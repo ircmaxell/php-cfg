@@ -196,7 +196,7 @@ class Parser {
                 $this->block = $endBlock;
                 return;
             case 'Stmt_InlineHTML':
-                $this->block->children[] = new Op\Terminal\Echo_([$this->parseExprNode($node->value)], $this->mapAttributes($node));
+                $this->block->children[] = new Op\Terminal\Echo_($this->parseExprNode($node->value), $this->mapAttributes($node));
                 return;
             case 'Stmt_Interface':
                 $this->block->children[] = new Op\Stmt\Interface_(
