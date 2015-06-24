@@ -3,6 +3,7 @@
 namespace PHPCfg;
 
 class Traverser {
+    /** @var \SplObjectStorage */
     private $seen;
 
     private $visitors = [];

@@ -3,7 +3,6 @@
 namespace PHPCfg\Op\Terminal;
 
 use PHPCfg\Op\Terminal;
-use PhpCfg\Block;
 
 class Unset_ extends Terminal {
     public $exprs;

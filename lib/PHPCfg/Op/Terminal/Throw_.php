@@ -4,7 +4,6 @@ namespace PHPCfg\Op\Terminal;
 
 use PHPCfg\Variable;
 use PHPCfg\Op\Terminal;
-use PhpCfg\Block;
 
 class Throw_ extends Terminal {
     public $expr;

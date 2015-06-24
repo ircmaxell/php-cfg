@@ -3,7 +3,6 @@
 namespace PHPCfg\Op\Expr;
 
 use PHPCfg\Op\Expr;
-use PhpCfg\Variable;
 
 class ConcatList extends Expr {
     public $list;

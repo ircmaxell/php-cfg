@@ -3,7 +3,6 @@
 namespace PHPCfg;
 
 use PHPCfg\Op;
-use PHPCfg\Block;
 
 interface Visitor {
     

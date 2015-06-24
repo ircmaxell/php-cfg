@@ -7,6 +7,7 @@ use PhpParser\NodeTraverser as AstTraverser;
 use PhpParser\NodeVisitor\NameResolver;
 
 class Parser {
+    /** @var Block */
     protected $block;
     protected $astParser;
     protected $astTraverser;

@@ -4,9 +4,7 @@ namespace PHPCfg\AstVisitor;
 
 use PhpParser\NodeVisitorAbstract;
 use PhpParser\Node;
-use PhpParser\Node\Expr\BooleanNot;
 use PhpParser\Node\Scalar\LNumber;
-use PhpParser\Node\Stmt\If_;
 use PhpParser\Node\Stmt\Goto_;
 use PhpParser\Node\Stmt\Label;
 

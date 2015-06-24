@@ -2,7 +2,6 @@
 
 namespace PHPCfg\Op\Terminal;
 
-use PHPCfg\Block;
 use PHPCfg\Variable;
 use PHPCfg\Op\Terminal;
 
