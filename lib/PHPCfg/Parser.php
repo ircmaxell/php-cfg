@@ -126,7 +126,7 @@ class Parser {
                 $loopInit = $this->block->create();
                 $loopBody = $this->block->create();
                 $loopEnd = $this->block->create();
-                $loopInit->children[] = new Op\Stmt\Jump($loopInit, $attrs);
+                $this->block->children[] = new Op\Stmt\Jump($loopInit, $attrs);
                 $loopInit->children[] = $validOp = new Op\Iterator\Valid($iterable, $attrs);
                 $loopInit->children[] = new Op\Stmt\JumpIf($validOp->result, $loopBody, $loopEnd, $attrs);
                 $this->block = $loopBody;
@@ -141,7 +141,7 @@ class Parser {
                     $loopBody->children[] = new Op\Expr\Assign($this->parseExprNode($node->valueVar), $valueOp->result, $attrs);
                 }
                 $loopBody = $this->parseNodes($node->stmts, $loopBody);
-                $loopBody->children[] = new Op\Stmt\Jump($loopEnd, $attrs);
+                $loopBody->children[] = new Op\Stmt\Jump($loopInit, $attrs);
                 $this->block = $loopEnd;
                 return;
             case 'Stmt_Function':

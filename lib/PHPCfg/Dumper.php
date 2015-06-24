@@ -55,7 +55,7 @@ class Dumper {
 
     private function dumpVar($var) {
         if ($var instanceof Literal) {
-            return $var->value;
+            return "LITERAL(" . var_export($var->value, true) . ")";
         } else if ($var instanceof Variable) {
             if (empty($var->name)) {
                 return "Var#$var->id";
