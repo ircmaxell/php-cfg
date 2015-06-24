@@ -2,11 +2,11 @@
 
 namespace PHPCfg\Op\Iterator;
 
-use PHPCfg\Op;
+use PHPCfg\Op\Expr;
 use PhpCfg\Variable;
 
-class Next extends Op {
-    public $var;
+class Next extends Expr {
+	public $var;
 
     public function __construct(Variable $var, array $attributes = array()) {
         parent::__construct($attributes);

@@ -1,12 +1,12 @@
 <?php
 
-namespace PHPCfg\Op;
+namespace PHPCfg\Op\Stmt;
 
 use PHPCfg\Block;
-use PHPCfg\Op;
+use PHPCfg\Op\Stmt;
 use PhpCfg\Variable;
 
-class Property extends Op {
+class Property extends Stmt {
     public $result;
 
     public function __construct($name, $visiblity, $static, Variable $defaultVar = null, Block $defaultBlock = null, array $attributes = array()) {

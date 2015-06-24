@@ -1,11 +1,11 @@
 <?php
 
-namespace PHPCfg\Op\Stmt;
+namespace PHPCfg\Op\Terminal;
 
-use PHPCfg\Op\Stmt;
+use PHPCfg\Op\Terminal;
 use PhpCfg\Block;
 
-class Unset_ extends Stmt {
+class Echo_ extends Terminal {
     public $exprs;
 
     public function __construct(array $exprs, array $attributes = array()) {

@@ -1,11 +1,11 @@
 <?php
 
-namespace PHPCfg\Op;
+namespace PHPCfg\Op\Terminal;
 
-use PHPCfg\Op;
+use PHPCfg\Op\Terminal;
 use PhpCfg\Variable;
 
-class Return_ extends Op {
+class Return_ extends Terminal {
     public $expr;
 
     public function __construct(Variable $expr = null, array $attributes = array()) {

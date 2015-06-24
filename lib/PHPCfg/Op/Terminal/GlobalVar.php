@@ -1,12 +1,12 @@
 <?php
 
-namespace PHPCfg\Op\Stmt;
+namespace PHPCfg\Op\Terminal;
 
 use PHPCfg\Block;
 use PHPCfg\Variable;
-use PHPCfg\Op\Stmt;
+use PHPCfg\Op\Terminal;
 
-class GlobalVar extends Stmt {
+class GlobalVar extends Terminal {
     public $var;
 
     public function __construct(Variable $var, array $attributes = array()) {

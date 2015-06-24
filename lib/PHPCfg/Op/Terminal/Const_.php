@@ -1,11 +1,11 @@
 <?php
 
-namespace PHPCfg\Op\Stmt;
+namespace PHPCfg\Op\Terminal;
 
 use PHPCfg\Variable;
-use PHPCfg\Op\Stmt;
+use PHPCfg\Op\Terminal;
 
-class Const_ extends Stmt {
+class Const_ extends Terminal {
     public $name;
     public $value;
 

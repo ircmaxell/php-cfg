@@ -1,12 +1,12 @@
 <?php
 
-namespace PHPCfg\Op\Stmt;
+namespace PHPCfg\Op\Terminal;
 
 use PHPCfg\Variable;
-use PHPCfg\Op\Stmt;
+use PHPCfg\Op\Terminal;
 use PhpCfg\Block;
 
-class Throw_ extends Stmt {
+class Throw_ extends Terminal {
     public $expr;
 
     public function __construct(Variable $expr, array $attributes = array()) {

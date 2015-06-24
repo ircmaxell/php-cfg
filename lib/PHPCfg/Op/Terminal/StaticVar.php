@@ -1,12 +1,12 @@
 <?php
 
-namespace PHPCfg\Op\Stmt;
+namespace PHPCfg\Op\Terminal;
 
 use PHPCfg\Block;
 use PHPCfg\Variable;
-use PHPCfg\Op\Stmt;
+use PHPCfg\Op\Terminal;
 
-class StaticVar extends Stmt {
+class StaticVar extends Terminal {
     public $var;
     public $default;
     public $defaultVar;

@@ -58,7 +58,7 @@ class Parser {
                 return;
             case 'Stmt_ClassConst':
                 foreach ($node->consts as $const) {
-                    $this->block->children[] = new Op\Stmt\Const_($const->name, $this->parseExprNode($const->value), $this->mapAttributes($node));
+                    $this->block->children[] = new Op\Terminal\Const_($const->name, $this->parseExprNode($const->value), $this->mapAttributes($node));
                 }
                 return;
             case 'Stmt_ClassMethod':
@@ -80,7 +80,7 @@ class Parser {
 
             case 'Stmt_Const':
                 foreach ($node->consts as $const) {
-                    $this->block->children[] = new Op\Stmt\Const_($const->name, $this->parseExprNode($const->value), $this->mapAttributes($node));
+                    $this->block->children[] = new Op\Terminal\Const_($const->name, $this->parseExprNode($const->value), $this->mapAttributes($node));
                 }
                 return;
             case 'Stmt_Do':
@@ -94,7 +94,7 @@ class Parser {
                    $this->block = $loopEnd;
                 return;
             case 'Stmt_Echo':
-                $this->block->children[] = new Op\Stmt\Echo_($this->parseExprList($node->exprs), $this->mapAttributes($node));
+                $this->block->children[] = new Op\Terminal\Echo_($this->parseExprList($node->exprs), $this->mapAttributes($node));
                 return;
             case 'Stmt_For':
                 $this->parseExprList($node->init);
@@ -153,7 +153,7 @@ class Parser {
                 return;
             case 'Stmt_Global':
                 foreach ($node->vars as $var) {
-                    $this->block->children[] = new Op\Stmt\GlobalVar($this->parseExprNode($var->name), $this->mapAttributes($node));
+                    $this->block->children[] = new Op\Terminal\GlobalVar($this->parseExprNode($var->name), $this->mapAttributes($node));
                 }
                 return;
             case 'Stmt_Goto':
@@ -189,7 +189,7 @@ class Parser {
                 $this->block = $endBlock;
                 return;
             case 'Stmt_InlineHTML':
-                $this->block->children[] = new Op\Stmt\Echo_([$this->parseExprNode($node->value)], $this->mapAttributes($node));
+                $this->block->children[] = new Op\Terminal\Echo_([$this->parseExprNode($node->value)], $this->mapAttributes($node));
                 return;
             case 'Stmt_Interface':
                 $this->block->children[] = new Op\Stmt\Interface_(
@@ -223,7 +223,7 @@ class Parser {
                         $defaultVar = null;
                         $defaultBlock = null;
                     }
-                    $this->block->children[] = new Op\Property(
+                    $this->block->children[] = new Op\Stmt\Property(
                         $this->parseExprNode($prop->name),
                         $visibility,
                         $static,
@@ -238,7 +238,7 @@ class Parser {
                 if ($node->expr) {
                     $expr = $this->parseExprNode($node->expr);
                 }
-                $this->block->children[] = new Op\Return_($expr, $this->mapAttributes($node));
+                $this->block->children[] = new Op\Terminal\Return_($expr, $this->mapAttributes($node));
                 return;
             case 'Stmt_Static':
                 foreach ($node->vars as $var) {
@@ -250,7 +250,7 @@ class Parser {
                         $defaultVar = $this->parseExprNode($var->default);
                         $this->block = $tmp;
                     }
-                    $this->block->children[] = new Op\Stmt\StaticVar($this->parseExprNode($var->name), $defaultBlock, $defaultVar, $this->mapAttributes($node));
+                    $this->block->children[] = new Op\Terminal\StaticVar($this->parseExprNode($var->name), $defaultBlock, $defaultVar, $this->mapAttributes($node));
                 }
                 return;
             case 'Stmt_Switch':
@@ -265,7 +265,7 @@ class Parser {
                 $this->block->children[] = new Op\Stmt\Switch_($cond, $cases, $targets, $this->mapAttributes($node));
                 return;
             case 'Stmt_Throw':
-                $this->block->children[] = new Op\Stmt\Throw_($this->parseExprNode($node->expr), $this->mapAttributes($node));
+                $this->block->children[] = new Op\Terminal\Throw_($this->parseExprNode($node->expr), $this->mapAttributes($node));
                 $this->block = new Block; // dead code
                 break;
             case 'Stmt_Trait':
@@ -279,7 +279,7 @@ class Parser {
                 // TODO: implement this!!!
                 return;
             case 'Stmt_Unset':
-                $this->block->children[] = new Op\Stmt\Unset_($this->parseExprList($node->vars), $this->mapAttributes($node));
+                $this->block->children[] = new Op\Terminal\Unset_($this->parseExprList($node->vars), $this->mapAttributes($node));
                 return;
             case 'Stmt_Use':
                 // ignore use statements, since names are already resolved

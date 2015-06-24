@@ -2,10 +2,10 @@
 
 namespace PHPCfg\Op\Iterator;
 
-use PHPCfg\Op;
+use PHPCfg\Op\Terminal;
 use PhpCfg\Variable;
 
-class Reset extends Op {
+class Reset extends Terminal {
     public $var;
 
     public function __construct(Variable $var, array $attributes = array()) {

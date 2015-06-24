@@ -16,10 +16,7 @@ class Value extends Expr {
     }
 
     public function getVariableNames() {
-        return ["var"];
+        return ["var", "result"];
     }
 
-    public function getSubBlocks() {
-        return [];
-    }
 }
