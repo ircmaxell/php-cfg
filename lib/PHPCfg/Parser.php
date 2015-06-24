@@ -4,6 +4,7 @@ namespace PHPCfg;
 use PhpParser\Parser as AstParser;
 use PhpParser\Node;
 use PhpParser\NodeTraverser as AstTraverser;
+use PhpParser\NodeVisitor\NameResolver;
 
 class Parser {
     protected $block;
@@ -12,8 +13,12 @@ class Parser {
     protected $fileName;
     protected $labels = [];
 
-    public function __construct(AstParser $astParser, AstTraverser $astTraverser) {
+    public function __construct(AstParser $astParser, AstTraverser $astTraverser = null) {
         $this->astParser = $astParser;
+        if (!$astTraverser) {
+        	$astTraverser = new AstTraverser; 
+			$astTraverser->addVisitor(new NameResolver); 
+        }
         $this->astTraverser = $astTraverser;
         $this->astTraverser->addVisitor(new AstVisitor\LoopResolver);
     }
