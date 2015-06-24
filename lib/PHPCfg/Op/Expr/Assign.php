@@ -10,12 +10,12 @@ class Assign extends Expr {
     public $expr;
 
     public function __construct(Variable $var, Variable $expr, array $attributes = array()) {
-		parent::__construct($attributes);
-		$this->var = $var;
-		$this->expr = $expr;
-	}
+        parent::__construct($attributes);
+        $this->var = $var;
+        $this->expr = $expr;
+    }
 
     public function getVariableNames() {
-		return ["var", "expr", "result"];
-	}
+        return ["var", "expr", "result"];
+    }
 }

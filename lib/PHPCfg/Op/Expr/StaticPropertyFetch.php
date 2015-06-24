@@ -11,12 +11,12 @@ class StaticPropertyFetch extends Expr {
     public $name;
 
     public function __construct(Variable $class, Variable $name, array $attributes = array()) {
-		parent::__construct($attributes);
-		$this->class = $class;
-		$this->name = $name;
-	}
+        parent::__construct($attributes);
+        $this->class = $class;
+        $this->name = $name;
+    }
 
     public function getVariableNames() {
-		return ["class", "name", "result"];
-	}
+        return ["class", "name", "result"];
+    }
 }

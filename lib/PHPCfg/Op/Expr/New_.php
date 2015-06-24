@@ -11,12 +11,12 @@ class New_ extends Expr {
     public $args;
 
     public function __construct(Variable $class, array $args, array $attributes = array()) {
-		parent::__construct($attributes);
-		$this->class = $class;
-		$this->args = $args;
-	}
+        parent::__construct($attributes);
+        $this->class = $class;
+        $this->args = $args;
+    }
 
     public function getVariableNames() {
-		return ["class", "args", "result"];
-	}
+        return ["class", "args", "result"];
+    }
 }

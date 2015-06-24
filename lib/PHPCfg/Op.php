@@ -11,22 +11,22 @@ abstract class Op {
     }
 
     public function getType() {
-    	return strtr(substr(rtrim(get_class($this), '_'), strlen(__CLASS__)), '\\', '_');
+        return strtr(substr(rtrim(get_class($this), '_'), strlen(__CLASS__)), '\\', '_');
     }
 
     public function getLine() {
-    	return $this->getAttribute('startLine', -1);
+        return $this->getAttribute('startLine', -1);
     }
 
     public function &getAttribute($key, $default = null) {
-    	if (!$this->hasAttribute($key)) {
-    		return $default;
-    	}
-    	return $this->attributes[$key];
+        if (!$this->hasAttribute($key)) {
+            return $default;
+        }
+        return $this->attributes[$key];
     }
 
     public function hasAttribute($key) {
-    	return array_key_exists($key, $this->attributes);
+        return array_key_exists($key, $this->attributes);
     }
 
     abstract public function getVariableNames();

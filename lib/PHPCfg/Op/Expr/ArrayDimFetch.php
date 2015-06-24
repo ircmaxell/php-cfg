@@ -11,12 +11,12 @@ class ArrayDimFetch extends Expr {
     public $dim;
 
     public function __construct(Variable $var, Variable $dim = null, array $attributes = array()) {
-		parent::__construct($attributes);
-		$this->var = $var;
-		$this->dim = $dim;
-	}
+        parent::__construct($attributes);
+        $this->var = $var;
+        $this->dim = $dim;
+    }
 
     public function getVariableNames() {
-		return ["var", "dim", "result"];
-	}
+        return ["var", "dim", "result"];
+    }
 }

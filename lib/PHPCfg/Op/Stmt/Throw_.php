@@ -7,18 +7,18 @@ use PHPCfg\Op\Stmt;
 use PhpCfg\Block;
 
 class Throw_ extends Stmt {
-	public $expr;
+    public $expr;
 
-	public function __construct(Variable $expr, array $attributes = array()) {
-		parent::__construct($attributes);
-		$this->expr = $expr;
-	}
+    public function __construct(Variable $expr, array $attributes = array()) {
+        parent::__construct($attributes);
+        $this->expr = $expr;
+    }
 
-	public function getVariableNames() {
-		return ['expr'];
-	}
+    public function getVariableNames() {
+        return ['expr'];
+    }
 
-	public function getSubBlocks() {
-		return [];
-	}
+    public function getSubBlocks() {
+        return [];
+    }
 }

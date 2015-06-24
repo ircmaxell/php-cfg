@@ -6,7 +6,7 @@ class Block {
     public $children = [];
 
     public function create() {
-    	$class = get_class($this);
-    	return new $class;
+        $class = get_class($this);
+        return new $class;
     }
 }

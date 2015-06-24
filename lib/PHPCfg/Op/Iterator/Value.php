@@ -10,16 +10,16 @@ class Value extends Expr {
     public $byRef;
 
     public function __construct(Variable $var, $byRef, array $attributes = array()) {
-		parent::__construct($attributes);
-		$this->var = $var;
-		$this->byRef = $byRef;
-	}
+        parent::__construct($attributes);
+        $this->var = $var;
+        $this->byRef = $byRef;
+    }
 
     public function getVariableNames() {
-		return ["var"];
-	}
+        return ["var"];
+    }
 
-	public function getSubBlocks() {
-    	return [];
+    public function getSubBlocks() {
+        return [];
     }
 }

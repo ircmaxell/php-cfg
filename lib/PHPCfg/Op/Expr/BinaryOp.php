@@ -10,12 +10,12 @@ abstract class BinaryOp extends Expr {
     public $right;
 
     public function __construct(Variable $left, Variable $right, array $attributes = array()) {
-		parent::__construct($attributes);
-		$this->left = $left;
-		$this->right = $right;
-	}
+        parent::__construct($attributes);
+        $this->left = $left;
+        $this->right = $right;
+    }
 
     public function getVariableNames() {
-		return ["left", "right", "result"];
-	}
+        return ["left", "right", "result"];
+    }
 }

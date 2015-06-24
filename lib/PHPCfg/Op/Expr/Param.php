@@ -15,21 +15,21 @@ class Param extends Expr {
     public $type;
 
     public function __construct(Variable $name, $type, $byRef, $variadic, Variable $defaultVar = null, Block $defaultBlock = null, array $attributes = array()) {
-		parent::__construct($attributes);
-		$this->result->name = $name;
-		$this->name = $name;
-		$this->type = $type;
-		$this->byRef = (bool) $byRef;
-		$this->variadic = (bool) $variadic;
-		$this->defaultVar = $defaultVar;
-		$this->defaultBlock = $defaultBlock;
-	}
+        parent::__construct($attributes);
+        $this->result->name = $name;
+        $this->name = $name;
+        $this->type = $type;
+        $this->byRef = (bool) $byRef;
+        $this->variadic = (bool) $variadic;
+        $this->defaultVar = $defaultVar;
+        $this->defaultBlock = $defaultBlock;
+    }
 
     public function getVariableNames() {
-		return ["name", "defaultVar", "result"];
-	}
+        return ["name", "defaultVar", "result"];
+    }
 
-	public function getSubBlocks() {
-    	return ["defaultBlock"];
+    public function getSubBlocks() {
+        return ["defaultBlock"];
     }
 }

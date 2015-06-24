@@ -12,13 +12,13 @@ class MethodCall extends Expr {
     public $args;
 
     public function __construct(Variable $var, Variable $name, array $args, array $attributes = array()) {
-		parent::__construct($attributes);
-		$this->var = $var;
-		$this->name = $name;
-		$this->args = $args;
-	}
+        parent::__construct($attributes);
+        $this->var = $var;
+        $this->name = $name;
+        $this->args = $args;
+    }
 
     public function getVariableNames() {
-		return ["var", "name", "args", "result"];
-	}
+        return ["var", "name", "args", "result"];
+    }
 }

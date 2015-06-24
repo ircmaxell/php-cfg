@@ -10,11 +10,11 @@ class ConstFetch extends Expr {
     public $name;
 
     public function __construct(Variable $name = null, array $attributes = array()) {
-		parent::__construct($attributes);
-		$this->name = $name;
-	}
+        parent::__construct($attributes);
+        $this->name = $name;
+    }
 
     public function getVariableNames() {
-		return ["name", "result"];
-	}
+        return ["name", "result"];
+    }
 }
