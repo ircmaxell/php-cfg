@@ -113,7 +113,7 @@ class Parser {
                 if (!empty($node->cond)) {
                     $cond = $this->parseExprNode($node->cond);
                 } else {
-                    $cond = new Literal(false);
+                    $cond = new Literal(true);
                 }
                 $this->block->children[] = new Op\Stmt\JumpIf($cond, $loopBody, $loopEnd, $this->mapAttributes($node));
                 $this->block = $this->parseNodes($node->stmts, $loopBody);
