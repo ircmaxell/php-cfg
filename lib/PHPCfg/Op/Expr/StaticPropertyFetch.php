@@ -3,14 +3,14 @@
 namespace PHPCfg\Op\Expr;
 
 use PHPCfg\Op\Expr;
-use PhpCfg\Variable;
+use PhpCfg\Operand;
 
 class StaticPropertyFetch extends Expr {
 
     public $class;
     public $name;
 
-    public function __construct(Variable $class, Variable $name, array $attributes = array()) {
+    public function __construct(Operand $class, Operand $name, array $attributes = array()) {
         parent::__construct($attributes);
         $this->class = $class;
         $this->name = $name;

@@ -3,14 +3,14 @@
 namespace PHPCfg\Op\Expr;
 
 use PHPCfg\Op\Expr;
-use PhpCfg\Variable;
+use PhpCfg\Operand;
 
 class FuncCall extends Expr {
 
     public $name;
     public $args;
 
-    public function __construct(Variable $name, array $args, array $attributes = array()) {
+    public function __construct(Operand $name, array $args, array $attributes = array()) {
         parent::__construct($attributes);
         $this->name = $name;
         $this->args = $args;

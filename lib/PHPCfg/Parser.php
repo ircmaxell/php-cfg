@@ -1,6 +1,9 @@
 <?php
 
 namespace PHPCfg;
+use PHPCfg\Operand\Literal;
+use PHPCfg\Operand\Temporary;
+use PHPCfg\Operand\Variable;
 use PhpParser\Parser as AstParser;
 use PhpParser\Node;
 use PhpParser\NodeTraverser as AstTraverser;
@@ -556,7 +559,7 @@ class Parser {
                 $ifBlock = $this->block->create();
                 $elseBlock = $this->block->create();
                 $endBlock = $this->block->create();
-                $result = new Variable;
+                $result = new Temporary;
                 $this->block->children[] = new Op\Stmt\JumpIf($cond, $ifBlock, $elseBlock, $attrs);
                 $this->block = $ifBlock;
                 if ($expr->if) {

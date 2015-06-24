@@ -3,14 +3,14 @@
 namespace PHPCfg\Op\Expr;
 
 use PHPCfg\Op\Expr;
-use PhpCfg\Variable;
+use PhpCfg\Operand;
 
 class New_ extends Expr {
 
     public $class;
     public $args;
 
-    public function __construct(Variable $class, array $args, array $attributes = array()) {
+    public function __construct(Operand $class, array $args, array $attributes = array()) {
         parent::__construct($attributes);
         $this->class = $class;
         $this->args = $args;

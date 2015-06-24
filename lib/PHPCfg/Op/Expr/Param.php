@@ -4,7 +4,7 @@ namespace PHPCfg\Op\Expr;
 
 use PHPCfg\Block;
 use PHPCfg\Op\Expr;
-use PhpCfg\Variable;
+use PhpCfg\Operand;
 
 class Param extends Expr {
     public $name;
@@ -14,7 +14,7 @@ class Param extends Expr {
     public $defaultBlock;
     public $type;
 
-    public function __construct(Variable $name, $type, $byRef, $variadic, Variable $defaultVar = null, Block $defaultBlock = null, array $attributes = array()) {
+    public function __construct(Operand $name, $type, $byRef, $variadic, Operand $defaultVar = null, Block $defaultBlock = null, array $attributes = array()) {
         parent::__construct($attributes);
         $this->result->name = $name;
         $this->name = $name;

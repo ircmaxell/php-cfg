@@ -3,7 +3,7 @@
 namespace PHPCfg\Op\Expr;
 
 use PHPCfg\Op\Expr;
-use PhpCfg\Variable;
+use PhpCfg\Operand;
 
 class Include_ extends Expr {
     const TYPE_INCLUDE = 1;
@@ -14,7 +14,7 @@ class Include_ extends Expr {
     public $type;
     public $expr;
 
-    public function __construct(Variable $expr, $type, array $attributes = array()) {
+    public function __construct(Operand $expr, $type, array $attributes = array()) {
         parent::__construct($attributes);
         $this->expr = $expr;
         $this->type = $type;

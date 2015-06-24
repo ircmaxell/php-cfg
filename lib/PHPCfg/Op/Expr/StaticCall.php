@@ -3,7 +3,7 @@
 namespace PHPCfg\Op\Expr;
 
 use PHPCfg\Op\Expr;
-use PhpCfg\Variable;
+use PhpCfg\Operand;
 
 class StaticCall extends Expr {
 
@@ -11,7 +11,7 @@ class StaticCall extends Expr {
     public $name;
     public $args;
 
-    public function __construct(Variable $class, Variable $name, array $args, array $attributes = array()) {
+    public function __construct(Operand $class, Operand $name, array $args, array $attributes = array()) {
         parent::__construct($attributes);
         $this->class = $class;
         $this->name = $name;

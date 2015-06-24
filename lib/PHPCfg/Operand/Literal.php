@@ -1,12 +1,13 @@
 <?php
 
-namespace PHPCfg;
+namespace PHPCfg\Operand;
 
-class Literal extends Variable {
+use PHPCfg\Operand;
+
+class Literal implements Operand {
     public $value;
 
     public function __construct($value) {
         $this->value = $value;
-        parent::__construct();
     }
 }

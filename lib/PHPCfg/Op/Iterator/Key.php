@@ -3,12 +3,12 @@
 namespace PHPCfg\Op\Iterator;
 
 use PHPCfg\Op\Expr;
-use PhpCfg\Variable;
+use PhpCfg\Operand;
 
 class Key extends Expr {
     public $var;
 
-    public function __construct(Variable $var, array $attributes = array()) {
+    public function __construct(Operand $var, array $attributes = array()) {
         parent::__construct($attributes);
         $this->var = $var;
     }

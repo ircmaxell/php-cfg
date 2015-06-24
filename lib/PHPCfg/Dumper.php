@@ -2,6 +2,10 @@
 
 namespace PHPCfg;
 
+use PHPCfg\Operand\Literal;
+use PHPCfg\Operand\Temporary;
+use PHPCfg\Operand\Variable;
+
 class Dumper {
     /** @var \SplObjectStorage Map of seen blocks to IDs */
     private $blockIds;
@@ -49,7 +53,7 @@ class Dumper {
         $result = $op->getType();
         foreach ($op->getVariableNames() as $varName) {
             $result .= "\n    $varName: ";
-            $result .= $this->indent($this->dumpVar($op->$varName));
+            $result .= $this->indent($this->dumpOperand($op->$varName));
         }
         foreach ($op->getSubBlocks() as $subBlock) {
             $result .= "\n    $subBlock: " . $this->indent($this->dumpBlockRef($op->$subBlock));
@@ -57,20 +61,18 @@ class Dumper {
         return $result;
     }
 
-    private function dumpVar($var) {
+    private function dumpOperand($var) {
         if ($var instanceof Literal) {
             return "LITERAL(" . var_export($var->value, true) . ")";
         } else if ($var instanceof Variable) {
-            if (empty($var->name)) {
-                return "Var#" . $this->getVarId($var);
-            } else {
-                assert($var->name instanceof Literal);
-                return "\${$var->name->value}";
-            }
+            assert($var->name instanceof Literal);
+            return "\${$var->name->value}";
+        } else if ($var instanceof Temporary) {
+            return "Var#" . $this->getVarId($var);
         } else if (is_array($var)) {
             $result = "array";
             foreach ($var as $k => $v) {
-                $result .= "\n    $k: " . $this->indent($this->dumpVar($v));
+                $result .= "\n    $k: " . $this->indent($this->dumpOperand($v));
             }
             return $result;
         }
@@ -81,7 +83,7 @@ class Dumper {
         return str_replace("\n", "\n    ", $str);
     }
 
-    private function getVarId(Variable $var) {
+    private function getVarId(Operand $var) {
         if (isset($this->varIds[$var])) {
             return $this->varIds[$var];
         } else {

@@ -3,7 +3,7 @@
 namespace PHPCfg\Op\Terminal;
 
 use PHPCfg\Block;
-use PHPCfg\Variable;
+use PHPCfg\Operand;
 use PHPCfg\Op\Terminal;
 
 class StaticVar extends Terminal {
@@ -11,7 +11,7 @@ class StaticVar extends Terminal {
     public $default;
     public $defaultVar;
 
-    public function __construct(Variable $var, Block $defaultBlock, Variable $defaultVar, array $attributes = array()) {
+    public function __construct(Operand $var, Block $defaultBlock, Operand $defaultVar, array $attributes = array()) {
         parent::__construct($attributes);
         $this->var = $var;
         $this->defaultBlock = $defaultBlock;
