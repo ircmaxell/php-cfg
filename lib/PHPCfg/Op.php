@@ -18,6 +18,10 @@ abstract class Op {
         return $this->getAttribute('startLine', -1);
     }
 
+    public function getFile() {
+    	return $this->getAttribute("filename", "unknown");
+    }
+
     public function &getAttribute($key, $default = null) {
         if (!$this->hasAttribute($key)) {
             return $default;

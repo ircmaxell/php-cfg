@@ -634,7 +634,7 @@ class Parser {
     }
 
     private function mapAttributes(Node $expr) {
-        return $expr->getAttributes();
+        return array_merge(["filename" => $this->fileName], $expr->getAttributes());
     }
 
 }
