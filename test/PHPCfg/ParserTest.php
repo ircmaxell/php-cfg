@@ -53,8 +53,7 @@ Block#3
         expr: Var#4
         result: Var#7
     Terminal_Echo
-        exprs: array
-            0: $b
+        expr: $b
     Stmt_Jump
         target: Block#5
 

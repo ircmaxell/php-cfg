@@ -99,7 +99,9 @@ class Parser {
                    $this->block = $loopEnd;
                 return;
             case 'Stmt_Echo':
-                $this->block->children[] = new Op\Terminal\Echo_($this->parseExprList($node->exprs), $this->mapAttributes($node));
+                foreach ($node->exprs as $expr) {
+                    $this->block->children[] = new Op\Terminal\Echo_($this->parseExprNode($expr), $this->mapAttributes($expr));
+                }
                 return;
             case 'Stmt_For':
                 $this->parseExprList($node->init);

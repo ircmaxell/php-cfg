@@ -3,14 +3,14 @@
 namespace PHPCfg\Op\Terminal;
 
 use PHPCfg\Op\Terminal;
-use PhpCfg\Block;
+use PHPCfg\Variable;
 
 class Echo_ extends Terminal {
-    public $exprs;
+    public $expr;
 
-    public function __construct(array $exprs, array $attributes = array()) {
+    public function __construct(Variable $expr, array $attributes = array()) {
         parent::__construct($attributes);
-        $this->exprs = $exprs;
+        $this->expr = $expr;
     }
 
     public function getSubBlocks() {
@@ -18,6 +18,6 @@ class Echo_ extends Terminal {
     }
 
     public function getVariableNames() {
-        return ['exprs'];
+        return ['expr'];
     }
 }
