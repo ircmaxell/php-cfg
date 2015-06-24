@@ -7,10 +7,13 @@ class Dumper {
     private $blockIds;
     /** @var \SplQueue Queue of blocks to dump */
     private $blockQueue;
+    /** @var \SplObjectStorage Map of seen variables to IDs */
+    private $varIds;
 
     public function dump(Block $block) {
         $this->blockIds = new \SplObjectStorage();
         $this->blockQueue = new \SplQueue();
+        $this->varIds = new \SplObjectStorage();
         $this->dumpBlockRef($block);
 
         $result = '';
@@ -26,6 +29,7 @@ class Dumper {
 
         $this->blockIds = null;
         $this->blockQueue = null;
+        $this->varIds = null;
         return $result;
     }
 
@@ -58,7 +62,7 @@ class Dumper {
             return "LITERAL(" . var_export($var->value, true) . ")";
         } else if ($var instanceof Variable) {
             if (empty($var->name)) {
-                return "Var#$var->id";
+                return "Var#" . $this->getVarId($var);
             } else {
                 assert($var->name instanceof Literal);
                 return "\${$var->name->value}";
@@ -75,5 +79,13 @@ class Dumper {
 
     private function indent($str) {
         return str_replace("\n", "\n    ", $str);
+    }
+
+    private function getVarId(Variable $var) {
+        if (isset($this->varIds[$var])) {
+            return $this->varIds[$var];
+        } else {
+            return $this->varIds[$var] = $this->varIds->count() + 1;
+        }
     }
 }

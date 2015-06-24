@@ -38,20 +38,20 @@ Block#1
 Block#2
     Iterator_Valid
         var: $a
-        result: Var#3
+        result: Var#1
     Stmt_JumpIf
-        cond: Var#3
+        cond: Var#1
         if: Block#3
         else: Block#4
 
 Block#3
     Iterator_Value
         var: $a
-        result: Var#4
+        result: Var#2
     Expr_Assign
         var: $b
-        expr: Var#4
-        result: Var#7
+        expr: Var#2
+        result: Var#3
     Terminal_Echo
         expr: $b
     Stmt_Jump
