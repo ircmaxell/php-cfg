@@ -20,55 +20,18 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
     }
 
     public function provideTestParseAndDump() {
-        return [
-            [
-                <<<'PHP'
-<?php
-foreach ($a as $b) {
-    echo $b;
-}
-PHP
-, <<<'OUT'
-Block#1
-    Iterator_Reset
-        var: $a
-    Stmt_Jump
-        target: Block#2
+        $dir = __DIR__ . '/../code';
+        $iter = new \RecursiveIteratorIterator(
+            new \RecursiveDirectoryIterator($dir), \RecursiveIteratorIterator::LEAVES_ONLY);
 
-Block#2
-    Iterator_Valid
-        var: $a
-        result: Var#1
-    Stmt_JumpIf
-        cond: Var#1
-        if: Block#3
-        else: Block#4
+        foreach ($iter as $file) {
+            if (!$file->isFile()) {
+                continue;
+            }
 
-Block#3
-    Iterator_Value
-        var: $a
-        result: Var#2
-    Expr_Assign
-        var: $b
-        expr: Var#2
-        result: Var#3
-    Terminal_Echo
-        expr: $b
-    Stmt_Jump
-        target: Block#5
-
-Block#4
-    Stmt_Jump
-        target: Block#6
-
-Block#5
-    Stmt_Jump
-        target: Block#2
-
-Block#6
-OUT
-            ],
-        ];
+            $contents = file_get_contents($file);
+            yield explode('-----', $contents);
+        }
     }
 
     private function canonicalize($str) {
