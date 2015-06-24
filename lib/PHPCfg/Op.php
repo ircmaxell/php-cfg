@@ -11,7 +11,7 @@ abstract class Op {
     }
 
     public function getType() {
-        return strtr(substr(rtrim(get_class($this), '_'), strlen(__CLASS__)), '\\', '_');
+    	return strtr(substr(rtrim(get_class($this), '_'), strlen(__CLASS__) + 1), '\\', '_');
     }
 
     public function getLine() {
