@@ -3,6 +3,7 @@
 namespace PHPCfg;
 
 class Block {
+    /** @var Op[] */
     public $children = [];
 
     public function create() {
