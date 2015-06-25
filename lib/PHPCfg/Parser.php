@@ -6,6 +6,7 @@ use PHPCfg\Operand\Temporary;
 use PHPCfg\Operand\Variable;
 use PhpParser\Parser as AstParser;
 use PhpParser\Node;
+use PhpParser\Node\Expr\BinaryOp as AstBinaryOp;
 use PhpParser\NodeTraverser as AstTraverser;
 use PhpParser\NodeVisitor\NameResolver;
 
@@ -357,6 +358,12 @@ class Parser {
             $this->block->children[] = $op = new $class($v, $e, $this->mapAttributes($expr));
             return $op->result;
         } elseif ($expr instanceof Node\Expr\BinaryOp) {
+            if ($expr instanceof AstBinaryOp\LogicalAnd || $expr instanceof AstBinaryOp\BooleanAnd) {
+                return $this->parseShortCircuiting($expr, false);
+            } else if ($expr instanceof AstBinaryOp\LogicalOr || $expr instanceof AstBinaryOp\BooleanOr) {
+                return $this->parseShortCircuiting($expr, true);
+            }
+
             $left = $this->parseExprNode($expr->left);
             $right = $this->parseExprNode($expr->right);
             $class = [
@@ -636,6 +643,29 @@ class Parser {
                 $this->mapAttributes($param)
             );
         }
+        return $result;
+    }
+
+    private function parseShortCircuiting(AstBinaryOp $expr, $isOr) {
+        $result = new Temporary;
+        $longBlock = new Block;
+        $endBlock = new Block;
+
+        $shortBlock = new Block;
+        $shortBlock->children[] = new Op\Expr\Assign($result, new Literal($isOr));
+        $shortBlock->children[] = new Op\Stmt\Jump($endBlock);
+
+        $this->block->children[] = new Op\Stmt\JumpIf(
+            $this->parseExprNode($expr->left),
+            $isOr ? $shortBlock : $longBlock, $isOr ? $longBlock : $shortBlock
+        );
+
+        $this->block = $longBlock;
+        $boolCast = new Op\Expr\Cast\Bool_($this->parseExprNode($expr->right));
+        $this->block->children[] = $boolCast;
+        $boolCast->result = $result;
+
+        $this->block = $endBlock;
         return $result;
     }
 

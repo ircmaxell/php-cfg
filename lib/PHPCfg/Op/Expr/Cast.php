@@ -11,7 +11,7 @@ abstract class Cast extends Expr {
 
     public function __construct(Operand $expr, array $attributes = array()) {
         parent::__construct($attributes);
-        $this->expr;
+        $this->expr = $expr;
     }
 
     public function getVariableNames() {
