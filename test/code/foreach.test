@@ -29,14 +29,6 @@ Block#3
     Terminal_Echo
         expr: $b
     Stmt_Jump
-        target: Block#5
-
-Block#4
-    Stmt_Jump
-        target: Block#6
-
-Block#5
-    Stmt_Jump
         target: Block#2
 
-Block#6
+Block#4

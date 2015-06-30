@@ -10,9 +10,13 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
         $astTraverser = new PhpParser\NodeTraverser;
         $astTraverser->addVisitor(new PhpParser\NodeVisitor\NameResolver);
         $parser = new Parser(new PhpParser\Parser(new PhpParser\Lexer), $astTraverser);
-        $dumper = new Dumper();
-
         $block = $parser->parse($code, 'foo.php');
+
+        $traverser = new Traverser();
+        $traverser->addVisitor(new Visitor\Simplifier());
+        $traverser->traverse($block);
+
+        $dumper = new Dumper();
         $this->assertEquals(
             $this->canonicalize($expectedDump),
             $this->canonicalize($dumper->dump($block))
