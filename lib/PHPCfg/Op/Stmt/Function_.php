@@ -2,10 +2,11 @@
 
 namespace PHPCfg\Op\Stmt;
 
+use PHPCfg\Op\CallableOp;
 use PHPCfg\Op\Stmt;
 use PhpCfg\Block;
 
-class Function_ extends Stmt {
+class Function_ extends Stmt implements CallableOp {
     public $byRef;
 
     public $name;
@@ -15,6 +16,8 @@ class Function_ extends Stmt {
     public $returnType;
 
     public $stmts;
+
+    public $globals;
 
     public function __construct($name, array $params, $byRef, $returnType, Block $stmts = null, array $attributes = array()) {
         parent::__construct($attributes);

@@ -2,10 +2,11 @@
 
 namespace PHPCfg\Op\Expr;
 
+use PHPCfg\Op\CallableOp;
 use PHPCfg\Op\Expr;
 use PhpCfg\Block;
 
-class Closure extends Expr {
+class Closure extends Expr implements CallableOp {
     public $byRef;
 
     public $params;
@@ -14,9 +15,14 @@ class Closure extends Expr {
 
     public $stmts;
 
-    public function __construct(array $params, $byRef, $returnType, Block $stmts, array $attributes = array()) {
+    public $globals;
+
+    public $useVars;
+
+    public function __construct(array $params, array $useVars, $byRef, $returnType, Block $stmts, array $attributes = array()) {
         parent::__construct($attributes);
         $this->params = $params;
+        $this->useVars = $useVars;
         $this->byRef = (bool) $byRef;
         $this->returnType = $returnType;
         $this->stmts = $stmts;
@@ -27,6 +33,6 @@ class Closure extends Expr {
     }
 
     public function getVariableNames() {
-        return ["result"];
+        return ["useVars", "result"];
     }
 }

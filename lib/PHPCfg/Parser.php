@@ -461,8 +461,17 @@ class Parser {
             case 'Expr_Closure':
                 $block = new Block;
                 $this->parseNodes($expr->stmts, $block);
+                $uses = [];
+                foreach ($expr->uses as $use) {
+                    $uses[] = new Operand\BoundVariable(
+                        new Literal($use->var),
+                        $use->byRef,
+                        Operand\BoundVariable::SCOPE_LOCAL
+                    );
+                }
                 $op = new Op\Expr\Closure(
                     $this->parseParameterList($expr->params),
+                    $uses,
                     $expr->byRef,
                     $expr->returnType,
                     $block,

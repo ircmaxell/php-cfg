@@ -5,6 +5,7 @@ namespace PHPCfg;
 use PHPCfg\Operand\Literal;
 use PHPCfg\Operand\Temporary;
 use PHPCfg\Operand\Variable;
+use PHPCfg\Operand\BoundVariable;
 
 class Dumper {
     /** @var \SplObjectStorage Map of seen blocks to IDs */
@@ -66,7 +67,22 @@ class Dumper {
             return "LITERAL(" . var_export($var->value, true) . ")";
         } else if ($var instanceof Variable) {
             assert($var->name instanceof Literal);
-            return "\${$var->name->value}";
+            $prefix = "$";
+            if ($var instanceof BoundVariable) {
+                if ($var->byRef) {
+                    $prefix = "&$";
+                }
+                switch ($var->scope) {
+                    case BoundVariable::SCOPE_GLOBAL:
+                        return "global<{$prefix}{$var->name->value}>";
+                    case BoundVariable::SCOPE_LOCAL:
+                        return "local<{$prefix}{$var->name->value}>";
+                    default:
+                        throw new \LogicException("Unknown bound variable scope");
+                }
+            }
+            
+            return $prefix . $var->name->value;
         } else if ($var instanceof Temporary) {
             return "Var#" . $this->getVarId($var);
         } else if (is_array($var)) {
