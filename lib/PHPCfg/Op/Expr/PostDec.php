@@ -8,6 +8,9 @@ use PhpCfg\Operand;
 class PostDec extends Expr {
     public $var;
 
+
+    protected $writeVariables = ['var', 'result'];
+
     public function __construct(Operand $var, array $attributes = array()) {
         parent::__construct($attributes);
         $this->var = $var;

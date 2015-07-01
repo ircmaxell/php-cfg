@@ -8,6 +8,8 @@ use PhpCfg\Operand;
 class Print_ extends Expr {
 
     public $expr;
+    
+    protected $writeVariables = ['result'];
 
     public function __construct(Operand $expr, array $attributes = array()) {
         parent::__construct($attributes);

@@ -14,25 +14,26 @@ class Traverser {
 
     public function traverse(Block $block) {
         $this->seen = new \SplObjectStorage;
-        return $this->traverseBlock($block);
+        return $this->traverseBlock($block, null);
     }
 
-    private function traverseBlock(Block $block) {
+    private function traverseBlock(Block $block, Block $prior = null) {
         if ($this->seen->contains($block)) {
+            $this->event("skipBlock", [$block, $prior]);
             return $block;
         }
         $this->seen->attach($block);
-        $this->event("enterBlock", [$block]);
+        $this->event("enterBlock", [$block, $prior]);
         foreach ($block->children as $op) {
             $this->event("enterOp", [$op, $block]);
             foreach ($op->getSubBlocks() as $subblock) {
                 if ($op->$subblock) {
-                    $this->traverseBlock($op->$subblock);
+                    $this->traverseBlock($op->$subblock, $block);
                 }
             }
             $this->event("leaveOp", [$op, $block]);
         }
-        $this->event("leaveBlock", [$block]);
+        $this->event("leaveBlock", [$block, $prior]);
     }
 
     private function event($name, array $args) {

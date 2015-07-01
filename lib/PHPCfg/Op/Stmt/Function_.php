@@ -31,4 +31,8 @@ class Function_ extends Stmt implements CallableOp {
     public function getSubBlocks() {
         return ['stmts'];
     }
+
+    public function getParams() {
+        return $this->params;
+    }
 }

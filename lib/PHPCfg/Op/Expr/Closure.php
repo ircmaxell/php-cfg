@@ -28,6 +28,10 @@ class Closure extends Expr implements CallableOp {
         $this->stmts = $stmts;
     }
 
+    public function getParams() {
+        return $this->params;
+    }
+
     public function getSubBlocks() {
         return ['stmts'];
     }

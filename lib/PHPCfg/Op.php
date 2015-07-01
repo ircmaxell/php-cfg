@@ -5,6 +5,7 @@ namespace PHPCfg;
 abstract class Op {
     
     protected $attributes = array();
+    protected $writeVariables = [];
 
     public function __construct(array $attributes = array()) {
         $this->attributes = $attributes;
@@ -29,6 +30,10 @@ abstract class Op {
         return $this->attributes[$key];
     }
 
+    public function setAttribute($key, &$value) {
+        $this->attributes[$key] = $value;
+    }
+
     public function hasAttribute($key) {
         return array_key_exists($key, $this->attributes);
     }
@@ -36,5 +41,9 @@ abstract class Op {
     abstract public function getVariableNames();
 
     abstract public function getSubBlocks();
+
+    public function isWriteVariable($name) {
+        return in_array($name, $this->writeVariables);
+    }
 
 }

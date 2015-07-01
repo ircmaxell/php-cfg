@@ -84,6 +84,9 @@ class Dumper {
             
             return $prefix . $var->name->value;
         } else if ($var instanceof Temporary) {
+            if ($var->original) {
+                return "Var#" . $this->getVarId($var) . "<" . $this->dumpOperand($var->original) . ">";
+            }
             return "Var#" . $this->getVarId($var);
         } else if (is_array($var)) {
             $result = "array";

@@ -2,11 +2,13 @@
 
 namespace PHPCfg\Op\Iterator;
 
-use PHPCfg\Op\Expr;
+use PHPCfg\Op\Terminal;
 use PhpCfg\Operand;
 
-class Next extends Expr {
+class Next extends Terminal {
 	public $var;
+
+    protected $writeVariables = ['var'];
 
     public function __construct(Operand $var, array $attributes = array()) {
         parent::__construct($attributes);
@@ -14,7 +16,7 @@ class Next extends Expr {
     }
 
     public function getVariableNames() {
-        return ["var", "result"];
+        return ["var"];
     }
 
     public function getSubBlocks() {

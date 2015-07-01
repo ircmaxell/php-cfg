@@ -6,4 +6,6 @@ use PHPCfg\Op;
 
 interface CallableOp {
 
+    public function getParams();
+
 }
