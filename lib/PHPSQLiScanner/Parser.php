@@ -37,7 +37,7 @@ class Parser implements Visitor {
             $this->dagStack[] = $this->dag;
             $this->dag = new DirectedAdjacencyList;
             foreach ($op->getParams() as $param) {
-                $this->dag->ensureArc($param, $param->result);
+                $this->dag->ensureArc($param, $param->result);  
             }
         }
     }

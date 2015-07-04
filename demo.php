@@ -12,23 +12,28 @@ $traverser = new PHPCfg\Traverser;
 $traverser->addVisitor($declarations);
 $traverser->addVisitor($calls);
 $traverser->addVisitor(new PHPCfg\Visitor\Simplifier);
-$traverser->addVisitor(new PHPCfg\Visitor\SSA);
 $traverser->addVisitor(new PHPSQLiScanner\Parser);
 
 $code = <<<'EOF'
 <?php
-
-function f() {
-    g($_POST['a']);
+$a = 1;
+while (true) {
+    $a += 1;
 }
-function g($a) {
-    mysql_query("SELECT $a");
-}
+$a += 1;
+return $a;
 EOF;
 
 
 $block = $parser->parse($code, __FILE__);
 $traverser->traverse($block);
+
+$transformer = new PHPCfg\SSATransform;
+
+$block = $transformer->transform($block);
+
+$dumper = new PHPCfg\Dumper;
+echo $dumper->dump($block);
 
 $scanner = new PHPSQLiScanner\Scanner;
 

@@ -1,7 +1,8 @@
 <?php
 
-namespace PHPCfg\Visitor;
+namespace PHPCfg;
 
+use StdClass;   
 use PHPCfg\Visitor;
 use PHPCfg\Op;
 use PHPCfg\Op\CallableOp;
@@ -12,7 +13,9 @@ use SplObjectStorage;
 /**
  * WARNING: Extremely broken, do not rely on, Phi nodes not implemented yet
  */
-class SSA implements Visitor {
+class SSATransform {
+
+    private $seen = null;
     public $scope = [
         "names" => [],
         "phi" => null,
@@ -23,10 +26,46 @@ class SSA implements Visitor {
         $this->initScope();
     }
 
+    public function transform(Block $block) {
+        $this->seen = new \SplObjectStorage;
+        $this->transformBlock($block);
+        foreach ($this->seen as $seen) {
+            foreach ($this->seen[$seen] as $name => $vars) {
+                $operands = [];
+                foreach ($vars->store as $child) {
+                    $operands[] = $child;
+                }
+                array_unshift($seen->children, new Op\Phi($name, $vars->var, $operands));
+            }
+        }
+        return $block;
+    }
+
+    private function transformBlock(Block $block) {
+        if (isset($this->seen[$block])) {
+            $this->skipBlock($block);
+            return $block;
+        }
+        $this->seen[$block] = new StdClass;
+        $this->skipBlock($block);
+        foreach ($block->children as $op) {
+            $this->enterOp($op, $block);
+            $scope = $this->scope;
+            foreach ($op->getSubBlocks() as $subblock) {
+                // restore scope
+                $this->scope = $scope;
+                if ($op->$subblock) {
+                    $this->transformBlock($op->$subblock);
+                }
+            }
+            $this->leaveOp($op);
+        }
+    }
+
     private function initScope() {
         $this->scope['phi'] = new SplObjectStorage;
-        $this->scope['names']['_GET'] = new Operand\Variable("_GET");
-        $this->scope['names']['_POST'] = new Operand\Variable("_POST");
+        $this->scope['names']['_GET'] = new Operand\Variable(new Operand\Literal("_GET"));
+        $this->scope['names']['_POST'] = new Operand\Variable(new Operand\Literal("_POST"));
     }
 
     public function enterOp(Op $op, Block $block) {
@@ -44,15 +83,24 @@ class SSA implements Visitor {
         }
     }
 
-    public function leaveOp(Op $op, Block $block) {
+    public function leaveOp(Op $op) {
         if ($op instanceof CallableOp) {
             $this->scope = array_pop($this->scopeStack);
         }
     }
 
-    public function enterBlock(Block $block, Block $prior = null) {}
-    public function leaveBlock(Block $block, Block $prior = null) {}
-    public function skipBlock(Block $block, Block $prior = null) {}
+    public function skipBlock(Block $block) {
+        foreach ($this->scope['names'] as $name => $var) {
+            if (!isset($this->seen[$block]->$name)) {
+                $this->seen[$block]->$name = (object) [
+                    'store' => new SplObjectStorage,
+                    'var' => new Operand\Temporary($var),
+                ];
+                $this->scope['names'][$name] = $this->seen[$block]->$name->var;
+            }
+            $this->seen[$block]->$name->store->attach($var);
+        }
+    }
 
     private function processOpVariable($op, $variableName) {
         $var = $op->$variableName;
