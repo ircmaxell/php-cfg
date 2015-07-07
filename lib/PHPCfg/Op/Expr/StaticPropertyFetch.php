@@ -19,4 +19,5 @@ class StaticPropertyFetch extends Expr {
     public function getVariableNames() {
         return ["class", "name", "result"];
     }
+
 }

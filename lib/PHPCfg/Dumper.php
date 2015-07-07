@@ -26,9 +26,9 @@ class Dumper {
             $block = $this->blockQueue->dequeue();
             $id = $this->blockIds[$block];
             $result .= "Block#$id";
-            foreach ($block->phi as $key => $value) {
-                $result .= "\n\t" . $this->indent("Phi<\${$key}>: " . $this->dumpOperand($value['var']) . " = [");
-                foreach ($value['store'] as $sub) {
+            foreach ($block->phi as $phi) {
+                $result .= "\n\t" . $this->indent("Phi<" . $this->dumpOperand($phi->result) . ">: = [");
+                foreach ($phi->vars as $sub) {
                     $result .= $this->dumpOperand($sub)  . ',';
                 }
                 $result .= ']';
@@ -94,6 +94,9 @@ class Dumper {
             
             return $prefix . $var->name->value;
         } else if ($var instanceof Temporary) {
+        	if ($var->original) {
+        		return "Var#" . $this->getVarId($var) . "<" . $this->dumpOperand($var->original) . ">";
+        	}
             return "Var#" . $this->getVarId($var);
         } else if (is_array($var)) {
             $result = "array";

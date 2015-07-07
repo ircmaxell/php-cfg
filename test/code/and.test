@@ -31,6 +31,6 @@ Block#3
 
 Block#4
     Expr_Assign
-        var: $x
+        var: Var#5<$x>
         expr: Var#3
-        result: Var#5
+        result: Var#6

@@ -3,6 +3,8 @@
 namespace PHPCfg\Op;
 
 use PHPCfg\Op;
+use PHPCfg\Operand;
+
 
 abstract class Terminal extends Op {
 
@@ -13,4 +15,5 @@ abstract class Terminal extends Op {
     public function getSubBlocks() {
         return [];
     }
+
 }

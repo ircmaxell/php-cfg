@@ -1,33 +1,42 @@
 <?php
+$a = [];
 foreach ($a as $b) {
     echo $b;
 }
 -----
 Block#1
+    Expr_Array
+        keys: array
+        values: array
+        result: Var#1
+    Expr_Assign
+        var: Var#2<$a>
+        expr: Var#1
+        result: Var#3
     Iterator_Reset
-        var: $a
+        var: Var#2<$a>
     Stmt_Jump
         target: Block#2
 
 Block#2
     Iterator_Valid
-        var: $a
-        result: Var#1
+        var: Var#2<$a>
+        result: Var#4
     Stmt_JumpIf
-        cond: Var#1
+        cond: Var#4
         if: Block#3
         else: Block#4
 
 Block#3
     Iterator_Value
-        var: $a
-        result: Var#2
+        var: Var#2<$a>
+        result: Var#5
     Expr_Assign
-        var: $b
-        expr: Var#2
-        result: Var#3
+        var: Var#6<$b>
+        expr: Var#5
+        result: Var#7
     Terminal_Echo
-        expr: $b
+        expr: Var#6<$b>
     Stmt_Jump
         target: Block#2
 

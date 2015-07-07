@@ -6,22 +6,26 @@ use PHPCfg\Operand;
 use PHPCfg\Op;
 
 class Phi extends Op {
-    public $name;
-    public $source;
-    public $dest;
+    public $vars = [];
+    public $result;
 
-    public function __construct($name, Operand $dest, array $source, array $attributes = array()) {
+    public function __construct(Operand $result, array $attributes = array()) {
         parent::__construct($attributes);
-        $this->name = $name;
-        $this->dest = $dest;
-        $this->source = $source;
+        $this->result = $result;
+    }
+
+    public function addOperand(Operand $op) {
+    	if (!in_array($op, $this->vars, true)) {
+    		$this->vars[] = $op;
+    	}
     }
 
     public function getVariableNames() {
-        return ['dest', 'source'];
+        return ['vars'];
     }
 
     public function getSubBlocks() {
         return [];
     }
+
 }

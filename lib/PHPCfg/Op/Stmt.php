@@ -3,6 +3,8 @@
 namespace PHPCfg\Op;
 
 use PHPCfg\Op;
+use PHPCfg\Operand;
+
 
 abstract class Stmt extends Op {
     public $result;
