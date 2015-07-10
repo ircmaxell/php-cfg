@@ -502,7 +502,11 @@ class Parser {
                 break;
             case 'Expr_ArrayDimFetch':
                 $v = $this->readVariable($this->parseExprNode($expr->var));
-                $d = $this->readVariable($this->parseExprNode($expr->dim));
+                if (!is_null($expr->dim)) {
+                	$d = $this->readVariable($this->parseExprNode($expr->dim));
+                } else {
+                	$d = null;
+                }
                 $op = new Op\Expr\ArrayDimFetch($v, $d, $attrs);
                 break;
             case 'Expr_Assign':

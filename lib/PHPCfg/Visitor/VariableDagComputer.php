@@ -21,12 +21,14 @@ class VariableDagComputer implements Visitor {
     }
 
     public function enterBlock(Block $block, Block $prior = null) {
-        
     }
 
     public function enterOp(Op $op, Block $block) {
         foreach ($op->getVariableNames() as $name) {
             $var = $op->$name;
+            if (is_null($var)) {
+            	continue;
+            }
             if (!is_array($var)) {
                 $var = [$var];
             }
