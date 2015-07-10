@@ -181,10 +181,14 @@ class Parser {
                 return;
             case 'Stmt_Function':
                 $block = new Block;
+                $params = $this->parseParameterList($node->params);
+                foreach ($params as $param) {
+                	$this->writeVariableName($param->name->value, $param->result, $block);
+                }
                 $this->parseNodes($node->stmts, $block);
                 $this->block->children[] = new Op\Stmt\Function_(
                     $this->parseExprNode($node->name),
-                    $this->parseParameterList($node->params),
+                    $params,
                     $node->byRef,
                     $this->parseExprNode($node->returnType),
                     $block,

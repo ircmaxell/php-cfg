@@ -20,9 +20,9 @@ $traverser->addVisitor($variables);
 
 $code = <<<'EOF'
 <?php
-function foo() {
-	$id = $_GET['id'];
-	mysql_query("SELECT * FROM foo WHERE id = $id");
+function foo($a) {
+	$b = $a + 1;
+	$a = $b + 1;
 }
 EOF;
 
