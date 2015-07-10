@@ -16,6 +16,10 @@ class VariableDagComputer implements Visitor {
         $this->dag = new DirectedAdjacencyList;
     }
 
+    public function getGlobalDag() {
+        return $this->dag;
+    }
+
     public function enterBlock(Block $block, Block $prior = null) {
         
     }
