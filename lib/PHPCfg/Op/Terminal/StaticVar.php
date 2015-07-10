@@ -11,7 +11,7 @@ class StaticVar extends Terminal {
     public $default;
     public $defaultVar;
 
-    public function __construct(Operand $var, Block $defaultBlock, Operand $defaultVar, array $attributes = array()) {
+    public function __construct(Operand $var, Block $defaultBlock = null, Operand $defaultVar = null, array $attributes = array()) {
         parent::__construct($attributes);
         $this->var = $var;
         $this->defaultBlock = $defaultBlock;
