@@ -964,12 +964,15 @@ class Parser {
             if (is_array($op->$name)) {
             	// SIGH, PHP won't let me do this directly (parses as $op->($name[$key]))
             	$result = $op->$name;
+            	$new = [];
                 foreach ($result as $key => $value) {
                     if ($value === $from) {
-                        $result[$key] = $to;
+                        $new[$key] = $to;
+                    } else {
+                    	$new[$key] = $value;
                     }
                 }
-                $op->$name = $result;
+                $op->$name = $new;
             } elseif ($op->$name === $from) {
                 $op->$name = $to;
             }
