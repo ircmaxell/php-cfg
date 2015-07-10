@@ -28,6 +28,10 @@ class VariableDagComputer implements Visitor {
             }
             foreach ($var as $v) {
                 $this->dag->ensureVertex($v);
+                if (!isset($v->dag)) {
+                    $v->dag = $this->dag;
+                }
+                assert($v->dag === $this->dag);
                 if ($op->isWriteVariable($name)) {
                     $this->dag->ensureArc($op, $v);
                 }
