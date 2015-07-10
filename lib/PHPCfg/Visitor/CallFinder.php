@@ -14,6 +14,7 @@ class CallFinder implements Visitor {
     protected $func;
 
     public function getCallsForFunction($func) {
+    	$func = strtolower($func);
         return isset($this->calls[$func]) ? $this->calls[$func] : [];
     }
 
@@ -26,7 +27,7 @@ class CallFinder implements Visitor {
         }
         if ($op instanceof Op\Expr\FuncCall) {
             if ($op->name instanceof Operand\Literal) {
-                $this->calls[$op->name->value][] = [
+                $this->calls[strtolower($op->name->value)][] = [
                     $op,
                     $this->func
                 ];
