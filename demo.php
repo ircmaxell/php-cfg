@@ -20,9 +20,8 @@ $traverser->addVisitor($variables);
 
 $code = <<<'EOF'
 <?php
-function foo($a) {
-	$b = $a + 1;
-	$a = $b + 1;
+function foo(array $a) {
+	$a[] = 1;
 }
 EOF;
 

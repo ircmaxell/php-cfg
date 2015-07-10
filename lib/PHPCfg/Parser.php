@@ -343,8 +343,12 @@ class Parser {
                 // TODO: implement this!!!
                 return;
             case 'Stmt_Unset':
+            	$vars = [];
+            	foreach ($this->parseExprList($node->vars) as $var) {
+            		$vars[] = $this->writeVariable($var);
+            	}
                 $this->block->children[] = new Op\Terminal\Unset_(
-                    $this->writeVariable($this->parseExprList($node->vars)), 
+                    $vars, 
                     $this->mapAttributes($node)
                 );
                 return;
@@ -557,7 +561,7 @@ class Parser {
                 $op = new Op\Expr\ConstFetch($this->readVariable($this->parseExprNode($expr->name)), $attrs);
                 break;
             case 'Expr_Empty':
-                $op = new Op\Expr\Empty_($this->readVariable($this->parseNodes([$expr->expr], new Block)), $attrs);
+                $op = new Op\Expr\Empty_($this->parseNodes([$expr->expr], new Block), $attrs);
                 break;
             case 'Expr_ErrorSuppress':
                 $block = new ErrorSuppressBlock;
@@ -572,7 +576,11 @@ class Parser {
                 $op = new Op\Expr\Eval_($this->readVariable($this->parseExprNode($expr->expr)), $attrs);
                 break;
             case 'Expr_Exit':
-                $op = new Op\Expr\Exit_($this->readVariable($this->parseExprNode($expr->expr)), $attrs);
+            	$e = null;
+            	if ($expr->expr) {
+            		$e = $this->readVariable($this->parseExprNode($expr->expr));
+            	}
+                $op = new Op\Expr\Exit_($e, $attrs);
                 break;
             case 'Expr_FuncCall':
                 $op = new Op\Expr\FuncCall(
@@ -616,29 +624,29 @@ class Parser {
                 $var = $this->parseExprNode($expr->var);
                 $read = $this->readVariable($var);
                 $write = $this->writeVariable($var);
-                $this->block->children[] = $op = new Op\BinaryOp\Minus($read, new Operand\Literal(1), $attrs);
-                $this->block->children[] = new Op\Assign($write, $op->result, $attrs);
+                $this->block->children[] = $op = new Op\Expr\BinaryOp\Minus($read, new Operand\Literal(1), $attrs);
+                $this->block->children[] = new Op\Expr\Assign($write, $op->result, $attrs);
                 return $read;
             case 'Expr_PostInc':
                 $var = $this->parseExprNode($expr->var);
                 $read = $this->readVariable($var);
                 $write = $this->writeVariable($var);
-                $this->block->children[] = $op = new Op\BinaryOp\Plus($read, new Operand\Literal(1), $attrs);
-                $this->block->children[] = new Op\Assign($write, $op->result, $attrs);
+                $this->block->children[] = $op = new Op\Expr\BinaryOp\Plus($read, new Operand\Literal(1), $attrs);
+                $this->block->children[] = new Op\Expr\Assign($write, $op->result, $attrs);
                 return $read;
             case 'Expr_PreDec':
                 $var = $this->parseExprNode($expr->var);
                 $read = $this->readVariable($var);
                 $write = $this->writeVariable($var);
-                $this->block->children[] = $op = new Op\BinaryOp\Minus($read, new Operand\Literal(1), $attrs);
-                $this->block->children[] = new Op\Assign($write, $op->result, $attrs);
+                $this->block->children[] = $op = new Op\Expr\BinaryOp\Minus($read, new Operand\Literal(1), $attrs);
+                $this->block->children[] = new Op\Expr\Assign($write, $op->result, $attrs);
                 return $op->result;
             case 'Expr_PreInc':
                 $var = $this->parseExprNode($expr->var);
                 $read = $this->readVariable($var);
                 $write = $this->writeVariable($var);
-                $this->block->children[] = $op = new Op\BinaryOp\Plus($read, new Operand\Literal(1), $attrs);
-                $this->block->children[] = new Op\Assign($write, $op->result, $attrs);
+                $this->block->children[] = $op = new Op\Expr\BinaryOp\Plus($read, new Operand\Literal(1), $attrs);
+                $this->block->children[] = new Op\Expr\Assign($write, $op->result, $attrs);
                 return $op->result;
             case 'Expr_Print':
                 $op = new Op\Expr\Print_($this->readVariable($this->parseExprNode($expr->expr)), $attrs);
@@ -954,11 +962,14 @@ class Parser {
                 continue;
             }
             if (is_array($op->$name)) {
-                foreach ($op->$name as $key => $value) {
+            	// SIGH, PHP won't let me do this directly (parses as $op->($name[$key]))
+            	$result = $op->$name;
+                foreach ($result as $key => $value) {
                     if ($value === $from) {
-                        $op->$name[$key] = $to;
+                        $result[$key] = $to;
                     }
                 }
+                $op->$name = $result;
             } elseif ($op->$name === $from) {
                 $op->$name = $to;
             }

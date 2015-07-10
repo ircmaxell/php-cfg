@@ -67,7 +67,9 @@ class Dumper {
             $result .= $this->indent($this->dumpOperand($op->$varName));
         }
         foreach ($op->getSubBlocks() as $subBlock) {
-            $result .= "\n    $subBlock: " . $this->indent($this->dumpBlockRef($op->$subBlock));
+        	if ($op->$subBlock) {
+            	$result .= "\n    $subBlock: " . $this->indent($this->dumpBlockRef($op->$subBlock));
+            }
         }
         return $result;
     }
