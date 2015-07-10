@@ -8,11 +8,15 @@ $parser = new PHPCfg\Parser(new PhpParser\Parser(new PhpParser\Lexer), $astTrave
 
 $declarations = new PHPCfg\Visitor\DeclarationFinder;
 $calls = new PHPCfg\Visitor\CallFinder;
+$variables = new PHPCfg\Visitor\VariableFinder;
+
 $traverser = new PHPCfg\Traverser;
+
 $traverser->addVisitor($declarations);
 $traverser->addVisitor($calls);
 $traverser->addVisitor(new PHPCfg\Visitor\Simplifier);
 $traverser->addVisitor(new PHPCfg\Visitor\VariableDagComputer);
+$traverser->addVisitor($variables);
 
 $code = <<<'EOF'
 <?php
