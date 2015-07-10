@@ -93,7 +93,7 @@ class Parser {
                     $this->parseExprNode($node->name),
                     $this->parseParameterList($node->params),
                     $node->byRef,
-                    $node->returnType,
+                    $this->parseExprNode($node->returnType),
                     $block,
                     $this->mapAttributes($node)
                 );
@@ -186,7 +186,7 @@ class Parser {
                     $this->parseExprNode($node->name),
                     $this->parseParameterList($node->params),
                     $node->byRef,
-                    $node->returnType,
+                    $this->parseExprNode($node->returnType),
                     $block,
                     $this->mapAttributes($node)
                 );
@@ -532,7 +532,7 @@ class Parser {
                     $this->parseParameterList($expr->params),
                     $uses,
                     $expr->byRef,
-                    $expr->returnType,
+                    $this->parseExprNode($expr->returnType),
                     $block,
                     $attrs
                 );
