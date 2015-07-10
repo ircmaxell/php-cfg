@@ -25,8 +25,8 @@ class Parser {
     public function __construct(AstParser $astParser, AstTraverser $astTraverser = null) {
         $this->astParser = $astParser;
         if (!$astTraverser) {
-        	$astTraverser = new AstTraverser; 
-			$astTraverser->addVisitor(new NameResolver); 
+            $astTraverser = new AstTraverser; 
+            $astTraverser->addVisitor(new NameResolver); 
         }
         $this->astTraverser = $astTraverser;
         $this->astTraverser->addVisitor(new AstVisitor\LoopResolver);
@@ -42,7 +42,7 @@ class Parser {
         $ast = $this->astTraverser->traverse($ast);
         $this->parseNodes($ast, $start = new Block);
         foreach ($this->incompletePhis as $block) {
-        	$this->sealBlock($block);
+            $this->sealBlock($block);
         }
         $this->removeTrivialPhi($start);
         return $start;
@@ -102,9 +102,9 @@ class Parser {
             case 'Stmt_Const':
                 foreach ($node->consts as $const) {
                     $this->block->children[] = new Op\Terminal\Const_(
-                    	$const->name, 
-                    	$this->parseExprNode($const->value), 
-                    	$this->mapAttributes($node)
+                        $const->name, 
+                        $this->parseExprNode($const->value), 
+                        $this->mapAttributes($node)
                     );
                 }
                 return;
@@ -123,8 +123,8 @@ class Parser {
             case 'Stmt_Echo':
                 foreach ($node->exprs as $expr) {
                     $this->block->children[] = new Op\Terminal\Echo_(
-                    	$this->readVariable($this->parseExprNode($expr)), 
-                    	$this->mapAttributes($expr)
+                        $this->readVariable($this->parseExprNode($expr)), 
+                        $this->mapAttributes($expr)
                     );
                 }
                 return;
@@ -194,8 +194,8 @@ class Parser {
             case 'Stmt_Global':
                 foreach ($node->vars as $var) {
                     $this->block->children[] = new Op\Terminal\GlobalVar(
-                    	$this->writeVariable($this->parseExprNode($var->name)), 
-                    	$this->mapAttributes($node)
+                        $this->writeVariable($this->parseExprNode($var->name)), 
+                        $this->mapAttributes($node)
                     );
                 }
                 return;
@@ -303,10 +303,10 @@ class Parser {
                         $this->block = $tmp;
                     }
                     $this->block->children[] = new Op\Terminal\StaticVar(
-                    	$this->writeVariable($this->parseExprNode($var->name)), 
-                    	$defaultBlock, 
-                    	$defaultVar, 
-                    	$this->mapAttributes($node)
+                        $this->writeVariable($this->parseExprNode($var->name)), 
+                        $defaultBlock, 
+                        $defaultVar, 
+                        $this->mapAttributes($node)
                     );
                 }
                 return;
@@ -323,8 +323,8 @@ class Parser {
                 return;
             case 'Stmt_Throw':
                 $this->block->children[] = new Op\Terminal\Throw_(
-                	$this->readVariable($this->parseExprNode($node->expr)), 
-                	$this->mapAttributes($node)
+                    $this->readVariable($this->parseExprNode($node->expr)), 
+                    $this->mapAttributes($node)
                 );
                 $this->block = new Block; // dead code
                 break;
@@ -340,8 +340,8 @@ class Parser {
                 return;
             case 'Stmt_Unset':
                 $this->block->children[] = new Op\Terminal\Unset_(
-                	$this->writeVariable($this->parseExprList($node->vars)), 
-                	$this->mapAttributes($node)
+                    $this->writeVariable($this->parseExprList($node->vars)), 
+                    $this->mapAttributes($node)
                 );
                 return;
             case 'Stmt_Use':
@@ -391,8 +391,8 @@ class Parser {
         } elseif ($expr instanceof Node\Scalar) {
             return $this->parseScalarNode($expr);
         } elseif ($expr instanceof Node\Expr\AssignOp) {
-        	$var = $this->parseExprNode($expr->var);
-        	$read = $this->readVariable($var);
+            $var = $this->parseExprNode($expr->var);
+            $read = $this->readVariable($var);
             $write = $this->writeVariable($var);
             $e = $this->readVariable($this->parseExprNode($expr->expr));
             $class = [
@@ -523,8 +523,8 @@ class Parser {
                 $uses = [];
                 foreach ($expr->uses as $use) {
                     $uses[] = new Operand\BoundVariable(
-                    	$this->readVariable(new Variable(new Literal($use->var))),
-                    	$use->byRef,
+                        $this->readVariable(new Variable(new Literal($use->var))),
+                        $use->byRef,
                         Operand\BoundVariable::SCOPE_LOCAL
                     );
                 }
@@ -578,9 +578,9 @@ class Parser {
                 break;
             case 'Expr_Instanceof':
                 $op = new Op\Expr\InstanceOf_(
-                	$this->readVariable($this->parseExprNode($expr->expr)),
-                	$this->readVariable($this->parseExprNode($expr->class)), 
-                	$attrs
+                    $this->readVariable($this->parseExprNode($expr->expr)),
+                    $this->readVariable($this->parseExprNode($expr->class)), 
+                    $attrs
                 );
                 break;
             case 'Expr_Isset':
@@ -599,47 +599,47 @@ class Parser {
                 break;
             case 'Expr_New':
                 $op = new Op\Expr\New_(
-                	$this->readVariable($this->parseExprNode($expr->class)), 
-                	$this->parseExprList($expr->args), 
-                	$attrs
+                    $this->readVariable($this->parseExprNode($expr->class)), 
+                    $this->parseExprList($expr->args), 
+                    $attrs
                 );
                 break;
             case 'Expr_PostDec':
-            	$var = $this->parseExprNode($expr->var);
-            	$read = $this->readVariable($var);
-            	$write = $this->writeVariable($var);
-            	$this->block->children[] = $op = new Op\BinaryOp\Minus($read, new Operand\Literal(1), $attrs);
-            	$this->block->children[] = new Op\Assign($write, $op->result, $attrs);
-            	return $read;
+                $var = $this->parseExprNode($expr->var);
+                $read = $this->readVariable($var);
+                $write = $this->writeVariable($var);
+                $this->block->children[] = $op = new Op\BinaryOp\Minus($read, new Operand\Literal(1), $attrs);
+                $this->block->children[] = new Op\Assign($write, $op->result, $attrs);
+                return $read;
             case 'Expr_PostInc':
-            	$var = $this->parseExprNode($expr->var);
-            	$read = $this->readVariable($var);
-            	$write = $this->writeVariable($var);
-            	$this->block->children[] = $op = new Op\BinaryOp\Plus($read, new Operand\Literal(1), $attrs);
-            	$this->block->children[] = new Op\Assign($write, $op->result, $attrs);
-            	return $read;
+                $var = $this->parseExprNode($expr->var);
+                $read = $this->readVariable($var);
+                $write = $this->writeVariable($var);
+                $this->block->children[] = $op = new Op\BinaryOp\Plus($read, new Operand\Literal(1), $attrs);
+                $this->block->children[] = new Op\Assign($write, $op->result, $attrs);
+                return $read;
             case 'Expr_PreDec':
-				$var = $this->parseExprNode($expr->var);
-            	$read = $this->readVariable($var);
-            	$write = $this->writeVariable($var);
-            	$this->block->children[] = $op = new Op\BinaryOp\Minus($read, new Operand\Literal(1), $attrs);
-            	$this->block->children[] = new Op\Assign($write, $op->result, $attrs);
-            	return $op->result;
+                $var = $this->parseExprNode($expr->var);
+                $read = $this->readVariable($var);
+                $write = $this->writeVariable($var);
+                $this->block->children[] = $op = new Op\BinaryOp\Minus($read, new Operand\Literal(1), $attrs);
+                $this->block->children[] = new Op\Assign($write, $op->result, $attrs);
+                return $op->result;
             case 'Expr_PreInc':
-				$var = $this->parseExprNode($expr->var);
-            	$read = $this->readVariable($var);
-            	$write = $this->writeVariable($var);
-            	$this->block->children[] = $op = new Op\BinaryOp\Plus($read, new Operand\Literal(1), $attrs);
-            	$this->block->children[] = new Op\Assign($write, $op->result, $attrs);
-            	return $op->result;
+                $var = $this->parseExprNode($expr->var);
+                $read = $this->readVariable($var);
+                $write = $this->writeVariable($var);
+                $this->block->children[] = $op = new Op\BinaryOp\Plus($read, new Operand\Literal(1), $attrs);
+                $this->block->children[] = new Op\Assign($write, $op->result, $attrs);
+                return $op->result;
             case 'Expr_Print':
                 $op = new Op\Expr\Print_($this->readVariable($this->parseExprNode($expr->expr)), $attrs);
                 break;
             case 'Expr_PropertyFetch':
                 $op = new Op\Expr\PropertyFetch(
-                	$this->readVariable($this->parseExprNode($expr->var)), 
-                	$this->readVariable($this->parseExprNode($expr->name)), 
-                	$attrs
+                    $this->readVariable($this->parseExprNode($expr->var)), 
+                    $this->readVariable($this->parseExprNode($expr->name)), 
+                    $attrs
                 );
                 break;
             case 'Expr_StaticCall':
@@ -652,9 +652,9 @@ class Parser {
                 break;
             case 'Expr_StaticPropertyFetch':
                 $op = new Op\Expr\StaticPropertyFetch(
-                	$this->readVariable($this->parseExprNode($expr->class)), 
-                	$this->readVariable($this->parseExprNode($expr->name)), 
-                	$attrs
+                    $this->readVariable($this->parseExprNode($expr->class)), 
+                    $this->readVariable($this->parseExprNode($expr->name)), 
+                    $attrs
                 );
                 break;
             case 'Expr_Ternary':
@@ -770,191 +770,191 @@ class Parser {
     }
 
     private function sealBlock(Block $block) {
-    	$this->sealedBlocks->attach($block);
-    	if (isset($this->incompletePhis[$block])) {
-    		foreach ($this->incompletePhis[$block] as $name => $phi) {
-    			$this->addPhiOperands($name, $phi, $block);
-    			$block->phi[] = $phi;
-    		}
-    	}
+        $this->sealedBlocks->attach($block);
+        if (isset($this->incompletePhis[$block])) {
+            foreach ($this->incompletePhis[$block] as $name => $phi) {
+                $this->addPhiOperands($name, $phi, $block);
+                $block->phi[] = $phi;
+            }
+        }
     }
 
     private function readVariable(Operand $var) {
-    	if ($var instanceof Operand\Variable) {
-    		return $this->readVariableName($this->getVariableName($var), $this->block);
-    	}
-    	return $var;
+        if ($var instanceof Operand\Variable) {
+            return $this->readVariableName($this->getVariableName($var), $this->block);
+        }
+        return $var;
     }
 
     private function writeVariable(Operand $var) {
-    	while ($var instanceof Operand\Temporary && $var->original) {
-    		$var = $var->original;
-    	}
-    	if ($var instanceof Operand\Variable) {
-    		$name = $this->getVariableName($var);
-    		$var = new Operand\Temporary($var);
-    		$this->writeVariableName($name, $var, $this->block);
-    	}
-    	return $var;
+        while ($var instanceof Operand\Temporary && $var->original) {
+            $var = $var->original;
+        }
+        if ($var instanceof Operand\Variable) {
+            $name = $this->getVariableName($var);
+            $var = new Operand\Temporary($var);
+            $this->writeVariableName($name, $var, $this->block);
+        }
+        return $var;
     }
 
     private function readVariableName($name, Block $block) {
-    	if ($this->isLocalVariable($name, $block)) {
-    		return $this->scope[$block][$name];
-    	}
-    	return $this->readVariableRecursive($name, $block);
+        if ($this->isLocalVariable($name, $block)) {
+            return $this->scope[$block][$name];
+        }
+        return $this->readVariableRecursive($name, $block);
     }
 
     private function writeVariableName($name, Operand $value, Block $block) {
-    	$this->writeKeyToArray("scope", $block, $name, $value);
+        $this->writeKeyToArray("scope", $block, $name, $value);
     }
 
     private function readVariableRecursive($name, Block $block) {
-    	$var = null;
-    	if ($this->sealedBlocks->contains($block) && count($block->parents) === 1) {
-    		$var = $this->readVariableName($name, $block->parents[0]); 
-    	} else {
-    		$var = new Operand\Temporary(new Variable(new Literal($name)));
-    		$phi = new Op\Phi($var);
-    		$this->writeKeyToArray("incompletePhis", $block, $name, $phi);
-    	}
-    	$this->writeVariableName($name, $var, $block);
-    	return $var;
+        $var = null;
+        if ($this->sealedBlocks->contains($block) && count($block->parents) === 1) {
+            $var = $this->readVariableName($name, $block->parents[0]); 
+        } else {
+            $var = new Operand\Temporary(new Variable(new Literal($name)));
+            $phi = new Op\Phi($var);
+            $this->writeKeyToArray("incompletePhis", $block, $name, $phi);
+        }
+        $this->writeVariableName($name, $var, $block);
+        return $var;
     }
 
     private function addPhiOperands($name, Op\Phi $phi, Block $block) {
-    	foreach ($block->parents as $parent) {
-    		$var = $this->readVariableName($name, $parent);
-    		$phi->addOperand($var);
-    	}
+        foreach ($block->parents as $parent) {
+            $var = $this->readVariableName($name, $parent);
+            $phi->addOperand($var);
+        }
     }
 
     private function writeKeyToArray($name, $first, $second, $value) {
-    	if (!$this->$name->offsetExists($first)) {
-    		$this->$name->offsetSet($first, []);
-    	}
-    	$array = $this->$name->offsetGet($first);
-    	$array[$second] = $value;
-    	$this->$name->offsetSet($first, $array);
-    	return $value;
+        if (!$this->$name->offsetExists($first)) {
+            $this->$name->offsetSet($first, []);
+        }
+        $array = $this->$name->offsetGet($first);
+        $array[$second] = $value;
+        $this->$name->offsetSet($first, $array);
+        return $value;
     }
 
     private function isLocalVariable($name, Block $block) {
-    	if (isset($this->scope[$block])) {
-    		$vars = $this->scope[$block];
-    		if (isset($vars[$name])) {
-    			return true;
-    		}
-    	}
-    	return false;
+        if (isset($this->scope[$block])) {
+            $vars = $this->scope[$block];
+            if (isset($vars[$name])) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private function getVariableName(Operand\Variable $var) {
-    	assert($var->name instanceof Literal);
-    	return $var->name->value;
+        assert($var->name instanceof Literal);
+        return $var->name->value;
     }
 
     private function removeTrivialPhi(Block $block) {
-    	static $seen;
-    	if (!$seen) {
-    		$seen = new \SplObjectStorage;
-    	}
-    	if ($seen->contains($block)) {
-    		return;
-    	}
-    	$seen->attach($block);
-    	foreach ($block->phi as $key => $phi) {
-    		if ($this->tryRemoveTrivialPhi($phi, $block)) {
-    			unset($block->phi[$key]);
-    		}
-    	}
-    	foreach ($block->children as $child) {
-    		foreach ($child->getSubBlocks() as $name) {
-    			$subBlocks = $child->$name;
-    			if (!is_array($child->$name)) {
-    				if ($child->$name === null) {
-    					continue;
-    				}
-    				$subBlocks = [$subBlocks];
-    			}
-    			foreach ($subBlocks as $subBlock) {
-    				$this->removeTrivialPhi($subBlock);
-    			}
-    		}
-    	}
-    	$seen->detach($block);
+        static $seen;
+        if (!$seen) {
+            $seen = new \SplObjectStorage;
+        }
+        if ($seen->contains($block)) {
+            return;
+        }
+        $seen->attach($block);
+        foreach ($block->phi as $key => $phi) {
+            if ($this->tryRemoveTrivialPhi($phi, $block)) {
+                unset($block->phi[$key]);
+            }
+        }
+        foreach ($block->children as $child) {
+            foreach ($child->getSubBlocks() as $name) {
+                $subBlocks = $child->$name;
+                if (!is_array($child->$name)) {
+                    if ($child->$name === null) {
+                        continue;
+                    }
+                    $subBlocks = [$subBlocks];
+                }
+                foreach ($subBlocks as $subBlock) {
+                    $this->removeTrivialPhi($subBlock);
+                }
+            }
+        }
+        $seen->detach($block);
     }
 
     private function tryRemoveTrivialPhi(Op\Phi $phi, Block $block) {
-    	if (count($phi->vars) > 1) {
-    		return false;
-    	}
-    	if (count($phi->vars) === 0) {
-    		// shouldn't happen except in unused variables
-    		$var = new Operand\Temporary;
-    	} else {
-    		$var = $phi->vars[0];
-    	}
-    	// Remove Phi!
-    	$this->replaceVariables($phi->result, $var, $block);
-    	return true;
+        if (count($phi->vars) > 1) {
+            return false;
+        }
+        if (count($phi->vars) === 0) {
+            // shouldn't happen except in unused variables
+            $var = new Operand\Temporary;
+        } else {
+            $var = $phi->vars[0];
+        }
+        // Remove Phi!
+        $this->replaceVariables($phi->result, $var, $block);
+        return true;
     }
 
     private function replaceVariables(Operand $from, Operand $to, Block $block) {
-    	static $seen;
-    	if (!$seen) {
-    		$seen = new \SplObjectStorage;
-    	}
-    	if ($seen->contains($block)) {
-    		return;
-    	}
-    	$seen->attach($block);
-    	foreach ($block->phi as $phi) {
-    		$key = array_search($from, $phi->vars, true);
-    		if ($key !== false) {
-    			if (in_array($to, $phi->vars, true)) {
-    				// remove it
-    				unset($phi->vars[$key]);
-    				$phi->vars = array_values($phi->vars);
-    			} else {
-    				// replace it
-    				$phi->vars[$key] = $to;
-    			}
-    		}
-    	}
-    	foreach ($block->children as $child) {
-    		$this->replaceOpVariable($from, $to, $child);
-    		foreach ($child->getSubBlocks() as $name) {
-    			$subBlocks = $child->$name;
-    			if (!is_array($child->$name)) {
-    				if ($child->$name === null) {
-    					continue;
-    				}
-    				$subBlocks = [$subBlocks];
-    			}
-    			foreach ($subBlocks as $subBlock) {
-    				$this->replaceVariables($from, $to, $subBlock);
-    			}
-    		}
-    	}
-    	$seen->detach($block);
+        static $seen;
+        if (!$seen) {
+            $seen = new \SplObjectStorage;
+        }
+        if ($seen->contains($block)) {
+            return;
+        }
+        $seen->attach($block);
+        foreach ($block->phi as $phi) {
+            $key = array_search($from, $phi->vars, true);
+            if ($key !== false) {
+                if (in_array($to, $phi->vars, true)) {
+                    // remove it
+                    unset($phi->vars[$key]);
+                    $phi->vars = array_values($phi->vars);
+                } else {
+                    // replace it
+                    $phi->vars[$key] = $to;
+                }
+            }
+        }
+        foreach ($block->children as $child) {
+            $this->replaceOpVariable($from, $to, $child);
+            foreach ($child->getSubBlocks() as $name) {
+                $subBlocks = $child->$name;
+                if (!is_array($child->$name)) {
+                    if ($child->$name === null) {
+                        continue;
+                    }
+                    $subBlocks = [$subBlocks];
+                }
+                foreach ($subBlocks as $subBlock) {
+                    $this->replaceVariables($from, $to, $subBlock);
+                }
+            }
+        }
+        $seen->detach($block);
     }
 
     private function replaceOpVariable(Operand $from, Operand $to, Op $op) {
-    	foreach ($op->getVariableNames() as $name) {
-    		if (is_null($op->$name)) {
-    			continue;
-    		}
-    		if (is_array($op->$name)) {
-    			foreach ($op->$name as $key => $value) {
-    				if ($value === $from) {
-    					$op->$name[$key] = $to;
-    				}
-    			}
-    		} elseif ($op->$name === $from) {
-    			$op->$name = $to;
-    		}
-    	}
+        foreach ($op->getVariableNames() as $name) {
+            if (is_null($op->$name)) {
+                continue;
+            }
+            if (is_array($op->$name)) {
+                foreach ($op->$name as $key => $value) {
+                    if ($value === $from) {
+                        $op->$name[$key] = $to;
+                    }
+                }
+            } elseif ($op->$name === $from) {
+                $op->$name = $to;
+            }
+        }
     }
 
 }

@@ -15,9 +15,9 @@ class Phi extends Op {
     }
 
     public function addOperand(Operand $op) {
-    	if (!in_array($op, $this->vars, true)) {
-    		$this->vars[] = $op;
-    	}
+        if (!in_array($op, $this->vars, true)) {
+            $this->vars[] = $op;
+        }
     }
 
     public function getVariableNames() {

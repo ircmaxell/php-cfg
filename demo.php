@@ -12,25 +12,19 @@ $traverser = new PHPCfg\Traverser;
 $traverser->addVisitor($declarations);
 $traverser->addVisitor($calls);
 $traverser->addVisitor(new PHPCfg\Visitor\Simplifier);
-$traverser->addVisitor(new PHPSQLiScanner\Parser);
+$traverser->addVisitor(new PHPCfg\Visitor\VariableDagComputer);
 
 $code = <<<'EOF'
 <?php
-$a = 1;
-while (true) {
-    $a += 1;
+function foo() {
+	$id = $_GET['id'];
+	mysql_query("SELECT * FROM foo WHERE id = $id");
 }
-$a += 1;
-return $a;
 EOF;
 
 
 $block = $parser->parse($code, __FILE__);
 $traverser->traverse($block);
-
-$transformer = new PHPCfg\SSATransform;
-
-$block = $transformer->transform($block);
 
 $dumper = new PHPCfg\Dumper;
 echo $dumper->dump($block);

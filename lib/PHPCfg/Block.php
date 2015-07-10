@@ -12,9 +12,9 @@ class Block {
     public $phi = [];
 
     public function __construct(Block $parent = null) {
-    	if ($parent) {
-    		$this->parents[] = $parent;
-    	}
+        if ($parent) {
+            $this->parents[] = $parent;
+        }
     }
 
     public function create() {
@@ -23,8 +23,8 @@ class Block {
     }
 
     public function addParent(Block $parent) {
-    	if (!in_array($parent, $this->parents, true)) {
-    		$this->parents[] = $parent;
-    	}
+        if (!in_array($parent, $this->parents, true)) {
+            $this->parents[] = $parent;
+        }
     }
 }

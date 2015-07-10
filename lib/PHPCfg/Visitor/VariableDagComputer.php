@@ -1,13 +1,13 @@
 <?php
 
-namespace PHPSQLiScanner;
+namespace PHPCfg\Visitor;
 
 use Gliph\Graph\DirectedAdjacencyList;
 use PHPCfg\Visitor;
 use PHPCfg\Op;
 use PHPCfg\Block;
 
-class Parser implements Visitor {
+class VariableDagComputer implements Visitor {
 
     protected $dag = null;
     protected $dagStack = [];
