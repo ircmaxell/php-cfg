@@ -21,6 +21,6 @@ class Include_ extends Expr {
     }
 
     public function getVariableNames() {
-        return ["expr", "result", "type"];
+        return ["expr", "result"];
     }
 }

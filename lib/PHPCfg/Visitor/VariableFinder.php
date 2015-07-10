@@ -30,6 +30,9 @@ class VariableFinder implements Visitor{
                 $var = [$var];
             }
             foreach ($var as $v) {
+            	if (is_null($v)) {
+            		continue;
+            	}
                 $this->variables->attach($v);
             }
         }

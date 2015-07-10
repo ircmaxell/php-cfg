@@ -33,6 +33,13 @@ class VariableDagComputer implements Visitor {
                 $var = [$var];
             }
             foreach ($var as $v) {
+            	if (is_null($v)) {
+            		continue;
+            	}
+            	assert($v instanceof \PHPCfg\Operand);
+            	if (!$v instanceof \PHPCfg\Operand) {
+            		var_dump($name, $var);
+            	}
                 $this->dag->ensureVertex($v);
                 if (!isset($v->dag)) {
                     $v->dag = $this->dag;
