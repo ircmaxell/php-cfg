@@ -482,7 +482,7 @@ class Parser {
         switch ($expr->getType()) {
             case 'Arg':
                 // TODO: Handle var-args
-                return $this->parseExprNode($expr->value);
+                return $this->readVariable($this->parseExprNode($expr->value));
             case 'Expr_Array':
                 $keys = [];
                 $values = [];
