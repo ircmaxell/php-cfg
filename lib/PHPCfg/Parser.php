@@ -731,7 +731,7 @@ class Parser {
             }
             $result[] = new Op\Expr\Param(
                 $this->parseExprNode($param->name),
-                $param->type,
+                $this->parseExprNode($param->type),
                 $param->byRef,
                 $param->variadic,
                 $defaultVar,
