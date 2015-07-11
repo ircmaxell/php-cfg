@@ -700,6 +700,9 @@ class Parser {
             case 'Expr_UnaryMinus':
                 $op = new Op\Expr\UnaryMinus($this->readVariable($this->parseExprNode($expr->expr)), $attrs);
                 break;
+            case 'Expr_UnaryPlus':
+                $op = new Op\Expr\UnaryPlus($this->readVariable($this->parseExprNode($expr->expr)), $attrs);
+                break;
             default:
                 throw new \RuntimeException("Unknown Expr Type " . $expr->getType());
         }
