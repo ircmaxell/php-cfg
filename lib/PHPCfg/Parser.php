@@ -183,11 +183,11 @@ class Parser {
                 $block = new Block;
                 $params = $this->parseParameterList($node->params);
                 foreach ($params as $param) {
-                	$this->writeVariableName($param->name->value, $param->result, $block);
+                    $this->writeVariableName($param->name->value, $param->result, $block);
                 }
                 $this->parseNodes($node->stmts, $block);
                 $this->block->children[] = new Op\Stmt\Function_(
-                    $this->parseExprNode($node->name),
+                    $this->parseExprNode($node->namespacedName),
                     $params,
                     $node->byRef,
                     $this->parseExprNode($node->returnType),
@@ -343,10 +343,10 @@ class Parser {
                 // TODO: implement this!!!
                 return;
             case 'Stmt_Unset':
-            	$vars = [];
-            	foreach ($this->parseExprList($node->vars) as $var) {
-            		$vars[] = $this->writeVariable($var);
-            	}
+                $vars = [];
+                foreach ($this->parseExprList($node->vars) as $var) {
+                    $vars[] = $this->writeVariable($var);
+                }
                 $this->block->children[] = new Op\Terminal\Unset_(
                     $vars, 
                     $this->mapAttributes($node)
@@ -392,6 +392,11 @@ class Parser {
         } elseif ($expr instanceof Node\Expr\Variable) {
             return new Variable($this->parseExprNode($expr->name));
         } elseif ($expr instanceof Node\Name) {
+            $isReserved = in_array(strtolower($expr->getLast()), ["int", "string", "array", "callable", "float", "bool"]);
+            if ($isReserved) {
+                // always return the unqalified literal
+                return new Literal($expr->getLast());
+            }
             if (isset($expr->namespacedName)) {
                 return new Literal($expr->namespacedName->toString());
             }
@@ -507,9 +512,9 @@ class Parser {
             case 'Expr_ArrayDimFetch':
                 $v = $this->readVariable($this->parseExprNode($expr->var));
                 if (!is_null($expr->dim)) {
-                	$d = $this->readVariable($this->parseExprNode($expr->dim));
+                    $d = $this->readVariable($this->parseExprNode($expr->dim));
                 } else {
-                	$d = null;
+                    $d = null;
                 }
                 $op = new Op\Expr\ArrayDimFetch($v, $d, $attrs);
                 break;
@@ -576,10 +581,10 @@ class Parser {
                 $op = new Op\Expr\Eval_($this->readVariable($this->parseExprNode($expr->expr)), $attrs);
                 break;
             case 'Expr_Exit':
-            	$e = null;
-            	if ($expr->expr) {
-            		$e = $this->readVariable($this->parseExprNode($expr->expr));
-            	}
+                $e = null;
+                if ($expr->expr) {
+                    $e = $this->readVariable($this->parseExprNode($expr->expr));
+                }
                 $op = new Op\Expr\Exit_($e, $attrs);
                 break;
             case 'Expr_FuncCall':
@@ -962,14 +967,14 @@ class Parser {
                 continue;
             }
             if (is_array($op->$name)) {
-            	// SIGH, PHP won't let me do this directly (parses as $op->($name[$key]))
-            	$result = $op->$name;
-            	$new = [];
+                // SIGH, PHP won't let me do this directly (parses as $op->($name[$key]))
+                $result = $op->$name;
+                $new = [];
                 foreach ($result as $key => $value) {
                     if ($value === $from) {
                         $new[$key] = $to;
                     } else {
-                    	$new[$key] = $value;
+                        $new[$key] = $value;
                     }
                 }
                 $op->$name = $new;
