@@ -9,15 +9,7 @@ use PHPCfg\Block;
 
 class VariableDagComputer implements Visitor {
 
-    protected $dag = null;
-    protected $dagStack = [];
-
     public function __construct() {
-        $this->dag = new DirectedAdjacencyList;
-    }
-
-    public function getGlobalDag() {
-        return $this->dag;
     }
 
     public function enterBlock(Block $block, Block $prior = null) {
@@ -40,30 +32,21 @@ class VariableDagComputer implements Visitor {
             	if (!$v instanceof \PHPCfg\Operand) {
             		var_dump($name, $var);
             	}
-                $this->dag->ensureVertex($v);
-                if (!isset($v->dag)) {
-                    $v->dag = $this->dag;
-                }
-                assert($v->dag === $this->dag);
                 if ($op->isWriteVariable($name)) {
-                    $this->dag->ensureArc($op, $v);
+                    $v->ops[] = $op;
+                } else {
+                    $v->usages[] = $op;
                 }
             }
         }
         if ($op instanceof Op\CallableOp) {
-            $this->dagStack[] = $this->dag;
-            $this->dag = new DirectedAdjacencyList;
             foreach ($op->getParams() as $param) {
-                $this->dag->ensureArc($param, $param->result);  
+                $param->result->ops[] = $param;  
             }
         }
     }
 
     public function leaveOp(Op $op, Block $block) {
-        if ($op instanceof Op\CallableOp) {
-            $op->setAttribute('dag', $this->dag);
-            $this->dag = array_pop($this->dagStack);
-        }
     }
 
     public function leaveBlock(Block $block, Block $prior = null) {

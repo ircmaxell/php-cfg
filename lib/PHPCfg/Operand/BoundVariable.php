@@ -9,6 +9,9 @@ class BoundVariable extends Variable {
     const SCOPE_LOCAL = 2;
     public $byRef;
     public $scope;
+    public $ops = [];
+    
+    public $usages = [];
 
     public function __construct($name, $byRef, $scope = self::SCOPE_GLOBAL) {
         parent::__construct($name);

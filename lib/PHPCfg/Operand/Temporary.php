@@ -6,6 +6,10 @@ use PHPCfg\Operand;
 
 class Temporary implements Operand {
     public $original;
+    
+    public $ops = [];
+    
+    public $usages = [];
 
     /**
      * Constructs a temporary variable

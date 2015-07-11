@@ -727,9 +727,15 @@ class Parser {
                 return new Literal(dirname($this->fileName));
             case 'Scalar_MagicConst_File':
                 return new Literal($this->fileName);
+            case 'Scalar_MagicConst_Namespace':
+                // TODO
+                return new Literal("__NAMESPACE__");
             case 'Scalar_MagicConst_Method':
                 // TODO
                 return new Literal("__METHOD__");
+            case 'Scalar_MagicConst_Function':
+                // TODO
+                return new Literal("__FUNCTION__");
             default:
                 throw new \RuntimeException("Unknown how to deal with scalar type " . $scalar->getType());
         }
@@ -837,6 +843,7 @@ class Parser {
         } else {
             $var = new Operand\Temporary(new Variable(new Literal($name)));
             $phi = new Op\Phi($var);
+            $phi->result->ops[] = $phi;
             $this->writeKeyToArray("incompletePhis", $block, $name, $phi);
         }
         $this->writeVariableName($name, $var, $block);
