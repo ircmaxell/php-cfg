@@ -69,7 +69,7 @@ class Parser {
         switch ($node->getType()) {
             case 'Stmt_Class':
                 $this->block->children[] = new Op\Stmt\Class_(
-                    $this->parseExprNode($node->name),
+                    $this->parseExprNode($node->namespacedName),
                     $node->type,
                     $this->parseExprNode($node->extends),
                     $this->parseExprList($node->implements),
