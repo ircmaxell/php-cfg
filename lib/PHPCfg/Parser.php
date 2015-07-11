@@ -929,43 +929,43 @@ class Parser {
     }
 
     private function replaceVariables(Operand $from, Operand $to, Block $block) {
-        static $seen;
-        if (!$seen) {
-            $seen = new \SplObjectStorage;
-        }
-        if ($seen->contains($block)) {
-            return;
-        }
-        $seen->attach($block);
-        foreach ($block->phi as $phi) {
-            $key = array_search($from, $phi->vars, true);
-            if ($key !== false) {
-                if (in_array($to, $phi->vars, true)) {
-                    // remove it
-                    unset($phi->vars[$key]);
-                    $phi->vars = array_values($phi->vars);
-                } else {
-                    // replace it
-                    $phi->vars[$key] = $to;
-                }
-            }
-        }
-        foreach ($block->children as $child) {
-            $this->replaceOpVariable($from, $to, $child);
-            foreach ($child->getSubBlocks() as $name) {
-                $subBlocks = $child->$name;
-                if (!is_array($child->$name)) {
-                    if ($child->$name === null) {
-                        continue;
+        $toReplace = new \SplObjectStorage;
+        $replaced = new \SplObjectStorage;
+        $toReplace->attach($block);
+        foreach ($toReplace as $block) {
+            $toReplace->detach($block);
+            $replaced->attach($block);
+            foreach ($block->phi as $phi) {
+                $key = array_search($from, $phi->vars, true);
+                if ($key !== false) {
+                    if (in_array($to, $phi->vars, true)) {
+                        // remove it
+                        unset($phi->vars[$key]);
+                        $phi->vars = array_values($phi->vars);
+                    } else {
+                        // replace it
+                        $phi->vars[$key] = $to;
                     }
-                    $subBlocks = [$subBlocks];
                 }
-                foreach ($subBlocks as $subBlock) {
-                    $this->replaceVariables($from, $to, $subBlock);
+            }
+            foreach ($block->children as $child) {
+                $this->replaceOpVariable($from, $to, $child);
+                foreach ($child->getSubBlocks() as $name) {
+                    $subBlocks = $child->$name;
+                    if (!is_array($child->$name)) {
+                        if ($child->$name === null) {
+                            continue;
+                        }
+                        $subBlocks = [$subBlocks];
+                    }
+                    foreach ($subBlocks as $subBlock) {
+                        if (!$replaced->contains($subBlock)) {
+                            $toReplace->attach($subBlock);
+                        }
+                    }
                 }
             }
         }
-        $seen->detach($block);
     }
 
     private function replaceOpVariable(Operand $from, Operand $to, Op $op) {
