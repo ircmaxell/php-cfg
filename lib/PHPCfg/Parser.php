@@ -883,34 +883,32 @@ class Parser {
     }
 
     private function removeTrivialPhi(Block $block) {
-        static $seen;
-        if (!$seen) {
-            $seen = new \SplObjectStorage;
-        }
-        if ($seen->contains($block)) {
-            return;
-        }
-        $seen->attach($block);
-        foreach ($block->phi as $key => $phi) {
-            if ($this->tryRemoveTrivialPhi($phi, $block)) {
-                unset($block->phi[$key]);
+        $toReplace = new \SplObjectStorage;
+        $replaced = new \SplObjectStorage;
+        $toReplace->attach($block);
+        foreach ($toReplace as $block) {
+            foreach ($block->phi as $key => $phi) {
+                if ($this->tryRemoveTrivialPhi($phi, $block)) {
+                    unset($block->phi[$key]);
+                }
             }
-        }
-        foreach ($block->children as $child) {
-            foreach ($child->getSubBlocks() as $name) {
-                $subBlocks = $child->$name;
-                if (!is_array($child->$name)) {
-                    if ($child->$name === null) {
-                        continue;
+            foreach ($block->children as $child) {
+                foreach ($child->getSubBlocks() as $name) {
+                    $subBlocks = $child->$name;
+                    if (!is_array($child->$name)) {
+                        if ($child->$name === null) {
+                            continue;
+                        }
+                        $subBlocks = [$subBlocks];
                     }
-                    $subBlocks = [$subBlocks];
-                }
-                foreach ($subBlocks as $subBlock) {
-                    $this->removeTrivialPhi($subBlock);
+                    foreach ($subBlocks as $subBlock) {
+                        if (!$replaced->contains($subBlock)) {
+                            $toReplace->attach($subBlock);
+                        }
+                    }
                 }
             }
         }
-        $seen->detach($block);
     }
 
     private function tryRemoveTrivialPhi(Op\Phi $phi, Block $block) {
