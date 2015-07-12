@@ -115,6 +115,9 @@ class Parser {
                     );
                 }
                 return;
+            case 'Stmt_Declare':
+                // TODO
+                return;
             case 'Stmt_Do':
                 $loopBody = new Block($this->block);
                 $loopEnd = new Block;
