@@ -8,8 +8,10 @@ class Temporary implements Operand {
     public $original;
     
     public $ops = [];
-    
+
     public $usages = [];
+
+    public $type;
 
     /**
      * Constructs a temporary variable

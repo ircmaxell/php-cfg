@@ -23,9 +23,6 @@ class VariableFinder implements Visitor{
     public function enterOp(Op $op, Block $block) {
         foreach ($op->getVariableNames() as $name) {
             $var = $op->$name;
-            if (is_null($var)) {
-            	continue;
-            }
             if (!is_array($var)) {
                 $var = [$var];
             }

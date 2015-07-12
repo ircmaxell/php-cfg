@@ -10,7 +10,7 @@ class BoundVariable extends Variable {
     public $byRef;
     public $scope;
     public $ops = [];
-    
+    public $type;
     public $usages = [];
 
     public function __construct($name, $byRef, $scope = self::SCOPE_GLOBAL) {
