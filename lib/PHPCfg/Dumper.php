@@ -61,6 +61,8 @@ class Dumper {
         $result = $op->getType();
         if ($op instanceof Op\Phi) {
             $result .= " <\$" . $op->name . ">";
+        } elseif ($op instanceof Op\Expr\TypeAssert) {
+            $result .= "<" . $op->assertedType . ">";
         }
         foreach ($op->getVariableNames() as $varName) {
             $result .= "\n    $varName: ";

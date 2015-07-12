@@ -236,10 +236,26 @@ class Parser {
                 $ifBlock = $this->block->create();
                 $elseBlock = new Block;
                 $endBlock = new Block;
-                $this->block->children[] = new Op\Stmt\JumpIf($cond, $ifBlock, $elseBlock, $attrs);
                 $ifBlock->addParent($this->block);
                 $elseBlock->addParent($this->block);
+
+                $this->block->children[] = new Op\Stmt\JumpIf($cond, $ifBlock, $elseBlock, $attrs);
+                $this->block = $ifBlock;
+                $positiveAssertions = $this->getTypeAssertionsForCond($node->cond);
+                foreach ($positiveAssertions as $key => $assert) {
+                    $var = $this->readVariable($assert['var']);
+                    $this->block->children[] = $aop = new Op\Expr\TypeAssert($var, $assert['type']);
+                    $aop->result = $this->writeVariable($assert['var']);
+                    $positiveAssertions[$key]['assert'] = $aop;
+                }
+                
+                
                 $this->block = $this->parseNodes($node->stmts, $ifBlock);
+                foreach ($positiveAssertions as $assert) {
+                    $var = $this->readVariable($assert['var']);
+                    $this->block->children[] = $aop = new Op\Expr\TypeUnAssert($var, $assert['assert']);
+                    $aop->result = $this->writeVariable($assert['var']);
+                }
                 $this->block->children[] = new Op\Stmt\Jump($endBlock, $attrs);
                 $endBlock->addParent($this->block);
                 $this->block = $elseBlock;
@@ -1035,6 +1051,25 @@ class Parser {
                 $op->$name = $to;
             }
         }
+    }
+
+    protected function getTypeAssertionsForCond(Node $node) {
+        $typeAssertions = [];
+        switch ($node->getType()) {
+            case 'Expr_Instanceof':
+                if (!$node->expr instanceof Node\Expr\Variable || !is_string($node->expr->name)) {
+                    continue;
+                }
+                if ($node->class instanceof Node\Name) {
+                    // we have a type assertion
+                    $typeAssertions[] = [
+                        'var' => new Operand\Variable(new Operand\Literal($node->expr->name)),
+                        'type' => $node->class->toString(),
+                    ];
+                }
+                break;
+        }
+        return $typeAssertions;
     }
 
 }
