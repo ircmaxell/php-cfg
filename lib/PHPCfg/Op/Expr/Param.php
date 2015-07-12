@@ -14,6 +14,9 @@ class Param extends Expr {
     public $defaultBlock;
     public $type;
 
+    // A helper
+    public $function;
+
     public function __construct(Operand $name, $type, $byRef, $variadic, Operand $defaultVar = null, Block $defaultBlock = null, array $attributes = array()) {
         parent::__construct($attributes);
         $this->result->original = $name;

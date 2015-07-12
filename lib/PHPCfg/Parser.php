@@ -83,20 +83,27 @@ class Parser {
                 }
                 return;
             case 'Stmt_ClassMethod':
+                $params = $this->parseParameterList($node->params);
                 if ($node->stmts) {
                     $block = new Block;
+                    foreach ($params as $param) {
+                        $this->writeVariableName($param->name->value, $param->result, $block);
+                    }
                     $this->parseNodes($node->stmts, $block);
                 } else {
                     $block = null;
                 }
-                $this->block->children[] = new Op\Stmt\ClassMethod(
+                $this->block->children[] = $func = new Op\Stmt\ClassMethod(
                     $this->parseExprNode($node->name),
-                    $this->parseParameterList($node->params),
+                    $params,
                     $node->byRef,
                     $this->parseExprNode($node->returnType),
                     $block,
                     $this->mapAttributes($node)
                 );
+                foreach ($params as $param) {
+                    $param->function = $func;
+                }
                 return;
 
             case 'Stmt_Const':
@@ -186,7 +193,7 @@ class Parser {
                     $this->writeVariableName($param->name->value, $param->result, $block);
                 }
                 $this->parseNodes($node->stmts, $block);
-                $this->block->children[] = new Op\Stmt\Function_(
+                $this->block->children[] = $func = new Op\Stmt\Function_(
                     $this->parseExprNode($node->namespacedName),
                     $params,
                     $node->byRef,
@@ -194,6 +201,9 @@ class Parser {
                     $block,
                     $this->mapAttributes($node)
                 );
+                foreach ($params as $param) {
+                    $param->function = $func;
+                }
                 return;
             case 'Stmt_Global':
                 foreach ($node->vars as $var) {
@@ -210,6 +220,12 @@ class Parser {
                 $this->block->children[] = new Op\Stmt\Jump($this->labels[$node->name], $this->mapAttributes($node));
                 $this->labels[$node->name]->addParent($this->block);
                 $this->block = $this->block->create(); // dead code
+                return;
+            case 'Stmt_HaltCompiler':
+                $this->block->children[] = new Op\Terminal\Echo_(
+                    $this->readVariable(new Operand\Literal($node->remaining)), 
+                    $this->mapAttributes($node)
+                );
                 return;
             case 'Stmt_If':
                 $attrs = $this->mapAttributes($node);
@@ -338,6 +354,9 @@ class Parser {
                     $this->parseNodes($node->stmts, new Block),
                     $this->mapAttributes($node)
                 );
+                return;
+            case 'Stmt_TraitUse':
+                // TODO
                 return;
             case 'Stmt_TryCatch':
                 // TODO: implement this!!!
@@ -703,6 +722,17 @@ class Parser {
             case 'Expr_UnaryPlus':
                 $op = new Op\Expr\UnaryPlus($this->readVariable($this->parseExprNode($expr->expr)), $attrs);
                 break;
+            case 'Expr_Yield':
+                $key = null;
+                $value = null;
+                if ($expr->key) {
+                    $key = $this->readVariable($this->parseExprNode($expr->key));
+                }
+                if ($expr->value) {
+                    $key = $this->readVariable($this->parseExprNode($expr->value));
+                }
+                $op = new Op\Expr\Yield_($value, $key, $attrs);
+                break;
             default:
                 throw new \RuntimeException("Unknown Expr Type " . $expr->getType());
         }
@@ -796,7 +826,13 @@ class Parser {
     }
 
     private function mapAttributes(Node $expr) {
-        return array_merge(["filename" => $this->fileName], $expr->getAttributes());
+        return array_merge(
+            [
+                "filename" => $this->fileName,
+                "doccomment" => $expr->getDocComment(),
+            ], 
+            $expr->getAttributes()
+        );
     }
 
     private function sealBlock(Block $block) {
@@ -889,24 +925,28 @@ class Parser {
         $toReplace = new \SplObjectStorage;
         $replaced = new \SplObjectStorage;
         $toReplace->attach($block);
-        foreach ($toReplace as $block) {
-            foreach ($block->phi as $key => $phi) {
-                if ($this->tryRemoveTrivialPhi($phi, $block)) {
-                    unset($block->phi[$key]);
-                }
-            }
-            foreach ($block->children as $child) {
-                foreach ($child->getSubBlocks() as $name) {
-                    $subBlocks = $child->$name;
-                    if (!is_array($child->$name)) {
-                        if ($child->$name === null) {
-                            continue;
-                        }
-                        $subBlocks = [$subBlocks];
+        while ($toReplace->count() > 0) {
+            foreach ($toReplace as $block) {
+                $toReplace->detach($block);
+                $replaced->attach($block);
+                foreach ($block->phi as $key => $phi) {
+                    if ($this->tryRemoveTrivialPhi($phi, $block)) {
+                        unset($block->phi[$key]);
                     }
-                    foreach ($subBlocks as $subBlock) {
-                        if (!$replaced->contains($subBlock)) {
-                            $toReplace->attach($subBlock);
+                }
+                foreach ($block->children as $child) {
+                    foreach ($child->getSubBlocks() as $name) {
+                        $subBlocks = $child->$name;
+                        if (!is_array($child->$name)) {
+                            if ($child->$name === null) {
+                                continue;
+                            }
+                            $subBlocks = [$subBlocks];
+                        }
+                        foreach ($subBlocks as $subBlock) {
+                            if (!$replaced->contains($subBlock)) {
+                                $toReplace->attach($subBlock);
+                            }
                         }
                     }
                 }
@@ -933,35 +973,37 @@ class Parser {
         $toReplace = new \SplObjectStorage;
         $replaced = new \SplObjectStorage;
         $toReplace->attach($block);
-        foreach ($toReplace as $block) {
-            $toReplace->detach($block);
-            $replaced->attach($block);
-            foreach ($block->phi as $phi) {
-                $key = array_search($from, $phi->vars, true);
-                if ($key !== false) {
-                    if (in_array($to, $phi->vars, true)) {
-                        // remove it
-                        unset($phi->vars[$key]);
-                        $phi->vars = array_values($phi->vars);
-                    } else {
-                        // replace it
-                        $phi->vars[$key] = $to;
+        while ($toReplace->count() > 0) {
+            foreach ($toReplace as $block) {
+                $toReplace->detach($block);
+                $replaced->attach($block);
+                foreach ($block->phi as $phi) {
+                    $key = array_search($from, $phi->vars, true);
+                    if ($key !== false) {
+                        if (in_array($to, $phi->vars, true)) {
+                            // remove it
+                            unset($phi->vars[$key]);
+                            $phi->vars = array_values($phi->vars);
+                        } else {
+                            // replace it
+                            $phi->vars[$key] = $to;
+                        }
                     }
                 }
-            }
-            foreach ($block->children as $child) {
-                $this->replaceOpVariable($from, $to, $child);
-                foreach ($child->getSubBlocks() as $name) {
-                    $subBlocks = $child->$name;
-                    if (!is_array($child->$name)) {
-                        if ($child->$name === null) {
-                            continue;
+                foreach ($block->children as $child) {
+                    $this->replaceOpVariable($from, $to, $child);
+                    foreach ($child->getSubBlocks() as $name) {
+                        $subBlocks = $child->$name;
+                        if (!is_array($child->$name)) {
+                            if ($child->$name === null) {
+                                continue;
+                            }
+                            $subBlocks = [$subBlocks];
                         }
-                        $subBlocks = [$subBlocks];
-                    }
-                    foreach ($subBlocks as $subBlock) {
-                        if (!$replaced->contains($subBlock)) {
-                            $toReplace->attach($subBlock);
+                        foreach ($subBlocks as $subBlock) {
+                            if (!$replaced->contains($subBlock)) {
+                                $toReplace->attach($subBlock);
+                            }
                         }
                     }
                 }
