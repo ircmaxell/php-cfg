@@ -1,10 +1,10 @@
 <?php
 
 require "vendor/autoload.php";
-
+use PhpParser\ParserFactory;
 $astTraverser = new PhpParser\NodeTraverser;
 $astTraverser->addVisitor(new PhpParser\NodeVisitor\NameResolver);
-$parser = new PHPCfg\Parser(new PhpParser\Parser(new PhpParser\Lexer), $astTraverser);
+$parser = new PHPCfg\Parser((new ParserFactory)->create(ParserFactory::PREFER_PHP7), $astTraverser);
 
 $declarations = new PHPCfg\Visitor\DeclarationFinder;
 $calls = new PHPCfg\Visitor\CallFinder;

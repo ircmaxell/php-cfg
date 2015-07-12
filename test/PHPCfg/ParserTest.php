@@ -3,13 +3,14 @@
 namespace PHPCfg;
 
 use PhpParser;
+use PhpParser\ParserFactory;
 
 class ParserTest extends \PHPUnit_Framework_TestCase {
     /** @dataProvider provideTestParseAndDump */
     public function testParseAndDump($code, $expectedDump) {
         $astTraverser = new PhpParser\NodeTraverser;
         $astTraverser->addVisitor(new PhpParser\NodeVisitor\NameResolver);
-        $parser = new Parser(new PhpParser\Parser(new PhpParser\Lexer), $astTraverser);
+        $parser = new Parser((new ParserFactory)->create(ParserFactory::PREFER_PHP7), $astTraverser);
         $block = $parser->parse($code, 'foo.php');
 
         $traverser = new Traverser();
