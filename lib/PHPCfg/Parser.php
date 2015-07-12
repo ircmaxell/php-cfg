@@ -21,6 +21,8 @@ class Parser {
     protected $sealedBlocks;
     protected $incompletePhis;
 
+    protected $currentClass = null;
+
 
     public function __construct(AstParser $astParser, AstTraverser $astTraverser = null) {
         $this->astParser = $astParser;
@@ -68,18 +70,29 @@ class Parser {
         }
         switch ($node->getType()) {
             case 'Stmt_Class':
+                $name = $this->parseExprNode($node->namespacedName);
+                $old = $this->currentClass;
+                $this->currentClass = $name;
                 $this->block->children[] = new Op\Stmt\Class_(
-                    $this->parseExprNode($node->namespacedName),
+                    $name,
                     $node->type,
                     $this->parseExprNode($node->extends),
                     $this->parseExprList($node->implements),
                     $this->parseNodes($node->stmts, new Block),
                     $this->mapAttributes($node)
                 );
+                $this->currentClass = $old;
                 return;
             case 'Stmt_ClassConst':
+                if (!$this->currentClass instanceof Operand) {
+                    throw new \RuntimeException("Unknown current class");
+                }
                 foreach ($node->consts as $const) {
-                    $this->block->children[] = new Op\Terminal\Const_($const->name, $this->parseExprNode($const->value), $this->mapAttributes($node));
+                    $this->block->children[] = new Op\Terminal\Const_(
+                        $this->parseExprNode(strtolower($this->currentClass->value) . '::' . $const->name), 
+                        $this->parseExprNode($const->value), 
+                        $this->mapAttributes($node)
+                    );
                 }
                 return;
             case 'Stmt_ClassMethod':
@@ -108,8 +121,9 @@ class Parser {
 
             case 'Stmt_Const':
                 foreach ($node->consts as $const) {
+
                     $this->block->children[] = new Op\Terminal\Const_(
-                        $const->name, 
+                        $this->parseExprNode($const->namespacedName), 
                         $this->parseExprNode($const->value), 
                         $this->mapAttributes($node)
                     );
@@ -282,12 +296,16 @@ class Parser {
                 $this->block->children[] = new Op\Terminal\Echo_($this->parseExprNode($node->value), $this->mapAttributes($node));
                 return;
             case 'Stmt_Interface':
+                $name = $this->parseExprNode($node->namespacedName);
+                $old = $this->currentClass;
+                $this->currentClass = $name;
                 $this->block->children[] = new Op\Stmt\Interface_(
-                    $this->parseExprNode($node->name),
+                    $name,
                     $this->parseExprList($node->extends),
                     $this->parseNodes($node->stmts, new Block),
                     $this->mapAttributes($node)
                 );
+                $this->currentClass = $old;
                 return;
             case 'Stmt_Label':
                 if (!isset($this->labels[$node->name])) {

@@ -13,6 +13,11 @@ class DeclarationFinder implements Visitor {
     protected $methods = [];
     protected $functions = [];
     protected $interfaces = [];
+    protected $constants = [];
+
+    public function getConstants() {
+        return $this->constants;
+    }
 
     public function getTraits() {
         return $this->traits;
@@ -47,6 +52,11 @@ class DeclarationFinder implements Visitor {
             $this->methods[] = $op;
         } elseif ($op instanceof Op\Stmt\Function_) {
             $this->functions[] = $op;
+        } elseif ($op instanceof Op\Terminal\Const_) {
+            if (!isset($this->constants[$op->name->value])) {
+                $this->constants[$op->name->value] = [];
+            }
+            $this->constants[$op->name->value][] = $op;
         }
     }
 
