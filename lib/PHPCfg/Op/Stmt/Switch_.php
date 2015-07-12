@@ -22,6 +22,6 @@ class Switch_ extends Stmt {
     }
 
     public function getSubBlocks() {
-        return ['target'];
+        return ['targets'];
     }
 }

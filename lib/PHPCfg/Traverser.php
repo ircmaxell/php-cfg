@@ -27,8 +27,15 @@ class Traverser {
         foreach ($block->children as $op) {
             $this->event("enterOp", [$op, $block]);
             foreach ($op->getSubBlocks() as $subblock) {
-                if ($op->$subblock) {
-                    $this->traverseBlock($op->$subblock, $block);
+                $sub = $op->$subblock;
+                if (!$sub) {
+                    continue;
+                }
+                if (!is_array($sub)) {
+                    $sub = [$sub];
+                }
+                foreach ($sub as $subb) {
+                    $this->traverseBlock($subb, $block);
                 }
             }
             $this->event("leaveOp", [$op, $block]);

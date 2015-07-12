@@ -372,9 +372,9 @@ class Parser {
                 $cases = [];
                 $targets = [];
                 foreach ($node->cases as $case) {
-                    $caseBlock = new Block($this->block);
+                    $targets[] = $caseBlock = new Block($this->block);
                     $cases[] = [$this->parseExprNode($case->cond)];
-                    $targets[] = [$this->parseNodes($case->stmts, $caseBlock)];
+                    $this->parseNodes($case->stmts, $caseBlock);
                 }
                 $this->block->children[] = new Op\Stmt\Switch_($cond, $cases, $targets, $this->mapAttributes($node));
                 return;
