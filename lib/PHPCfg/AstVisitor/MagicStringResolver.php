@@ -16,7 +16,7 @@ class MagicStringResolver extends NodeVisitorAbstract {
     public function enterNode(Node $node) {
     	if ($node instanceof Node\Stmt\ClassLike) {
     		$this->classStack[] = $node->namespacedName->toString();
-    		if ($node->extends && !is_array($node->extends)) {
+    		if (!empty($node->extends) && !is_array($node->extends)) {
     			// Should always be fully qualified
     			$this->parentStack[] = $node->extends->toString();
     		} else {

@@ -402,11 +402,15 @@ class Parser {
                 $this->block = new Block; // dead code
                 break;
             case 'Stmt_Trait':
+            	$name = $this->parseExprNode($node->namespacedName);
+                $old = $this->currentClass;
+                $this->currentClass = $name;
                 $this->block->children[] = new Op\Stmt\Trait_(
-                    $this->parseExprNode($node->name),
+                    $name,
                     $this->parseNodes($node->stmts, new Block),
                     $this->mapAttributes($node)
                 );
+                $this->currentClass = $old;
                 return;
             case 'Stmt_TraitUse':
                 // TODO
