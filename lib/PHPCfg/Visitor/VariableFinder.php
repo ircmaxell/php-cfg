@@ -18,6 +18,9 @@ class VariableFinder implements Visitor{
 	}
 	
     public function enterBlock(Block $block, Block $prior = null) {
+    	foreach ($block->phi as $phi) {
+    		$this->enterOp($phi, $block);
+    	}
     }
 
     public function enterOp(Op $op, Block $block) {

@@ -84,12 +84,13 @@ class Dumper {
     }
 
     private function dumpOperand($var) {
+    	$type = isset($var->type) ? "<{$var->type}>" : "";
         if ($var instanceof Literal) {
-            return "LITERAL(" . var_export($var->value, true) . ")";
+            return "LITERAL{$type}(" . var_export($var->value, true) . ")";
 
         } else if ($var instanceof Variable) {
             assert($var->name instanceof Literal);
-            $prefix = "$";
+            $prefix = "{$type}$";
             if ($var instanceof BoundVariable) {
                 if ($var->byRef) {
                     $prefix = "&$";
@@ -106,14 +107,14 @@ class Dumper {
                 }
             }
             
-            return $prefix . $var->name->value;
+            return $prefix . $var->name->value . $type;
         } else if ($var instanceof Temporary) {
             if ($var->original) {
-                return "Var#" . $this->getVarId($var) . "<" . $this->dumpOperand($var->original) . ">";
+                return "Var{$type}#" . $this->getVarId($var) . "<" . $this->dumpOperand($var->original) . ">";
             }
-            return "Var#" . $this->getVarId($var);
+            return "Var{$type}#" . $this->getVarId($var);
         } else if (is_array($var)) {
-            $result = "array";
+            $result = "array" . $type;
             foreach ($var as $k => $v) {
                 $result .= "\n    $k: " . $this->indent($this->dumpOperand($v));
             }

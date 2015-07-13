@@ -11,10 +11,14 @@ class Simplifier implements Visitor {
         foreach ($op->getSubBlocks() as $name) {
             /** @var Block $block */
             $target = $op->$name;
+
             if (!isset($target->children[0]) || !$target->children[0] instanceof Op\Stmt\Jump) {
                 continue;
             }
-
+            if (count($target->phi) > 0) {
+            	// DO NOT OPTIMIZE PHI NODES
+            	continue;
+            }
             $jump = $target->children[0];
             $op->$name = $jump->target;
         }

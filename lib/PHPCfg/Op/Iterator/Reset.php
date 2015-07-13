@@ -8,7 +8,7 @@ use PhpCfg\Operand;
 class Reset extends Terminal {
     public $var;
 
-    protected $writeVariables = ['var'];
+    protected $writeVariables = [];
 
     public function __construct(Operand $var, array $attributes = array()) {
         parent::__construct($attributes);
