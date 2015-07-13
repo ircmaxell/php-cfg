@@ -115,6 +115,7 @@ class Parser {
                 if ($node->stmts) {
                     $block = new Block;
                     foreach ($params as $param) {
+                        $param->result->ops[] = $param;
                         $this->writeVariableName($param->name->value, $param->result, $block);
                     }
                     $this->parseNodes($node->stmts, $block);
@@ -223,8 +224,10 @@ class Parser {
                 $block = new Block;
                 $params = $this->parseParameterList($node->params);
                 foreach ($params as $param) {
+                    $param->result->ops[] = $param;
                     $this->writeVariableName($param->name->value, $param->result, $block);
                 }
+                var_dump($this->scope[$block]);
                 $this->parseNodes($node->stmts, $block);
                 $this->block->children[] = $func = new Op\Stmt\Function_(
                     $this->parseExprNode($node->namespacedName),
@@ -854,7 +857,7 @@ class Parser {
                 $defaultVar = null;
                 $defaultBlock = null;
             }
-            $result[] = new Op\Expr\Param(
+            $result[] = $p = new Op\Expr\Param(
                 $this->parseExprNode($param->name),
                 $this->parseExprNode($param->type),
                 $param->byRef,
@@ -863,6 +866,7 @@ class Parser {
                 $defaultBlock,
                 $this->mapAttributes($param)
             );
+            $p->result->original = new Operand\Variable(new Operand\Literal($p->name->value));
         }
         return $result;
     }
