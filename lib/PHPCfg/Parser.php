@@ -227,7 +227,6 @@ class Parser {
                     $param->result->ops[] = $param;
                     $this->writeVariableName($param->name->value, $param->result, $block);
                 }
-                var_dump($this->scope[$block]);
                 $this->parseNodes($node->stmts, $block);
                 $this->block->children[] = $func = new Op\Stmt\Function_(
                     $this->parseExprNode($node->namespacedName),
