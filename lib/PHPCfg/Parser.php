@@ -875,17 +875,22 @@ class Parser {
         $shortBlock = new Block;
         $shortBlock->children[] = new Op\Expr\Assign($result, new Literal($isOr));
         $shortBlock->children[] = new Op\Stmt\Jump($endBlock);
+        $endBlock->addParent($shortBlock);
 
         $this->block->children[] = new Op\Stmt\JumpIf(
             $this->parseExprNode($expr->left),
             $isOr ? $shortBlock : $longBlock, $isOr ? $longBlock : $shortBlock
         );
+        $shortBlock->addParent($this->block);
+        $longBlock->addParent($this->block);
 
         $this->block = $longBlock;
         $boolCast = new Op\Expr\Cast\Bool_($this->parseExprNode($expr->right));
         $this->block->children[] = $boolCast;
-        $boolCast->result = $result;
+        $this->block->children[] = new Op\Stmt\Jump($endBlock);
+        $endBlock->addParent($this->block);
 
+        $boolCast->result = $result;
         $this->block = $endBlock;
         return $result;
     }
