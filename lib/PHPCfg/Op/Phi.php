@@ -16,6 +16,9 @@ class Phi extends Op {
     }
 
     public function addOperand(Operand $op) {
+        if ($op === $this->result) {
+            return;
+        }
         if (!in_array($op, $this->vars, true)) {
             $this->vars[] = $op;
         }

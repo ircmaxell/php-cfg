@@ -16,8 +16,8 @@ class Simplifier implements Visitor {
                 continue;
             }
             if (count($target->phi) > 0) {
-            	// DO NOT OPTIMIZE PHI NODES
-            	continue;
+                // It's a phi block, we can't reassign it
+                continue;
             }
             $jump = $target->children[0];
             $op->$name = $jump->target;
