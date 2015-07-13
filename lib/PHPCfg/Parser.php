@@ -32,6 +32,7 @@ class Parser {
         }
         $this->astTraverser = $astTraverser;
         $this->astTraverser->addVisitor(new AstVisitor\LoopResolver);
+        $this->astTraverser->addVisitor(new AstVisitor\MagicStringResolver);
         $this->scope = new \SplObjectStorage;
         $this->sealedBlocks = new \SplObjectStorage;
         $this->incompletePhis = new \SplObjectStorage;
@@ -44,7 +45,18 @@ class Parser {
         $ast = $this->astTraverser->traverse($ast);
         $this->parseNodes($ast, $start = new Block);
         foreach ($this->incompletePhis as $block) {
-            $this->sealBlock($block);
+        	// sealBlock()
+        	$this->sealedBlocks->attach($block);
+        	if (isset($this->incompletePhis[$block])) {
+            	foreach ($this->incompletePhis[$block] as $name => $phi) {
+            		// add phi operands
+            		foreach ($block->parents as $parent) {
+	            		$var = $this->readVariableName($name, $parent);
+            			$phi->addOperand($var);
+        			}
+                	$block->phi[] = $phi;
+            	}
+        	}
         }
         $this->removeTrivialPhi($start);
         return $start;
@@ -96,6 +108,9 @@ class Parser {
                 }
                 return;
             case 'Stmt_ClassMethod':
+            	if (!$this->currentClass instanceof Operand) {
+                    throw new \RuntimeException("Unknown current class");
+                }
                 $params = $this->parseParameterList($node->params);
                 if ($node->stmts) {
                     $block = new Block;
@@ -107,6 +122,7 @@ class Parser {
                     $block = null;
                 }
                 $this->block->children[] = $func = new Op\Stmt\ClassMethod(
+                	$this->currentClass,
                     $this->parseExprNode($node->name),
                     $params,
                     $node->byRef,
@@ -446,6 +462,14 @@ class Parser {
             $list = $this->parseExprList($expr);
             return end($list);
         } elseif ($expr instanceof Node\Expr\Variable) {
+        	if ($expr->name === "this") {
+        		return new Operand\BoundVariable(
+        			$this->parseExprNode($expr->name),
+        			false,
+        			Operand\BoundVariable::SCOPE_OBJECT,
+        			$this->currentClass
+        		);
+        	}
             return new Variable($this->parseExprNode($expr->name));
         } elseif ($expr instanceof Node\Name) {
             $isReserved = in_array(strtolower($expr->getLast()), ["int", "string", "array", "callable", "float", "bool"]);
@@ -872,17 +896,11 @@ class Parser {
         );
     }
 
-    private function sealBlock(Block $block) {
-        $this->sealedBlocks->attach($block);
-        if (isset($this->incompletePhis[$block])) {
-            foreach ($this->incompletePhis[$block] as $name => $phi) {
-                $this->addPhiOperands($name, $phi, $block);
-                $block->phi[] = $phi;
-            }
-        }
-    }
-
     private function readVariable(Operand $var) {
+    	if ($var instanceof Operand\BoundVariable) {
+    		// bound variables are immune to SSA
+    		return $var;
+    	}
         if ($var instanceof Operand\Variable) {
             return $this->readVariableName($this->getVariableName($var), $this->block);
         }
@@ -924,13 +942,6 @@ class Parser {
         }
         $this->writeVariableName($name, $var, $block);
         return $var;
-    }
-
-    private function addPhiOperands($name, Op\Phi $phi, Block $block) {
-        foreach ($block->parents as $parent) {
-            $var = $this->readVariableName($name, $parent);
-            $phi->addOperand($var);
-        }
     }
 
     private function writeKeyToArray($name, $first, $second, $value) {

@@ -68,10 +68,17 @@ class Dumper {
             $result .= "\n    $varName: ";
             $result .= $this->indent($this->dumpOperand($op->$varName));
         }
-        foreach ($op->getSubBlocks() as $subBlock) {
-        	if ($op->$subBlock) {
-            	$result .= "\n    $subBlock: " . $this->indent($this->dumpBlockRef($op->$subBlock));
-            }
+        foreach ($op->getSubBlocks() as $blockName) {
+        	$sub = $op->$blockName;
+        	if (is_null($sub)) {
+        		continue;
+        	}
+        	if (!is_array($sub)) {
+        		$sub = [$sub];
+        	}
+        	foreach ($sub as $subBlock) {
+            	$result .= "\n    $blockName: " . $this->indent($this->dumpBlockRef($subBlock));
+        	}
         }
         return $result;
     }
@@ -79,6 +86,7 @@ class Dumper {
     private function dumpOperand($var) {
         if ($var instanceof Literal) {
             return "LITERAL(" . var_export($var->value, true) . ")";
+
         } else if ($var instanceof Variable) {
             assert($var->name instanceof Literal);
             $prefix = "$";
@@ -91,6 +99,8 @@ class Dumper {
                         return "global<{$prefix}{$var->name->value}>";
                     case BoundVariable::SCOPE_LOCAL:
                         return "local<{$prefix}{$var->name->value}>";
+                    case BoundVariable::SCOPE_OBJECT:
+                    	return "this<{$prefix}{$var->name->value}>";
                     default:
                         throw new \LogicException("Unknown bound variable scope");
                 }
