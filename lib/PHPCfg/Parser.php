@@ -1086,6 +1086,37 @@ class Parser {
                     ];
                 }
                 break;
+            case 'Expr_FuncCall':
+                if (
+                       !$node->name instanceof Node\Name 
+                    || !isset($node->args[0])
+                    || !$node->args[0]->value instanceof Node\Expr\Variable) {
+                    continue;
+                }
+                static $assertionFunctions = [
+                    'is_array'    => 'array',
+                    'is_bool'     => 'bool',
+                    'is_callable' => 'callable',
+                    'is_double'   => 'float',
+                    'is_float'    => 'float',
+                    'is_int'      => 'int',
+                    'is_integer'  => 'int',
+                    'is_long'     => 'int',
+                    'is_null'     => 'null',
+                    'is_numeric'  => 'numeric',
+                    'is_object'   => 'object',
+                    'is_real'     => 'float',
+                    'is_string'   => 'string',
+                ];
+
+                $lname = strtolower($node->name);
+                if (isset($assertionFunctions[$lname])) {
+                    // it's an assertion!
+                    $typeAssertions[] = [
+                        'var' => new Operand\Variable(new Operand\Literal($node->args[0]->value->name)),
+                        'type' => $assertionFunctions[$lname],
+                    ];
+                }
         }
         return $typeAssertions;
     }

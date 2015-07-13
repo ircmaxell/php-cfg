@@ -112,6 +112,10 @@ class Dumper {
         return 'UNKNOWN';
     }
 
+    /**
+     * @param string $str
+     * @return string
+     */
     private function indent($str) {
         return str_replace("\n", "\n    ", $str);
     }
