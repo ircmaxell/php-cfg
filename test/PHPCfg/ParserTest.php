@@ -6,8 +6,9 @@ use PhpParser;
 use PhpParser\ParserFactory;
 
 class ParserTest extends \PHPUnit_Framework_TestCase {
+
     /** @dataProvider provideTestParseAndDump */
-    public function testParseAndDump($code, $expectedDump) {
+    public function testParseAndDump($name, $code, $expectedDump) {
         $astTraverser = new PhpParser\NodeTraverser;
         $astTraverser->addVisitor(new PhpParser\NodeVisitor\NameResolver);
         $parser = new Parser((new ParserFactory)->create(ParserFactory::PREFER_PHP7), $astTraverser);
@@ -35,7 +36,7 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
             }
 
             $contents = file_get_contents($file);
-            yield explode('-----', $contents);
+            yield array_merge([$file->getBasename()], explode('-----', $contents));
         }
     }
 

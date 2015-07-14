@@ -20,6 +20,8 @@ Block#2
     Expr_Cast_Bool
         expr: Var#2
         result: Var#3
+    Stmt_Jump
+        target: Block#4
 
 Block#3
     Expr_Assign
