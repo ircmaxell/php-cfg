@@ -489,7 +489,7 @@ class Parser {
         }
 
         if ($node instanceof Node\Stmt\If_) {
-            foreach ($node->elseifs as $elseif) {
+            foreach ($node->elseifs as $elseIf) {
                 $this->parseIf($elseIf);
             }
             if ($node->else) {
