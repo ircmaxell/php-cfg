@@ -60,7 +60,7 @@ class NameResolver extends NameResolverParent {
             return implode('|', array_map([$this, 'parseTypeDecl'], explode('|', $type)));
         }
         if (substr($type, 0, 1) === '?') {
-            return '?' . $this->parseTypeDecl(substr($type, 0, -2));
+            return '?' . $this->parseTypeDecl(substr($type, 1));
         }
         if (substr($type, -2) === '[]') {
             return $this->parseTypeDecl(substr($type, 0, -2)) . '[]';

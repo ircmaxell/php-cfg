@@ -23,7 +23,7 @@ class Temporary implements Operand {
     /**
      * Constructs a temporary variable
      * 
-     * @param Operand? $original The previous variable this was constructed from
+     * @param ?Operand $original The previous variable this was constructed from
      */
     public function __construct(Operand $original = null) {
         $this->original = $original;
