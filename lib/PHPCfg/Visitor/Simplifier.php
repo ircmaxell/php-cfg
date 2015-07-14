@@ -21,6 +21,9 @@ class Simplifier implements Visitor {
         foreach ($op->getSubBlocks() as $name) {
             /** @var Block $block */
             $target = $op->$name;
+            if (!$target) {
+            	continue;
+            }
 
             if ($this->removed->contains($target)) {
                 // short circuit
