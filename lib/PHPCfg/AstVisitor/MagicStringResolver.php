@@ -20,6 +20,7 @@ class MagicStringResolver extends NodeVisitorAbstract {
     protected $methodStack = [];
 
     public function enterNode(Node $node) {
+        $this->repairComments($node);
         if ($node instanceof Node\Stmt\ClassLike) {
             $this->classStack[] = $node->namespacedName->toString();
             if (!empty($node->extends) && !is_array($node->extends)) {
@@ -28,7 +29,9 @@ class MagicStringResolver extends NodeVisitorAbstract {
             } else {
                 $this->parentStack[] = '';
             }
-        } elseif ($node instanceof Node\Stmt\Function_) {
+        }
+        $this->repairComments($node);
+        if ($node instanceof Node\Stmt\Function_) {
             $this->functionStack[] = $node->namespacedName->toString();
         } elseif ($node instanceof Node\Stmt\ClassMethod) {
             $this->methodStack[] = end($this->classStack) . '::' . $node->name;
@@ -88,6 +91,24 @@ class MagicStringResolver extends NodeVisitorAbstract {
         $parts = explode('\\', $class);
         array_pop($parts);
         return implode('\\', $parts);
+    }
+
+    private function repairComments(Node $node) {
+        $comment = $node->getDocComment();
+        if ($comment && !empty($this->classStack)) {
+            $regex = "(@(param|return|var|type)\s+(\S+))i";
+            $comment->setText(
+                preg_replace_callback(
+                    $regex,
+                    function ($match) {
+                        $type = $match[2];
+                        $type = preg_replace('((?<=^|\|)((?i:self)|\$this)(?=\[|$|\|))', end($this->classStack), $type);
+                        return '@' . $match[1] . ' ' . $type;
+                    },
+                    $comment->getText()
+                )
+            );
+        }
     }
 
 }

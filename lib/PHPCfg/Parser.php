@@ -15,7 +15,6 @@ use PHPCfg\Operand\Variable;
 use PhpParser\Node;
 use PhpParser\Node\Expr\BinaryOp as AstBinaryOp;
 use PhpParser\NodeTraverser as AstTraverser;
-use PhpParser\NodeVisitor\NameResolver;
 use PhpParser\Parser as AstParser;
 
 class Parser {
@@ -40,9 +39,9 @@ class Parser {
         $this->astParser = $astParser;
         if (!$astTraverser) {
             $astTraverser = new AstTraverser;
-            $astTraverser->addVisitor(new NameResolver);
         }
         $this->astTraverser = $astTraverser;
+        $this->astTraverser->addVisitor(new AstVisitor\NameResolver);
         $this->astTraverser->addVisitor(new AstVisitor\LoopResolver);
         $this->astTraverser->addVisitor(new AstVisitor\MagicStringResolver);
         $this->scope = new \SplObjectStorage;
