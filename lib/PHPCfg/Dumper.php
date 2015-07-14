@@ -38,11 +38,12 @@ class Dumper {
             }
             foreach ($block->parents as $parent) {
                 if (!$parent->dead) {
-                    $result .= "\n\tparent: " . $this->dumpBlockRef($parent);
+                    $result .= "\n    " . $this->indent("Parent: " . $this->dumpBlockRef($parent));
                 }
             }
+
             foreach ($block->phi as $phi) {
-                $result .= "\n\t" . $this->indent("Phi<" . $this->dumpOperand($phi->result) . ">: = [");
+                $result .= "\n    " . $this->indent("Phi<" . $this->dumpOperand($phi->result) . ">: = [");
                 foreach ($phi->vars as $sub) {
                     $result .= $this->dumpOperand($sub)  . ',';
                 }

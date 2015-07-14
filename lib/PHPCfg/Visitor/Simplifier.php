@@ -40,6 +40,9 @@ class Simplifier implements Visitor {
                 if ($this->removed->contains($target)) {
                     // short circuit
                     $results[$key] = $target->children[0]->target;
+                    if (!in_array($block, $target->children[0]->target->parents, true)) {
+                        $target->children[0]->target->parents[] = $block;
+                    }
                     continue;
                 }
 
@@ -49,6 +52,11 @@ class Simplifier implements Visitor {
 
                 // First, optimize the child:
                 $this->enterOp($target->children[0], $target);
+
+                if ($target->children[0]->target === $target) {
+                    // Prevent killing infinite tight loops
+                    continue;
+                }
 
                 if (count($target->phi) > 0) {
                     // It's a phi block, we can't reassign it
@@ -82,6 +90,16 @@ class Simplifier implements Visitor {
                 }
                 $this->removed->attach($target);
                 $target->dead = true;
+
+                // Remove the target from the list of parents
+                $k = array_search($target, $target->children[0]->target->parents, true);
+                unset($target->children[0]->target->parents[$k]);
+                $target->children[0]->target->parents = array_values($target->children[0]->target->parents);
+
+                if (!in_array($block, $target->children[0]->target->parents, true)) {
+                    $target->children[0]->target->parents[] = $block;
+                }
+
                 $results[$key] = $target->children[0]->target;
             }
             if (!is_array($op->$name)) {

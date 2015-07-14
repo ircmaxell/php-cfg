@@ -30,16 +30,20 @@ Block#1
         target: Block#2
 
 Block#2
-	Phi<Var#4<$a>>: = [Var#1<$a>,Var#5<$a>,]
+    Parent: Block#1
+    Parent: Block#3
+    Parent: Block#4
+    Phi<Var#4<$a>>: = [Var#1<$a>,Var#5<$a>,]
     Iterator_Valid
         var: Var#3
         result: Var#6
     Stmt_JumpIf
         cond: Var#6
         if: Block#3
-        else: Block#4
+        else: Block#5
 
 Block#3
+    Parent: Block#2
     Iterator_Value
         var: Var#3
         result: Var#7
@@ -53,14 +57,11 @@ Block#3
         result: Var#10
     Stmt_JumpIf
         cond: Var#10
-        if: Block#5
+        if: Block#4
         else: Block#2
 
 Block#4
-    Terminal_Echo
-        expr: Var#4<$a>
-
-Block#5
+    Parent: Block#3
     Expr_BinaryOp_Plus
         left: Var#4<$a>
         right: Var#8<$b>
@@ -71,3 +72,8 @@ Block#5
         result: Var#12
     Stmt_Jump
         target: Block#2
+
+Block#5
+    Parent: Block#2
+    Terminal_Echo
+        expr: Var#4<$a>

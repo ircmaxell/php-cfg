@@ -7,5 +7,7 @@ Block#1
         target: Block#2
 
 Block#2
+    Parent: Block#1
+    Parent: Block#2
     Stmt_Jump
         target: Block#2
