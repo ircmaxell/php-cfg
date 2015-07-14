@@ -33,6 +33,14 @@ class Dumper {
             $block = $this->blockQueue->dequeue();
             $id = $this->blockIds[$block];
             $result .= "Block#$id";
+            if ($block->dead) {
+                $result .= "(dead)";
+            }
+            foreach ($block->parents as $parent) {
+                if (!$parent->dead) {
+                    $result .= "\n\tparent: " . $this->dumpBlockRef($parent);
+                }
+            }
             foreach ($block->phi as $phi) {
                 $result .= "\n\t" . $this->indent("Phi<" . $this->dumpOperand($phi->result) . ">: = [");
                 foreach ($phi->vars as $sub) {

@@ -29,8 +29,8 @@ class Parser {
     protected $fileName;
     protected $labels = [];
     protected $scope;
-    protected $sealedBlocks;
     protected $incompletePhis;
+    protected $complete = false;
 
     protected $currentClass = null;
 
@@ -45,7 +45,6 @@ class Parser {
         $this->astTraverser->addVisitor(new AstVisitor\LoopResolver);
         $this->astTraverser->addVisitor(new AstVisitor\MagicStringResolver);
         $this->scope = new \SplObjectStorage;
-        $this->sealedBlocks = new \SplObjectStorage;
         $this->incompletePhis = new \SplObjectStorage;
     }
 
@@ -55,27 +54,24 @@ class Parser {
         $ast = $this->astParser->parse($code);
         $ast = $this->astTraverser->traverse($ast);
 
+        $this->complete = false;
         $this->parseNodes($ast, $start = new Block);
+        $this->complete = true;
+
         foreach ($this->incompletePhis as $block) {
-            // sealBlock()
-            if ($block->dead) {
-                continue;
-            }
-            $this->sealedBlocks->attach($block);
-            if (isset($this->incompletePhis[$block])) {
-                foreach ($this->incompletePhis[$block] as $name => $phi) {
-                    // add phi operands
-                    foreach ($block->parents as $parent) {
-                        if ($parent->dead) {
-                            continue;
-                        }
-                        $var = $this->readVariableName($name, $parent);
-                        $phi->addOperand($var);
+            foreach ($this->incompletePhis[$block] as $name => $phi) {
+                // add phi operands
+                foreach ($block->parents as $parent) {
+                    if ($parent->dead) {
+                        continue;
                     }
-                    $block->phi[] = $phi;
+                    $var = $this->readVariableName($name, $parent);
+                    $phi->addOperand($var);
                 }
+                $block->phi[] = $phi;
             }
         }
+        $this->incompletePhis->removeAllExcept(new \SplObjectStorage);
         $this->removeTrivialPhi($start);
         return $start;
     }
@@ -216,29 +212,40 @@ class Parser {
                 $attrs = $this->mapAttributes($node);
                 $iterable = $this->readVariable($this->parseExprNode($node->expr));
                 $this->block->children[] = new Op\Iterator\Reset($iterable, $attrs);
-                $loopInit = $this->block->create();
-                $loopBody = $this->block->create();
-                $loopEnd = $this->block->create();
+                
+                $loopInit = new Block;
+                $loopBody = new Block;
+                $loopEnd = new Block;
+
                 $this->block->children[] = new Op\Stmt\Jump($loopInit, $attrs);
                 $loopInit->addParent($this->block);
+
                 $loopInit->children[] = $validOp = new Op\Iterator\Valid($iterable, $attrs);
                 $loopInit->children[] = new Op\Stmt\JumpIf($validOp->result, $loopBody, $loopEnd, $attrs);
+
                 $loopBody->addParent($loopInit);
                 $loopEnd->addParent($loopInit);
+
                 $this->block = $loopBody;
+
                 if ($node->keyVar) {
-                    $loopBody->children[] = $keyOp = new Op\Iterator\Key($iterable, $attrs);
-                    $loopBody->children[] = new Op\Expr\Assign($this->writeVariable($this->parseExprNode($node->keyVar)), $keyOp->result, $attrs);
+                    $this->block->children[] = $keyOp = new Op\Iterator\Key($iterable, $attrs);
+                    $this->block->children[] = new Op\Expr\Assign($this->writeVariable($this->parseExprNode($node->keyVar)), $keyOp->result, $attrs);
                 }
-                $loopBody->children[] = $valueOp = new Op\Iterator\Value($iterable, $node->byRef, $attrs);
+
+                $this->block->children[] = $valueOp = new Op\Iterator\Value($iterable, $node->byRef, $attrs);
+
                 if ($node->byRef) {
-                    $loopBody->children[] = new Op\Expr\AssignRef($this->writeVariable($this->parseExprNode($node->valueVar)), $valueOp->result, $attrs);
+                    $this->block->children[] = new Op\Expr\AssignRef($this->writeVariable($this->parseExprNode($node->valueVar)), $valueOp->result, $attrs);
                 } else {
-                    $loopBody->children[] = new Op\Expr\Assign($this->writeVariable($this->parseExprNode($node->valueVar)), $valueOp->result, $attrs);
+                    $this->block->children[] = new Op\Expr\Assign($this->writeVariable($this->parseExprNode($node->valueVar)), $valueOp->result, $attrs);
                 }
-                $loopBody = $this->parseNodes($node->stmts, $loopBody);
-                $loopBody->children[] = new Op\Stmt\Jump($loopInit, $attrs);
-                $loopInit->addParent($loopBody);
+
+                $this->block = $this->parseNodes($node->stmts, $this->block);
+                $this->block->children[] = new Op\Stmt\Jump($loopInit, $attrs);
+
+                $loopInit->addParent($this->block);
+
                 $this->block = $loopEnd;
                 return;
             case 'Stmt_Function':
@@ -482,6 +489,7 @@ class Parser {
         $endBlock->addParent($this->block);
 
         $this->block = $elseBlock;
+
         foreach ($negativeAssertions as $key => $assert) {
             $var = $this->readVariable($assert['var']);
             $this->block->children[] = $aop = new Op\Expr\TypeAssert($var, $assert['type']);
@@ -493,13 +501,12 @@ class Parser {
                 $this->parseIf($elseIf);
             }
             if ($node->else) {
-                $elseBlock = $this->parseNodes($node->else->stmts, $this->block);
+                $this->block = $this->parseNodes($node->else->stmts, $this->block);
             }
-           }
-        $elseBlock->children[] = new Op\Stmt\Jump($endBlock, $attrs);
+        }
+        $this->block->children[] = new Op\Stmt\Jump($endBlock, $attrs);
         $endBlock->addParent($elseBlock);
         $this->block = $endBlock;
-
     }
 
     /**
@@ -1006,9 +1013,21 @@ class Parser {
     }
 
     private function readVariableRecursive($name, Block $block) {
-        if ($this->sealedBlocks->contains($block) && count($block->parents) === 1) {
-            $var = $this->readVariableName($name, $block->parents[0]);
+        if ($this->complete) {
+            if (count($block->parents) === 1) {
+                // Special case, just return the read var
+                return $this->readVariableName($name, $block->parents[0]);
+            }
+            $var = new Operand\Temporary(new Variable(new Literal($name)));
+            $phi = new Op\Phi($var, ["block" => $block]);
+            $phi->result->ops[] = $phi;
+            $block->phi[] = $phi;
+            // Prevent unbound recursion
             $this->writeVariableName($name, $var, $block);
+
+            foreach ($block->parents as $parent) {
+                $phi->addOperand($this->readVariableName($name, $parent));
+            }
             return $var;
         }
         $var = new Operand\Temporary(new Variable(new Literal($name)));

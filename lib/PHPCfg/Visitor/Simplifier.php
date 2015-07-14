@@ -81,6 +81,7 @@ class Simplifier implements Visitor {
                     $target->phi = [];
                 }
                 $this->removed->attach($target);
+                $target->dead = true;
                 $results[$key] = $target->children[0]->target;
             }
             if (!is_array($op->$name)) {
