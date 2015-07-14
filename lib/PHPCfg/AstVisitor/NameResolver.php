@@ -83,7 +83,6 @@ class NameResolver extends NameResolverParent {
         // Now, we need to resolve the type
         $resolved = $this->resolveClassName(new Name($type));
         return $resolved->toString();
-        var_dump($resolved);
     }
 
 }

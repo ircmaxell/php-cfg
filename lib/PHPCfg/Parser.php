@@ -285,60 +285,7 @@ class Parser {
                 );
                 return;
             case 'Stmt_If':
-                $attrs = $this->mapAttributes($node);
-                $cond = $this->readVariable($this->parseExprNode($node->cond));
-                $ifBlock = $this->block->create();
-                $elseBlock = new Block;
-                $endBlock = new Block;
-
-                $this->block->children[] = new Op\Stmt\JumpIf($cond, $ifBlock, $elseBlock, $attrs);
-                $ifBlock->addParent($this->block);
-                $elseBlock->addParent($this->block);
-
-                $this->block = $ifBlock;
-
-                $positiveAssertions = $this->getTypeAssertionsForCond($node->cond);
-
-                foreach ($positiveAssertions as $key => $assert) {
-                    $var = $this->readVariable($assert['var']);
-                    $this->block->children[] = $aop = new Op\Expr\TypeAssert($var, $assert['type']);
-                    $aop->result = $this->writeVariable($assert['var']);
-                    $positiveAssertions[$key]['assert'] = $aop;
-                }
-                
-                $this->block = $this->parseNodes($node->stmts, $ifBlock);
-
-                foreach ($positiveAssertions as $assert) {
-                    $var = $this->readVariable($assert['var']);
-                    $this->block->children[] = $aop = new Op\Expr\TypeUnAssert($var, $assert['assert']);
-                    $aop->result = $this->writeVariable($assert['var']);
-                }
-
-                $this->block->children[] = new Op\Stmt\Jump($endBlock, $attrs);
-                $endBlock->addParent($this->block);
-
-                foreach ($node->elseifs as $elseif) {
-                    $this->block = $elseBlock;
-                    $cond = $this->readVariable($this->parseExprNode($elseif->cond, $this->mapAttributes($elseif)));
-
-                    $ifBlock = new Block;
-                    $elseBlock = new Block;
-
-                    $this->block->children[] = new Op\Stmt\JumpIf($cond, $ifBlock, $elseBlock, $this->mapAttributes($elseif));
-                    $ifBlock->addParent($this->block);
-                    $elseBlock->addParent($this->block);
-                    $this->block = $this->parseNodes($elseif->stmts, $ifBlock);
-
-                    $this->block->children[] = new Op\Stmt\Jump($endBlock, $this->mapAttributes($elseif));
-                    $endBlock->addParent($this->block);
-                }
-
-                if ($node->else) {
-                    $elseBlock = $this->parseNodes($node->else->stmts, $elseBlock);
-                }
-                $elseBlock->children[] = new Op\Stmt\Jump($endBlock, $attrs);
-                $endBlock->addParent($elseBlock);
-                $this->block = $endBlock;
+                $this->parseIf($node);
                 return;
             case 'Stmt_InlineHTML':
                 $this->block->children[] = new Op\Terminal\Echo_($this->parseExprNode($node->value), $this->mapAttributes($node));
@@ -498,6 +445,60 @@ class Parser {
                 var_dump($node);
                 throw new \RuntimeException("Unknown Stmt Node Encountered : " . $node->getType());
         }
+    }
+
+    protected function parseIf(Node $node) {
+        $attrs = $this->mapAttributes($node);
+        $cond = $this->readVariable($this->parseExprNode($node->cond));
+        $ifBlock = new Block;
+        $elseBlock = new Block;
+        $endBlock = new Block;
+
+        $this->block->children[] = new Op\Stmt\JumpIf($cond, $ifBlock, $elseBlock, $attrs);
+        $ifBlock->addParent($this->block);
+        $elseBlock->addParent($this->block);
+
+        $this->block = $ifBlock;
+
+        $typeAssertions = $this->getTypeAssertionsForCond($node->cond);
+
+        $negativeAssertions = [];
+        foreach ($typeAssertions as $key => $assert) {
+            $negativeAssertions[$key] = $assert;
+            if ($assert['type'][0] === '!') {
+                $negativeAssertions[$key]['type'] = substr($assert['type'], 1);
+            } else {
+                $negativeAssertions[$key]['type'] = '!' . $assert['type'];
+            }
+            $var = $this->readVariable($assert['var']);
+            $this->block->children[] = $aop = new Op\Expr\TypeAssert($var, $assert['type']);
+            $aop->result = $this->writeVariable($assert['var']);
+            $typeAssertions[$key]['assert'] = $aop;
+        }
+        
+        $this->block = $this->parseNodes($node->stmts, $ifBlock);
+
+        $this->block->children[] = new Op\Stmt\Jump($endBlock, $attrs);
+        $endBlock->addParent($this->block);
+
+        $this->block = $elseBlock;
+        foreach ($negativeAssertions as $key => $assert) {
+            $var = $this->readVariable($assert['var']);
+            $this->block->children[] = $aop = new Op\Expr\TypeAssert($var, $assert['type']);
+        }
+
+        if ($node instanceof Node\Stmt\If_) {
+            foreach ($node->elseifs as $elseif) {
+                $this->parseIf($elseIf);
+            }
+            if ($node->else) {
+                $elseBlock = $this->parseNodes($node->else->stmts, $this->block);
+            }
+           }
+        $elseBlock->children[] = new Op\Stmt\Jump($endBlock, $attrs);
+        $endBlock->addParent($elseBlock);
+        $this->block = $endBlock;
+
     }
 
     /**
@@ -1158,6 +1159,76 @@ class Parser {
     protected function getTypeAssertionsForCond(Node $node) {
         $typeAssertions = [];
         switch ($node->getType()) {
+            case 'Expr_BinaryOp_BooleanAnd':
+                $leftAssert = $this->getTypeAssertionsForCond($node->left);
+                $rightAssert = $this->getTypeAssertionsForCond($node->right);
+                $assertVars = [];
+                foreach ($leftAssert as $assert) {
+                    $assertVars[$assert['var']->name->value] = $assert;
+                }
+                foreach ($rightAssert as $assert) {
+                    $name = $assert['var']->name->value;
+                    if (isset($assertVars[$name])) {
+                        // merge the asserts
+                        if ($assert['type'][0] === '!' && $assertVars[$name]['type'][0] === '!') {
+                            // Both are negative assertions, merge directly
+                            $assert['type'] .= '|' . substr($assertVars[$name]['type'], 1);
+                            $typeAssertions[] = $assert;
+                        } elseif ($assert['type'][0] !== '!' && $assertVars[$name]['type'][0] !== '!') {
+                            throw new \RuntimeException("Dual positive type assertion, doesn't make sense: {$assert['type']} and {$assertVars[$name]['type']}");
+                        } elseif ($assert['type'][0] === '!') {
+                            $typeAssertions[] = $assertVars[$name];
+                        } else {
+                            $typeAssertions[] = $assert;
+                        }
+
+                        // remove the var
+                        unset($assertVars[$name]);
+                    } else {
+                        $typeAssertions[] = $assert;
+                    }
+                    foreach ($assertVars as $assert) {
+                        $typeAssertions[] = $assert;
+                    }
+                }
+                break;
+            case 'Expr_BinaryOp_BooleanOr':
+                $leftAssert = $this->getTypeAssertionsForCond($node->left);
+                $rightAssert = $this->getTypeAssertionsForCond($node->right);
+                $assertVars = [];
+                foreach ($leftAssert as $assert) {
+                    $assertVars[$assert['var']->name->value] = $assert;
+                }
+                foreach ($rightAssert as $assert) {
+                    $name = $assert['var']->name->value;
+                    if (isset($assertVars[$name])) {
+                        // Only asserts in both follow
+                        // merge the asserts
+                        if ($assert['type'][0] === '!' && $assertVars[$name]['type'][0] === '!') {
+                            // Both are negative assertions, merge directly
+                            $assert['type'] .= '|' . substr($assertVars[$name]['type'], 1);
+                            $typeAssertions[] = $assert;
+                        } elseif ($assert['type'][0] !== '!' && $assertVars[$name]['type'][0] !== '!') {
+                            $assert['type'] .= '|' . $assertVars[$name]['type'];
+                            $typeAssertions[] = $assert;
+                        } elseif ($assert['type'][0] === '!') {
+                            // The positive assertion wins
+                            $typeAssertions[] = $assertVars[$name];
+                        } else {
+                            $typeAssertions[] = $assert;
+                        }
+
+                        // remove the var
+                        unset($assertVars[$name]);
+                    }
+                }
+                break;
+            case 'Expr_BooleanNot':
+                $typeAssertions = $this->getTypeAssertionsForCond($node->expr);
+                foreach ($typeAssertions as $key => $value) {
+                    $typeAssertions[$key]['type'] = '!' . $value['type'];
+                }
+                break;
             case 'Expr_Instanceof':
                 if (!$node->expr instanceof Node\Expr\Variable || !is_string($node->expr->name)) {
                     continue;
