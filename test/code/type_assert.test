@@ -55,12 +55,12 @@ Block#5
 Block#6
     Expr_TypeAssert<!float|int>
         expr: Var#6<$a>
-        result: Var#8
+        result: Var#8<$a>
     Stmt_Jump
         target: Block#7
 
 Block#7
-	Phi<Var#9<$a>>: = [Var#7<$a>,Var#6<$a>,]
+	Phi<Var#9<$a>>: = [Var#7<$a>,Var#8<$a>,]
     Expr_FuncCall
         name: LITERAL('var_dump')
         args: array

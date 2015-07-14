@@ -485,6 +485,7 @@ class Parser {
         foreach ($negativeAssertions as $key => $assert) {
             $var = $this->readVariable($assert['var']);
             $this->block->children[] = $aop = new Op\Expr\TypeAssert($var, $assert['type']);
+            $aop->result = $this->writeVariable($assert['var']);
         }
 
         if ($node instanceof Node\Stmt\If_) {
