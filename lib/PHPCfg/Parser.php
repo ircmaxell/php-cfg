@@ -1,15 +1,22 @@
 <?php
 
+/*
+ * This file is part of PHP-CFG, a Control flow graph implementation for PHP
+ *
+ * @copyright 2015 Anthony Ferrara. All rights reserved
+ * @license MIT See LICENSE at the root of the project for more info
+ */
+
 namespace PHPCfg;
 
 use PHPCfg\Operand\Literal;
 use PHPCfg\Operand\Temporary;
 use PHPCfg\Operand\Variable;
-use PhpParser\Parser as AstParser;
 use PhpParser\Node;
 use PhpParser\Node\Expr\BinaryOp as AstBinaryOp;
 use PhpParser\NodeTraverser as AstTraverser;
 use PhpParser\NodeVisitor\NameResolver;
+use PhpParser\Parser as AstParser;
 
 class Parser {
     const MODE_NONE = 0;
@@ -496,7 +503,8 @@ class Parser {
 
     /**
      * @param PhpParser\Node[] $expr
-     * @param int $readWrite
+     * @param int              $readWrite
+     *
      * @return PHPCfg\Operand[]
      */
     protected function parseExprList(array $expr, $readWrite = self::MODE_NONE) {
@@ -546,16 +554,16 @@ class Parser {
             $e = $this->readVariable($this->parseExprNode($expr->expr));
             $class = [
                 "Expr_AssignOp_BitwiseAnd" => Op\Expr\BinaryOp\BitwiseAnd::class,
-                "Expr_AssignOp_BitwiseOr" => Op\Expr\BinaryOp\BitwiseOr::class,
+                "Expr_AssignOp_BitwiseOr"  => Op\Expr\BinaryOp\BitwiseOr::class,
                 "Expr_AssignOp_BitwiseXor" => Op\Expr\BinaryOp\BitwiseXor::class,
-                "Expr_AssignOp_Concat" => Op\Expr\BinaryOp\Concat::class,
-                "Expr_AssignOp_Div" => Op\Expr\BinaryOp\Div::class,
-                "Expr_AssignOp_Minus" => Op\Expr\BinaryOp\Minus::class,
-                "Expr_AssignOp_Mod" => Op\Expr\BinaryOp\Mod::class,
-                "Expr_AssignOp_Mul" => Op\Expr\BinaryOp\Mul::class,
-                "Expr_AssignOp_Plus" => Op\Expr\BinaryOp\Plus::class,
-                "Expr_AssignOp_Pow" => Op\Expr\BinaryOp\Pow::class,
-                "Expr_AssignOp_ShiftLeft" => Op\Expr\BinaryOp\ShiftLeft::class,
+                "Expr_AssignOp_Concat"     => Op\Expr\BinaryOp\Concat::class,
+                "Expr_AssignOp_Div"        => Op\Expr\BinaryOp\Div::class,
+                "Expr_AssignOp_Minus"      => Op\Expr\BinaryOp\Minus::class,
+                "Expr_AssignOp_Mod"        => Op\Expr\BinaryOp\Mod::class,
+                "Expr_AssignOp_Mul"        => Op\Expr\BinaryOp\Mul::class,
+                "Expr_AssignOp_Plus"       => Op\Expr\BinaryOp\Plus::class,
+                "Expr_AssignOp_Pow"        => Op\Expr\BinaryOp\Pow::class,
+                "Expr_AssignOp_ShiftLeft"  => Op\Expr\BinaryOp\ShiftLeft::class,
                 "Expr_AssignOp_ShiftRight" => Op\Expr\BinaryOp\ShiftRight::class,
             ][$expr->getType()];
             if (empty($class)) {
@@ -575,29 +583,29 @@ class Parser {
             $left = $this->readVariable($this->parseExprNode($expr->left));
             $right = $this->readVariable($this->parseExprNode($expr->right));
             $class = [
-                "Expr_BinaryOp_BitwiseAnd" => Op\Expr\BinaryOp\BitwiseAnd::class,
-                "Expr_BinaryOp_BitwiseOr" => Op\Expr\BinaryOp\BitwiseOr::class,
-                "Expr_BinaryOp_BitwiseXor" => Op\Expr\BinaryOp\BitwiseXor::class,
-                "Expr_BinaryOp_Coalesce" => Op\Expr\BinaryOp\Coalesce::class,
-                "Expr_BinaryOp_Concat" => Op\Expr\BinaryOp\Concat::class,
-                "Expr_BinaryOp_Div" => Op\Expr\BinaryOp\Div::class,
-                "Expr_BinaryOp_Equal" => Op\Expr\BinaryOp\Equal::class,
-                "Expr_BinaryOp_Greater" => Op\Expr\BinaryOp\Greater::class,
+                "Expr_BinaryOp_BitwiseAnd"     => Op\Expr\BinaryOp\BitwiseAnd::class,
+                "Expr_BinaryOp_BitwiseOr"      => Op\Expr\BinaryOp\BitwiseOr::class,
+                "Expr_BinaryOp_BitwiseXor"     => Op\Expr\BinaryOp\BitwiseXor::class,
+                "Expr_BinaryOp_Coalesce"       => Op\Expr\BinaryOp\Coalesce::class,
+                "Expr_BinaryOp_Concat"         => Op\Expr\BinaryOp\Concat::class,
+                "Expr_BinaryOp_Div"            => Op\Expr\BinaryOp\Div::class,
+                "Expr_BinaryOp_Equal"          => Op\Expr\BinaryOp\Equal::class,
+                "Expr_BinaryOp_Greater"        => Op\Expr\BinaryOp\Greater::class,
                 "Expr_BinaryOp_GreaterOrEqual" => Op\Expr\BinaryOp\GreaterOrEqual::class,
-                "Expr_BinaryOp_Identical" => Op\Expr\BinaryOp\Identical::class,
-                "Expr_BinaryOp_LogicalXor" => Op\Expr\BinaryOp\LogicalXor::class,
-                "Expr_BinaryOp_Minus" => Op\Expr\BinaryOp\Minus::class,
-                "Expr_BinaryOp_Mod" => Op\Expr\BinaryOp\Mod::class,
-                "Expr_BinaryOp_Mul" => Op\Expr\BinaryOp\Mul::class,
-                "Expr_BinaryOp_NotEqual" => Op\Expr\BinaryOp\NotEqual::class,
-                "Expr_BinaryOp_NotIdentical" => Op\Expr\BinaryOp\NotIdentical::class,
-                "Expr_BinaryOp_Plus" => Op\Expr\BinaryOp\Plus::class,
-                "Expr_BinaryOp_Pow" => Op\Expr\BinaryOp\Pow::class,
-                "Expr_BinaryOp_ShiftLeft" => Op\Expr\BinaryOp\ShiftLeft::class,
-                "Expr_BinaryOp_ShiftRight" => Op\Expr\BinaryOp\ShiftRight::class,
-                "Expr_BinaryOp_Smaller" => Op\Expr\BinaryOp\Smaller::class,
+                "Expr_BinaryOp_Identical"      => Op\Expr\BinaryOp\Identical::class,
+                "Expr_BinaryOp_LogicalXor"     => Op\Expr\BinaryOp\LogicalXor::class,
+                "Expr_BinaryOp_Minus"          => Op\Expr\BinaryOp\Minus::class,
+                "Expr_BinaryOp_Mod"            => Op\Expr\BinaryOp\Mod::class,
+                "Expr_BinaryOp_Mul"            => Op\Expr\BinaryOp\Mul::class,
+                "Expr_BinaryOp_NotEqual"       => Op\Expr\BinaryOp\NotEqual::class,
+                "Expr_BinaryOp_NotIdentical"   => Op\Expr\BinaryOp\NotIdentical::class,
+                "Expr_BinaryOp_Plus"           => Op\Expr\BinaryOp\Plus::class,
+                "Expr_BinaryOp_Pow"            => Op\Expr\BinaryOp\Pow::class,
+                "Expr_BinaryOp_ShiftLeft"      => Op\Expr\BinaryOp\ShiftLeft::class,
+                "Expr_BinaryOp_ShiftRight"     => Op\Expr\BinaryOp\ShiftRight::class,
+                "Expr_BinaryOp_Smaller"        => Op\Expr\BinaryOp\Smaller::class,
                 "Expr_BinaryOp_SmallerOrEqual" => Op\Expr\BinaryOp\SmallerOrEqual::class,
-                "Expr_BinaryOp_Spaceship" => Op\Expr\BinaryOp\Spaceship::class,
+                "Expr_BinaryOp_Spaceship"      => Op\Expr\BinaryOp\Spaceship::class,
             ][$expr->getType()];
             if (empty($class)) {
                 throw new \RuntimeException("BinaryOp Not Found: " . $expr->getType());
@@ -607,13 +615,13 @@ class Parser {
         } elseif ($expr instanceof Node\Expr\Cast) {
             $e = $this->readVariable($this->parseExprNode($expr->expr));
             $class = [
-                "Expr_Cast_Array" => Op\Expr\Cast\Array_::class,
-                "Expr_Cast_Bool" => Op\Expr\Cast\Bool_::class,
+                "Expr_Cast_Array"  => Op\Expr\Cast\Array_::class,
+                "Expr_Cast_Bool"   => Op\Expr\Cast\Bool_::class,
                 "Expr_Cast_Double" => Op\Expr\Cast\Double::class,
-                "Expr_Cast_Int" => Op\Expr\Cast\Int_::class,
+                "Expr_Cast_Int"    => Op\Expr\Cast\Int_::class,
                 "Expr_Cast_Object" => Op\Expr\Cast\Object_::class,
                 "Expr_Cast_String" => Op\Expr\Cast\String_::class,
-                "Expr_Cast_Unset" => Op\Expr\Cast\Unset_::class,
+                "Expr_Cast_Unset"  => Op\Expr\Cast\Unset_::class,
 
             ][$expr->getType()];
             if (empty($class)) {
@@ -955,7 +963,7 @@ class Parser {
     private function mapAttributes(Node $expr) {
         return array_merge(
             [
-                "filename" => $this->fileName,
+                "filename"   => $this->fileName,
                 "doccomment" => $expr->getDocComment(),
             ],
             $expr->getAttributes()
@@ -1158,7 +1166,7 @@ class Parser {
                 if ($node->class instanceof Node\Name) {
                     // we have a type assertion
                     $typeAssertions[] = [
-                        'var' => new Operand\Variable(new Operand\Literal($node->expr->name)),
+                        'var'  => new Operand\Variable(new Operand\Literal($node->expr->name)),
                         'type' => $node->class->toString(),
                     ];
                 }
@@ -1190,7 +1198,7 @@ class Parser {
                 if (isset($assertionFunctions[$lname])) {
                     // it's an assertion!
                     $typeAssertions[] = [
-                        'var' => new Operand\Variable(new Operand\Literal($node->args[0]->value->name)),
+                        'var'  => new Operand\Variable(new Operand\Literal($node->args[0]->value->name)),
                         'type' => $assertionFunctions[$lname],
                     ];
                 }

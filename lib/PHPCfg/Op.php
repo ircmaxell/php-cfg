@@ -1,13 +1,20 @@
 <?php
 
+/*
+ * This file is part of PHP-CFG, a Control flow graph implementation for PHP
+ *
+ * @copyright 2015 Anthony Ferrara. All rights reserved
+ * @license MIT See LICENSE at the root of the project for more info
+ */
+
 namespace PHPCfg;
 
 abstract class Op {
     
-    protected $attributes = array();
+    protected $attributes = [];
     protected $writeVariables = [];
 
-    public function __construct(array $attributes = array()) {
+    public function __construct(array $attributes = []) {
         $this->attributes = $attributes;
     }
 

@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * This file is part of PHP-CFG, a Control flow graph implementation for PHP
+ *
+ * @copyright 2015 Anthony Ferrara. All rights reserved
+ * @license MIT See LICENSE at the root of the project for more info
+ */
+
 namespace PHPCfg\Op\Expr;
 
 use PHPCfg\Op\Expr;
@@ -10,7 +17,7 @@ class Array_ extends Expr {
     public $values;
     public $byRef;
 
-    public function __construct(array $keys, array $values, array $byRef, array $attributes = array()) {
+    public function __construct(array $keys, array $values, array $byRef, array $attributes = []) {
         parent::__construct($attributes);
         $this->keys = $keys;
         $this->values = $values;

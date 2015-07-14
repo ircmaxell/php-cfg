@@ -1,11 +1,18 @@
 <?php
 
+/*
+ * This file is part of PHP-CFG, a Control flow graph implementation for PHP
+ *
+ * @copyright 2015 Anthony Ferrara. All rights reserved
+ * @license MIT See LICENSE at the root of the project for more info
+ */
+
 namespace PHPCfg;
 
+use PHPCfg\Operand\BoundVariable;
 use PHPCfg\Operand\Literal;
 use PHPCfg\Operand\Temporary;
 use PHPCfg\Operand\Variable;
-use PHPCfg\Operand\BoundVariable;
 
 class Dumper {
     /** @var \SplObjectStorage Map of seen blocks to IDs */
@@ -125,6 +132,7 @@ class Dumper {
 
     /**
      * @param string $str
+     *
      * @return string
      */
     private function indent($str) {

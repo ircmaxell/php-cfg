@@ -1,8 +1,13 @@
 <?php
 
-namespace PHPCfg\Operand;
+/*
+ * This file is part of PHP-CFG, a Control flow graph implementation for PHP
+ *
+ * @copyright 2015 Anthony Ferrara. All rights reserved
+ * @license MIT See LICENSE at the root of the project for more info
+ */
 
-use PHPCfg\Operand;
+namespace PHPCfg\Operand;
 
 class BoundVariable extends Variable {
     const SCOPE_GLOBAL = 1;

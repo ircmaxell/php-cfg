@@ -1,15 +1,22 @@
 <?php
 
+/*
+ * This file is part of PHP-CFG, a Control flow graph implementation for PHP
+ *
+ * @copyright 2015 Anthony Ferrara. All rights reserved
+ * @license MIT See LICENSE at the root of the project for more info
+ */
+
 namespace PHPCfg\Op\Terminal;
 
-use PHPCfg\Operand;
 use PHPCfg\Op\Terminal;
+use PHPCfg\Operand;
 
 class Const_ extends Terminal {
     public $name;
     public $value;
 
-    public function __construct($name, Operand $value, array $attributes = array()) {
+    public function __construct($name, Operand $value, array $attributes = []) {
         parent::__construct($attributes);
         $this->name = $name;
         $this->value = $value;

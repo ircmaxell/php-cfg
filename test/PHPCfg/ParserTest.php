@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * This file is part of PHP-CFG, a Control flow graph implementation for PHP
+ *
+ * @copyright 2015 Anthony Ferrara. All rights reserved
+ * @license MIT See LICENSE at the root of the project for more info
+ */
+
 namespace PHPCfg;
 
 use PhpParser;
@@ -45,7 +52,7 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
         $str = trim($str);
 
         // normalize EOL to \n
-        $str = str_replace(array("\r\n", "\r"), "\n", $str);
+        $str = str_replace(["\r\n", "\r"], "\n", $str);
 
         // trim right side of all lines
         return implode("\n", array_map('rtrim', explode("\n", $str)));

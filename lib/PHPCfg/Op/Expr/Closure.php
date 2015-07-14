@@ -1,10 +1,17 @@
 <?php
 
+/*
+ * This file is part of PHP-CFG, a Control flow graph implementation for PHP
+ *
+ * @copyright 2015 Anthony Ferrara. All rights reserved
+ * @license MIT See LICENSE at the root of the project for more info
+ */
+
 namespace PHPCfg\Op\Expr;
 
+use PhpCfg\Block;
 use PHPCfg\Op\CallableOp;
 use PHPCfg\Op\Expr;
-use PhpCfg\Block;
 
 class Closure extends Expr implements CallableOp {
     public $byRef;
@@ -19,7 +26,7 @@ class Closure extends Expr implements CallableOp {
 
     public $useVars;
 
-    public function __construct(array $params, array $useVars, $byRef, $returnType, Block $stmts, array $attributes = array()) {
+    public function __construct(array $params, array $useVars, $byRef, $returnType, Block $stmts, array $attributes = []) {
         parent::__construct($attributes);
         $this->params = $params;
         $this->useVars = $useVars;

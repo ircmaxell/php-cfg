@@ -1,16 +1,23 @@
 <?php
 
+/*
+ * This file is part of PHP-CFG, a Control flow graph implementation for PHP
+ *
+ * @copyright 2015 Anthony Ferrara. All rights reserved
+ * @license MIT See LICENSE at the root of the project for more info
+ */
+
 namespace PHPCfg\Op;
 
-use PHPCfg\Operand;
 use PHPCfg\Op;
+use PHPCfg\Operand;
 
 class Phi extends Op {
     public $vars = [];
     public $result;
     protected $writeVariables = ['result'];
 
-    public function __construct(Operand $result, array $attributes = array()) {
+    public function __construct(Operand $result, array $attributes = []) {
         parent::__construct($attributes);
         $this->result = $result;
     }

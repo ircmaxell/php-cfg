@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * This file is part of PHP-CFG, a Control flow graph implementation for PHP
+ *
+ * @copyright 2015 Anthony Ferrara. All rights reserved
+ * @license MIT See LICENSE at the root of the project for more info
+ */
+
 namespace PHPCfg\Op\Expr;
 
 use PHPCfg\Block;
@@ -17,7 +24,7 @@ class Param extends Expr {
     // A helper
     public $function;
 
-    public function __construct(Operand $name, $type, $byRef, $variadic, Operand $defaultVar = null, Block $defaultBlock = null, array $attributes = array()) {
+    public function __construct(Operand $name, $type, $byRef, $variadic, Operand $defaultVar = null, Block $defaultBlock = null, array $attributes = []) {
         parent::__construct($attributes);
         $this->result->original = $name;
         $this->name = $name;
