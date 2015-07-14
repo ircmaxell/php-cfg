@@ -19,6 +19,7 @@ class Empty_ extends Expr {
     }
 
     public function getSubBlocks() {
-        return ['expr'];
+        // We don't parse sub-blocks like we normally would
+        return [];
     }
 }

@@ -67,7 +67,7 @@ class LoopResolver extends NodeVisitorAbstract {
     }
 
     protected function makeLabel() {
-        return 'compiled_label_' . mt_rand(0, mt_getrandmax()) . self::$labelCounter++;
+        return 'compiled_label_' . mt_rand(0, mt_getrandmax()) . '_' . self::$labelCounter++;
     }
 
 }

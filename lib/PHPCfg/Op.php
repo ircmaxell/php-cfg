@@ -38,6 +38,10 @@ abstract class Op {
         return array_key_exists($key, $this->attributes);
     }
 
+    public function getAttributes() {
+        return $this->attributes;
+    }
+
     abstract public function getVariableNames();
 
     abstract public function getSubBlocks();

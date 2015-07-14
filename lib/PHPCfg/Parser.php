@@ -43,14 +43,21 @@ class Parser {
         $this->fileName = $fileName;
         $ast = $this->astParser->parse($code);
         $ast = $this->astTraverser->traverse($ast);
+
         $this->parseNodes($ast, $start = new Block);
         foreach ($this->incompletePhis as $block) {
         	// sealBlock()
+            if ($block->dead) {
+                continue;
+            }
         	$this->sealedBlocks->attach($block);
         	if (isset($this->incompletePhis[$block])) {
             	foreach ($this->incompletePhis[$block] as $name => $phi) {
             		// add phi operands
             		foreach ($block->parents as $parent) {
+                        if ($parent->dead) {
+                            continue;
+                        }
 	            		$var = $this->readVariableName($name, $parent);
             			$phi->addOperand($var);
         			}
@@ -66,9 +73,8 @@ class Parser {
         
         $tmp = $this->block;
         $this->block = $block;
-        $count = count($nodes);
-        for ($i = 0; $i < $count; $i++) {
-            $this->parseNode($nodes[$i]);
+        foreach ($nodes as $node) {
+            $this->parseNode($node);
         }
         $end = $this->block;
         $this->block = $tmp;
@@ -259,6 +265,7 @@ class Parser {
                 $this->block->children[] = new Op\Stmt\Jump($this->labels[$node->name], $this->mapAttributes($node));
                 $this->labels[$node->name]->addParent($this->block);
                 $this->block = new Block;
+                $this->block->dead = true;
                 return;
             case 'Stmt_HaltCompiler':
                 $this->block->children[] = new Op\Terminal\Echo_(
@@ -309,7 +316,7 @@ class Parser {
                     $this->block->children[] = new Op\Stmt\JumpIf($cond, $ifBlock, $elseBlock, $this->mapAttributes($elseif));
                     $ifBlock->addParent($this->block);
                     $elseBlock->addParent($this->block);
-                    $this->block = $this->parseNodes($node->stmts, $ifBlock);
+                    $this->block = $this->parseNodes($elseif->stmts, $ifBlock);
 
                     $this->block->children[] = new Op\Stmt\Jump($endBlock, $this->mapAttributes($elseif));
                     $endBlock->addParent($this->block);
@@ -344,6 +351,7 @@ class Parser {
                 $this->block->children[] = new Op\Stmt\Jump($this->labels[$node->name], $this->mapAttributes($node));
                 $this->labels[$node->name]->addParent($this->block);
                 $this->block = $this->labels[$node->name];
+                assert(empty($this->block->children));
                 break;
             case 'Stmt_Namespace':
                 // ignore namespace nodes
@@ -378,6 +386,9 @@ class Parser {
                     $expr = $this->readVariable($this->parseExprNode($node->expr));
                 }
                 $this->block->children[] = new Op\Terminal\Return_($expr, $this->mapAttributes($node));
+                // Dump everything after the return
+                $this->block = new Block;
+                $this->block->dead = true;
                 return;
             case 'Stmt_Static':
                 foreach ($node->vars as $var) {
@@ -401,12 +412,26 @@ class Parser {
                 $cond = $this->readVariable($this->parseExprNode($node->cond));
                 $cases = [];
                 $targets = [];
+                $block = false;
+                $endBlock = new Block;
                 foreach ($node->cases as $case) {
                     $targets[] = $caseBlock = new Block($this->block);
+                    if ($block && !$block->dead) {
+                        // wire up!
+                        $block->children[] = new Op\Stmt\Jump($caseBlock);
+                        $caseBlock->addParent($block);
+                    }
                     $cases[] = [$this->parseExprNode($case->cond)];
-                    $this->parseNodes($case->stmts, $caseBlock);
+                    $block = $this->parseNodes($case->stmts, $caseBlock);
                 }
                 $this->block->children[] = new Op\Stmt\Switch_($cond, $cases, $targets, $this->mapAttributes($node));
+                if ($block && !$block->dead) {
+                    // wire end of block to endblock
+                    $block->children[] = new Op\Stmt\Jump($endBlock);
+                    $endBlock->addParent($block);
+                }
+                $endBlock->addParent($this->block);
+                $this->block = $endBlock;
                 return;
             case 'Stmt_Throw':
                 $this->block->children[] = new Op\Terminal\Throw_(
@@ -414,6 +439,7 @@ class Parser {
                     $this->mapAttributes($node)
                 );
                 $this->block = new Block; // dead code
+                $this->block->dead = true;
                 break;
             case 'Stmt_Trait':
             	$name = $this->parseExprNode($node->namespacedName);
@@ -961,7 +987,7 @@ class Parser {
             return $var;
         }
         $var = new Operand\Temporary(new Variable(new Literal($name)));
-        $phi = new Op\Phi($var);
+        $phi = new Op\Phi($var, ["block" => $block]);
         $phi->result->ops[] = $phi;
         $this->writeKeyToArray("incompletePhis", $block, $name, $phi);
         $this->writeVariableName($name, $var, $block);
@@ -1001,11 +1027,6 @@ class Parser {
             foreach ($toReplace as $block) {
                 $toReplace->detach($block);
                 $replaced->attach($block);
-                foreach ($block->phi as $key => $phi) {
-                    if ($this->tryRemoveTrivialPhi($phi, $block)) {
-                        unset($block->phi[$key]);
-                    }
-                }
                 foreach ($block->children as $child) {
                     foreach ($child->getSubBlocks() as $name) {
                         $subBlocks = $child->$name;

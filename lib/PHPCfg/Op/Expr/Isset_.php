@@ -19,6 +19,7 @@ class Isset_ extends Expr {
     }
 
     public function getSubBlocks() {
-        return ['expr'];
+        // We don't parse subblocks like we normally do
+        return [];
     }
 }
