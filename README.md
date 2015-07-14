@@ -1,3 +1,5 @@
+![[Build Status](https://travis-ci.org/ircmaxell/php-cfg.svg)](https://travis-ci.org/ircmaxell/php-cfg)
+
 # PHP-CFG
 
 A Control-Flow-Graph implementation in Pure PHP.
