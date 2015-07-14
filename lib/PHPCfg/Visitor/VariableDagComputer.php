@@ -19,19 +19,19 @@ class VariableDagComputer implements Visitor {
         foreach ($op->getVariableNames() as $name) {
             $var = $op->$name;
             if (is_null($var)) {
-            	continue;
+                continue;
             }
             if (!is_array($var)) {
                 $var = [$var];
             }
             foreach ($var as $v) {
-            	if (is_null($v)) {
-            		continue;
-            	}
-            	assert($v instanceof \PHPCfg\Operand);
-            	if (!$v instanceof \PHPCfg\Operand) {
-            		var_dump($name, $var);
-            	}
+                if (is_null($v)) {
+                    continue;
+                }
+                assert($v instanceof \PHPCfg\Operand);
+                if (!$v instanceof \PHPCfg\Operand) {
+                    var_dump($name, $var);
+                }
                 if ($op->isWriteVariable($name)) {
                     $v->ops[] = $op;
                 } else {
@@ -41,7 +41,7 @@ class VariableDagComputer implements Visitor {
         }
         if ($op instanceof Op\CallableOp) {
             foreach ($op->getParams() as $param) {
-                $param->result->ops[] = $param;  
+                $param->result->ops[] = $param;
             }
         }
     }

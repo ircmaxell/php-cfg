@@ -69,26 +69,26 @@ class Dumper {
             $result .= $this->indent($this->dumpOperand($op->$varName));
         }
         foreach ($op->getSubBlocks() as $blockName) {
-        	$sub = $op->$blockName;
-        	if (is_null($sub)) {
-        		continue;
-        	}
-        	if (!is_array($sub)) {
-        		$sub = [$sub];
-        	}
-        	foreach ($sub as $subBlock) {
-            	$result .= "\n    $blockName: " . $this->indent($this->dumpBlockRef($subBlock));
-        	}
+            $sub = $op->$blockName;
+            if (is_null($sub)) {
+                continue;
+            }
+            if (!is_array($sub)) {
+                $sub = [$sub];
+            }
+            foreach ($sub as $subBlock) {
+                $result .= "\n    $blockName: " . $this->indent($this->dumpBlockRef($subBlock));
+            }
         }
         return $result;
     }
 
     private function dumpOperand($var) {
-    	$type = isset($var->type) ? "<{$var->type}>" : "";
+        $type = isset($var->type) ? "<{$var->type}>" : "";
         if ($var instanceof Literal) {
             return "LITERAL{$type}(" . var_export($var->value, true) . ")";
 
-        } else if ($var instanceof Variable) {
+        } elseif ($var instanceof Variable) {
             assert($var->name instanceof Literal);
             $prefix = "{$type}$";
             if ($var instanceof BoundVariable) {
@@ -101,19 +101,19 @@ class Dumper {
                     case BoundVariable::SCOPE_LOCAL:
                         return "local<{$prefix}{$var->name->value}>";
                     case BoundVariable::SCOPE_OBJECT:
-                    	return "this<{$prefix}{$var->name->value}>";
+                        return "this<{$prefix}{$var->name->value}>";
                     default:
                         throw new \LogicException("Unknown bound variable scope");
                 }
             }
             
             return $prefix . $var->name->value . $type;
-        } else if ($var instanceof Temporary) {
+        } elseif ($var instanceof Temporary) {
             if ($var->original) {
                 return "Var{$type}#" . $this->getVarId($var) . "<" . $this->dumpOperand($var->original) . ">";
             }
             return "Var{$type}#" . $this->getVarId($var);
-        } else if (is_array($var)) {
+        } elseif (is_array($var)) {
             $result = "array" . $type;
             foreach ($var as $k => $v) {
                 $result .= "\n    $k: " . $this->indent($this->dumpOperand($v));

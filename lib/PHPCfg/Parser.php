@@ -1,6 +1,7 @@
 <?php
 
 namespace PHPCfg;
+
 use PHPCfg\Operand\Literal;
 use PHPCfg\Operand\Temporary;
 use PHPCfg\Operand\Variable;
@@ -31,8 +32,8 @@ class Parser {
     public function __construct(AstParser $astParser, AstTraverser $astTraverser = null) {
         $this->astParser = $astParser;
         if (!$astTraverser) {
-            $astTraverser = new AstTraverser; 
-            $astTraverser->addVisitor(new NameResolver); 
+            $astTraverser = new AstTraverser;
+            $astTraverser->addVisitor(new NameResolver);
         }
         $this->astTraverser = $astTraverser;
         $this->astTraverser->addVisitor(new AstVisitor\LoopResolver);
@@ -50,24 +51,24 @@ class Parser {
 
         $this->parseNodes($ast, $start = new Block);
         foreach ($this->incompletePhis as $block) {
-        	// sealBlock()
+            // sealBlock()
             if ($block->dead) {
                 continue;
             }
-        	$this->sealedBlocks->attach($block);
-        	if (isset($this->incompletePhis[$block])) {
-            	foreach ($this->incompletePhis[$block] as $name => $phi) {
-            		// add phi operands
-            		foreach ($block->parents as $parent) {
+            $this->sealedBlocks->attach($block);
+            if (isset($this->incompletePhis[$block])) {
+                foreach ($this->incompletePhis[$block] as $name => $phi) {
+                    // add phi operands
+                    foreach ($block->parents as $parent) {
                         if ($parent->dead) {
                             continue;
                         }
-	            		$var = $this->readVariableName($name, $parent);
-            			$phi->addOperand($var);
-        			}
-                	$block->phi[] = $phi;
-            	}
-        	}
+                        $var = $this->readVariableName($name, $parent);
+                        $phi->addOperand($var);
+                    }
+                    $block->phi[] = $phi;
+                }
+            }
         }
         $this->removeTrivialPhi($start);
         return $start;
@@ -111,14 +112,14 @@ class Parser {
                 }
                 foreach ($node->consts as $const) {
                     $this->block->children[] = new Op\Terminal\Const_(
-                        $this->parseExprNode(strtolower($this->currentClass->value) . '::' . $const->name), 
-                        $this->parseExprNode($const->value), 
+                        $this->parseExprNode(strtolower($this->currentClass->value) . '::' . $const->name),
+                        $this->parseExprNode($const->value),
                         $this->mapAttributes($node)
                     );
                 }
                 return;
             case 'Stmt_ClassMethod':
-            	if (!$this->currentClass instanceof Operand) {
+                if (!$this->currentClass instanceof Operand) {
                     throw new \RuntimeException("Unknown current class");
                 }
                 $params = $this->parseParameterList($node->params);
@@ -133,7 +134,7 @@ class Parser {
                     $block = null;
                 }
                 $this->block->children[] = $func = new Op\Stmt\ClassMethod(
-                	$this->currentClass,
+                    $this->currentClass,
                     $this->parseExprNode($node->name),
                     $params,
                     $node->byRef,
@@ -150,8 +151,8 @@ class Parser {
                 foreach ($node->consts as $const) {
 
                     $this->block->children[] = new Op\Terminal\Const_(
-                        $this->parseExprNode($const->namespacedName), 
-                        $this->parseExprNode($const->value), 
+                        $this->parseExprNode($const->namespacedName),
+                        $this->parseExprNode($const->value),
                         $this->mapAttributes($node)
                     );
                 }
@@ -178,7 +179,7 @@ class Parser {
             case 'Stmt_Echo':
                 foreach ($node->exprs as $expr) {
                     $this->block->children[] = new Op\Terminal\Echo_(
-                        $this->readVariable($this->parseExprNode($expr)), 
+                        $this->readVariable($this->parseExprNode($expr)),
                         $this->mapAttributes($expr)
                     );
                 }
@@ -257,7 +258,7 @@ class Parser {
             case 'Stmt_Global':
                 foreach ($node->vars as $var) {
                     $this->block->children[] = new Op\Terminal\GlobalVar(
-                        $this->writeVariable($this->parseExprNode($var->name)), 
+                        $this->writeVariable($this->parseExprNode($var->name)),
                         $this->mapAttributes($node)
                     );
                 }
@@ -273,7 +274,7 @@ class Parser {
                 return;
             case 'Stmt_HaltCompiler':
                 $this->block->children[] = new Op\Terminal\Echo_(
-                    $this->readVariable(new Operand\Literal($node->remaining)), 
+                    $this->readVariable(new Operand\Literal($node->remaining)),
                     $this->mapAttributes($node)
                 );
                 return;
@@ -311,7 +312,7 @@ class Parser {
                 $endBlock->addParent($this->block);
 
                 foreach ($node->elseifs as $elseif) {
-                	$this->block = $elseBlock;
+                    $this->block = $elseBlock;
                     $cond = $this->readVariable($this->parseExprNode($elseif->cond, $this->mapAttributes($elseif)));
 
                     $ifBlock = new Block;
@@ -405,9 +406,9 @@ class Parser {
                         $this->block = $tmp;
                     }
                     $this->block->children[] = new Op\Terminal\StaticVar(
-                        $this->writeVariable($this->parseExprNode($var->name)), 
-                        $defaultBlock, 
-                        $defaultVar, 
+                        $this->writeVariable($this->parseExprNode($var->name)),
+                        $defaultBlock,
+                        $defaultVar,
                         $this->mapAttributes($node)
                     );
                 }
@@ -439,14 +440,14 @@ class Parser {
                 return;
             case 'Stmt_Throw':
                 $this->block->children[] = new Op\Terminal\Throw_(
-                    $this->readVariable($this->parseExprNode($node->expr)), 
+                    $this->readVariable($this->parseExprNode($node->expr)),
                     $this->mapAttributes($node)
                 );
                 $this->block = new Block; // dead code
                 $this->block->dead = true;
                 break;
             case 'Stmt_Trait':
-            	$name = $this->parseExprNode($node->namespacedName);
+                $name = $this->parseExprNode($node->namespacedName);
                 $old = $this->currentClass;
                 $this->currentClass = $name;
                 $this->block->children[] = new Op\Stmt\Trait_(
@@ -464,7 +465,7 @@ class Parser {
                 return;
             case 'Stmt_Unset':
                 $this->block->children[] = new Op\Terminal\Unset_(
-                    $this->parseExprList($node->vars, self::MODE_WRITE), 
+                    $this->parseExprList($node->vars, self::MODE_WRITE),
                     $this->mapAttributes($node)
                 );
                 return;
@@ -517,14 +518,14 @@ class Parser {
             $list = $this->parseExprList($expr);
             return end($list);
         } elseif ($expr instanceof Node\Expr\Variable) {
-        	if ($expr->name === "this") {
-        		return new Operand\BoundVariable(
-        			$this->parseExprNode($expr->name),
-        			false,
-        			Operand\BoundVariable::SCOPE_OBJECT,
-        			$this->currentClass
-        		);
-        	}
+            if ($expr->name === "this") {
+                return new Operand\BoundVariable(
+                    $this->parseExprNode($expr->name),
+                    false,
+                    Operand\BoundVariable::SCOPE_OBJECT,
+                    $this->currentClass
+                );
+            }
             return new Variable($this->parseExprNode($expr->name));
         } elseif ($expr instanceof Node\Name) {
             $isReserved = in_array(strtolower($expr->getLast()), ["int", "string", "array", "callable", "float", "bool"]);
@@ -567,7 +568,7 @@ class Parser {
         } elseif ($expr instanceof Node\Expr\BinaryOp) {
             if ($expr instanceof AstBinaryOp\LogicalAnd || $expr instanceof AstBinaryOp\BooleanAnd) {
                 return $this->parseShortCircuiting($expr, false);
-            } else if ($expr instanceof AstBinaryOp\LogicalOr || $expr instanceof AstBinaryOp\BooleanOr) {
+            } elseif ($expr instanceof AstBinaryOp\LogicalOr || $expr instanceof AstBinaryOp\BooleanOr) {
                 return $this->parseShortCircuiting($expr, true);
             }
 
@@ -735,7 +736,7 @@ class Parser {
             case 'Expr_Instanceof':
                 $op = new Op\Expr\InstanceOf_(
                     $this->readVariable($this->parseExprNode($expr->expr)),
-                    $this->readVariable($this->parseExprNode($expr->class)), 
+                    $this->readVariable($this->parseExprNode($expr->class)),
                     $attrs
                 );
                 break;
@@ -755,8 +756,8 @@ class Parser {
                 break;
             case 'Expr_New':
                 $op = new Op\Expr\New_(
-                    $this->readVariable($this->parseExprNode($expr->class)), 
-                    $this->parseExprList($expr->args, self::MODE_READ), 
+                    $this->readVariable($this->parseExprNode($expr->class)),
+                    $this->parseExprList($expr->args, self::MODE_READ),
                     $attrs
                 );
                 break;
@@ -793,8 +794,8 @@ class Parser {
                 break;
             case 'Expr_PropertyFetch':
                 $op = new Op\Expr\PropertyFetch(
-                    $this->readVariable($this->parseExprNode($expr->var)), 
-                    $this->readVariable($this->parseExprNode($expr->name)), 
+                    $this->readVariable($this->parseExprNode($expr->var)),
+                    $this->readVariable($this->parseExprNode($expr->name)),
                     $attrs
                 );
                 break;
@@ -808,8 +809,8 @@ class Parser {
                 break;
             case 'Expr_StaticPropertyFetch':
                 $op = new Op\Expr\StaticPropertyFetch(
-                    $this->readVariable($this->parseExprNode($expr->class)), 
-                    $this->readVariable($this->parseExprNode($expr->name)), 
+                    $this->readVariable($this->parseExprNode($expr->class)),
+                    $this->readVariable($this->parseExprNode($expr->name)),
                     $attrs
                 );
                 break;
@@ -956,16 +957,16 @@ class Parser {
             [
                 "filename" => $this->fileName,
                 "doccomment" => $expr->getDocComment(),
-            ], 
+            ],
             $expr->getAttributes()
         );
     }
 
     private function readVariable(Operand $var) {
-    	if ($var instanceof Operand\BoundVariable) {
-    		// bound variables are immune to SSA
-    		return $var;
-    	}
+        if ($var instanceof Operand\BoundVariable) {
+            // bound variables are immune to SSA
+            return $var;
+        }
         if ($var instanceof Operand\Variable) {
             return $this->readVariableName($this->getVariableName($var), $this->block);
         }
@@ -997,7 +998,7 @@ class Parser {
 
     private function readVariableRecursive($name, Block $block) {
         if ($this->sealedBlocks->contains($block) && count($block->parents) === 1) {
-            $var = $this->readVariableName($name, $block->parents[0]); 
+            $var = $this->readVariableName($name, $block->parents[0]);
             $this->writeVariableName($name, $var, $block);
             return $var;
         }
@@ -1042,6 +1043,11 @@ class Parser {
             foreach ($toReplace as $block) {
                 $toReplace->detach($block);
                 $replaced->attach($block);
+                foreach ($block->phi as $key => $phi) {
+                    if ($this->tryRemoveTrivialPhi($phi, $block)) {
+                        unset($block->phi[$key]);
+                    }
+                }
                 foreach ($block->children as $child) {
                     foreach ($child->getSubBlocks() as $name) {
                         $subBlocks = $child->$name;
@@ -1159,7 +1165,7 @@ class Parser {
                 break;
             case 'Expr_FuncCall':
                 if (
-                       !$node->name instanceof Node\Name 
+                       !$node->name instanceof Node\Name
                     || !isset($node->args[0])
                     || !$node->args[0]->value instanceof Node\Expr\Variable) {
                     continue;

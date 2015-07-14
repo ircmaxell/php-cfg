@@ -19,8 +19,20 @@ class Phi extends Op {
         if ($op === $this->result) {
             return;
         }
-        if (!in_array($op, $this->vars, true)) {
+        if (!$this->hasOperand($op)) {
             $this->vars[] = $op;
+        }
+    }
+
+    public function hasOperand(Operand $op) {
+        return in_array($op, $this->vars, true);
+    }
+
+    public function removeOperand(Operand $op) {
+        foreach ($this->vars as $key => $value) {
+            if ($op === $value) {
+                unset($this->vars[$key]);
+            }
         }
     }
 

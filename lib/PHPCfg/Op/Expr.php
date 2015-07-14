@@ -6,7 +6,6 @@ use PHPCfg\Op;
 use PHPCfg\Operand\Temporary;
 use PHPCfg\Operand;
 
-
 abstract class Expr extends Op {
     public $result;
 

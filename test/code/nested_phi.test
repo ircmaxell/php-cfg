@@ -1,0 +1,73 @@
+<?php
+
+$a = 1;
+foreach ([1, 2, 3] as $b) {
+    if ($a > 0) {
+        $a += $b;
+    }
+}
+echo $a;
+
+-----
+Block#1
+    Expr_Assign
+        var: Var#1<$a>
+        expr: LITERAL(1)
+        result: Var#2
+    Expr_Array
+        keys: array
+            0: UNKNOWN
+            1: UNKNOWN
+            2: UNKNOWN
+        values: array
+            0: LITERAL(1)
+            1: LITERAL(2)
+            2: LITERAL(3)
+        result: Var#3
+    Iterator_Reset
+        var: Var#3
+    Stmt_Jump
+        target: Block#2
+
+Block#2
+	Phi<Var#4<$a>>: = [Var#1<$a>,Var#5<$a>,]
+    Iterator_Valid
+        var: Var#3
+        result: Var#6
+    Stmt_JumpIf
+        cond: Var#6
+        if: Block#3
+        else: Block#4
+
+Block#3
+    Iterator_Value
+        var: Var#3
+        result: Var#7
+    Expr_Assign
+        var: Var#8<$b>
+        expr: Var#7
+        result: Var#9
+    Expr_BinaryOp_Greater
+        left: Var#4<$a>
+        right: LITERAL(0)
+        result: Var#10
+    Stmt_JumpIf
+        cond: Var#10
+        if: Block#5
+        else: Block#2
+
+Block#4
+    Terminal_Echo
+        expr: Var#4<$a>
+
+Block#5
+    Expr_BinaryOp_Plus
+        left: Var#4<$a>
+        right: Var#8<$b>
+        result: Var#11
+    Expr_Assign
+        var: Var#5<$a>
+        expr: Var#11
+        result: Var#12
+    Stmt_Jump
+        target: Block#2

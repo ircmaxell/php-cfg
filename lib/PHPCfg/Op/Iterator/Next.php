@@ -6,7 +6,7 @@ use PHPCfg\Op\Terminal;
 use PhpCfg\Operand;
 
 class Next extends Terminal {
-	public $var;
+    public $var;
 
     protected $writeVariables = ['var'];
 

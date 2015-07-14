@@ -7,20 +7,20 @@ use PHPCfg\Op;
 use PHPCfg\Block;
 
 class VariableFinder implements Visitor{
-	protected $variables;
+    protected $variables;
 
-	public function __construct() {
-		$this->variables = new \SplObjectStorage;
-	}
+    public function __construct() {
+        $this->variables = new \SplObjectStorage;
+    }
 
-	public function getVariables() {
-		return $this->variables;
-	}
-	
+    public function getVariables() {
+        return $this->variables;
+    }
+    
     public function enterBlock(Block $block, Block $prior = null) {
-    	foreach ($block->phi as $phi) {
-    		$this->enterOp($phi, $block);
-    	}
+        foreach ($block->phi as $phi) {
+            $this->enterOp($phi, $block);
+        }
     }
 
     public function enterOp(Op $op, Block $block) {
@@ -30,9 +30,9 @@ class VariableFinder implements Visitor{
                 $var = [$var];
             }
             foreach ($var as $v) {
-            	if (is_null($v)) {
-            		continue;
-            	}
+                if (is_null($v)) {
+                    continue;
+                }
                 $this->variables->attach($v);
             }
         }
