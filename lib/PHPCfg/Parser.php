@@ -180,7 +180,7 @@ class Parser {
                 }
                 return;
             case 'Stmt_For':
-                $this->parseExprList($node->init);
+                $this->parseExprList($node->init, "read");
                 $loopInit = $this->block->create();
                 $loopBody = $this->block->create();
                 $loopEnd = $this->block->create();
@@ -196,7 +196,7 @@ class Parser {
                 $loopBody->addParent($this->block);
                 $loopEnd->addParent($this->block);
                 $this->block = $this->parseNodes($node->stmts, $loopBody);
-                $this->parseExprList($node->loop);
+                $this->parseExprList($node->loop, "read");
                 $this->block->children[] = new Op\Stmt\Jump($loopInit, $this->mapAttributes($node));
                 $loopInit->addParent($this->block);
                 $this->block = $loopEnd;
@@ -459,12 +459,8 @@ class Parser {
                 // TODO: implement this!!!
                 return;
             case 'Stmt_Unset':
-                $vars = [];
-                foreach ($this->parseExprList($node->vars) as $var) {
-                    $vars[] = $this->writeVariable($var);
-                }
                 $this->block->children[] = new Op\Terminal\Unset_(
-                    $vars, 
+                    $this->parseExprList($node->vars, "write"), 
                     $this->mapAttributes($node)
                 );
                 return;
@@ -493,8 +489,14 @@ class Parser {
         }
     }
 
-    protected function parseExprList(array $expr) {
-        return array_map([$this, 'parseExprNode'], $expr);
+    protected function parseExprList(array $expr, $readWrite = false) {
+        $vars = array_map([$this, 'parseExprNode'], $expr);
+        if ($readWrite === "read") {
+            $vars = array_map([$this, 'readVariable'], $vars);
+        } elseif ($readWrite === "write") {
+            $vars = array_map([$this, 'writeVariable'], $vars);
+        }
+        return $vars;
     }
 
     protected function parseExprNode($expr) {
@@ -714,7 +716,7 @@ class Parser {
             case 'Expr_FuncCall':
                 $op = new Op\Expr\FuncCall(
                     $this->parseExprNode($expr->name),
-                    $this->parseExprList($expr->args),
+                    $this->parseExprList($expr->args, true),
                     $attrs
                 );
                 break;
@@ -732,20 +734,20 @@ class Parser {
                 $op = new Op\Expr\Isset_($this->parseNodes($expr->vars, new Block), $attrs);
                 break;
             case 'Expr_List':
-                $op = new Op\Expr\List_($this->parseExprList($expr->vars), $attrs);
+                $op = new Op\Expr\List_($this->parseExprList($expr->vars, "write"), $attrs);
                 break;
             case 'Expr_MethodCall':
                 $op = new Op\Expr\MethodCall(
                     $this->readVariable($this->parseExprNode($expr->var)),
                     $this->readVariable($this->parseExprNode($expr->name)),
-                    $this->parseExprList($expr->args),
+                    $this->parseExprList($expr->args, "read"),
                     $attrs
                 );
                 break;
             case 'Expr_New':
                 $op = new Op\Expr\New_(
                     $this->readVariable($this->parseExprNode($expr->class)), 
-                    $this->parseExprList($expr->args), 
+                    $this->parseExprList($expr->args, "read"), 
                     $attrs
                 );
                 break;
@@ -791,7 +793,7 @@ class Parser {
                 $op = new Op\Expr\StaticCall(
                     $this->readVariable($this->parseExprNode($expr->class)),
                     $this->readVariable($this->parseExprNode($expr->name)),
-                    $this->parseExprList($expr->args),
+                    $this->parseExprList($expr->args, "read"),
                     $attrs
                 );
                 break;
@@ -809,6 +811,8 @@ class Parser {
                 $endBlock = $this->block->create();
                 $result = new Temporary;
                 $this->block->children[] = new Op\Stmt\JumpIf($cond, $ifBlock, $elseBlock, $attrs);
+                $ifBlock->addParent($this->block);
+                $elseBlock->addParent($this->block);
                 $this->block = $ifBlock;
                 if ($expr->if) {
                     $this->block->children[] = new Op\Expr\Assign($result, $this->parseExprNode($expr->if), $attrs);
@@ -816,9 +820,11 @@ class Parser {
                     $this->block->children[] = new Op\Expr\Assign($result, $cond, $attrs);
                 }
                 $this->block->children[] = new Op\Stmt\Jump($endBlock, $attrs);
+                $elseBlock->addParent($this->block);
                 $this->block = $elseBlock;
                 $this->block->children[] = new Op\Expr\Assign($result, $this->parseExprNode($expr->else), $attrs);
                 $elseBlock->children[] = new Op\Stmt\Jump($endBlock, $attrs);
+                $endBlock->addParent($elseBlock);
                 $this->block = $endBlock;
                 return $result;
             case 'Expr_UnaryMinus':
@@ -851,7 +857,7 @@ class Parser {
     private function parseScalarNode(Node\Scalar $scalar) {
         switch ($scalar->getType()) {
             case 'Scalar_Encapsed':
-                $op = new Op\Expr\ConcatList($this->parseExprList($scalar->parts), $this->mapAttributes($scalar));
+                $op = new Op\Expr\ConcatList($this->parseExprList($scalar->parts, "read"), $this->mapAttributes($scalar));
                 $this->block->children[] = $op;
                 return $op->result;
             case 'Scalar_DNumber':
