@@ -122,7 +122,7 @@ class Parser {
         $this->currentClass = $old;
     }
 
-    protected function parseStmt_ClassCont(Stmt\ClassConst $node) {
+    protected function parseStmt_ClassConst(Stmt\ClassConst $node) {
         if (!$this->currentClass instanceof Operand) {
             throw new \RuntimeException("Unknown current class");
         }
