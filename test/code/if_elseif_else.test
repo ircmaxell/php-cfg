@@ -1,0 +1,51 @@
+<?php
+
+if ($a) {
+    echo "a";
+} else if ($b) {
+    echo "b";
+} else {
+    echo "c";
+}
+echo "d";
+-----
+Block#1
+    Stmt_JumpIf
+        cond: Var#1
+        if: Block#2
+        else: Block#3
+
+Block#2
+    Parent: Block#1
+    Terminal_Echo
+        expr: LITERAL('a')
+    Stmt_Jump
+        target: Block#4
+
+Block#3
+    Parent: Block#1
+    Stmt_JumpIf
+        cond: Var#2
+        if: Block#5
+        else: Block#6
+
+Block#4
+    Parent: Block#3
+    Parent: Block#5
+    Parent: Block#6
+    Terminal_Echo
+        expr: LITERAL('d')
+
+Block#5
+    Parent: Block#3
+    Terminal_Echo
+        expr: LITERAL('b')
+    Stmt_Jump
+        target: Block#4
+
+Block#6
+    Parent: Block#3
+    Terminal_Echo
+        expr: LITERAL('c')
+    Stmt_Jump
+        target: Block#4
