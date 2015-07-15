@@ -27,8 +27,7 @@ class Block {
     }
 
     public function create() {
-        $class = get_class($this);
-        return new $class();
+        return new static;
     }
 
     public function addParent(Block $parent) {
