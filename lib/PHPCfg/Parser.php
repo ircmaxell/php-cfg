@@ -714,7 +714,8 @@ class Parser {
     }
 
     protected function parseExpr_BitwiseNot(Expr\BitwiseNot $expr) {
-        return Op\Expr\BitwiseNot($this->readVariable($this->parseExprNode($expr->expr)), $this->mapAttributes($expr));
+        return new Op\Expr\BitwiseNot(
+            $this->readVariable($this->parseExprNode($expr->expr)), $this->mapAttributes($expr));
     }
 
     protected function parseExpr_BooleanNot(Expr\BooleanNot $expr) {
@@ -726,7 +727,7 @@ class Parser {
         return $op;
     }
     
-    protected function parseExpr_Closure(Exor\Closure $expr) {
+    protected function parseExpr_Closure(Expr\Closure $expr) {
         $block = new Block;
         $this->parseNodes($expr->stmts, $block);
         $uses = [];
