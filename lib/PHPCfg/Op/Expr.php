@@ -19,7 +19,7 @@ abstract class Expr extends Op {
 
     public function __construct(array $attributes = []) {
         parent::__construct($attributes);
-        $this->result = new Temporary;
+        $this->result = $this->addReadRef(new Temporary);
     }
 
     public function getSubBlocks() {

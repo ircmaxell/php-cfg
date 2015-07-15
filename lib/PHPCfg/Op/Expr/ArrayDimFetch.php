@@ -19,8 +19,8 @@ class ArrayDimFetch extends Expr {
 
     public function __construct(Operand $var, Operand $dim = null, array $attributes = []) {
         parent::__construct($attributes);
-        $this->var = $var;
-        $this->dim = $dim;
+        $this->var = $this->addReadRef($var);
+        $this->dim = $this->addReadRef($dim);
     }
 
     public function getVariableNames() {

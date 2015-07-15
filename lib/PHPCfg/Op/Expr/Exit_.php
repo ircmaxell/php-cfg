@@ -18,7 +18,7 @@ class Exit_ extends Expr {
 
     public function __construct(Operand $expr = null, array $attributes = []) {
         parent::__construct($attributes);
-        $this->expr;
+        $this->expr = $this->addReadRef($expr);
     }
 
     public function getVariableNames() {

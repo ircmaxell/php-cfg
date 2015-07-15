@@ -20,9 +20,9 @@ class StaticCall extends Expr {
 
     public function __construct(Operand $class, Operand $name, array $args, array $attributes = []) {
         parent::__construct($attributes);
-        $this->class = $class;
-        $this->name = $name;
-        $this->args = $args;
+        $this->class = $this->addReadRef($class);
+        $this->name = $this->addReadRef($name);
+        $this->args = $this->addReadRef($args);
     }
 
     public function getVariableNames() {

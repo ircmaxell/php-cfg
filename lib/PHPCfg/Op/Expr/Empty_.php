@@ -18,7 +18,7 @@ class Empty_ extends Expr {
 
     public function __construct(Block $expr, array $attributes = []) {
         parent::__construct($attributes);
-        $this->expr = $expr;
+        $this->expr = $this->addReadRef($expr);
     }
 
     public function getVariableNames() {

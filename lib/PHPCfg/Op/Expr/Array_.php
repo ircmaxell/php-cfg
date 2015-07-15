@@ -19,8 +19,8 @@ class Array_ extends Expr {
 
     public function __construct(array $keys, array $values, array $byRef, array $attributes = []) {
         parent::__construct($attributes);
-        $this->keys = $keys;
-        $this->values = $values;
+        $this->keys = $this->addReadRef($keys);
+        $this->values = $this->addReadRef($values);
         $this->byRef = $byRef;
     }
 

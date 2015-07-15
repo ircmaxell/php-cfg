@@ -19,7 +19,7 @@ class Switch_ extends Stmt {
 
     public function __construct(Operand $cond, array $cases, array $targets, array $attributes = []) {
         parent::__construct($attributes);
-        $this->cond = $cond;
+        $this->cond = $this->addReadRef($cond);
         $this->cases = $cases;
         $this->targets = $targets;
     }

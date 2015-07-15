@@ -20,8 +20,8 @@ class Yield_ extends Expr {
 
     public function __construct(Operand $value = null, Operand $key = null, array $attributes = []) {
         parent::__construct($attributes);
-        $this->value = $value;
-        $this->key = $key;
+        $this->value = $this->addReadRef($value);
+        $this->key = $this->addReadRef($key);
     }
 
     public function getVariableNames() {

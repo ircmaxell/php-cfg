@@ -18,7 +18,7 @@ class Value extends Expr {
 
     public function __construct(Operand $var, $byRef, array $attributes = []) {
         parent::__construct($attributes);
-        $this->var = $var;
+        $this->var = $this->addReadRef($var);
         $this->byRef = $byRef;
     }
 

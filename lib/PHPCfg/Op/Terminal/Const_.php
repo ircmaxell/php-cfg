@@ -18,8 +18,8 @@ class Const_ extends Terminal {
 
     public function __construct($name, Operand $value, array $attributes = []) {
         parent::__construct($attributes);
-        $this->name = $name;
-        $this->value = $value;
+        $this->name = $this->addReadRef($name);
+        $this->value = $this->addReadRef($value);
     }
 
     public function getVariableNames() {

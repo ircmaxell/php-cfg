@@ -19,7 +19,7 @@ class Phi extends Op {
 
     public function __construct(Operand $result, array $attributes = []) {
         parent::__construct($attributes);
-        $this->result = $result;
+        $this->result = $this->addWriteRef($result);
     }
 
     public function addOperand(Operand $op) {
@@ -27,7 +27,7 @@ class Phi extends Op {
             return;
         }
         if (!$this->hasOperand($op)) {
-            $this->vars[] = $op;
+            $this->vars[] = $this->addReadRef($op);
         }
     }
 
@@ -38,6 +38,7 @@ class Phi extends Op {
     public function removeOperand(Operand $op) {
         foreach ($this->vars as $key => $value) {
             if ($op === $value) {
+            	$op->removeUsage($this);
                 unset($this->vars[$key]);
             }
         }

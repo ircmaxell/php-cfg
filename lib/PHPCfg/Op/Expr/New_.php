@@ -19,8 +19,8 @@ class New_ extends Expr {
 
     public function __construct(Operand $class, array $args, array $attributes = []) {
         parent::__construct($attributes);
-        $this->class = $class;
-        $this->args = $args;
+        $this->class = $this->addReadRef($class);
+        $this->args = $this->addReadRef($args);
     }
 
     public function getVariableNames() {

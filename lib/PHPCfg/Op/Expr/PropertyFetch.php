@@ -19,8 +19,8 @@ class PropertyFetch extends Expr {
 
     public function __construct(Operand $var, Operand $name, array $attributes = []) {
         parent::__construct($attributes);
-        $this->var = $var;
-        $this->name = $name;
+        $this->var = $this->addReadRef($var);
+        $this->name = $this->addReadRef($name);
     }
 
     public function getVariableNames() {

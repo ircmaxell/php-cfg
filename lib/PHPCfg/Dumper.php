@@ -77,8 +77,9 @@ class Dumper {
         $result = $op->getType();
         if ($op instanceof Op\Phi) {
             $result .= " <\$" . $op->name . ">";
-        } elseif ($op instanceof Op\Expr\TypeAssert) {
-            $result .= "<" . $op->assertedType . ">";
+        } elseif ($op instanceof Op\Expr\Assertion) {
+        	$mode = ($op->mode === Op\Expr\Assertion::MODE_NEGATED ? '!' : '');
+            $result .= "<" . $mode . $this->dumpAssertion($op->assertion) . ">";
         }
         foreach ($op->getVariableNames() as $varName) {
             $result .= "\n    $varName: ";
@@ -154,5 +155,18 @@ class Dumper {
         } else {
             return $this->varIds[$var] = $this->varIds->count() + 1;
         }
+    }
+
+    private function dumpAssertion(Assertion $assert) {
+    	$kind = $assert->getKind();
+    	if ($assert->value instanceof Operand) {
+    		return $kind . '(' . $this->dumpOperand($assert->value) . ')';
+    	}
+    	$combinator = $assert->mode === Assertion::MODE_UNION ? "|" : '&';
+    	$results = [];
+    	foreach ($assert->value as $child) {
+    		$results[] = $this->dumpAssertion($child);
+    	}
+    	return $kind . '(' . implode($combinator, $results) . ')';
     }
 }

@@ -18,8 +18,8 @@ class InstanceOf_ extends Expr {
 
     public function __construct(Operand $expr, Operand $class, array $attributes = []) {
         parent::__construct($attributes);
-        $this->expr = $expr;
-        $this->class = $class;
+        $this->expr = $this->addReadRef($expr);
+        $this->class = $this->addReadRef($class);
     }
 
     public function getVariableNames() {

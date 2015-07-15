@@ -19,8 +19,8 @@ class ClassConstFetch extends Expr {
 
     public function __construct(Operand $class, Operand $name = null, array $attributes = []) {
         parent::__construct($attributes);
-        $this->class = $class;
-        $this->name = $name;
+        $this->class = $this->addReadRef($class);
+        $this->name = $this->addReadRef($name);
     }
 
     public function getVariableNames() {

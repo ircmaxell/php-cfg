@@ -18,10 +18,10 @@ class Property extends Stmt {
 
     public function __construct($name, $visiblity, $static, Operand $defaultVar = null, Block $defaultBlock = null, array $attributes = []) {
         parent::__construct($attributes);
-        $this->name = $name;
+        $this->name = $this->addReadRef($name);
         $this->visiblity = $visiblity;
         $this->static = $static;
-        $this->defaultVar = $defaultVar;
+        $this->defaultVar = $this->addReadRef($defaultVar);
         $this->defaultBlock = $defaultBlock;
     }
 

@@ -18,7 +18,7 @@ class ConstFetch extends Expr {
 
     public function __construct(Operand $name = null, array $attributes = []) {
         parent::__construct($attributes);
-        $this->name = $name;
+        $this->name = $this->addReadRef($name);
     }
 
     public function getVariableNames() {

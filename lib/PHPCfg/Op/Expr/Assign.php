@@ -20,8 +20,8 @@ class Assign extends Expr {
 
     public function __construct(Operand $var, Operand $expr, array $attributes = []) {
         parent::__construct($attributes);
-        $this->var = $var;
-        $this->expr = $expr;
+        $this->var = $this->addWriteRef($var);
+        $this->expr = $this->addReadRef($expr);
     }
 
     public function getVariableNames() {

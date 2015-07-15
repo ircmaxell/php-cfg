@@ -20,9 +20,9 @@ class StaticVar extends Terminal {
 
     public function __construct(Operand $var, Block $defaultBlock = null, Operand $defaultVar = null, array $attributes = []) {
         parent::__construct($attributes);
-        $this->var = $var;
+        $this->var = $this->addReadRef($var);
         $this->defaultBlock = $defaultBlock;
-        $this->defaultVar = $defaultVar;
+        $this->defaultVar = $this->addReadRef($defaultVar);
     }
 
     public function getVariableNames() {

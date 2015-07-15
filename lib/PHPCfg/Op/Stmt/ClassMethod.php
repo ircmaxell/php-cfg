@@ -17,6 +17,6 @@ class ClassMethod extends Function_ {
 
     public function __construct(Operand $class, $name, array $params, $byRef, $returnType, Block $stmts = null, array $attributes = []) {
         parent::__construct($name, $params, $byRef, $returnType, $stmts, $attributes);
-        $this->class = $class;
+        $this->class = $this->addReadRef($class);
     }
 }

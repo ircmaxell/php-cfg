@@ -28,8 +28,8 @@ class Closure extends Expr implements CallableOp {
 
     public function __construct(array $params, array $useVars, $byRef, $returnType, Block $stmts, array $attributes = []) {
         parent::__construct($attributes);
-        $this->params = $params;
-        $this->useVars = $useVars;
+        $this->params = $this->addReadRef($params);
+        $this->useVars = $this->addReadRef($useVars);
         $this->byRef = (bool) $byRef;
         $this->returnType = $returnType;
         $this->stmts = $stmts;

@@ -15,7 +15,6 @@ $traverser = new PHPCfg\Traverser;
 $traverser->addVisitor($declarations);
 $traverser->addVisitor($calls);
 $traverser->addVisitor(new PHPCfg\Visitor\Simplifier);
-$traverser->addVisitor(new PHPCfg\Visitor\VariableDagComputer);
 $traverser->addVisitor($variables);
 
 $code = <<<'EOF'

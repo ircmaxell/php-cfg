@@ -28,8 +28,8 @@ class Function_ extends Stmt implements CallableOp {
 
     public function __construct($name, array $params, $byRef, $returnType, Block $stmts = null, array $attributes = []) {
         parent::__construct($attributes);
-        $this->name = $name;
-        $this->params = $params;
+        $this->name = $this->addReadRef($name);
+        $this->params = $this->addReadRef($params);
         $this->byRef = (bool) $byRef;
         $this->returnType = $returnType;
         $this->stmts = $stmts;

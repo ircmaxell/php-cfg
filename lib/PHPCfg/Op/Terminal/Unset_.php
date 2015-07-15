@@ -16,7 +16,7 @@ class Unset_ extends Terminal {
 
     public function __construct(array $exprs, array $attributes = []) {
         parent::__construct($attributes);
-        $this->exprs = $exprs;
+        $this->exprs = $this->addReadRef($exprs);
     }
 
     public function getSubBlocks() {

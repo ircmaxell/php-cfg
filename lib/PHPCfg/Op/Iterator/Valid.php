@@ -17,7 +17,7 @@ class Valid extends Expr {
 
     public function __construct(Operand $var, array $attributes = []) {
         parent::__construct($attributes);
-        $this->var = $var;
+        $this->var = $this->addReadRef($var);
     }
 
     public function getVariableNames() {

@@ -16,7 +16,7 @@ class ConcatList extends Expr {
 
     public function __construct(array $list, array $attributes = []) {
         parent::__construct($attributes);
-        $this->list = $list;
+        $this->list = $this->addReadRef($list);
     }
 
     public function getVariableNames() {

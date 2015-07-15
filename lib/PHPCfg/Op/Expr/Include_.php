@@ -23,7 +23,7 @@ class Include_ extends Expr {
 
     public function __construct(Operand $expr, $type, array $attributes = []) {
         parent::__construct($attributes);
-        $this->expr = $expr;
+        $this->expr = $this->addReadRef($expr);
         $this->type = $type;
     }
 

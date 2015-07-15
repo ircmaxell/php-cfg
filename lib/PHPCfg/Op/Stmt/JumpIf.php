@@ -11,6 +11,7 @@ namespace PHPCfg\Op\Stmt;
 
 use PhpCfg\Block;
 use PHPCfg\Op\Stmt;
+use PHPCfg\Op\Expr;
 use PHPCfg\Operand;
 
 class JumpIf extends Stmt {
@@ -22,7 +23,7 @@ class JumpIf extends Stmt {
         parent::__construct($attributes);
         $this->if = $if;
         $this->else = $else;
-        $this->cond = $cond;
+        $this->cond = $this->addReadRef($cond);
     }
 
     public function getVariableNames() {
@@ -32,4 +33,5 @@ class JumpIf extends Stmt {
     public function getSubBlocks() {
         return ['if', 'else'];
     }
+
 }

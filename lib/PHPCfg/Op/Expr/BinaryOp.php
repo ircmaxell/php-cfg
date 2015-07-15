@@ -18,8 +18,8 @@ abstract class BinaryOp extends Expr {
 
     public function __construct(Operand $left, Operand $right, array $attributes = []) {
         parent::__construct($attributes);
-        $this->left = $left;
-        $this->right = $right;
+        $this->left = $this->addReadRef($left);
+        $this->right = $this->addReadRef($right);
     }
 
     public function getVariableNames() {

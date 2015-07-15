@@ -49,7 +49,7 @@ Block#4
 
 Block#5
     Parent: Block#4
-    Expr_TypeAssert<float|int>
+    Expr_Assertion<(type(LITERAL('int'))|type(LITERAL('float')))>
         expr: Var#6<$a>
         result: Var#7<$a>
     Terminal_Echo
@@ -59,7 +59,7 @@ Block#5
 
 Block#6
     Parent: Block#4
-    Expr_TypeAssert<!float|int>
+    Expr_Assertion<!(type(LITERAL('int'))|type(LITERAL('float')))>
         expr: Var#6<$a>
         result: Var#8<$a>
     Stmt_Jump

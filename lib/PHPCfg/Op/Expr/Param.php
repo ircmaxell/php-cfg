@@ -27,11 +27,11 @@ class Param extends Expr {
     public function __construct(Operand $name, $type, $byRef, $variadic, Operand $defaultVar = null, Block $defaultBlock = null, array $attributes = []) {
         parent::__construct($attributes);
         $this->result->original = $name;
-        $this->name = $name;
+        $this->name = $this->addReadRef($name);
         $this->type = $type;
         $this->byRef = (bool) $byRef;
         $this->variadic = (bool) $variadic;
-        $this->defaultVar = $defaultVar;
+        $this->defaultVar = $this->addReadRef($defaultVar);
         $this->defaultBlock = $defaultBlock;
     }
 

@@ -20,9 +20,9 @@ class MethodCall extends Expr {
 
     public function __construct(Operand $var, Operand $name, array $args, array $attributes = []) {
         parent::__construct($attributes);
-        $this->var = $var;
-        $this->name = $name;
-        $this->args = $args;
+        $this->var = $this->addReadRef($var);
+        $this->name = $this->addReadRef($name);
+        $this->args = $this->addReadRef($args);
     }
 
     public function getVariableNames() {

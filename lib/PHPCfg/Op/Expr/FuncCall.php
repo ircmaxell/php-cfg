@@ -19,8 +19,8 @@ class FuncCall extends Expr {
 
     public function __construct(Operand $name, array $args, array $attributes = []) {
         parent::__construct($attributes);
-        $this->name = $name;
-        $this->args = $args;
+        $this->name = $this->addReadRef($name);
+        $this->args = $this->addReadRef($args);
     }
 
     public function getVariableNames() {
