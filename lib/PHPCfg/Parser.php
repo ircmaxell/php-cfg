@@ -13,6 +13,7 @@ use PHPCfg\Operand\Literal;
 use PHPCfg\Operand\Temporary;
 use PHPCfg\Operand\Variable;
 use PhpParser\Node;
+use PhpParser\Node\Stmt;
 use PhpParser\Node\Expr\BinaryOp as AstBinaryOp;
 use PhpParser\NodeTraverser as AstTraverser;
 use PhpParser\Parser as AstParser;
@@ -27,11 +28,13 @@ class Parser {
     protected $astParser;
     protected $astTraverser;
     protected $fileName;
+    /** @var Block[] */
     protected $labels = [];
     protected $scope;
     protected $incompletePhis;
     protected $complete = false;
 
+    /** @var Literal|null */
     protected $currentClass = null;
 
 
@@ -93,368 +96,231 @@ class Parser {
             $this->parseExprNode($node);
             return;
         }
-        switch ($node->getType()) {
-            case 'Stmt_Class':
-                $name = $this->parseExprNode($node->namespacedName);
-                $old = $this->currentClass;
-                $this->currentClass = $name;
-                $this->block->children[] = new Op\Stmt\Class_(
-                    $name,
-                    $node->type,
-                    $this->parseExprNode($node->extends),
-                    $this->parseExprList($node->implements),
-                    $this->parseNodes($node->stmts, new Block),
-                    $this->mapAttributes($node)
-                );
-                $this->currentClass = $old;
-                return;
-            case 'Stmt_ClassConst':
-                if (!$this->currentClass instanceof Operand) {
-                    throw new \RuntimeException("Unknown current class");
-                }
-                foreach ($node->consts as $const) {
-                    $this->block->children[] = new Op\Terminal\Const_(
-                        $this->parseExprNode(strtolower($this->currentClass->value) . '::' . $const->name),
-                        $this->parseExprNode($const->value),
-                        $this->mapAttributes($node)
-                    );
-                }
-                return;
-            case 'Stmt_ClassMethod':
-                if (!$this->currentClass instanceof Operand) {
-                    throw new \RuntimeException("Unknown current class");
-                }
-                $params = $this->parseParameterList($node->params);
-                if ($node->stmts) {
-                    $block = new Block;
-                    foreach ($params as $param) {
-                        $param->result->ops[] = $param;
-                        $this->writeVariableName($param->name->value, $param->result, $block);
-                    }
-                    $this->parseNodes($node->stmts, $block);
-                } else {
-                    $block = null;
-                }
-                $this->block->children[] = $func = new Op\Stmt\ClassMethod(
-                    $this->currentClass,
-                    $this->parseExprNode($node->name),
-                    $params,
-                    $node->byRef,
-                    $this->parseExprNode($node->returnType),
-                    $block,
-                    $this->mapAttributes($node)
-                );
-                foreach ($params as $param) {
-                    $param->function = $func;
-                }
-                return;
 
-            case 'Stmt_Const':
-                foreach ($node->consts as $const) {
+        $type = $node->getType();
+        if (method_exists($this, 'parse' . $type)) {
+            $this->{'parse' . $type}($node);
+            return;
+        }
 
-                    $this->block->children[] = new Op\Terminal\Const_(
-                        $this->parseExprNode($const->namespacedName),
-                        $this->parseExprNode($const->value),
-                        $this->mapAttributes($node)
-                    );
-                }
-                return;
-            case 'Stmt_Declare':
-                // TODO
-                return;
-            case 'Stmt_Do':
-                $loopBody = new Block($this->block);
-                $loopEnd = new Block;
-                $this->block->children[] = new Op\Stmt\Jump($loopBody, $this->mapAttributes($node));
-                $loopBody->addParent($this->block);
+        var_dump($node);
+        throw new \RuntimeException("Unknown Stmt Node Encountered : " . $type);
+    }
 
-                $this->block = $loopBody;
-                $this->block = $this->parseNodes($node->stmts, $loopBody);
-                $cond = $this->readVariable($this->parseExprNode($node->cond));
-                $this->block->children[] = new Op\Stmt\JumpIf($cond, $loopBody, $loopEnd, $this->mapAttributes($node));
+    protected function parseStmt_Class(Stmt\Class_ $node) {
+        $name = $this->parseExprNode($node->namespacedName);
+        $old = $this->currentClass;
+        $this->currentClass = $name;
+        $this->block->children[] = new Op\Stmt\Class_(
+            $name,
+            $node->type,
+            $this->parseExprNode($node->extends),
+            $this->parseExprList($node->implements),
+            $this->parseNodes($node->stmts, new Block),
+            $this->mapAttributes($node)
+        );
+        $this->currentClass = $old;
+    }
 
-                $loopBody->addParent($this->block);
-                $loopEnd->addParent($this->block);
-
-                $this->block = $loopEnd;
-                return;
-            case 'Stmt_Echo':
-                foreach ($node->exprs as $expr) {
-                    $this->block->children[] = new Op\Terminal\Echo_(
-                        $this->readVariable($this->parseExprNode($expr)),
-                        $this->mapAttributes($expr)
-                    );
-                }
-                return;
-            case 'Stmt_For':
-                $this->parseExprList($node->init, self::MODE_READ);
-                $loopInit = $this->block->create();
-                $loopBody = $this->block->create();
-                $loopEnd = $this->block->create();
-                $this->block->children[] = new Op\Stmt\Jump($loopInit, $this->mapAttributes($node));
-                $loopInit->addParent($this->block);
-                $this->block = $loopInit;
-                if (!empty($node->cond)) {
-                    $cond = $this->readVariable($this->parseExprNode($node->cond));
-                } else {
-                    $cond = new Literal(true);
-                }
-                $this->block->children[] = new Op\Stmt\JumpIf($cond, $loopBody, $loopEnd, $this->mapAttributes($node));
-                $loopBody->addParent($this->block);
-                $loopEnd->addParent($this->block);
-                $this->block = $this->parseNodes($node->stmts, $loopBody);
-                $this->parseExprList($node->loop, self::MODE_READ);
-                $this->block->children[] = new Op\Stmt\Jump($loopInit, $this->mapAttributes($node));
-                $loopInit->addParent($this->block);
-                $this->block = $loopEnd;
-                return;
-            case 'Stmt_Foreach':
-                $attrs = $this->mapAttributes($node);
-                $iterable = $this->readVariable($this->parseExprNode($node->expr));
-                $this->block->children[] = new Op\Iterator\Reset($iterable, $attrs);
-                
-                $loopInit = new Block;
-                $loopBody = new Block;
-                $loopEnd = new Block;
-
-                $this->block->children[] = new Op\Stmt\Jump($loopInit, $attrs);
-                $loopInit->addParent($this->block);
-
-                $loopInit->children[] = $validOp = new Op\Iterator\Valid($iterable, $attrs);
-                $loopInit->children[] = new Op\Stmt\JumpIf($validOp->result, $loopBody, $loopEnd, $attrs);
-
-                $loopBody->addParent($loopInit);
-                $loopEnd->addParent($loopInit);
-
-                $this->block = $loopBody;
-
-                if ($node->keyVar) {
-                    $this->block->children[] = $keyOp = new Op\Iterator\Key($iterable, $attrs);
-                    $this->block->children[] = new Op\Expr\Assign($this->writeVariable($this->parseExprNode($node->keyVar)), $keyOp->result, $attrs);
-                }
-
-                $this->block->children[] = $valueOp = new Op\Iterator\Value($iterable, $node->byRef, $attrs);
-
-                if ($node->byRef) {
-                    $this->block->children[] = new Op\Expr\AssignRef($this->writeVariable($this->parseExprNode($node->valueVar)), $valueOp->result, $attrs);
-                } else {
-                    $this->block->children[] = new Op\Expr\Assign($this->writeVariable($this->parseExprNode($node->valueVar)), $valueOp->result, $attrs);
-                }
-
-                $this->block = $this->parseNodes($node->stmts, $this->block);
-                $this->block->children[] = new Op\Stmt\Jump($loopInit, $attrs);
-
-                $loopInit->addParent($this->block);
-
-                $this->block = $loopEnd;
-                return;
-            case 'Stmt_Function':
-                $block = new Block;
-                $params = $this->parseParameterList($node->params);
-                foreach ($params as $param) {
-                    $param->result->ops[] = $param;
-                    $this->writeVariableName($param->name->value, $param->result, $block);
-                }
-                $this->parseNodes($node->stmts, $block);
-                $this->block->children[] = $func = new Op\Stmt\Function_(
-                    $this->parseExprNode($node->namespacedName),
-                    $params,
-                    $node->byRef,
-                    $this->parseExprNode($node->returnType),
-                    $block,
-                    $this->mapAttributes($node)
-                );
-                foreach ($params as $param) {
-                    $param->function = $func;
-                }
-                return;
-            case 'Stmt_Global':
-                foreach ($node->vars as $var) {
-                    $this->block->children[] = new Op\Terminal\GlobalVar(
-                        $this->writeVariable($this->parseExprNode($var->name)),
-                        $this->mapAttributes($node)
-                    );
-                }
-                return;
-            case 'Stmt_Goto':
-                if (!isset($this->labels[$node->name])) {
-                    $this->labels[$node->name] = new Block;
-                }
-                $this->block->children[] = new Op\Stmt\Jump($this->labels[$node->name], $this->mapAttributes($node));
-                $this->labels[$node->name]->addParent($this->block);
-                $this->block = new Block;
-                $this->block->dead = true;
-                return;
-            case 'Stmt_HaltCompiler':
-                $this->block->children[] = new Op\Terminal\Echo_(
-                    $this->readVariable(new Operand\Literal($node->remaining)),
-                    $this->mapAttributes($node)
-                );
-                return;
-            case 'Stmt_If':
-                $this->parseIf($node);
-                return;
-            case 'Stmt_InlineHTML':
-                $this->block->children[] = new Op\Terminal\Echo_($this->parseExprNode($node->value), $this->mapAttributes($node));
-                return;
-            case 'Stmt_Interface':
-                $name = $this->parseExprNode($node->namespacedName);
-                $old = $this->currentClass;
-                $this->currentClass = $name;
-                $this->block->children[] = new Op\Stmt\Interface_(
-                    $name,
-                    $this->parseExprList($node->extends),
-                    $this->parseNodes($node->stmts, new Block),
-                    $this->mapAttributes($node)
-                );
-                $this->currentClass = $old;
-                return;
-            case 'Stmt_Label':
-                if (!isset($this->labels[$node->name])) {
-                    $this->labels[$node->name] = new Block;
-                }
-                $this->block->children[] = new Op\Stmt\Jump($this->labels[$node->name], $this->mapAttributes($node));
-                $this->labels[$node->name]->addParent($this->block);
-                $this->block = $this->labels[$node->name];
-                assert(empty($this->block->children));
-                break;
-            case 'Stmt_Namespace':
-                // ignore namespace nodes
-                $this->parseNodes($node->stmts, $this->block);
-                return;
-            case 'Stmt_Property':
-                $visibility = $node->type & Node\Stmt\Class_::VISIBILITY_MODIFER_MASK;
-                $static = $node->type & Node\Stmt\Class_::MODIFIER_STATIC;
-                foreach ($node->props as $prop) {
-                    if ($prop->default) {
-                        $tmp = $this->block;
-                        $this->block = $defaultBlock = new Block;
-                        $defaultVar = $this->parseExprNode($prop->default);
-                        $this->block = $tmp;
-                    } else {
-                        $defaultVar = null;
-                        $defaultBlock = null;
-                    }
-                    $this->block->children[] = new Op\Stmt\Property(
-                        $this->parseExprNode($prop->name),
-                        $visibility,
-                        $static,
-                        $defaultVar,
-                        $defaultBlock,
-                        $this->mapAttributes($node)
-                    );
-                }
-                return;
-            case 'Stmt_Return':
-                $expr = null;
-                if ($node->expr) {
-                    $expr = $this->readVariable($this->parseExprNode($node->expr));
-                }
-                $this->block->children[] = new Op\Terminal\Return_($expr, $this->mapAttributes($node));
-                // Dump everything after the return
-                $this->block = new Block;
-                $this->block->dead = true;
-                return;
-            case 'Stmt_Static':
-                foreach ($node->vars as $var) {
-                    $defaultBlock = null;
-                    $defaultVar = null;
-                    if ($var->default) {
-                        $tmp = $this->block;
-                        $this->block = $defaultBlock = new Block;
-                        $defaultVar = $this->parseExprNode($var->default);
-                        $this->block = $tmp;
-                    }
-                    $this->block->children[] = new Op\Terminal\StaticVar(
-                        $this->writeVariable($this->parseExprNode($var->name)),
-                        $defaultBlock,
-                        $defaultVar,
-                        $this->mapAttributes($node)
-                    );
-                }
-                return;
-            case 'Stmt_Switch':
-                $cond = $this->readVariable($this->parseExprNode($node->cond));
-                $cases = [];
-                $targets = [];
-                $block = false;
-                $endBlock = new Block;
-                foreach ($node->cases as $case) {
-                    $targets[] = $caseBlock = new Block($this->block);
-                    if ($block && !$block->dead) {
-                        // wire up!
-                        $block->children[] = new Op\Stmt\Jump($caseBlock);
-                        $caseBlock->addParent($block);
-                    }
-                    $cases[] = [$this->parseExprNode($case->cond)];
-                    $block = $this->parseNodes($case->stmts, $caseBlock);
-                }
-                $this->block->children[] = new Op\Stmt\Switch_($cond, $cases, $targets, $this->mapAttributes($node));
-                if ($block && !$block->dead) {
-                    // wire end of block to endblock
-                    $block->children[] = new Op\Stmt\Jump($endBlock);
-                    $endBlock->addParent($block);
-                }
-                $endBlock->addParent($this->block);
-                $this->block = $endBlock;
-                return;
-            case 'Stmt_Throw':
-                $this->block->children[] = new Op\Terminal\Throw_(
-                    $this->readVariable($this->parseExprNode($node->expr)),
-                    $this->mapAttributes($node)
-                );
-                $this->block = new Block; // dead code
-                $this->block->dead = true;
-                break;
-            case 'Stmt_Trait':
-                $name = $this->parseExprNode($node->namespacedName);
-                $old = $this->currentClass;
-                $this->currentClass = $name;
-                $this->block->children[] = new Op\Stmt\Trait_(
-                    $name,
-                    $this->parseNodes($node->stmts, new Block),
-                    $this->mapAttributes($node)
-                );
-                $this->currentClass = $old;
-                return;
-            case 'Stmt_TraitUse':
-                // TODO
-                return;
-            case 'Stmt_TryCatch':
-                // TODO: implement this!!!
-                return;
-            case 'Stmt_Unset':
-                $this->block->children[] = new Op\Terminal\Unset_(
-                    $this->parseExprList($node->vars, self::MODE_WRITE),
-                    $this->mapAttributes($node)
-                );
-                return;
-            case 'Stmt_Use':
-                // ignore use statements, since names are already resolved
-                return;
-            case 'Stmt_While':
-                $loopInit = new Block;
-                $loopBody = new Block;
-                $loopEnd = new Block;
-                $this->block->children[] = new Op\Stmt\Jump($loopInit, $this->mapAttributes($node));
-                $loopInit->addParent($this->block);
-                $this->block = $loopInit;
-                $cond = $this->readVariable($this->parseExprNode($node->cond));
-                $this->block->children[] = new Op\Stmt\JumpIf($cond, $loopBody, $loopEnd, $this->mapAttributes($node));
-                $loopBody->addParent($this->block);
-                $loopEnd->addParent($this->block);
-                $this->block = $this->parseNodes($node->stmts, $loopBody);
-                $this->block->children[] = new Op\Stmt\Jump($loopInit, $this->mapAttributes($node));
-                $loopInit->addParent($this->block);
-                $this->block = $loopEnd;
-                return;
-            default:
-                var_dump($node);
-                throw new \RuntimeException("Unknown Stmt Node Encountered : " . $node->getType());
+    protected function parseStmt_ClassCont(Stmt\ClassConst $node) {
+        if (!$this->currentClass instanceof Operand) {
+            throw new \RuntimeException("Unknown current class");
+        }
+        foreach ($node->consts as $const) {
+            $this->block->children[] = new Op\Terminal\Const_(
+                $this->parseExprNode(strtolower($this->currentClass->value) . '::' . $const->name),
+                $this->parseExprNode($const->value),
+                $this->mapAttributes($node)
+            );
         }
     }
 
-    protected function parseIf(Node $node) {
+    protected function parseStmt_ClassMethod(Stmt\ClassMethod $node) {
+        if (!$this->currentClass instanceof Operand) {
+            throw new \RuntimeException("Unknown current class");
+        }
+        $params = $this->parseParameterList($node->params);
+        if ($node->stmts) {
+            $block = new Block;
+            foreach ($params as $param) {
+                $param->result->ops[] = $param;
+                $this->writeVariableName($param->name->value, $param->result, $block);
+            }
+            $this->parseNodes($node->stmts, $block);
+        } else {
+            $block = null;
+        }
+        $this->block->children[] = $func = new Op\Stmt\ClassMethod(
+            $this->currentClass,
+            $this->parseExprNode($node->name),
+            $params,
+            $node->byRef,
+            $this->parseExprNode($node->returnType),
+            $block,
+            $this->mapAttributes($node)
+        );
+        foreach ($params as $param) {
+            $param->function = $func;
+        }
+    }
+
+    protected function parseStmt_Const(Stmt\Const_ $node) {
+        foreach ($node->consts as $const) {
+            $this->block->children[] = new Op\Terminal\Const_(
+                $this->parseExprNode($const->namespacedName),
+                $this->parseExprNode($const->value),
+                $this->mapAttributes($node)
+            );
+        }
+    }
+
+    protected function parseStmt_Declare(Stmt\Declare_ $node) {
+        // TODO
+    }
+
+    protected function parseStmt_Do(Stmt\Do_ $node) {
+        $loopBody = new Block($this->block);
+        $loopEnd = new Block;
+        $this->block->children[] = new Op\Stmt\Jump($loopBody, $this->mapAttributes($node));
+        $loopBody->addParent($this->block);
+
+        $this->block = $loopBody;
+        $this->block = $this->parseNodes($node->stmts, $loopBody);
+        $cond = $this->readVariable($this->parseExprNode($node->cond));
+        $this->block->children[] = new Op\Stmt\JumpIf($cond, $loopBody, $loopEnd, $this->mapAttributes($node));
+
+        $loopBody->addParent($this->block);
+        $loopEnd->addParent($this->block);
+
+        $this->block = $loopEnd;
+    }
+
+    protected function parseStmt_Echo(Stmt\Echo_ $node) {
+        foreach ($node->exprs as $expr) {
+            $this->block->children[] = new Op\Terminal\Echo_(
+                $this->readVariable($this->parseExprNode($expr)),
+                $this->mapAttributes($expr)
+            );
+        }
+    }
+
+    protected function parseStmt_For(Stmt\For_ $node) {
+        $this->parseExprList($node->init, self::MODE_READ);
+        $loopInit = $this->block->create();
+        $loopBody = $this->block->create();
+        $loopEnd = $this->block->create();
+        $this->block->children[] = new Op\Stmt\Jump($loopInit, $this->mapAttributes($node));
+        $loopInit->addParent($this->block);
+        $this->block = $loopInit;
+        if (!empty($node->cond)) {
+            $cond = $this->readVariable($this->parseExprNode($node->cond));
+        } else {
+            $cond = new Literal(true);
+        }
+        $this->block->children[] = new Op\Stmt\JumpIf($cond, $loopBody, $loopEnd, $this->mapAttributes($node));
+        $loopBody->addParent($this->block);
+        $loopEnd->addParent($this->block);
+        $this->block = $this->parseNodes($node->stmts, $loopBody);
+        $this->parseExprList($node->loop, self::MODE_READ);
+        $this->block->children[] = new Op\Stmt\Jump($loopInit, $this->mapAttributes($node));
+        $loopInit->addParent($this->block);
+        $this->block = $loopEnd;
+    }
+
+    protected function parseStmt_Foreach(Stmt\Foreach_ $node) {
+        $attrs = $this->mapAttributes($node);
+        $iterable = $this->readVariable($this->parseExprNode($node->expr));
+        $this->block->children[] = new Op\Iterator\Reset($iterable, $attrs);
+
+        $loopInit = new Block;
+        $loopBody = new Block;
+        $loopEnd = new Block;
+
+        $this->block->children[] = new Op\Stmt\Jump($loopInit, $attrs);
+        $loopInit->addParent($this->block);
+
+        $loopInit->children[] = $validOp = new Op\Iterator\Valid($iterable, $attrs);
+        $loopInit->children[] = new Op\Stmt\JumpIf($validOp->result, $loopBody, $loopEnd, $attrs);
+
+        $loopBody->addParent($loopInit);
+        $loopEnd->addParent($loopInit);
+
+        $this->block = $loopBody;
+
+        if ($node->keyVar) {
+            $this->block->children[] = $keyOp = new Op\Iterator\Key($iterable, $attrs);
+            $this->block->children[] = new Op\Expr\Assign($this->writeVariable($this->parseExprNode($node->keyVar)), $keyOp->result, $attrs);
+        }
+
+        $this->block->children[] = $valueOp = new Op\Iterator\Value($iterable, $node->byRef, $attrs);
+
+        if ($node->byRef) {
+            $this->block->children[] = new Op\Expr\AssignRef($this->writeVariable($this->parseExprNode($node->valueVar)), $valueOp->result, $attrs);
+        } else {
+            $this->block->children[] = new Op\Expr\Assign($this->writeVariable($this->parseExprNode($node->valueVar)), $valueOp->result, $attrs);
+        }
+
+        $this->block = $this->parseNodes($node->stmts, $this->block);
+        $this->block->children[] = new Op\Stmt\Jump($loopInit, $attrs);
+
+        $loopInit->addParent($this->block);
+
+        $this->block = $loopEnd;
+    }
+
+    protected function parseStmt_Function(Stmt\Function_ $node) {
+        $block = new Block;
+        $params = $this->parseParameterList($node->params);
+        foreach ($params as $param) {
+            $param->result->ops[] = $param;
+            $this->writeVariableName($param->name->value, $param->result, $block);
+        }
+        $this->parseNodes($node->stmts, $block);
+        $this->block->children[] = $func = new Op\Stmt\Function_(
+            $this->parseExprNode($node->namespacedName),
+            $params,
+            $node->byRef,
+            $this->parseExprNode($node->returnType),
+            $block,
+            $this->mapAttributes($node)
+        );
+        foreach ($params as $param) {
+            $param->function = $func;
+        }
+    }
+
+    protected function parseStmt_Global(Stmt\Global_ $node) {
+        foreach ($node->vars as $var) {
+            $this->block->children[] = new Op\Terminal\GlobalVar(
+                $this->writeVariable($this->parseExprNode($var->name)),
+                $this->mapAttributes($node)
+            );
+        }
+    }
+
+    protected function parseStmt_Goto(Stmt\Goto_ $node) {
+        if (!isset($this->labels[$node->name])) {
+            $this->labels[$node->name] = new Block;
+        }
+        $this->block->children[] = new Op\Stmt\Jump($this->labels[$node->name], $this->mapAttributes($node));
+        $this->labels[$node->name]->addParent($this->block);
+        $this->block = new Block;
+        $this->block->dead = true;
+    }
+
+    protected function parseStmt_HaltCompiler(Stmt\HaltCompiler $node) {
+        $this->block->children[] = new Op\Terminal\Echo_(
+            $this->readVariable(new Operand\Literal($node->remaining)),
+            $this->mapAttributes($node)
+        );
+    }
+
+    protected function parseStmt_If(Stmt\If_ $node) {
+        $this->parseIf($node);
+    }
+
+    /** @param Stmt\If_|Stmt\ElseIf_ $node */
+    protected function parseIf($node) {
         $attrs = $this->mapAttributes($node);
         $cond = $this->readVariable($this->parseExprNode($node->cond));
         $ifBlock = new Block;
@@ -509,11 +375,180 @@ class Parser {
         $this->block = $endBlock;
     }
 
+    protected function parseStmt_InlineHTML(Stmt\InlineHTML $node) {
+        $this->block->children[] = new Op\Terminal\Echo_($this->parseExprNode($node->value), $this->mapAttributes($node));
+    }
+
+    protected function parseStmt_Interface(Stmt\Interface_ $node) {
+        $name = $this->parseExprNode($node->namespacedName);
+        $old = $this->currentClass;
+        $this->currentClass = $name;
+        $this->block->children[] = new Op\Stmt\Interface_(
+            $name,
+            $this->parseExprList($node->extends),
+            $this->parseNodes($node->stmts, new Block),
+            $this->mapAttributes($node)
+        );
+        $this->currentClass = $old;
+    }
+
+    protected function parseStmt_Label(Stmt\Label $node) {
+        if (!isset($this->labels[$node->name])) {
+            $this->labels[$node->name] = new Block;
+        }
+        $this->block->children[] = new Op\Stmt\Jump($this->labels[$node->name], $this->mapAttributes($node));
+        $this->labels[$node->name]->addParent($this->block);
+        $this->block = $this->labels[$node->name];
+        assert(empty($this->block->children));
+    }
+
+    protected function parseStmt_Namespace(Stmt\Namespace_ $node) {
+        // ignore namespace nodes
+        $this->parseNodes($node->stmts, $this->block);
+    }
+
+    protected function parseStmt_Property(Stmt\Property $node) {
+        $visibility = $node->type & Node\Stmt\Class_::VISIBILITY_MODIFER_MASK;
+        $static = $node->type & Node\Stmt\Class_::MODIFIER_STATIC;
+        foreach ($node->props as $prop) {
+            if ($prop->default) {
+                $tmp = $this->block;
+                $this->block = $defaultBlock = new Block;
+                $defaultVar = $this->parseExprNode($prop->default);
+                $this->block = $tmp;
+            } else {
+                $defaultVar = null;
+                $defaultBlock = null;
+            }
+            $this->block->children[] = new Op\Stmt\Property(
+                $this->parseExprNode($prop->name),
+                $visibility,
+                $static,
+                $defaultVar,
+                $defaultBlock,
+                $this->mapAttributes($node)
+            );
+        }
+    }
+
+    protected function parseStmt_Return(Stmt\Return_ $node) {
+        $expr = null;
+        if ($node->expr) {
+            $expr = $this->readVariable($this->parseExprNode($node->expr));
+        }
+        $this->block->children[] = new Op\Terminal\Return_($expr, $this->mapAttributes($node));
+        // Dump everything after the return
+        $this->block = new Block;
+        $this->block->dead = true;
+    }
+
+    protected function parseStmt_Static(Stmt\Static_ $node) {
+        foreach ($node->vars as $var) {
+            $defaultBlock = null;
+            $defaultVar = null;
+            if ($var->default) {
+                $tmp = $this->block;
+                $this->block = $defaultBlock = new Block;
+                $defaultVar = $this->parseExprNode($var->default);
+                $this->block = $tmp;
+            }
+            $this->block->children[] = new Op\Terminal\StaticVar(
+                $this->writeVariable($this->parseExprNode($var->name)),
+                $defaultBlock,
+                $defaultVar,
+                $this->mapAttributes($node)
+            );
+        }
+    }
+
+    protected function parseStmt_Switch(Stmt\Switch_ $node) {
+        $cond = $this->readVariable($this->parseExprNode($node->cond));
+        $cases = [];
+        $targets = [];
+        $block = false;
+        $endBlock = new Block;
+        foreach ($node->cases as $case) {
+            $targets[] = $caseBlock = new Block($this->block);
+            if ($block && !$block->dead) {
+                // wire up!
+                $block->children[] = new Op\Stmt\Jump($caseBlock);
+                $caseBlock->addParent($block);
+            }
+            $cases[] = [$this->parseExprNode($case->cond)];
+            $block = $this->parseNodes($case->stmts, $caseBlock);
+        }
+        $this->block->children[] = new Op\Stmt\Switch_($cond, $cases, $targets, $this->mapAttributes($node));
+        if ($block && !$block->dead) {
+            // wire end of block to endblock
+            $block->children[] = new Op\Stmt\Jump($endBlock);
+            $endBlock->addParent($block);
+        }
+        $endBlock->addParent($this->block);
+        $this->block = $endBlock;
+    }
+
+    protected function parseStmt_Throw(Stmt\Throw_ $node) {
+        $this->block->children[] = new Op\Terminal\Throw_(
+            $this->readVariable($this->parseExprNode($node->expr)),
+            $this->mapAttributes($node)
+        );
+        $this->block = new Block; // dead code
+        $this->block->dead = true;
+    }
+
+    protected function parseStmt_Trait(Stmt\Trait_ $node) {
+        $name = $this->parseExprNode($node->namespacedName);
+        $old = $this->currentClass;
+        $this->currentClass = $name;
+        $this->block->children[] = new Op\Stmt\Trait_(
+            $name,
+            $this->parseNodes($node->stmts, new Block),
+            $this->mapAttributes($node)
+        );
+        $this->currentClass = $old;
+    }
+
+    protected function parseStmt_TraitUse(Stmt\TraitUse $node) {
+        // TODO
+    }
+
+    protected function parseStmt_TryCatch(Stmt\TryCatch $node) {
+        // TODO: implement this!!!
+    }
+
+    protected function parseStmt_Unset(Stmt\Unset_ $node) {
+        $this->block->children[] = new Op\Terminal\Unset_(
+            $this->parseExprList($node->vars, self::MODE_WRITE),
+            $this->mapAttributes($node)
+        );
+    }
+
+    protected function parseStmt_Use(Stmt\Use_ $node) {
+        // ignore use statements, since names are already resolved
+    }
+
+    protected function parseStmt_While(Stmt\While_ $node) {
+        $loopInit = new Block;
+        $loopBody = new Block;
+        $loopEnd = new Block;
+        $this->block->children[] = new Op\Stmt\Jump($loopInit, $this->mapAttributes($node));
+        $loopInit->addParent($this->block);
+        $this->block = $loopInit;
+        $cond = $this->readVariable($this->parseExprNode($node->cond));
+        $this->block->children[] = new Op\Stmt\JumpIf($cond, $loopBody, $loopEnd, $this->mapAttributes($node));
+        $loopBody->addParent($this->block);
+        $loopEnd->addParent($this->block);
+        $this->block = $this->parseNodes($node->stmts, $loopBody);
+        $this->block->children[] = new Op\Stmt\Jump($loopInit, $this->mapAttributes($node));
+        $loopInit->addParent($this->block);
+        $this->block = $loopEnd;
+    }
+
     /**
-     * @param PhpParser\Node[] $expr
-     * @param int              $readWrite
+     * @param Node[] $expr
+     * @param int    $readWrite
      *
-     * @return PHPCfg\Operand[]
+     * @return Operand[]
      */
     protected function parseExprList(array $expr, $readWrite = self::MODE_NONE) {
         $vars = array_map([$this, 'parseExprNode'], $expr);
@@ -546,7 +581,7 @@ class Parser {
         } elseif ($expr instanceof Node\Name) {
             $isReserved = in_array(strtolower($expr->getLast()), ["int", "string", "array", "callable", "float", "bool"]);
             if ($isReserved) {
-                // always return the unqalified literal
+                // always return the unqualified literal
                 return new Literal($expr->getLast());
             }
             if (isset($expr->namespacedName)) {
