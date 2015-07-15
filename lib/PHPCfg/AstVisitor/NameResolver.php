@@ -35,6 +35,7 @@ class NameResolver extends NameResolverParent {
         'true',
         'static',
         'string',
+        'mixed',
     ];
     
     public function enterNode(Node $node) {
