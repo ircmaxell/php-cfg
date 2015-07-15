@@ -1192,10 +1192,11 @@ class Parser {
                         // merge the asserts
                         if ($assert['type'][0] === '!' && $assertVars[$name]['type'][0] === '!') {
                             // Both are negative assertions, merge directly
-                            $assert['type'] .= '|' . substr($assertVars[$name]['type'], 1);
+                            $assert['type'] = '(' . $assert['type'] . '|' . substr($assertVars[$name]['type'], 1) . ')';
                             $typeAssertions[] = $assert;
                         } elseif ($assert['type'][0] !== '!' && $assertVars[$name]['type'][0] !== '!') {
-                            throw new \RuntimeException("Dual positive type assertion, doesn't make sense: {$assert['type']} and {$assertVars[$name]['type']}");
+                            $assert['type'] = '(' . $assert['type'] . '&' . $assertVars[$name]['type'] . ')';
+                            $typeAssertions[] = $assert;
                         } elseif ($assert['type'][0] === '!') {
                             $typeAssertions[] = $assertVars[$name];
                         } else {
