@@ -11,7 +11,7 @@ namespace PHPCfg\Operand;
 
 use PHPCfg\Operand;
 
-class Variable implements Operand {
+class Variable extends Operand {
     public $name;
     public $ops = [];
 

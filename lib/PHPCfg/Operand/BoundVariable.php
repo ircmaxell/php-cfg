@@ -15,9 +15,6 @@ class BoundVariable extends Variable {
     const SCOPE_OBJECT = 3;
     public $byRef;
     public $scope;
-    public $ops = [];
-    public $type;
-    public $usages = [];
     public $extra;
 
     public function __construct($name, $byRef, $scope = self::SCOPE_GLOBAL, $extra = null) {

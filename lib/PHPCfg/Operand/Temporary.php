@@ -11,14 +11,8 @@ namespace PHPCfg\Operand;
 
 use PHPCfg\Operand;
 
-class Temporary implements Operand {
+class Temporary extends Operand {
     public $original;
-    
-    public $ops = [];
-
-    public $usages = [];
-
-    public $type;
 
     /**
      * Constructs a temporary variable

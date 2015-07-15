@@ -9,5 +9,9 @@
 
 namespace PHPCfg;
 
-/** Only exists for type hints */
-interface Operand { }
+abstract class Operand {
+    public $type = null;
+    public $typeAssertion = null;
+    public $ops = [];
+    public $usages = [];
+}
