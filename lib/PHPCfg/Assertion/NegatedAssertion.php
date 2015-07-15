@@ -10,11 +10,19 @@
 namespace PHPCfg\Assertion;
 
 use PHPCfg\Assertion;
+use PHPCfg\Operand;
 
-class TypeAssertion extends Assertion {
+class NegatedAssertion extends Assertion {
+
+    /**
+     * @param Assertion[]|Operand $value
+     */
+    public function __construct($value) {
+        parent::__construct($value, self::MODE_INTERSECTION);
+    }
 
     public function getKind() {
-        return 'type';
+        return 'not';
     }
 
 }

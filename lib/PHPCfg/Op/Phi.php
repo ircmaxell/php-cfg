@@ -38,7 +38,7 @@ class Phi extends Op {
     public function removeOperand(Operand $op) {
         foreach ($this->vars as $key => $value) {
             if ($op === $value) {
-            	$op->removeUsage($this);
+                $op->removeUsage($this);
                 unset($this->vars[$key]);
             }
         }

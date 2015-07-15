@@ -718,7 +718,12 @@ class Parser {
     }
 
     protected function parseExpr_BooleanNot(Expr\BooleanNot $expr) {
-        return Op\Expr\BooleanNot($this->readVariable($this->parseExprNode($expr->expr)), $this->mapAttributes($expr));
+        $cond = $this->readVariable($this->parseExprNode($expr->expr));
+        $op = new Op\Expr\BooleanNot($cond, $this->mapAttributes($expr));
+        foreach ($cond->assertions as $assertion) {
+            $op->result->addAssertion($assertion['var'], new Assertion\NegatedAssertion([$assertion['assertion']]));
+        }
+        return $op;
     }
     
     protected function parseExpr_Closure(Exor\Closure $expr) {
@@ -785,14 +790,14 @@ class Parser {
     }
 
     protected function parseExpr_FuncCall(Expr\FuncCall $expr) {
-    	$args = $this->parseExprList($expr->args, self::MODE_READ);
+        $args = $this->parseExprList($expr->args, self::MODE_READ);
         $op = new Op\Expr\FuncCall(
             $this->parseExprNode($expr->name),
             $args,
             $this->mapAttributes($expr)
         );
         if ($op->name instanceof Operand\Literal) {
-        	static $assertionFunctions = [
+            static $assertionFunctions = [
                 'is_array'    => 'array',
                 'is_bool'     => 'bool',
                 'is_callable' => 'callable',
@@ -810,10 +815,10 @@ class Parser {
             ];
             $lname = strtolower($op->name->value);
             if (isset($assertionFunctions[$lname])) {
-            	$op->result->addAssertion(
-            		$args[0],
-            		new Assertion\TypeAssertion(new Operand\Literal($assertionFunctions[$lname]))
-            	);
+                $op->result->addAssertion(
+                    $args[0],
+                    new Assertion\TypeAssertion(new Operand\Literal($assertionFunctions[$lname]))
+                );
             }
         }
         return $op;
@@ -824,8 +829,8 @@ class Parser {
     }
     
     protected function parseExpr_Instanceof(Expr\InstanceOf_ $expr) {
-    	$var = $this->readVariable($this->parseExprNode($expr->expr));
-    	$class = $this->readVariable($this->parseExprNode($expr->class));
+        $var = $this->readVariable($this->parseExprNode($expr->expr));
+        $class = $this->readVariable($this->parseExprNode($expr->class));
         $op = new Op\Expr\InstanceOf_(
             $var,
             $class,
@@ -1061,10 +1066,10 @@ class Parser {
 
         $mode = $isOr ? Assertion::MODE_UNION : Assertion::MODE_INTERSECTION;
         foreach ($left->assertions as $assert) {
-        	$result->addAssertion($assert['var'], $assert['assertion'], $mode);
+            $result->addAssertion($assert['var'], $assert['assertion'], $mode);
         }
         foreach ($right->assertions as $assert) {
-        	$result->addAssertion($assert['var'], $assert['assertion'], $mode);
+            $result->addAssertion($assert['var'], $assert['assertion'], $mode);
         }
 
         return $result;
@@ -1089,7 +1094,7 @@ class Parser {
             return $this->readVariableName($this->getVariableName($var), $this->block);
         }
         if ($var instanceof Operand\Temporary && $var->original instanceof Operand) {
-        	return $this->readVariable($var->original);
+            return $this->readVariable($var->original);
         }
         return $var;
     }
@@ -1282,34 +1287,33 @@ class Parser {
     }
 
     protected function processAssertions(Operand $op, Block $if, Block $else) {
-    	$block = $this->block;
-    	foreach ($op->assertions as $assert) {
-    		$this->block = $if;
-        	array_unshift($this->block->children, new Op\Expr\Assertion(
-        		$this->readVariable($assert['var']),
-        		$this->writeVariable($assert['var']),
-        		$this->readAssertion($assert['assertion'])
-			));
-			$this->block = $else;
-        	array_unshift($this->block->children, new Op\Expr\Assertion(
-        		$this->readVariable($assert['var']),
-        		$this->writeVariable($assert['var']),
-        		$this->readAssertion($assert['assertion']),
-        		Op\Expr\Assertion::MODE_NEGATED
-			));
+        $block = $this->block;
+        foreach ($op->assertions as $assert) {
+            $this->block = $if;
+            array_unshift($this->block->children, new Op\Expr\Assertion(
+                $this->readVariable($assert['var']),
+                $this->writeVariable($assert['var']),
+                $this->readAssertion($assert['assertion'])
+            ));
+            $this->block = $else;
+            array_unshift($this->block->children, new Op\Expr\Assertion(
+                $this->readVariable($assert['var']),
+                $this->writeVariable($assert['var']),
+                new Assertion\NegatedAssertion([$this->readAssertion($assert['assertion'])])
+            ));
         }
         $this->block = $block;
     }
 
     protected function readAssertion(Assertion $assert) {
-    	if ($assert->value instanceof Operand) {
-    		return new $assert($this->readVariable($assert->value));
-    	}
-    	$vars = [];
-    	foreach ($assert->value as $child) {
-    		$vars[] = $this->readAssertion($child);
-    	}
-    	return new $assert($vars, $assert->mode);
+        if ($assert->value instanceof Operand) {
+            return new $assert($this->readVariable($assert->value));
+        }
+        $vars = [];
+        foreach ($assert->value as $child) {
+            $vars[] = $this->readAssertion($child);
+        }
+        return new $assert($vars, $assert->mode);
     }
 
 }

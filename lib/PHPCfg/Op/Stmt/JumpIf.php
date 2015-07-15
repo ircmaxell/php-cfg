@@ -11,7 +11,6 @@ namespace PHPCfg\Op\Stmt;
 
 use PhpCfg\Block;
 use PHPCfg\Op\Stmt;
-use PHPCfg\Op\Expr;
 use PHPCfg\Operand;
 
 class JumpIf extends Stmt {

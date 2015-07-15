@@ -59,7 +59,7 @@ Block#5
 
 Block#6
     Parent: Block#4
-    Expr_Assertion<!(type(LITERAL('int'))|type(LITERAL('float')))>
+    Expr_Assertion<not((type(LITERAL('int'))|type(LITERAL('float'))))>
         expr: Var#6<$a>
         result: Var#8<$a>
     Stmt_Jump

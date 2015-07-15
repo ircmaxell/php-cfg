@@ -58,29 +58,29 @@ abstract class Op {
     }
 
     protected function addReadRef($op) {
-    	if (is_array($op)) {
-    		$new = [];
-    		foreach ($op as $key => $o) {
-    			$new[$key] = $this->addReadRef($o);
-    		}
-    		return $new;
-    	} elseif (!$op instanceof Operand) {
-    		return $op;
-    	}
-    	return $op->addUsage($this);
+        if (is_array($op)) {
+            $new = [];
+            foreach ($op as $key => $o) {
+                $new[$key] = $this->addReadRef($o);
+            }
+            return $new;
+        } elseif (!$op instanceof Operand) {
+            return $op;
+        }
+        return $op->addUsage($this);
     }
 
     protected function addWriteRef($op) {
-    	if (is_array($op)) {
-    		$new = [];
-    		foreach ($op as $key => $o) {
-    			$new[$key] = $this->addWriteRef($o);
-    		}
-    		return $new;
-    	} elseif (!$op instanceof Operand) {
-    		return $op;
-    	}
-    	return $op->addWriteOp($this);
+        if (is_array($op)) {
+            $new = [];
+            foreach ($op as $key => $o) {
+                $new[$key] = $this->addWriteRef($o);
+            }
+            return $new;
+        } elseif (!$op instanceof Operand) {
+            return $op;
+        }
+        return $op->addWriteOp($this);
     }
 
 }
