@@ -1,4 +1,4 @@
-![[Build Status](https://travis-ci.org/ircmaxell/php-cfg.svg)](https://travis-ci.org/ircmaxell/php-cfg)
+![[Build Status](https://travis-ci.org/ircmaxell/php-cfg.svg?branch=master)](https://travis-ci.org/ircmaxell/php-cfg)
 
 # PHP-CFG
 
