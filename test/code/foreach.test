@@ -6,43 +6,36 @@ foreach ($a as $b) {
 -----
 Block#1
     Expr_Array
-        keys: array
-        values: array
         result: Var#1
     Expr_Assign
         var: Var#2<$a>
         expr: Var#1
-        result: Var#3
+        result: Var#4
     Iterator_Reset
         var: Var#2<$a>
     Stmt_Jump
         target: Block#2
 
 Block#2
-    Parent: Block#1
-    Parent: Block#3
     Iterator_Valid
         var: Var#2<$a>
-        result: Var#4
+        result: Var#5
     Stmt_JumpIf
-        cond: Var#4
+        cond: Var#5
         if: Block#3
         else: Block#4
 
 Block#3
-    Parent: Block#2
     Iterator_Value
         var: Var#2<$a>
-        result: Var#5
+        result: Var#6
     Expr_Assign
-        var: Var#6<$b>
-        expr: Var#5
-        result: Var#7
+        var: Var#7<$b>
+        expr: Var#6
+        result: Var#9
     Terminal_Echo
-        expr: Var#6<$b>
+        expr: Var#7<$b>
     Stmt_Jump
         target: Block#2
 
 Block#4
-    Parent: Block#2
-

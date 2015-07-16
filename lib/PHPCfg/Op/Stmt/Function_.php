@@ -20,6 +20,8 @@ class Function_ extends Stmt implements CallableOp {
 
     public $params;
 
+    public $paramVars = [];
+
     public $returnType;
 
     public $stmts;
@@ -29,7 +31,10 @@ class Function_ extends Stmt implements CallableOp {
     public function __construct($name, array $params, $byRef, $returnType, Block $stmts = null, array $attributes = []) {
         parent::__construct($attributes);
         $this->name = $this->addReadRef($name);
-        $this->params = $this->addReadRef($params);
+        $this->params = $params;
+        foreach ($params as $param) {
+            $this->paramVars[] = $this->addReadRef($param->result);
+        }
         $this->byRef = (bool) $byRef;
         $this->returnType = $returnType;
         $this->stmts = $stmts;

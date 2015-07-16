@@ -25,10 +25,10 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
         $traverser->addVisitor(new Visitor\Simplifier());
         $traverser->traverse($block);
 
-        $dumper = new Dumper();
+        $printer = new Printer\Text();
         $this->assertEquals(
             $this->canonicalize($expectedDump),
-            $this->canonicalize($dumper->dump($block))
+            $this->canonicalize($printer->printCfg([$block]))
         );
     }
 
