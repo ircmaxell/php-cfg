@@ -16,16 +16,22 @@ abstract class Operand {
     public $usages = [];
 
     public function addUsage(Op $op) {
-        if (!in_array($op, $this->usages, true)) {
-            $this->usages[] = $op;
+        foreach ($this->usages as $test) {
+            if ($test === $op) {
+                return $this;
+            }
         }
+        $this->usages[] = $op;
         return $this;
     }
 
     public function addWriteOp(Op $op) {
-        if (!in_array($op, $this->ops, true)) {
-            $this->ops[] = $op;
+        foreach ($this->ops as $test) {
+            if ($test === $op) {
+                return $this;
+            }
         }
+        $this->ops[] = $op;
         return $this;
     }
 

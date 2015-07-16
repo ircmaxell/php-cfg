@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "5016f8e2c91d6be6ad645a294cb26dc9",
+    "hash": "6ce889bed706bce9a52f2825aa520eb0",
     "packages": [
         {
             "name": "nikic/php-parser",
@@ -50,6 +50,49 @@
                 "php"
             ],
             "time": "2015-07-14 19:13:42"
+        },
+        {
+            "name": "phpdocumentor/graphviz",
+            "version": "dev-encode_specials",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/ircmaxell/GraphViz.git",
+                "reference": "17530ff08e8ea8e954d84357f420c032261eef5c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/ircmaxell/GraphViz/zipball/17530ff08e8ea8e954d84357f420c032261eef5c",
+                "reference": "17530ff08e8ea8e954d84357f420c032261eef5c",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=5.3.3"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "phpDocumentor": [
+                        "src/",
+                        "tests/unit"
+                    ]
+                }
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Mike van Riel",
+                    "email": "mike.vanriel@naenius.com"
+                }
+            ],
+            "support": {
+                "source": "https://github.com/ircmaxell/GraphViz/tree/encode_specials"
+            },
+            "time": "2015-07-16 14:49:32"
         }
     ],
     "packages-dev": [
@@ -160,49 +203,6 @@
             ],
             "description": "A tool to automatically fix PHP code style",
             "time": "2015-07-08 21:03:30"
-        },
-        {
-            "name": "phpdocumentor/graphviz",
-            "version": "dev-encode_specials",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/ircmaxell/GraphViz.git",
-                "reference": "17530ff08e8ea8e954d84357f420c032261eef5c"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/ircmaxell/GraphViz/zipball/17530ff08e8ea8e954d84357f420c032261eef5c",
-                "reference": "17530ff08e8ea8e954d84357f420c032261eef5c",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=5.3.3"
-            },
-            "require-dev": {
-                "phpunit/phpunit": "~4.0"
-            },
-            "type": "library",
-            "autoload": {
-                "psr-0": {
-                    "phpDocumentor": [
-                        "src/",
-                        "tests/unit"
-                    ]
-                }
-            },
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Mike van Riel",
-                    "email": "mike.vanriel@naenius.com"
-                }
-            ],
-            "support": {
-                "source": "https://github.com/ircmaxell/GraphViz/tree/encode_specials"
-            },
-            "time": "2015-07-16 14:49:32"
         },
         {
             "name": "phpdocumentor/reflection-docblock",

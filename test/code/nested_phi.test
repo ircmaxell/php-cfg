@@ -13,67 +13,56 @@ Block#1
     Expr_Assign
         var: Var#1<$a>
         expr: LITERAL(1)
-        result: Var#2
+        result: Var#4
     Expr_Array
-        keys: array
-            0: UNKNOWN
-            1: UNKNOWN
-            2: UNKNOWN
-        values: array
-            0: LITERAL(1)
-            1: LITERAL(2)
-            2: LITERAL(3)
-        result: Var#3
+        values: LITERAL(1)
+        values: LITERAL(2)
+        values: LITERAL(3)
+        result: Var#8
     Iterator_Reset
-        var: Var#3
+        var: Var#8
     Stmt_Jump
         target: Block#2
 
 Block#2
-    Parent: Block#1
-    Parent: Block#3
-    Parent: Block#4
-    Phi<Var#4<$a>>: = [Var#1<$a>,Var#5<$a>,]
+    Phi<Var#9<$a>>: = [Var#1<$a>,Var#11<$a>,]
     Iterator_Valid
-        var: Var#3
-        result: Var#6
+        var: Var#8
+        result: Var#13
     Stmt_JumpIf
-        cond: Var#6
+        cond: Var#13
         if: Block#3
-        else: Block#5
+        else: Block#4
 
 Block#3
-    Parent: Block#2
     Iterator_Value
-        var: Var#3
-        result: Var#7
+        var: Var#8
+        result: Var#14
     Expr_Assign
-        var: Var#8<$b>
-        expr: Var#7
-        result: Var#9
+        var: Var#15<$b>
+        expr: Var#14
+        result: Var#17
     Expr_BinaryOp_Greater
-        left: Var#4<$a>
+        left: Var#9<$a>
         right: LITERAL(0)
-        result: Var#10
+        result: Var#19
     Stmt_JumpIf
-        cond: Var#10
-        if: Block#4
+        cond: Var#19
+        if: Block#5
         else: Block#2
 
 Block#4
-    Parent: Block#3
-    Expr_BinaryOp_Plus
-        left: Var#4<$a>
-        right: Var#8<$b>
-        result: Var#11
-    Expr_Assign
-        var: Var#5<$a>
-        expr: Var#11
-        result: Var#12
-    Stmt_Jump
-        target: Block#2
+    Terminal_Echo
+        expr: Var#9<$a>
 
 Block#5
-    Parent: Block#2
-    Terminal_Echo
-        expr: Var#4<$a>
+    Expr_BinaryOp_Plus
+        left: Var#9<$a>
+        right: Var#15<$b>
+        result: Var#20
+    Expr_Assign
+        var: Var#11<$a>
+        expr: Var#20
+        result: Var#21
+    Stmt_Jump
+        target: Block#2

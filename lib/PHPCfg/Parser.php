@@ -140,7 +140,6 @@ class Parser {
         if ($node->stmts) {
             $block = new Block;
             foreach ($params as $param) {
-                $param->result->ops[] = $param;
                 $this->writeVariableName($param->name->value, $param->result, $block);
             }
             $this->parseNodes($node->stmts, $block);
@@ -271,7 +270,6 @@ class Parser {
         $block = new Block;
         $params = $this->parseParameterList($node->params);
         foreach ($params as $param) {
-            $param->result->ops[] = $param;
             $this->writeVariableName($param->name->value, $param->result, $block);
         }
         $this->parseNodes($node->stmts, $block);
@@ -1131,7 +1129,6 @@ class Parser {
             }
             $var = new Operand\Temporary(new Variable(new Literal($name)));
             $phi = new Op\Phi($var, ["block" => $block]);
-            $phi->result->ops[] = $phi;
             $block->phi[] = $phi;
             // Prevent unbound recursion
             $this->writeVariableName($name, $var, $block);
@@ -1143,7 +1140,6 @@ class Parser {
         }
         $var = new Operand\Temporary(new Variable(new Literal($name)));
         $phi = new Op\Phi($var, ["block" => $block]);
-        $phi->result->ops[] = $phi;
         $this->writeKeyToArray("incompletePhis", $block, $name, $phi);
         $this->writeVariableName($name, $var, $block);
         return $var;
@@ -1276,6 +1272,11 @@ class Parser {
                 foreach ($result as $key => $value) {
                     if ($value === $from) {
                         $new[$key] = $to;
+                        if ($op->isWriteVariable($name)) {
+                            $to->addWriteOp($op);
+                        } else {
+                            $to->addUsage($op);
+                        }
                     } else {
                         $new[$key] = $value;
                     }
@@ -1283,6 +1284,11 @@ class Parser {
                 $op->$name = $new;
             } elseif ($op->$name === $from) {
                 $op->$name = $to;
+                if ($op->isWriteVariable($name)) {
+                    $to->addWriteOp($op);
+                } else {
+                    $to->addUsage($op);
+                }
             }
         }
     }
