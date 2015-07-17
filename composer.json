@@ -11,7 +11,7 @@
     "require": {
         "php": ">=5.5",
         "nikic/php-parser": "dev-master",
-        "phpdocumentor/graphviz": "dev-encode_specials"
+        "phpdocumentor/graphviz": "dev-master"
     },
     "require-dev": {
         "phpunit/phpunit": "^4.7",
@@ -22,11 +22,5 @@
             "PHPCfg\\": "lib/PHPCfg/",
             "PHPSQLiScanner\\": "lib/PHPSQLiScanner/"
         }
-    },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/ircmaxell/GraphViz"
-        }
-    ]
+    }
 }
