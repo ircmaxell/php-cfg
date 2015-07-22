@@ -18,6 +18,6 @@ $block = $parser->parse(file_get_contents(__FILE__), __FILE__);
 ```
 To dump the graph, simply use the built-in dumper:
 ```php
-$dumper = new PHPCfg\Dumper;
-echo $dumper->dump($block);
+$dumper = new PHPCfg\Printer\Text();
+echo $dumper->printCFG(array($block));
 ```
