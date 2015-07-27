@@ -11,9 +11,9 @@ namespace PHPCfg;
 
 interface Visitor {
 
-	public function beforeTraverse(Block $block);
+    public function beforeTraverse(Block $block);
 
-	public function afterTraverse(Block $block);
+    public function afterTraverse(Block $block);
     
     public function enterBlock(Block $block, Block $prior = null);
 

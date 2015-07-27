@@ -25,10 +25,10 @@ class Simplifier implements Visitor {
     public function beforeTraverse(Block $block) {
     }
 
-	public function afterTraverse(Block $block) {
-		// Remove trivial PHI functions
-		$this->removeTrivialPhi($block);
-	}
+    public function afterTraverse(Block $block) {
+        // Remove trivial PHI functions
+        $this->removeTrivialPhi($block);
+    }
 
     public function enterOp(Op $op, Block $block) {
         if ($this->recursionProtection->contains($op)) {
@@ -183,10 +183,10 @@ class Simplifier implements Visitor {
                 $toReplace->detach($block);
                 $replaced->attach($block);
                 foreach ($block->phi as $phi) {
-                	if ($phi->hasOperand($from)) {
-                		$phi->removeOperand($from);
-                		$phi->addOperand($to);
-                	}
+                    if ($phi->hasOperand($from)) {
+                        $phi->removeOperand($from);
+                        $phi->addOperand($to);
+                    }
                 }
                 foreach ($block->children as $child) {
                     $this->replaceOpVariable($from, $to, $child);

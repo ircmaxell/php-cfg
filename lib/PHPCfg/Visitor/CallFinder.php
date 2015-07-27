@@ -54,6 +54,6 @@ class CallFinder implements Visitor {
 
     public function beforeTraverse(Block $block) {}
 
-	public function afterTraverse(Block $block) {}
+    public function afterTraverse(Block $block) {}
 
 }

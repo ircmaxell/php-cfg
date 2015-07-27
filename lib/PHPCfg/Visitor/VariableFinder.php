@@ -17,15 +17,18 @@ class VariableFinder implements Visitor{
     protected $variables;
 
     public function __construct() {
-    	$this->variables = new \SplObjectStorage;
+        $this->variables = new \SplObjectStorage;
     }
 
     public function getVariables() {
         return $this->variables;
     }
 
-	public function afterTraverse(Block $block) {
-	}
+    public function beforeTraverse(Block $block) {
+    }
+
+    public function afterTraverse(Block $block) {
+    }
 
     public function enterBlock(Block $block, Block $prior = null) {
         foreach ($block->phi as $phi) {
