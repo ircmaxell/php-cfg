@@ -11,7 +11,7 @@ echo "d";
 -----
 Block#1
     Stmt_JumpIf
-        cond: Var#1
+        cond: Var#1<$a>
         if: Block#2
         else: Block#3
 
@@ -23,7 +23,7 @@ Block#2
 
 Block#3
     Stmt_JumpIf
-        cond: Var#3
+        cond: Var#4<$b>
         if: Block#5
         else: Block#6
 

@@ -17,16 +17,16 @@ use PHPCfg\Visitor;
 class Simplifier implements Visitor {
     protected $removed;
     protected $recursionProtection;
-    public function __construct() {
+    protected $trivialPhiCandidates;
+
+    public function beforeTraverse(Block $block) {
         $this->removed = new \SplObjectStorage;
         $this->recursionProtection = new \SplObjectStorage;
     }
 
-    public function beforeTraverse(Block $block) {
-    }
-
     public function afterTraverse(Block $block) {
         // Remove trivial PHI functions
+        $this->trivialPhiCandidates = new \SplObjectStorage;
         $this->removeTrivialPhi($block);
     }
 
@@ -157,6 +157,18 @@ class Simplifier implements Visitor {
                 }
             }
         }
+        while ($this->trivialPhiCandidates->count() > 0) {
+            foreach ($this->trivialPhiCandidates as $phi) {
+                $block = $this->trivialPhiCandidates[$phi];
+                $this->trivialPhiCandidates->detach($phi);
+                if ($this->tryRemoveTrivialPhi($phi, $block)) {
+                    $key = array_search($phi, $block->phi, true);
+                    if ($key !== false) {
+                        unset($block->phi[$key]);
+                    }
+                }
+            }
+        }
     }
 
     private function tryRemoveTrivialPhi(Op\Phi $phi, Block $block) {
@@ -165,7 +177,7 @@ class Simplifier implements Visitor {
         }
         if (count($phi->vars) === 0) {
             // shouldn't happen except in unused variables
-            $var = new Operand\Temporary;
+            $var = new Operand\Temporary($phi->result->original);
         } else {
             $var = $phi->vars[0];
         }
@@ -184,6 +196,8 @@ class Simplifier implements Visitor {
                 $replaced->attach($block);
                 foreach ($block->phi as $phi) {
                     if ($phi->hasOperand($from)) {
+                        // Since we're removing from the phi, it may become trivial
+                        $this->trivialPhiCandidates[$phi] = $block;
                         $phi->removeOperand($from);
                         $phi->addOperand($to);
                     }
