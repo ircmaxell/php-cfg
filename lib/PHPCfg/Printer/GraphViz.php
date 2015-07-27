@@ -90,6 +90,7 @@ class GraphViz extends Printer {
         }
         foreach ($rendered['varIds'] as $var) {
             foreach ($var->ops as $write) {
+                $b = $write->getAttribute('block');
                 foreach ($write->getVariableNames() as $varName) {
                     $vs = $write->$varName;
                     if (!is_array($vs)) {
@@ -100,7 +101,11 @@ class GraphViz extends Printer {
                             continue;
                         }
                         $edge = new Edge($nodes[$v], $nodes[$var]);
-                        $edge->setlabel($write->getType() . ":" . $varName);
+                        if ($b) {
+                            $edge->setlabel('Block<' . $rendered['blockIds'][$b] . '>' . $write->getType() . ":" . $varName);
+                        } else {
+                            $edge->setlabel($write->getType() . ":" . $varName);
+                        }
                         foreach ($this->options['edge'] as $name => $value) {
                             $setter = 'set' . $name;
                             $edge->$setter($value);

@@ -13,6 +13,7 @@ class BoundVariable extends Variable {
     const SCOPE_GLOBAL = 1;
     const SCOPE_LOCAL  = 2;
     const SCOPE_OBJECT = 3;
+    const SCOPE_FUNCTION = 4;
     public $byRef;
     public $scope;
     public $extra;

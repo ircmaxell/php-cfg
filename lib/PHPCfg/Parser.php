@@ -428,7 +428,7 @@ class Parser {
                 $this->block = $tmp;
             }
             $this->block->children[] = new Op\Terminal\StaticVar(
-                $this->writeVariable($this->parseExprNode($var->name)),
+                $this->writeVariable(new Operand\BoundVariable($this->parseExprNode($var->name), true, Operand\BoundVariable::SCOPE_FUNCTION)),
                 $defaultBlock,
                 $defaultVar,
                 $this->mapAttributes($node)
@@ -1122,7 +1122,7 @@ class Parser {
 
     private function readVariableRecursive($name, Block $block) {
         if ($this->complete) {
-            if (count($block->parents) === 1) {
+            if (count($block->parents) === 1 && !$block->parents[0]->dead) {
                 // Special case, just return the read var
                 return $this->readVariableName($name, $block->parents[0]);
             }
@@ -1133,6 +1133,9 @@ class Parser {
             $this->writeVariableName($name, $var, $block);
 
             foreach ($block->parents as $parent) {
+                if ($parent->dead) {
+                    continue;
+                }
                 $phi->addOperand($this->readVariableName($name, $parent));
             }
             return $var;

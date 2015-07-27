@@ -56,6 +56,8 @@ abstract class Printer {
                         return "local<{$prefix}{$var->name->value}>";
                     case BoundVariable::SCOPE_OBJECT:
                         return "this<{$prefix}{$var->name->value}>";
+                    case BoundVariable::SCOPE_FUNCTION:
+                        return "static<{$prefix}{$var->name->value}>";
                     default:
                         throw new \LogicException("Unknown bound variable scope");
                 }

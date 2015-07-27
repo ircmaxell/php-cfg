@@ -19,6 +19,11 @@ class Text extends Printer {
         foreach ($rendered['blocks'] as $block) {
             $ops = $rendered['blocks'][$block];
             $output .= "\nBlock#" . $rendered['blockIds'][$block];
+            foreach ($block->parents as $prev) {
+                if ($rendered['blockIds']->contains($prev)) {
+                    $output .= $this->indent("\nParent: Block#" . $rendered['blockIds'][$prev]);
+                }
+            }
             foreach ($ops as $op) {
                 $output .= $this->indent("\n" . $op['label']);
                 foreach ($op['childBlocks'] as $child) {
