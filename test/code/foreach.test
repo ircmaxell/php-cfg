@@ -17,6 +17,8 @@ Block#1
         target: Block#2
 
 Block#2
+    Parent: Block#1
+    Parent: Block#3
     Iterator_Valid
         var: Var#2<$a>
         result: Var#5
@@ -26,6 +28,7 @@ Block#2
         else: Block#4
 
 Block#3
+    Parent: Block#2
     Iterator_Value
         var: Var#2<$a>
         result: Var#6
@@ -39,3 +42,4 @@ Block#3
         target: Block#2
 
 Block#4
+    Parent: Block#2

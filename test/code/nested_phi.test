@@ -25,6 +25,9 @@ Block#1
         target: Block#2
 
 Block#2
+    Parent: Block#1
+    Parent: Block#3
+    Parent: Block#5
     Phi<Var#9<$a>>: = [Var#1<$a>,Var#11<$a>,]
     Iterator_Valid
         var: Var#8
@@ -35,6 +38,7 @@ Block#2
         else: Block#4
 
 Block#3
+    Parent: Block#2
     Iterator_Value
         var: Var#8
         result: Var#14
@@ -52,10 +56,12 @@ Block#3
         else: Block#2
 
 Block#4
+    Parent: Block#2
     Terminal_Echo
         expr: Var#9<$a>
 
 Block#5
+    Parent: Block#3
     Expr_BinaryOp_Plus
         left: Var#9<$a>
         right: Var#15<$b>

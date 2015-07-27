@@ -12,6 +12,7 @@ Block#1
         else: Block#3
 
 Block#2
+    Parent: Block#1
     Expr_Assign
         var: Var#3
         expr: LITERAL(true)
@@ -20,6 +21,7 @@ Block#2
         target: Block#4
 
 Block#3
+    Parent: Block#1
     Expr_FuncCall
         name: LITERAL('b')
         result: Var#7
@@ -30,6 +32,8 @@ Block#3
         target: Block#4
 
 Block#4
+    Parent: Block#2
+    Parent: Block#3
     Expr_Assign
         var: Var#8<$x>
         expr: Var#3

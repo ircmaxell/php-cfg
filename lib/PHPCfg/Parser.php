@@ -346,7 +346,7 @@ class Parser {
             }
         }
         $this->block->children[] = new Op\Stmt\Jump($endBlock, $attrs);
-        $endBlock->addParent($elseBlock);
+        $endBlock->addParent($this->block);
         $this->block = $endBlock;
     }
 
