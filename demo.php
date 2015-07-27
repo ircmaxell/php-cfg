@@ -29,7 +29,7 @@ $block = $parser->parse($code, __FILE__);
 $traverser->traverse($block);
 
 $dumper = new PHPCfg\Printer\Text();
-echo $dumper->printCFG(array($block))
+echo $dumper->printCFG(array($block));
 
 $scanner = new PHPSQLiScanner\Scanner;
 
