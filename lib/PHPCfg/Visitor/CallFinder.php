@@ -52,4 +52,8 @@ class CallFinder implements Visitor {
 
     public function skipBlock(Block $block, Block $prior = null) {}
 
+    public function beforeTraverse(Block $block) {}
+
+	public function afterTraverse(Block $block) {}
+
 }

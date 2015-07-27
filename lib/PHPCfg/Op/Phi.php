@@ -40,6 +40,7 @@ class Phi extends Op {
             if ($op === $value) {
                 $op->removeUsage($this);
                 unset($this->vars[$key]);
+                $this->vars = array_values($this->vars);
             }
         }
     }

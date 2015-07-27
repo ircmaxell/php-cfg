@@ -21,7 +21,9 @@ class Traverser {
 
     public function traverse(Block $block) {
         $this->seen = new \SplObjectStorage;
-        return $this->traverseBlock($block, null);
+        $this->event("beforeTraverse", [$block]);
+        $this->traverseBlock($block, null);
+        $this->event("afterTraverse", [$block]);
     }
 
     private function traverseBlock(Block $block, Block $prior = null) {

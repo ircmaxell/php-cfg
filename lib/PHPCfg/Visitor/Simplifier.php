@@ -11,6 +11,7 @@ namespace PHPCfg\Visitor;
 
 use PHPCfg\Block;
 use PHPCfg\Op;
+use PHPCfg\Operand;
 use PHPCfg\Visitor;
 
 class Simplifier implements Visitor {
@@ -20,6 +21,15 @@ class Simplifier implements Visitor {
         $this->removed = new \SplObjectStorage;
         $this->recursionProtection = new \SplObjectStorage;
     }
+
+    public function beforeTraverse(Block $block) {
+    }
+
+	public function afterTraverse(Block $block) {
+		// Remove trivial PHI functions
+		$this->removeTrivialPhi($block);
+	}
+
     public function enterOp(Op $op, Block $block) {
         if ($this->recursionProtection->contains($op)) {
             return;
@@ -115,5 +125,121 @@ class Simplifier implements Visitor {
     public function enterBlock(Block $block, Block $prior = null) {}
     public function leaveBlock(Block $block, Block $prior = null) {}
     public function skipBlock(Block $block, Block $prior = null) {}
+
+    private function removeTrivialPhi(Block $block) {
+        $toReplace = new \SplObjectStorage;
+        $replaced = new \SplObjectStorage;
+        $toReplace->attach($block);
+        while ($toReplace->count() > 0) {
+            foreach ($toReplace as $block) {
+                $toReplace->detach($block);
+                $replaced->attach($block);
+                foreach ($block->phi as $key => $phi) {
+                    if ($this->tryRemoveTrivialPhi($phi, $block)) {
+                        unset($block->phi[$key]);
+                    }
+                }
+                foreach ($block->children as $child) {
+                    foreach ($child->getSubBlocks() as $name) {
+                        $subBlocks = $child->$name;
+                        if (!is_array($child->$name)) {
+                            if ($child->$name === null) {
+                                continue;
+                            }
+                            $subBlocks = [$subBlocks];
+                        }
+                        foreach ($subBlocks as $subBlock) {
+                            if (!$replaced->contains($subBlock)) {
+                                $toReplace->attach($subBlock);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private function tryRemoveTrivialPhi(Op\Phi $phi, Block $block) {
+        if (count($phi->vars) > 1) {
+            return false;
+        }
+        if (count($phi->vars) === 0) {
+            // shouldn't happen except in unused variables
+            $var = new Operand\Temporary;
+        } else {
+            $var = $phi->vars[0];
+        }
+        // Remove Phi!
+        $this->replaceVariables($phi->result, $var, $block);
+        return true;
+    }
+
+    private function replaceVariables(Operand $from, Operand $to, Block $block) {
+        $toReplace = new \SplObjectStorage;
+        $replaced = new \SplObjectStorage;
+        $toReplace->attach($block);
+        while ($toReplace->count() > 0) {
+            foreach ($toReplace as $block) {
+                $toReplace->detach($block);
+                $replaced->attach($block);
+                foreach ($block->phi as $phi) {
+                	if ($phi->hasOperand($from)) {
+                		$phi->removeOperand($from);
+                		$phi->addOperand($to);
+                	}
+                }
+                foreach ($block->children as $child) {
+                    $this->replaceOpVariable($from, $to, $child);
+                    foreach ($child->getSubBlocks() as $name) {
+                        $subBlocks = $child->$name;
+                        if (!is_array($child->$name)) {
+                            if ($child->$name === null) {
+                                continue;
+                            }
+                            $subBlocks = [$subBlocks];
+                        }
+                        foreach ($subBlocks as $subBlock) {
+                            if (!$replaced->contains($subBlock)) {
+                                $toReplace->attach($subBlock);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private function replaceOpVariable(Operand $from, Operand $to, Op $op) {
+        foreach ($op->getVariableNames() as $name) {
+            if (is_null($op->$name)) {
+                continue;
+            }
+            if (is_array($op->$name)) {
+                // SIGH, PHP won't let me do this directly (parses as $op->($name[$key]))
+                $result = $op->$name;
+                $new = [];
+                foreach ($result as $key => $value) {
+                    if ($value === $from) {
+                        $new[$key] = $to;
+                        if ($op->isWriteVariable($name)) {
+                            $to->addWriteOp($op);
+                        } else {
+                            $to->addUsage($op);
+                        }
+                    } else {
+                        $new[$key] = $value;
+                    }
+                }
+                $op->$name = $new;
+            } elseif ($op->$name === $from) {
+                $op->$name = $to;
+                if ($op->isWriteVariable($name)) {
+                    $to->addWriteOp($op);
+                } else {
+                    $to->addUsage($op);
+                }
+            }
+        }
+    }
     
 }
