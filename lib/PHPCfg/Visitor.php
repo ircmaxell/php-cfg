@@ -11,6 +11,9 @@ namespace PHPCfg;
 
 interface Visitor {
 
+    const REMOVE_OP = -1;
+    const REMOVE_BLOCK = -2;
+
     public function beforeTraverse(Block $block);
 
     public function afterTraverse(Block $block);
