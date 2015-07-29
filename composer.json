@@ -19,8 +19,7 @@
     },
     "autoload": {
         "psr-4": {
-            "PHPCfg\\": "lib/PHPCfg/",
-            "PHPSQLiScanner\\": "lib/PHPSQLiScanner/"
+            "PHPCfg\\": "lib/PHPCfg/"
         }
     }
 }

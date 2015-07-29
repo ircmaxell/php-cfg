@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "553ff4398f97f6dc48b5d8f24755ab47",
+    "hash": "35d00cbb178b50ef41acc56e74b3e9b2",
     "packages": [
         {
             "name": "nikic/php-parser",
@@ -150,16 +150,16 @@
         },
         {
             "name": "fabpot/php-cs-fixer",
-            "version": "v1.9.2",
+            "version": "v1.10",
             "source": {
                 "type": "git",
                 "url": "https://github.com/FriendsOfPHP/PHP-CS-Fixer.git",
-                "reference": "70e6b56d511b734aae45d587c2407eb9a4ef51ab"
+                "reference": "8e21b4fb32c4618a425817d9f0daf3d57a9808d1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/FriendsOfPHP/PHP-CS-Fixer/zipball/70e6b56d511b734aae45d587c2407eb9a4ef51ab",
-                "reference": "70e6b56d511b734aae45d587c2407eb9a4ef51ab",
+                "url": "https://api.github.com/repos/FriendsOfPHP/PHP-CS-Fixer/zipball/8e21b4fb32c4618a425817d9f0daf3d57a9808d1",
+                "reference": "8e21b4fb32c4618a425817d9f0daf3d57a9808d1",
                 "shasum": ""
             },
             "require": {
@@ -200,7 +200,7 @@
                 }
             ],
             "description": "A tool to automatically fix PHP code style",
-            "time": "2015-07-26 08:04:48"
+            "time": "2015-07-27 20:56:10"
         },
         {
             "name": "phpdocumentor/reflection-docblock",

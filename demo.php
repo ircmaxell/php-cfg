@@ -31,6 +31,3 @@ $traverser->traverse($block);
 $dumper = new PHPCfg\Printer\Text();
 echo $dumper->printCFG(array($block));
 
-$scanner = new PHPSQLiScanner\Scanner;
-
-$scanner->scan($calls);
