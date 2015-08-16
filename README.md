@@ -9,8 +9,8 @@ A Control-Flow-Graph implementation in Pure PHP.
 To bootstrap the parser, you need to give it a `PhpParser` instance:
 ```php
 $parser = new PHPCfg\Parser(
-    new PhpParser\Parser(new PhpParser\Lexer)
-); 
+    (new PhpParser\ParserFactory)->create(PhpParser\ParserFactory::PREFER_PHP7)
+);
 ```
 Then, just call parse on a block of code, giving it a filename:
 ```php
