@@ -339,7 +339,6 @@ class Parser {
 
         if ($node instanceof Node\Stmt\If_) {
             foreach ($node->elseifs as $elseIf) {
-               // $this->parseIf($elseIf);
                 $this->parseElseIf($elseIf, $endBlock);
             }
             if ($node->else) {
@@ -369,7 +368,6 @@ class Parser {
 
         $this->block->children[] = new Op\Stmt\Jump($targetNode, $attrs);
         $targetNode->addParent($this->block);
-        //$endBlock->addParent($this->block);
 
         $this->block = $elseBlock;
 
