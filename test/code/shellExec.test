@@ -1,0 +1,13 @@
+<?php
+
+`ls $dir`;
+-----
+Block#1
+    Expr_ConcatList
+        list: LITERAL('ls ')
+        list: Var#2<$dir>
+        result: Var#4
+    Expr_FuncCall
+        name: LITERAL('shell_exec')
+        args: Var#4
+        result: Var#6

@@ -999,6 +999,18 @@ class Parser {
         return new Op\Expr\Yield_($value, $key, $this->mapAttributes($expr));
     }
 
+    protected function parseExpr_ShellExec(Expr\ShellExec $expr) {
+        $this->block->children[] = $arg = new Op\Expr\ConcatList(
+            $this->parseExprList($expr->parts, self::MODE_READ),
+            $this->mapAttributes($expr)
+        );
+        return new Op\Expr\FuncCall(
+            new Operand\Literal('shell_exec'),
+            [$arg->result],
+            $this->mapAttributes($expr)
+        );
+    }
+
     private function parseScalarNode(Node\Scalar $scalar) {
         switch ($scalar->getType()) {
             case 'Scalar_Encapsed':
