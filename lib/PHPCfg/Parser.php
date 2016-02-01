@@ -704,7 +704,7 @@ class Parser {
         return new Op\Expr\Assign($v, $e, $this->mapAttributes($expr));
     }
 
-    protected function parseExpr_AssignRef(Expr\Assign $expr) {
+    protected function parseExpr_AssignRef(Expr\AssignRef $expr) {
         $e = $this->readVariable($this->parseExprNode($expr->expr));
         $v = $this->writeVariable($this->parseExprNode($expr->var));
         return new Op\Expr\AssignRef($v, $e, $this->mapAttributes($expr));
