@@ -13,6 +13,7 @@ use PHPCfg\Op;
 use PHPCfg\Operand\Temporary;
 
 abstract class Expr extends Op {
+    /** @var \PhpCfg\Operand */
     public $result;
 
     protected $writeVariables = ['result'];

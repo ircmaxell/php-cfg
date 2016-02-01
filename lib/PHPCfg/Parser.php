@@ -251,7 +251,9 @@ class Parser {
 
         $this->block->children[] = $valueOp = new Op\Iterator\Value($iterable, $node->byRef, $attrs);
 
-        if ($node->byRef) {
+        if ($node->valueVar instanceof Expr\List_) {
+            $this->parseListAssignment($node->valueVar, $valueOp->result);
+        } elseif ($node->byRef) {
             $this->block->children[] = new Op\Expr\AssignRef($this->writeVariable($this->parseExprNode($node->valueVar)), $valueOp->result, $attrs);
         } else {
             $this->block->children[] = new Op\Expr\Assign($this->writeVariable($this->parseExprNode($node->valueVar)), $valueOp->result, $attrs);
@@ -700,6 +702,10 @@ class Parser {
     
     protected function parseExpr_Assign(Expr\Assign $expr) {
         $e = $this->readVariable($this->parseExprNode($expr->expr));
+        if ($expr->var instanceof Expr\List_) {
+            $this->parseListAssignment($expr->var, $e);
+            return $e;
+        }
         $v = $this->writeVariable($this->parseExprNode($expr->var));
         return new Op\Expr\Assign($v, $e, $this->mapAttributes($expr));
     }
@@ -842,8 +848,26 @@ class Parser {
         return new Op\Expr\Isset_($this->parseNodes($expr->vars, new Block), $this->mapAttributes($expr));
     }
 
-    protected function parseExpr_List(Expr\List_ $expr) {
-        return new Op\Expr\List_($this->parseExprList($expr->vars, self::MODE_WRITE), $this->mapAttributes($expr));
+    protected function parseListAssignment(Expr\List_ $expr, Operand $rhs) {
+        $attributes = $this->mapAttributes($expr);
+        foreach ($expr->vars as $i => $var) {
+            if (null === $var) {
+                continue;
+            }
+
+            $fetch = new Op\Expr\ArrayDimFetch($rhs, new Operand\Literal($i), $attributes);
+            $this->block->children[] = $fetch;
+            if ($var instanceof Expr\List_) {
+                $this->parseListAssignment($var, $fetch->result);
+                continue;
+            }
+
+            $assign = new Op\Expr\Assign(
+                $this->writeVariable($this->parseExprNode($var)),
+                $fetch->result, $attributes
+            );
+            $this->block->children[] = $assign;
+        }
     }
 
     protected function parseExpr_MethodCall(Expr\MethodCall $expr) {

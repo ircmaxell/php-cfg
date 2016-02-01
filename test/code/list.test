@@ -1,0 +1,84 @@
+<?php
+
+list($a, , $b, list($c, $d)) = $array;
+foreach ($a as list($b, $c));
+-----
+Block#1
+    Expr_ArrayDimFetch
+        var: Var#1<$array>
+        dim: LITERAL(0)
+        result: Var#4
+    Expr_Assign
+        var: Var#5<$a>
+        expr: Var#4
+        result: Var#7
+    Expr_ArrayDimFetch
+        var: Var#1<$array>
+        dim: LITERAL(2)
+        result: Var#9
+    Expr_Assign
+        var: Var#10<$b>
+        expr: Var#9
+        result: Var#12
+    Expr_ArrayDimFetch
+        var: Var#1<$array>
+        dim: LITERAL(3)
+        result: Var#14
+    Expr_ArrayDimFetch
+        var: Var#14
+        dim: LITERAL(0)
+        result: Var#16
+    Expr_Assign
+        var: Var#17<$c>
+        expr: Var#16
+        result: Var#19
+    Expr_ArrayDimFetch
+        var: Var#14
+        dim: LITERAL(1)
+        result: Var#21
+    Expr_Assign
+        var: Var#22<$d>
+        expr: Var#21
+        result: Var#24
+    Iterator_Reset
+        var: Var#5<$a>
+    Stmt_Jump
+        target: Block#2
+
+Block#2
+    Parent: Block#1
+    Parent: Block#3
+    Iterator_Valid
+        var: Var#5<$a>
+        result: Var#25
+    Stmt_JumpIf
+        cond: Var#25
+        if: Block#3
+        else: Block#4
+
+Block#3
+    Parent: Block#2
+    Iterator_Value
+        var: Var#5<$a>
+        result: Var#26
+    Expr_ArrayDimFetch
+        var: Var#26
+        dim: LITERAL(0)
+        result: Var#28
+    Expr_Assign
+        var: Var#29<$b>
+        expr: Var#28
+        result: Var#31
+    Expr_ArrayDimFetch
+        var: Var#26
+        dim: LITERAL(1)
+        result: Var#33
+    Expr_Assign
+        var: Var#34<$c>
+        expr: Var#33
+        result: Var#36
+    Stmt_Jump
+        target: Block#2
+
+Block#4
+    Parent: Block#2
