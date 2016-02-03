@@ -1020,6 +1020,7 @@ class Parser {
             case 'Scalar_DNumber':
             case 'Scalar_LNumber':
             case 'Scalar_String':
+            case 'Scalar_EncapsedStringPart':
                 return new Literal($scalar->value);
             case 'Scalar_MagicConst_Class':
                 // TODO
