@@ -10,7 +10,7 @@
     ],
     "require": {
         "php": ">=5.5",
-        "nikic/php-parser": "dev-master",
+        "nikic/php-parser": "^2.0",
         "phpdocumentor/graphviz": "dev-master"
     },
     "require-dev": {
