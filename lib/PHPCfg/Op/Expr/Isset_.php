@@ -9,24 +9,18 @@
 
 namespace PHPCfg\Op\Expr;
 
-use PhpCfg\Block;
 use PHPCfg\Op\Expr;
 
 class Isset_ extends Expr {
 
-    public $expr;
+    public $vars;
 
-    public function __construct(Block $expr, array $attributes = []) {
+    public function __construct(array $vars, array $attributes = []) {
         parent::__construct($attributes);
-        $this->expr = $this->addReadRef($expr);
+        $this->vars = $this->addReadRef($vars);
     }
 
     public function getVariableNames() {
-        return ["result"];
-    }
-
-    public function getSubBlocks() {
-        // We don't parse subblocks like we normally do
-        return [];
+        return ["vars", "result"];
     }
 }

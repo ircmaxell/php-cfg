@@ -845,7 +845,10 @@ class Parser {
     }
 
     protected function parseExpr_Isset(Expr\Isset_ $expr) {
-        return new Op\Expr\Isset_($this->parseNodes($expr->vars, new Block), $this->mapAttributes($expr));
+        return new Op\Expr\Isset_(
+            $this->parseExprList($expr->vars, self::MODE_READ),
+            $this->mapAttributes($expr)
+        );
     }
 
     protected function parseListAssignment(Expr\List_ $expr, Operand $rhs) {
