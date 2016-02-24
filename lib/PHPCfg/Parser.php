@@ -341,12 +341,38 @@ class Parser {
 
         if ($node instanceof Node\Stmt\If_) {
             foreach ($node->elseifs as $elseIf) {
-                $this->parseIf($elseIf);
+                $this->parseElseIf($elseIf, $endBlock);
             }
             if ($node->else) {
                 $this->block = $this->parseNodes($node->else->stmts, $this->block);
             }
         }
+        $this->block->children[] = new Op\Stmt\Jump($endBlock, $attrs);
+        $endBlock->addParent($this->block);
+        $this->block = $endBlock;
+    }
+
+    protected function parseElseIf($node, $targetNode){
+        $attrs = $this->mapAttributes($node);
+        $cond = $this->readVariable($this->parseExprNode($node->cond));
+        $ifBlock = new Block;
+        $elseBlock = new Block;
+        $endBlock = new Block;
+
+        $this->block->children[] = new Op\Stmt\JumpIf($cond, $ifBlock, $elseBlock, $attrs);
+        $this->processAssertions($cond, $ifBlock, $elseBlock);
+        $ifBlock->addParent($this->block);
+        $elseBlock->addParent($this->block);
+
+        $this->block = $ifBlock;
+        
+        $this->block = $this->parseNodes($node->stmts, $ifBlock);
+
+        $this->block->children[] = new Op\Stmt\Jump($targetNode, $attrs);
+        $targetNode->addParent($this->block);
+
+        $this->block = $elseBlock;
+
         $this->block->children[] = new Op\Stmt\Jump($endBlock, $attrs);
         $endBlock->addParent($this->block);
         $this->block = $endBlock;
