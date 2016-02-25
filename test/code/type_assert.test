@@ -17,12 +17,15 @@ Block#1
 
 Block#2
     Parent: Block#1
-    Expr_Assign
-        var: Var#5
-        expr: LITERAL(true)
+    Parent: Block#3
+    Phi
+        vars: LITERAL(true)
+        vars: Var#6
         result: Var#7
-    Stmt_Jump
-        target: Block#4
+    Stmt_JumpIf
+        cond: Var#7
+        if: Block#4
+        else: Block#5
 
 Block#3
     Parent: Block#1
@@ -32,39 +35,31 @@ Block#3
         result: Var#9
     Expr_Cast_Bool
         expr: Var#9
-        result: Var#5
+        result: Var#6
     Stmt_Jump
-        target: Block#4
+        target: Block#2
 
 Block#4
     Parent: Block#2
-    Parent: Block#3
-    Stmt_JumpIf
-        cond: Var#5
-        if: Block#5
-        else: Block#6
-
-Block#5
-    Parent: Block#4
     Expr_Assertion<(type(LITERAL('int'))|type(LITERAL('float')))>
         expr: Var#2<$a>
         result: Var#12<$a>
     Terminal_Echo
         expr: Var#12<$a>
     Stmt_Jump
-        target: Block#7
+        target: Block#6
 
-Block#6
-    Parent: Block#4
+Block#5
+    Parent: Block#2
     Expr_Assertion<not((type(LITERAL('int'))|type(LITERAL('float'))))>
         expr: Var#2<$a>
         result: Var#13<$a>
     Stmt_Jump
-        target: Block#7
+        target: Block#6
 
-Block#7
+Block#6
+    Parent: Block#4
     Parent: Block#5
-    Parent: Block#6
     Phi<Var#14<$a>>: = [Var#12<$a>,Var#13<$a>,]
     Expr_FuncCall
         name: LITERAL('var_dump')

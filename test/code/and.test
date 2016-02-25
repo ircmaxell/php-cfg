@@ -20,21 +20,16 @@ Block#2
         expr: Var#4
         result: Var#5
     Stmt_Jump
-        target: Block#4
+        target: Block#3
 
 Block#3
     Parent: Block#1
-    Expr_Assign
-        var: Var#5
-        expr: LITERAL(false)
-        result: Var#7
-    Stmt_Jump
-        target: Block#4
-
-Block#4
-    Parent: Block#3
     Parent: Block#2
+    Phi
+        vars: LITERAL(false)
+        vars: Var#5
+        result: Var#7
     Expr_Assign
         var: Var#8<$x>
-        expr: Var#5
+        expr: Var#7
         result: Var#10

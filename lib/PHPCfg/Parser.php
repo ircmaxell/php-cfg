@@ -1083,17 +1083,13 @@ class Parser {
         $longBlock = new Block;
         $endBlock = new Block;
 
-        $shortBlock = new Block;
-        $shortBlock->children[] = new Op\Expr\Assign($result, new Literal($isOr));
-        $shortBlock->children[] = new Op\Stmt\Jump($endBlock);
-        $endBlock->addParent($shortBlock);
         $left = $this->readVariable($this->parseExprNode($expr->left));
-        $if = $isOr ? $shortBlock : $longBlock;
-        $else = $isOr ? $longBlock : $shortBlock;
+        $if = $isOr ? $endBlock : $longBlock;
+        $else = $isOr ? $longBlock : $endBlock;
 
         $this->block->children[] = new Op\Stmt\JumpIf($left, $if, $else);
-        $shortBlock->addParent($this->block);
         $longBlock->addParent($this->block);
+        $endBlock->addParent($this->block);
 
         $this->block = $longBlock;
         $right = $this->readVariable($this->parseExprNode($expr->right));
@@ -1102,8 +1098,11 @@ class Parser {
         $this->block->children[] = new Op\Stmt\Jump($endBlock);
         $endBlock->addParent($this->block);
 
-        $boolCast->result = $result;
         $this->block = $endBlock;
+        $phi = new Op\Phi($result, ['block' => $this->block]);
+        $phi->addOperand(new Literal($isOr));
+        $phi->addOperand($boolCast->result);
+        $this->block->children[] = $phi;
 
         $mode = $isOr ? Assertion::MODE_UNION : Assertion::MODE_INTERSECTION;
         foreach ($left->assertions as $assert) {

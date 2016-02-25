@@ -16,6 +16,7 @@ class Block {
     /** @var Block[] */
     public $parents = [];
 
+    /** @var Op\Phi[] */
     public $phi = [];
 
     public $dead = false;

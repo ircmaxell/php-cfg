@@ -13,28 +13,23 @@ Block#1
 
 Block#2
     Parent: Block#1
-    Expr_Assign
-        var: Var#3
-        expr: LITERAL(true)
+    Parent: Block#3
+    Phi
+        vars: LITERAL(true)
+        vars: Var#4
         result: Var#5
-    Stmt_Jump
-        target: Block#4
+    Expr_Assign
+        var: Var#6<$x>
+        expr: Var#5
+        result: Var#8
 
 Block#3
     Parent: Block#1
     Expr_FuncCall
         name: LITERAL('b')
-        result: Var#7
-    Expr_Cast_Bool
-        expr: Var#7
-        result: Var#3
-    Stmt_Jump
-        target: Block#4
-
-Block#4
-    Parent: Block#2
-    Parent: Block#3
-    Expr_Assign
-        var: Var#8<$x>
-        expr: Var#3
         result: Var#10
+    Expr_Cast_Bool
+        expr: Var#10
+        result: Var#4
+    Stmt_Jump
+        target: Block#2
