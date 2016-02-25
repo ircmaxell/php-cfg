@@ -2,7 +2,7 @@
 
 if ($a) {
     echo "a";
-} elseif ($b) {
+} else if ($b) {
     echo "b";
 } else {
     echo "c";

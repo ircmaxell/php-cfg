@@ -314,16 +314,20 @@ class Parser {
     }
 
     protected function parseStmt_If(Stmt\If_ $node) {
-        $this->parseIf($node);
+        $endBlock = new Block;
+        $this->parseIf($node, $endBlock);
+        $this->block = $endBlock;
     }
 
-    /** @param Stmt\If_|Stmt\ElseIf_ $node */
-    protected function parseIf($node) {
+    /**
+     * @param Stmt\If_|Stmt\ElseIf_ $node
+     * @param Block $endBlock
+     */
+    protected function parseIf($node, Block $endBlock) {
         $attrs = $this->mapAttributes($node);
         $cond = $this->readVariable($this->parseExprNode($node->cond));
         $ifBlock = new Block;
         $elseBlock = new Block;
-        $endBlock = new Block;
 
         $this->block->children[] = new Op\Stmt\JumpIf($cond, $ifBlock, $elseBlock, $attrs);
         $this->processAssertions($cond, $ifBlock, $elseBlock);
@@ -341,15 +345,14 @@ class Parser {
 
         if ($node instanceof Node\Stmt\If_) {
             foreach ($node->elseifs as $elseIf) {
-                $this->parseIf($elseIf);
+                $this->parseIf($elseIf, $endBlock);
             }
             if ($node->else) {
                 $this->block = $this->parseNodes($node->else->stmts, $this->block);
             }
+            $this->block->children[] = new Op\Stmt\Jump($endBlock, $attrs);
+            $endBlock->addParent($this->block);
         }
-        $this->block->children[] = new Op\Stmt\Jump($endBlock, $attrs);
-        $endBlock->addParent($this->block);
-        $this->block = $endBlock;
     }
 
     protected function parseStmt_InlineHTML(Stmt\InlineHTML $node) {
