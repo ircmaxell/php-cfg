@@ -769,7 +769,7 @@ class Parser {
     }
 
     protected function parseExpr_Empty(Expr\Empty_ $expr) {
-        return new Op\Expr\Empty_($this->parseNodes([$expr->expr], new Block), $this->mapAttributes($expr));
+        return new Op\Expr\Empty_($this->readVariable($this->parseExprNode($expr->expr)), $this->mapAttributes($expr));
     }
 
     protected function parseExpr_ErrorSuppress(Expr\ErrorSuppress $expr) {

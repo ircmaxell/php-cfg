@@ -1,0 +1,24 @@
+<?php
+
+var_dump(empty($a));
+var_dump(empty($a['b']));
+-----
+Block#1
+    Expr_Empty
+        expr: Var#1<$a>
+        result: Var#3
+    Expr_FuncCall
+        name: LITERAL('var_dump')
+        args: Var#3
+        result: Var#5
+    Expr_ArrayDimFetch
+        var: Var#1<$a>
+        dim: LITERAL('b')
+        result: Var#7
+    Expr_Empty
+        expr: Var#7
+        result: Var#8
+    Expr_FuncCall
+        name: LITERAL('var_dump')
+        args: Var#8
+        result: Var#10

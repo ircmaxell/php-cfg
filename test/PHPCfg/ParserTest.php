@@ -43,7 +43,7 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
             }
 
             $contents = file_get_contents($file);
-            yield $file->getBasename() => array_merge(explode('-----', $contents));
+            yield $file->getBasename() => explode('-----', $contents);
         }
     }
 
