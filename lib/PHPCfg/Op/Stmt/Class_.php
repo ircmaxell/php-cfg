@@ -23,4 +23,7 @@ class Class_ extends ClassLike {
         $this->implements = $implements;
     }
 
+    public function getVariableNames() {
+        return ['name', 'extends', 'implements'];
+    }
 }

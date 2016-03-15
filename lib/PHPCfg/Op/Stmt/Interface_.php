@@ -19,4 +19,7 @@ class Interface_ extends ClassLike {
         $this->extends = $extends;
     }
 
+    public function getVariableNames() {
+        return ['name', 'extends'];
+    }
 }

@@ -19,4 +19,7 @@ class Trait_ extends ClassLike {
         $this->stmts = $stmts;
     }
 
+    public function getVariableNames() {
+        return ['name'];
+    }
 }
