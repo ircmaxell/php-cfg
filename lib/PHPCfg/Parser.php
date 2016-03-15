@@ -739,7 +739,7 @@ class Parser {
         $uses = [];
         foreach ($expr->uses as $use) {
             $uses[] = new Operand\BoundVariable(
-                $this->readVariable(new Variable(new Literal($use->var))),
+                $this->readVariable(new Literal($use->var)),
                 $use->byRef,
                 Operand\BoundVariable::SCOPE_LOCAL
             );
