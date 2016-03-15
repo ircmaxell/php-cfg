@@ -23,7 +23,7 @@ class Const_ extends Terminal {
     }
 
     public function getVariableNames() {
-        return ['value'];
+        return ['name', 'value'];
     }
 
     public function getSubBlocks() {
