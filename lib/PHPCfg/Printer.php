@@ -15,9 +15,11 @@ use PHPCfg\Operand\Temporary;
 use PHPCfg\Operand\Variable;
 
 abstract class Printer {
-
+    /** @var \SplObjectStorage */
     private $varIds;
+    /** @var \SplQueue */
     private $blockQueue;
+    /** @var \SplObjectStorage */
     private $blocks;
 
     public function __construct() {
@@ -145,11 +147,6 @@ abstract class Printer {
         return $kind . '(' . implode($combinator, $results) . ')';
     }
 
-    /**
-     * @param string $str
-     *
-     * @return string
-     */
     protected function indent($str, $levels = 1) {
         if ($levels > 1) {
             $str = $this->indent($str, $levels - 1);
