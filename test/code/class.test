@@ -22,11 +22,11 @@ Block#1
         stmts: Block#3
     Expr_New
         class: LITERAL('NS\\NameOfClass')
-        result: Var#8
+        result: Var#1
     Expr_Assign
-        var: Var#9<$obj>
-        expr: Var#8
-        result: Var#11
+        var: Var#2<$obj>
+        expr: Var#1
+        result: Var#3
 
 Block#2
 

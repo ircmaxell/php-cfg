@@ -13,14 +13,14 @@ Block#1
     Expr_Assign
         var: Var#1<$a>
         expr: LITERAL(1)
-        result: Var#4
+        result: Var#2
     Expr_Array
         values: LITERAL(1)
         values: LITERAL(2)
         values: LITERAL(3)
-        result: Var#8
+        result: Var#3
     Iterator_Reset
-        var: Var#8
+        var: Var#3
     Stmt_Jump
         target: Block#2
 
@@ -28,47 +28,47 @@ Block#2
     Parent: Block#1
     Parent: Block#3
     Parent: Block#5
-    Phi<Var#9<$a>>: = [Var#1<$a>,Var#11<$a>,]
+    Phi<Var#4<$a>>: = [Var#1<$a>,Var#5<$a>,]
     Iterator_Valid
-        var: Var#8
-        result: Var#13
+        var: Var#3
+        result: Var#6
     Stmt_JumpIf
-        cond: Var#13
+        cond: Var#6
         if: Block#3
         else: Block#4
 
 Block#3
     Parent: Block#2
     Iterator_Value
-        var: Var#8
-        result: Var#14
+        var: Var#3
+        result: Var#7
     Expr_Assign
-        var: Var#15<$b>
-        expr: Var#14
-        result: Var#17
+        var: Var#8<$b>
+        expr: Var#7
+        result: Var#9
     Expr_BinaryOp_Greater
-        left: Var#9<$a>
+        left: Var#4<$a>
         right: LITERAL(0)
-        result: Var#19
+        result: Var#10
     Stmt_JumpIf
-        cond: Var#19
+        cond: Var#10
         if: Block#5
         else: Block#2
 
 Block#4
     Parent: Block#2
     Terminal_Echo
-        expr: Var#9<$a>
+        expr: Var#4<$a>
 
 Block#5
     Parent: Block#3
     Expr_BinaryOp_Plus
-        left: Var#9<$a>
-        right: Var#15<$b>
-        result: Var#20
+        left: Var#4<$a>
+        right: Var#8<$b>
+        result: Var#11
     Expr_Assign
-        var: Var#11<$a>
-        expr: Var#20
-        result: Var#21
+        var: Var#5<$a>
+        expr: Var#11
+        result: Var#12
     Stmt_Jump
         target: Block#2

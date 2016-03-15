@@ -5,9 +5,9 @@ $x = a() || b();
 Block#1
     Expr_FuncCall
         name: LITERAL('a')
-        result: Var#2
+        result: Var#1
     Stmt_JumpIf
-        cond: Var#2
+        cond: Var#1
         if: Block#2
         else: Block#3
 
@@ -16,20 +16,20 @@ Block#2
     Parent: Block#3
     Phi
         vars: LITERAL(true)
-        vars: Var#4
-        result: Var#5
+        vars: Var#2
+        result: Var#3
     Expr_Assign
-        var: Var#6<$x>
-        expr: Var#5
-        result: Var#8
+        var: Var#4<$x>
+        expr: Var#3
+        result: Var#5
 
 Block#3
     Parent: Block#1
     Expr_FuncCall
         name: LITERAL('b')
-        result: Var#10
+        result: Var#6
     Expr_Cast_Bool
-        expr: Var#10
-        result: Var#4
+        expr: Var#6
+        result: Var#2
     Stmt_Jump
         target: Block#2

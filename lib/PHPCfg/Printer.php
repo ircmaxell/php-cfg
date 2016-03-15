@@ -38,7 +38,6 @@ abstract class Printer {
     }
 
     protected function renderOperand(Operand $var) {
-        $id = $this->getVarId($var);
         $type = isset($var->type) ? "<{$var->type}>" : "";
         if ($var instanceof Literal) {
             return "LITERAL{$type}(" . var_export($var->value, true) . ")";
@@ -65,6 +64,7 @@ abstract class Printer {
             
             return $prefix . $var->name->value . $type;
         } elseif ($var instanceof Temporary) {
+            $id = $this->getVarId($var);
             if ($var->original) {
                 return "Var{$type}#$id" . "<" . $this->renderOperand($var->original) . ">";
             }

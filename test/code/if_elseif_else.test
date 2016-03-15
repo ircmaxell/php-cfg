@@ -25,7 +25,7 @@ Block#2
 Block#3
     Parent: Block#1
     Stmt_JumpIf
-        cond: Var#4<$b>
+        cond: Var#2<$b>
         if: Block#5
         else: Block#6
 

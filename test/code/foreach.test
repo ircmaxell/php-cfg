@@ -10,7 +10,7 @@ Block#1
     Expr_Assign
         var: Var#2<$a>
         expr: Var#1
-        result: Var#4
+        result: Var#3
     Iterator_Reset
         var: Var#2<$a>
     Stmt_Jump
@@ -21,9 +21,9 @@ Block#2
     Parent: Block#3
     Iterator_Valid
         var: Var#2<$a>
-        result: Var#5
+        result: Var#4
     Stmt_JumpIf
-        cond: Var#5
+        cond: Var#4
         if: Block#3
         else: Block#4
 
@@ -31,13 +31,13 @@ Block#3
     Parent: Block#2
     Iterator_Value
         var: Var#2<$a>
-        result: Var#6
+        result: Var#5
     Expr_Assign
-        var: Var#7<$b>
-        expr: Var#6
-        result: Var#9
+        var: Var#6<$b>
+        expr: Var#5
+        result: Var#7
     Terminal_Echo
-        expr: Var#7<$b>
+        expr: Var#6<$b>
     Stmt_Jump
         target: Block#2
 

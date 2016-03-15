@@ -12,40 +12,40 @@ Block#1
     Expr_Assign
         var: Var#1<$b>
         expr: LITERAL(1)
-        result: Var#4
+        result: Var#2
     Expr_Assign
-        var: Var#5<$c>
+        var: Var#3<$c>
         expr: LITERAL(2)
-        result: Var#8
+        result: Var#4
     Expr_Closure
-        Param[0]: Var#9<$a>
+        Param[0]: Var#5<$a>
         useVars: local<$b>
         useVars: local<&$c>
-        result: Var#13
+        result: Var#6
         stmts: Block#2
     Expr_Assign
-        var: Var#14<$fn>
-        expr: Var#13
-        result: Var#16
+        var: Var#7<$fn>
+        expr: Var#6
+        result: Var#8
     Expr_FuncCall
         name: $fn
         args: LITERAL(3)
-        result: Var#19
+        result: Var#9
     Expr_FuncCall
         name: LITERAL('var_dump')
-        args: Var#5<$c>
-        result: Var#21
+        args: Var#3<$c>
+        result: Var#10
 
 Block#2
     Expr_BinaryOp_Mul
-        left: Var#22<$b>
-        right: Var#24<$a>
-        result: Var#26
+        left: Var#11<$b>
+        right: Var#12<$a>
+        result: Var#13
     Expr_BinaryOp_Plus
-        left: Var#27<$c>
-        right: Var#26
-        result: Var#29
+        left: Var#14<$c>
+        right: Var#13
+        result: Var#15
     Expr_Assign
-        var: Var#30<$c>
-        expr: Var#29
-        result: Var#32
+        var: Var#16<$c>
+        expr: Var#15
+        result: Var#17

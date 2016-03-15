@@ -17,16 +17,16 @@ Block#1
         stmts: Block#2
     Expr_ConstFetch
         name: LITERAL('A')
-        result: Var#7
+        result: Var#1
     Expr_ClassConstFetch
         class: LITERAL('C')
         name: LITERAL('D')
-        result: Var#10
+        result: Var#2
     Expr_FuncCall
         name: LITERAL('var_dump')
-        args: Var#7
-        args: Var#10
-        result: Var#12
+        args: Var#1
+        args: Var#2
+        result: Var#3
 
 Block#2
     Terminal_Const

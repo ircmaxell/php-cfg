@@ -7,11 +7,11 @@ if (isset($a, $b, $c)) {
 Block#1
     Expr_Isset
         vars: Var#1<$a>
-        vars: Var#3<$b>
-        vars: Var#5<$c>
-        result: Var#7
+        vars: Var#2<$b>
+        vars: Var#3<$c>
+        result: Var#4
     Stmt_JumpIf
-        cond: Var#7
+        cond: Var#4
         if: Block#2
         else: Block#3
 
