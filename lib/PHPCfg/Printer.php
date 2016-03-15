@@ -82,7 +82,9 @@ abstract class Printer {
     protected function renderOp(Op $op) {
         $result = $op->getType();
         if ($op instanceof Op\CallableOp) {
-            $result .= '<' . $op->name->value . '>';
+            if (isset($op->name)) {
+                $result .= '<' . $op->name->value . '>';
+            }
             foreach ($op->getParams() as $key => $param) {
                 $result .= $this->indent("\nParam[$key]: " . $this->renderOperand($param->result));
             }
@@ -192,17 +194,6 @@ abstract class Printer {
                 ];
             }
             foreach ($block->children as $child) {
-                if ($child instanceof Op\CallableOp) {
-                    // render the params into the ops
-                    foreach ($child->getParams() as $idx => $param) {
-                        $renderedOps[$param] = [
-                            "op"          => $param,
-                            "label"       => "Param({$child->name->value})[$idx]: " . $this->renderOperand($param->result),
-                            "childBlocks" => [],
-                        ];
-                    }
-
-                }
                 $renderedOps[$child] = $ops[] = $this->renderOp($child);
             }
             $renderedBlocks[$block] = $ops;

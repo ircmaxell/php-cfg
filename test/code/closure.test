@@ -17,7 +17,7 @@ Block#1
         var: Var#5<$c>
         expr: LITERAL(2)
         result: Var#8
-    Expr_Closure<>
+    Expr_Closure
         Param[0]: Var#9<$a>
         useVars: local<$b>
         useVars: local<&$c>
