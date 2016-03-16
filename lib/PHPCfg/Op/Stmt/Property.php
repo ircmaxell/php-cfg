@@ -14,7 +14,11 @@ use PHPCfg\Op\Stmt;
 use PhpCfg\Operand;
 
 class Property extends Stmt {
-    public $result;
+    public $name;
+    public $visibility;
+    public $static;
+    public $defaultVar;
+    public $defaultBlock;
 
     public function __construct($name, $visiblity, $static, Operand $defaultVar = null, Block $defaultBlock = null, array $attributes = []) {
         parent::__construct($attributes);
@@ -26,7 +30,7 @@ class Property extends Stmt {
     }
 
     public function getVariableNames() {
-        return ["defaultVar"];
+        return ["name", "defaultVar"];
     }
 
     public function getSubBlocks() {
