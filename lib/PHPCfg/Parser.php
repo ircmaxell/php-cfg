@@ -123,9 +123,14 @@ class Parser {
             throw new \RuntimeException("Unknown current class");
         }
         foreach ($node->consts as $const) {
+            $tmp = $this->block;
+            $this->block = $valueBlock = new Block;
+            $value = $this->parseExprNode($const->value);
+            $this->block = $tmp;
+
             $this->block->children[] = new Op\Terminal\Const_(
                 $this->parseExprNode($const->name),
-                $this->parseExprNode($const->value),
+                $value, $valueBlock,
                 $this->mapAttributes($node)
             );
         }
@@ -161,9 +166,14 @@ class Parser {
 
     protected function parseStmt_Const(Stmt\Const_ $node) {
         foreach ($node->consts as $const) {
+            $tmp = $this->block;
+            $this->block = $valueBlock = new Block;
+            $value = $this->parseExprNode($const->value);
+            $this->block = $tmp;
+
             $this->block->children[] = new Op\Terminal\Const_(
                 $this->parseExprNode($const->namespacedName),
-                $this->parseExprNode($const->value),
+                $value, $valueBlock,
                 $this->mapAttributes($node)
             );
         }

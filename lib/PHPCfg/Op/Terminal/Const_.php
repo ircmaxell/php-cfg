@@ -11,15 +11,18 @@ namespace PHPCfg\Op\Terminal;
 
 use PHPCfg\Op\Terminal;
 use PHPCfg\Operand;
+use PHPCfg\Block;
 
 class Const_ extends Terminal {
     public $name;
     public $value;
+    public $valueBlock;
 
-    public function __construct($name, Operand $value, array $attributes = []) {
+    public function __construct($name, Operand $value, Block $valueBlock, array $attributes = []) {
         parent::__construct($attributes);
         $this->name = $this->addReadRef($name);
         $this->value = $this->addReadRef($value);
+        $this->valueBlock = $valueBlock;
     }
 
     public function getVariableNames() {
@@ -27,6 +30,6 @@ class Const_ extends Terminal {
     }
 
     public function getSubBlocks() {
-        return [];
+        return ['valueBlock'];
     }
 }
