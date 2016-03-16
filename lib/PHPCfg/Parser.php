@@ -464,7 +464,7 @@ class Parser {
                 $block->children[] = new Op\Stmt\Jump($caseBlock);
                 $caseBlock->addParent($block);
             }
-            $cases[] = [$this->parseExprNode($case->cond)];
+            $cases[] = $this->parseExprNode($case->cond);
             $block = $this->parseNodes($case->stmts, $caseBlock);
         }
         $this->block->children[] = new Op\Stmt\Switch_($cond, $cases, $targets, $this->mapAttributes($node));

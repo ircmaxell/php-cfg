@@ -24,8 +24,8 @@ class Switch_ extends Stmt {
         $this->targets = $targets;
     }
 
-    public function getVariables() {
-        return ['cond'];
+    public function getVariableNames() {
+        return ['cond', 'cases'];
     }
 
     public function getSubBlocks() {

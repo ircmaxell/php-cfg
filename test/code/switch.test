@@ -1,0 +1,52 @@
+<?php
+switch ($i) {
+    case 0:
+    case 1:
+    case 2:
+        echo "0 <= i <= 2";
+        break;
+    case 3:
+        echo "i == 3";
+        break;
+    default:
+        echo "i < 0 || i > 3";
+}
+-----
+Block#1
+    Stmt_Switch
+        cond: Var#1<$i>
+        cases[0]: LITERAL(0)
+        cases[1]: LITERAL(1)
+        cases[2]: LITERAL(2)
+        cases[3]: LITERAL(3)
+        targets: Block#2
+        targets: Block#2
+        targets: Block#2
+        targets: Block#3
+        targets: Block#4
+
+Block#2
+    Parent: Block#1
+    Terminal_Echo
+        expr: LITERAL('0 <= i <= 2')
+    Stmt_Jump
+        target: Block#5
+
+Block#3
+    Parent: Block#1
+    Terminal_Echo
+        expr: LITERAL('i == 3')
+    Stmt_Jump
+        target: Block#5
+
+Block#4
+    Parent: Block#1
+    Terminal_Echo
+        expr: LITERAL('i < 0 || i > 3')
+    Stmt_Jump
+        target: Block#5
+
+Block#5
+    Parent: Block#2
+    Parent: Block#3
+    Parent: Block#4
