@@ -28,7 +28,7 @@ Block#2
     Parent: Block#1
     Parent: Block#3
     Parent: Block#5
-    Phi<Var#4<$a>>: = [Var#1<$a>,Var#5<$a>,]
+    Var#4<$a> = Phi(Var#1<$a>, Var#5<$a>)
     Iterator_Valid
         var: Var#3
         result: Var#6

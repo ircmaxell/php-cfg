@@ -14,7 +14,7 @@ Block#1
 Block#2
     Parent: Block#1
     Parent: Block#3
-    Phi<Var#2>: = [LITERAL(true),Var#3,]
+    Var#2 = Phi(LITERAL(true), Var#3)
     Expr_Assign
         var: Var#4<$x>
         expr: Var#2

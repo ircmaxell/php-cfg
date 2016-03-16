@@ -18,7 +18,7 @@ Block#1
 Block#2
     Parent: Block#1
     Parent: Block#3
-    Phi<Var#3>: = [LITERAL(true),Var#4,]
+    Var#3 = Phi(LITERAL(true), Var#4)
     Stmt_JumpIf
         cond: Var#3
         if: Block#4
@@ -57,7 +57,7 @@ Block#5
 Block#6
     Parent: Block#4
     Parent: Block#5
-    Phi<Var#8<$a>>: = [Var#6<$a>,Var#7<$a>,]
+    Var#8<$a> = Phi(Var#6<$a>, Var#7<$a>)
     Expr_FuncCall
         name: LITERAL('var_dump')
         args[0]: Var#8<$a>

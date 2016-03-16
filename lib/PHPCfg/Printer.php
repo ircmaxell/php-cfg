@@ -181,11 +181,9 @@ abstract class Printer {
             $block = $this->blockQueue->dequeue();
             $ops = [];
             foreach ($block->phi as $phi) {
-                $result = $this->indent("Phi<" . $this->renderOperand($phi->result) . ">: = [");
-                foreach ($phi->vars as $sub) {
-                    $result .= $this->renderOperand($sub)  . ',';
-                }
-                $result .= ']';
+                $result = $this->indent($this->renderOperand($phi->result) . " = Phi(");
+                $result .= implode(', ', array_map([$this, 'renderOperand'], $phi->vars));
+                $result .= ')';
                 $renderedOps[$phi] = $ops[] = [
                     "op"          => $phi,
                     "label"       => $result,
