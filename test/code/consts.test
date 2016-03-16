@@ -30,8 +30,8 @@ Block#1
 
 Block#2
     Terminal_Const
-        name: LITERAL('c::D')
+        name: LITERAL('D')
         value: LITERAL(3)
     Terminal_Const
-        name: LITERAL('c::E')
+        name: LITERAL('E')
         value: LITERAL(4)

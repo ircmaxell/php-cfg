@@ -124,7 +124,7 @@ class Parser {
         }
         foreach ($node->consts as $const) {
             $this->block->children[] = new Op\Terminal\Const_(
-                $this->parseExprNode(strtolower($this->currentClass->value) . '::' . $const->name),
+                $this->parseExprNode($const->name),
                 $this->parseExprNode($const->value),
                 $this->mapAttributes($node)
             );
