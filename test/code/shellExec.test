@@ -4,10 +4,10 @@
 -----
 Block#1
     Expr_ConcatList
-        list: LITERAL('ls ')
-        list: Var#1<$dir>
+        list[0]: LITERAL('ls ')
+        list[1]: Var#1<$dir>
         result: Var#2
     Expr_FuncCall
         name: LITERAL('shell_exec')
-        args: Var#2
+        args[0]: Var#2
         result: Var#3

@@ -15,9 +15,9 @@ Block#1
         expr: LITERAL(1)
         result: Var#2
     Expr_Array
-        values: LITERAL(1)
-        values: LITERAL(2)
-        values: LITERAL(3)
+        values[0]: LITERAL(1)
+        values[1]: LITERAL(2)
+        values[2]: LITERAL(3)
         result: Var#3
     Iterator_Reset
         var: Var#3

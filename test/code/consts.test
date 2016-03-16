@@ -26,8 +26,8 @@ Block#1
         result: Var#3
     Expr_FuncCall
         name: LITERAL('var_dump')
-        args: Var#2
-        args: Var#3
+        args[0]: Var#2
+        args[1]: Var#3
         result: Var#4
 
 Block#2

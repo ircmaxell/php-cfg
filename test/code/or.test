@@ -15,8 +15,8 @@ Block#2
     Parent: Block#1
     Parent: Block#3
     Phi
-        vars: LITERAL(true)
-        vars: Var#2
+        vars[0]: LITERAL(true)
+        vars[1]: Var#2
         result: Var#3
     Expr_Assign
         var: Var#4<$x>

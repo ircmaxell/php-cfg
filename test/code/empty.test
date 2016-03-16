@@ -9,7 +9,7 @@ Block#1
         result: Var#2
     Expr_FuncCall
         name: LITERAL('var_dump')
-        args: Var#2
+        args[0]: Var#2
         result: Var#3
     Expr_ArrayDimFetch
         var: Var#1<$a>
@@ -20,5 +20,5 @@ Block#1
         result: Var#5
     Expr_FuncCall
         name: LITERAL('var_dump')
-        args: Var#5
+        args[0]: Var#5
         result: Var#6

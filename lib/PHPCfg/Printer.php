@@ -96,15 +96,17 @@ abstract class Printer {
         }
         foreach ($op->getVariableNames() as $varName) {
             $vars = $op->$varName;
-            if (!is_array($vars)) {
-                $vars = [$vars];
-            }
-            foreach ($vars as $var) {
-                if (!$var) {
-                    continue;
+            if (is_array($vars)) {
+                foreach ($vars as $key => $var) {
+                    if (!$var) {
+                        continue;
+                    }
+                    $result .= "\n    {$varName}[$key]: ";
+                    $result .= $this->indent($this->renderOperand($var));
                 }
+            } elseif ($vars) {
                 $result .= "\n    $varName: ";
-                $result .= $this->indent($this->renderOperand($var));
+                $result .= $this->indent($this->renderOperand($vars));
             }
         }
         $childBlocks = [];

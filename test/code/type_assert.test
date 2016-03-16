@@ -8,7 +8,7 @@ var_dump($a);
 Block#1
     Expr_FuncCall
         name: LITERAL('is_int')
-        args: Var#1<$a>
+        args[0]: Var#1<$a>
         result: Var#2
     Stmt_JumpIf
         cond: Var#2
@@ -19,8 +19,8 @@ Block#2
     Parent: Block#1
     Parent: Block#3
     Phi
-        vars: LITERAL(true)
-        vars: Var#3
+        vars[0]: LITERAL(true)
+        vars[1]: Var#3
         result: Var#4
     Stmt_JumpIf
         cond: Var#4
@@ -31,7 +31,7 @@ Block#3
     Parent: Block#1
     Expr_FuncCall
         name: LITERAL('is_float')
-        args: Var#1<$a>
+        args[0]: Var#1<$a>
         result: Var#5
     Expr_Cast_Bool
         expr: Var#5
@@ -63,5 +63,5 @@ Block#6
     Phi<Var#8<$a>>: = [Var#6<$a>,Var#7<$a>,]
     Expr_FuncCall
         name: LITERAL('var_dump')
-        args: Var#8<$a>
+        args[0]: Var#8<$a>
         result: Var#9
