@@ -18,12 +18,9 @@ Block#1
 Block#2
     Parent: Block#1
     Parent: Block#3
-    Phi
-        vars[0]: LITERAL(true)
-        vars[1]: Var#3
-        result: Var#4
+    Phi<Var#3>: = [LITERAL(true),Var#4,]
     Stmt_JumpIf
-        cond: Var#4
+        cond: Var#3
         if: Block#4
         else: Block#5
 
@@ -35,7 +32,7 @@ Block#3
         result: Var#5
     Expr_Cast_Bool
         expr: Var#5
-        result: Var#3
+        result: Var#4
     Stmt_Jump
         target: Block#2
 

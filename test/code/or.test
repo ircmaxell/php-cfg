@@ -14,13 +14,10 @@ Block#1
 Block#2
     Parent: Block#1
     Parent: Block#3
-    Phi
-        vars[0]: LITERAL(true)
-        vars[1]: Var#2
-        result: Var#3
+    Phi<Var#2>: = [LITERAL(true),Var#3,]
     Expr_Assign
         var: Var#4<$x>
-        expr: Var#3
+        expr: Var#2
         result: Var#5
 
 Block#3
@@ -30,6 +27,6 @@ Block#3
         result: Var#6
     Expr_Cast_Bool
         expr: Var#6
-        result: Var#2
+        result: Var#3
     Stmt_Jump
         target: Block#2

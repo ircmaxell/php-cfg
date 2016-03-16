@@ -1112,7 +1112,7 @@ class Parser {
         $phi = new Op\Phi($result, ['block' => $this->block]);
         $phi->addOperand(new Literal($isOr));
         $phi->addOperand($boolCast->result);
-        $this->block->children[] = $phi;
+        $this->block->phi[] = $phi;
 
         $mode = $isOr ? Assertion::MODE_UNION : Assertion::MODE_INTERSECTION;
         foreach ($left->assertions as $assert) {
