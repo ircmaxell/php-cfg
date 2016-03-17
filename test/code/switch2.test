@@ -1,0 +1,86 @@
+<?php
+switch ($i) {
+    case $j:
+    default:
+    case $k:
+        echo "A";
+    case $x:
+        echo "B";
+        break;
+    case $y:
+        echo "C";
+}
+echo "D";
+-----
+Block#1
+    Expr_BinaryOp_Equal
+        left: Var#1<$i>
+        right: Var#2<$j>
+        result: Var#3
+    Stmt_JumpIf
+        cond: Var#3
+        if: Block#2
+        else: Block#3
+
+Block#2
+    Parent: Block#3
+    Parent: Block#1
+    Parent: Block#7
+    Terminal_Echo
+        expr: LITERAL('A')
+    Stmt_Jump
+        target: Block#4
+
+Block#3
+    Parent: Block#1
+    Expr_BinaryOp_Equal
+        left: Var#1<$i>
+        right: Var#4<$k>
+        result: Var#5
+    Stmt_JumpIf
+        cond: Var#5
+        if: Block#2
+        else: Block#5
+
+Block#4
+    Parent: Block#2
+    Parent: Block#5
+    Terminal_Echo
+        expr: LITERAL('B')
+    Stmt_Jump
+        target: Block#6
+
+Block#5
+    Parent: Block#3
+    Expr_BinaryOp_Equal
+        left: Var#1<$i>
+        right: Var#6<$x>
+        result: Var#7
+    Stmt_JumpIf
+        cond: Var#7
+        if: Block#4
+        else: Block#7
+
+Block#6
+    Parent: Block#4
+    Parent: Block#8
+    Terminal_Echo
+        expr: LITERAL('D')
+
+Block#7
+    Parent: Block#5
+    Expr_BinaryOp_Equal
+        left: Var#1<$i>
+        right: Var#8<$y>
+        result: Var#9
+    Stmt_JumpIf
+        cond: Var#9
+        if: Block#8
+        else: Block#2
+
+Block#8
+    Parent: Block#7
+    Terminal_Echo
+        expr: LITERAL('C')
+    Stmt_Jump
+        target: Block#6
