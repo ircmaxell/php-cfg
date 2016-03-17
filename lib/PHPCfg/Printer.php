@@ -112,21 +112,20 @@ abstract class Printer {
         $childBlocks = [];
         foreach ($op->getSubBlocks() as $blockName) {
             $sub = $op->$blockName;
-            if (is_null($sub)) {
-                continue;
-            }
-            if (!is_array($sub)) {
-                $sub = [$sub];
-            }
-            foreach ($sub as $subBlock) {
-                if (!$subBlock) {
-                    continue;
+            if (is_array($sub)) {
+                foreach ($sub as $key => $subBlock) {
+                    if (!$subBlock) {
+                        continue;
+                    }
+                    $this->enqueueBlock($subBlock);
+                    $childBlocks[] = [
+                        "block" => $subBlock,
+                        "name" => $blockName . "[" . $key . "]",
+                    ];
                 }
-                $this->enqueueBlock($subBlock);
-                $childBlocks[] = [
-                    "block" => $subBlock,
-                    "name"  => $blockName,
-                ];
+            } elseif ($sub) {
+                $this->enqueueBlock($sub);
+                $childBlocks[] = ["block" => $sub, "name" => $blockName];
             }
         }
         return [
