@@ -9,6 +9,7 @@
 
 namespace PHPCfg\Op\Stmt;
 
+use PHPCfg\Block;
 use PHPCfg\Op\Stmt;
 use PhpCfg\Operand;
 
@@ -16,12 +17,14 @@ class Switch_ extends Stmt {
     public $target;
     public $cases;
     public $targets;
+    public $default;
 
-    public function __construct(Operand $cond, array $cases, array $targets, array $attributes = []) {
+    public function __construct(Operand $cond, array $cases, array $targets, Block $default, array $attributes = []) {
         parent::__construct($attributes);
         $this->cond = $this->addReadRef($cond);
         $this->cases = $cases;
         $this->targets = $targets;
+        $this->default = $default;
     }
 
     public function getVariableNames() {
@@ -29,6 +32,6 @@ class Switch_ extends Stmt {
     }
 
     public function getSubBlocks() {
-        return ['targets'];
+        return ['targets', 'default'];
     }
 }

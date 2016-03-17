@@ -468,25 +468,34 @@ class Parser {
         $cond = $this->readVariable($this->parseExprNode($node->cond));
         $cases = [];
         $targets = [];
-        $block = false;
+        $block = null;
         $endBlock = new Block;
+        $defaultBlock = $endBlock;
         foreach ($node->cases as $case) {
-            $targets[] = $caseBlock = new Block($this->block);
+            $caseBlock = new Block($this->block);
             if ($block && !$block->dead) {
                 // wire up!
                 $block->children[] = new Op\Stmt\Jump($caseBlock);
                 $caseBlock->addParent($block);
             }
-            $cases[] = $this->parseExprNode($case->cond);
+
+            if ($case->cond) {
+                $targets[] = $caseBlock;
+                $cases[] = $this->parseExprNode($case->cond);
+            } else {
+                $defaultBlock = $caseBlock;
+            }
+
             $block = $this->parseNodes($case->stmts, $caseBlock);
         }
-        $this->block->children[] = new Op\Stmt\Switch_($cond, $cases, $targets, $this->mapAttributes($node));
+        $this->block->children[] = new Op\Stmt\Switch_(
+            $cond, $cases, $targets, $defaultBlock, $this->mapAttributes($node)
+        );
         if ($block && !$block->dead) {
             // wire end of block to endblock
             $block->children[] = new Op\Stmt\Jump($endBlock);
             $endBlock->addParent($block);
         }
-        $endBlock->addParent($this->block);
         $this->block = $endBlock;
     }
 
