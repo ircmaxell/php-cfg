@@ -127,7 +127,7 @@ class GraphViz extends Printer {
         if ($levels > 1) {
             $str = $this->indent($str, $levels - 1);
         }
-        return str_replace(["\n", "\\l"], "\l    ", $str);
+        return str_replace(["\n", "\\l"], "\\l    ", $str);
     }
     
 }
