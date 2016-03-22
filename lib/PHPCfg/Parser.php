@@ -39,7 +39,9 @@ class Parser {
 
     /** @var Literal|null */
     protected $currentClass = null;
-
+    /** @var Script */
+    protected $script;
+    protected $anonId = 0;
 
     public function __construct(AstParser $astParser, AstTraverser $astTraverser = null) {
         $this->astParser = $astParser;
@@ -54,14 +56,46 @@ class Parser {
         $this->incompletePhis = new \SplObjectStorage;
     }
 
+    /**
+     * @param string $code
+     * @param string $fileName
+     * @returns Script
+     */
     public function parse($code, $fileName) {
-        $this->labels = [];
         $this->fileName = $fileName;
         $ast = $this->astParser->parse($code);
         $ast = $this->astTraverser->traverse($ast);
 
+        $this->script = $script = new Script();
+        $script->functions = [];
+        $script->main = new Func('{main}', false, null, null);
+        $this->parseFunc($script->main, [], $ast);
+
+        // Reset script specific state
+        $this->script = null;
+        $this->currentClass = null;
+
+        return $script;
+    }
+
+    protected function parseFunc(Func $func, array $params, array $stmts) {
+        // Back up function specific structures
+        $prevScope = $this->scope;
+        $prevIncompletePhis = $this->incompletePhis;
+        $prevLabels = $this->labels;
+        $this->scope = new \SplObjectStorage;
+        $this->incompletePhis = new \SplObjectStorage;
+        $this->labels = [];
+
+        $start = $func->cfg;
+
         $this->complete = false;
-        $this->parseNodes($ast, $start = new Block);
+        $func->params = $this->parseParameterList($func, $params);
+        foreach ($func->params as $param) {
+            $this->writeVariableName($param->name->value, $param->result, $start);
+        }
+
+        $this->parseNodes($stmts, $start);
         $this->complete = true;
 
         foreach ($this->incompletePhis as $block) {
@@ -78,8 +112,10 @@ class Parser {
                 $block->phi[] = $phi;
             }
         }
-        $this->incompletePhis->removeAllExcept(new \SplObjectStorage);
-        return $start;
+
+        $this->scope = $prevScope;
+        $this->incompletePhis = $prevIncompletePhis;
+        $this->labels = $prevLabels;
     }
 
     public function parseNodes(array $nodes, Block $block) {
@@ -143,28 +179,22 @@ class Parser {
         if (!$this->currentClass instanceof Operand) {
             throw new \RuntimeException("Unknown current class");
         }
-        $params = $this->parseParameterList($node->params);
-        if ($node->stmts) {
-            $block = new Block;
-            foreach ($params as $param) {
-                $this->writeVariableName($param->name->value, $param->result, $block);
-            }
-            $this->parseNodes($node->stmts, $block);
-        } else {
-            $block = null;
-        }
-        $this->block->children[] = $func = new Op\Stmt\ClassMethod(
-            $this->currentClass,
-            $this->parseExprNode($node->name),
-            $params,
+
+        $this->script->functions[] = $func = new Func(
+            $node->name,
             $node->byRef,
             $this->parseExprNode($node->returnType),
-            $block,
-            $this->mapAttributes($node)
+            $this->currentClass
         );
-        foreach ($params as $param) {
-            $param->function = $func;
+
+        if ($node->stmts) {
+            $this->parseFunc($func, $node->params, $node->stmts);
+        } else {
+            $func->params = $this->parseParameterList($func, $node->params);
+            $func->cfg = null;
         }
+
+        $this->block->children[] = new Op\Stmt\ClassMethod($func, $this->mapAttributes($node));
     }
 
     protected function parseStmt_Const(Stmt\Const_ $node) {
@@ -281,23 +311,14 @@ class Parser {
     }
 
     protected function parseStmt_Function(Stmt\Function_ $node) {
-        $block = new Block;
-        $params = $this->parseParameterList($node->params);
-        foreach ($params as $param) {
-            $this->writeVariableName($param->name->value, $param->result, $block);
-        }
-        $this->parseNodes($node->stmts, $block);
-        $this->block->children[] = $func = new Op\Stmt\Function_(
-            $this->parseExprNode($node->namespacedName),
-            $params,
+        $this->script->functions[] = $func = new Func(
+            $node->namespacedName,
             $node->byRef,
             $this->parseExprNode($node->returnType),
-            $block,
-            $this->mapAttributes($node)
+            null
         );
-        foreach ($params as $param) {
-            $param->function = $func;
-        }
+        $this->parseFunc($func, $node->params, $node->stmts);
+        $this->block->children[] = new Op\Stmt\Function_($func, $this->mapAttributes($node));
     }
 
     protected function parseStmt_Global(Stmt\Global_ $node) {
@@ -812,8 +833,6 @@ class Parser {
     }
     
     protected function parseExpr_Closure(Expr\Closure $expr) {
-        $block = new Block;
-        $this->parseNodes($expr->stmts, $block);
         $uses = [];
         foreach ($expr->uses as $use) {
             $uses[] = new Operand\BoundVariable(
@@ -822,14 +841,16 @@ class Parser {
                 Operand\BoundVariable::SCOPE_LOCAL
             );
         }
-        return new Op\Expr\Closure(
-            $this->parseParameterList($expr->params),
-            $uses,
+
+        $this->script->functions[] = $func = new Func(
+            '{anonymous}#' . ++$this->anonId,
             $expr->byRef,
             $this->parseExprNode($expr->returnType),
-            $block,
-            $this->mapAttributes($expr)
+            null
         );
+        $this->parseFunc($func, $expr->params, $expr->stmts);
+
+        return new Op\Expr\Closure($func, $uses, $this->mapAttributes($expr));
     }
 
     protected function parseExpr_ClassConstFetch(Expr\ClassConstFetch $expr) {
@@ -1127,7 +1148,7 @@ class Parser {
         }
     }
 
-    private function parseParameterList(array $params) {
+    private function parseParameterList(Func $func, array $params) {
         if (empty($params)) {
             return [];
         }
@@ -1152,6 +1173,7 @@ class Parser {
                 $this->mapAttributes($param)
             );
             $p->result->original = new Operand\Variable(new Operand\Literal($p->name->value));
+            $p->function = $func;
         }
         return $result;
     }

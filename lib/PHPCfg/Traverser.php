@@ -20,17 +20,26 @@ class Traverser {
         $this->visitors[] = $visitor;
     }
 
-    public function traverse(Block $block) {
+    public function traverse(Script $script) {
+        $this->traverseFunc($script->main);
+        foreach ($script->functions as $func) {
+            $this->traverseFunc($func);
+        }
+        $this->seen = null;
+    }
+
+    private function traverseFunc(Func $func) {
         $this->seen = new \SplObjectStorage;
+        $block = $func->cfg;
         $this->event("beforeTraverse", [$block]);
         $result = $this->traverseBlock($block, null);
         if ($result === Visitor::REMOVE_BLOCK) {
-            throw new \RuntimeException("Cannot remove parent block");
+            throw new \RuntimeException("Cannot remove function start block");
         } elseif (!is_null($result)) {
             $block = $result;
         }
         $this->event("afterTraverse", [$block]);
-        return $block;
+        $func->cfg = $block;
     }
 
     private function traverseBlock(Block $block, Block $prior = null) {

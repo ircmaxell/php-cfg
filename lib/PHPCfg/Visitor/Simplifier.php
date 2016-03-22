@@ -15,8 +15,11 @@ use PHPCfg\Operand;
 use PHPCfg\Visitor;
 
 class Simplifier implements Visitor {
+    /** @var \SplObjectStorage */
     protected $removed;
+    /** @var \SplObjectStorage */
     protected $recursionProtection;
+    /** @var \SplObjectStorage */
     protected $trivialPhiCandidates;
 
     public function beforeTraverse(Block $block) {

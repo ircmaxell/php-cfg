@@ -32,8 +32,8 @@ Block#2
 
 Block#3
     Stmt_ClassMethod<doSomething>
-        stmts: Block#4
 
-Block#4
+Function NS\NameOfClass::doSomething():
+Block#1
     Terminal_Echo
         expr: LITERAL('Hello World')

@@ -9,42 +9,23 @@
 
 namespace PHPCfg\Op\Stmt;
 
-use PhpCfg\Block;
+use PHPCfg\Func;
 use PHPCfg\Op\CallableOp;
 use PHPCfg\Op\Stmt;
 
 class Function_ extends Stmt implements CallableOp {
-    public $byRef;
+    public $func;
 
-    public $name;
-
-    public $params;
-
-    public $paramVars = [];
-
-    public $returnType;
-
-    public $stmts;
-
-    public $globals;
-
-    public function __construct($name, array $params, $byRef, $returnType, Block $stmts = null, array $attributes = []) {
+    public function __construct(Func $func, array $attributes = []) {
         parent::__construct($attributes);
-        $this->name = $this->addReadRef($name);
-        $this->params = $params;
-        foreach ($params as $param) {
-            $this->paramVars[] = $this->addReadRef($param->result);
-        }
-        $this->byRef = (bool) $byRef;
-        $this->returnType = $returnType;
-        $this->stmts = $stmts;
+        $this->func = $func;
+    }
+
+    public function getFunc() {
+        return $this->func;
     }
 
     public function getSubBlocks() {
-        return ['stmts'];
-    }
-
-    public function getParams() {
-        return $this->params;
+        return [];
     }
 }

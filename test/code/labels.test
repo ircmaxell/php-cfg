@@ -1,0 +1,34 @@
+<?php
+
+function test() {
+label:
+    echo "D";
+}
+
+echo "A";
+goto label;
+echo "B";
+label:
+echo "C";
+-----
+Block#1
+    Stmt_Function<test>
+    Terminal_Echo
+        expr: LITERAL('A')
+    Stmt_Jump
+        target: Block#2
+
+Block#2
+    Parent: Block#1
+    Terminal_Echo
+        expr: LITERAL('C')
+
+Function test():
+Block#1
+    Stmt_Jump
+        target: Block#2
+
+Block#2
+    Parent: Block#1
+    Terminal_Echo
+        expr: LITERAL('D')

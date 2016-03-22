@@ -9,7 +9,9 @@
 
 namespace PHPCfg\Printer;
 
+use PHPCfg\Func;
 use PHPCfg\Printer;
+use PHPCfg\Script;
 use phpDocumentor\GraphViz\Edge;
 use phpDocumentor\GraphViz\Graph;
 use phpDocumentor\GraphViz\Node;
@@ -29,13 +31,13 @@ class GraphViz extends Printer {
         $this->options = $options + $this->options;
     }
 
-    public function printCFG(array $blocks) {
+    public function printFunc(Func $func) {
         $graph = Graph::create("cfg");
         foreach ($this->options['graph'] as $name => $value) {
             $setter = 'set' . $name;
             $graph->$setter($value);
         }
-        $rendered = $this->render($blocks);
+        $rendered = $this->render($func->cfg);
         $nodes = new \SplObjectStorage;
         foreach ($rendered['blocks'] as $block) {
             $blockId = $rendered['blockIds'][$block];
@@ -67,13 +69,13 @@ class GraphViz extends Printer {
         return $graph;
     }
 
-    public function printVars(array $blocks) {
+    public function printVars(Func $func) {
         $graph = Graph::create("vars");
         foreach ($this->options['graph'] as $name => $value) {
             $setter = 'set' . $name;
             $graph->$setter($value);
         }
-        $rendered = $this->render($blocks);
+        $rendered = $this->render($func->cfg);
         $nodes = new \SplObjectStorage;
         foreach ($rendered['varIds'] as $var) {
             if (empty($var->ops) && empty($var->usages)) {

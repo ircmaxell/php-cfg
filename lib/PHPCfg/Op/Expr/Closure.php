@@ -9,38 +9,22 @@
 
 namespace PHPCfg\Op\Expr;
 
-use PhpCfg\Block;
+use PHPCfg\Func;
 use PHPCfg\Op\CallableOp;
 use PHPCfg\Op\Expr;
 
 class Closure extends Expr implements CallableOp {
-    public $byRef;
-
-    public $params;
-
-    public $returnType;
-
-    public $stmts;
-
-    public $globals;
-
+    public $func;
     public $useVars;
 
-    public function __construct(array $params, array $useVars, $byRef, $returnType, Block $stmts, array $attributes = []) {
+    public function __construct(Func $func, array $useVars, array $attributes = []) {
         parent::__construct($attributes);
-        $this->params = $this->addReadRef($params);
+        $this->func = $func;
         $this->useVars = $this->addReadRef($useVars);
-        $this->byRef = (bool) $byRef;
-        $this->returnType = $returnType;
-        $this->stmts = $stmts;
     }
 
-    public function getParams() {
-        return $this->params;
-    }
-
-    public function getSubBlocks() {
-        return ['stmts'];
+    public function getFunc() {
+        return $this->func;
     }
 
     public function getVariableNames() {

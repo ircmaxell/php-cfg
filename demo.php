@@ -23,9 +23,9 @@ function foo(array $a) {
 EOF;
 
 
-$block = $parser->parse($code, __FILE__);
-$traverser->traverse($block);
+$script = $parser->parse($code, __FILE__);
+$traverser->traverse($script);
 
 $dumper = new PHPCfg\Printer\Text();
-echo $dumper->printCFG(array($block));
+echo $dumper->printScript($script);
 

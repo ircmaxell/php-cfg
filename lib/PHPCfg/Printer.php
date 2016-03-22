@@ -26,8 +26,8 @@ abstract class Printer {
         $this->reset();
     }
 
-    abstract public function printCFG(array $blocks);
-    abstract public function printVars(array $blocks);
+    abstract public function printFunc(Func $func);
+    abstract public function printVars(Func $func);
 
     protected function reset() {
         $this->varIds = new \SplObjectStorage;
@@ -84,12 +84,8 @@ abstract class Printer {
     protected function renderOp(Op $op) {
         $result = $op->getType();
         if ($op instanceof Op\CallableOp) {
-            if (isset($op->name)) {
-                $result .= '<' . $op->name->value . '>';
-            }
-            foreach ($op->getParams() as $key => $param) {
-                $result .= $this->indent("\nParam[$key]: " . $this->renderOperand($param->result));
-            }
+            $func = $op->getFunc();
+            $result .= "<" . $func->name . ">";
         }
         if ($op instanceof Op\Expr\Assertion) {
             $result .= "<" . $this->renderAssertion($op->assertion) . ">";
@@ -170,15 +166,18 @@ abstract class Printer {
         }
     }
 
-    protected function render(array $blocks) {
-        foreach ($blocks as $block) {
-            $this->enqueueBlock($block);
-        }
+    protected function render(Func $func) {
+        $this->enqueueBlock($func->cfg);
         $renderedOps = new \SplObjectStorage;
         $renderedBlocks = new \SplObjectStorage;
         while ($this->blockQueue->count() > 0) {
             $block = $this->blockQueue->dequeue();
             $ops = [];
+            if ($block === $func->cfg) {
+                foreach ($func->params as $param) {
+                    $renderedOps[$param] = $ops[] = $this->renderOp($param);
+                }
+            }
             foreach ($block->phi as $phi) {
                 $result = $this->indent($this->renderOperand($phi->result) . " = Phi(");
                 $result .= implode(', ', array_map([$this, 'renderOperand'], $phi->vars));

@@ -9,8 +9,11 @@
 
 namespace PHPCfg\Op;
 
+use PHPCfg\Func;
+
 interface CallableOp {
 
-    public function getParams();
+    /** @returns Func */
+    public function getFunc();
 
 }

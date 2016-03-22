@@ -17,35 +17,37 @@ Block#1
         var: Var#3<$c>
         expr: LITERAL(2)
         result: Var#4
-    Expr_Closure
-        Param[0]: Var#5<$a>
+    Expr_Closure<{anonymous}#1>
         useVars[0]: local<$b>
         useVars[1]: local<&$c>
-        result: Var#6
-        stmts: Block#2
+        result: Var#5
     Expr_Assign
-        var: Var#7<$fn>
-        expr: Var#6
-        result: Var#8
+        var: Var#6<$fn>
+        expr: Var#5
+        result: Var#7
     Expr_FuncCall
         name: $fn
         args[0]: LITERAL(3)
-        result: Var#9
+        result: Var#8
     Expr_FuncCall
         name: LITERAL('var_dump')
         args[0]: Var#3<$c>
-        result: Var#10
+        result: Var#9
 
-Block#2
+Function {anonymous}#1():
+Block#1
+    Expr_Param
+        name: LITERAL('a')
+        result: Var#1<$a>
     Expr_BinaryOp_Mul
-        left: Var#11<$b>
-        right: Var#12<$a>
-        result: Var#13
+        left: Var#2<$b>
+        right: Var#1<$a>
+        result: Var#3
     Expr_BinaryOp_Plus
-        left: Var#14<$c>
-        right: Var#13
-        result: Var#15
+        left: Var#4<$c>
+        right: Var#3
+        result: Var#5
     Expr_Assign
-        var: Var#16<$c>
-        expr: Var#15
-        result: Var#17
+        var: Var#6<$c>
+        expr: Var#5
+        result: Var#7

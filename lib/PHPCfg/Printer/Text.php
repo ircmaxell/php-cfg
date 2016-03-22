@@ -9,12 +9,24 @@
 
 namespace PHPCfg\Printer;
 
+use PHPCfg\Func;
 use PHPCfg\Printer;
+use PHPCfg\Script;
 
 class Text extends Printer {
+    public function printScript(Script $script) {
+        $output = '';
+        $output .= $this->printFunc($script->main);
+        foreach ($script->functions as $func) {
+            $scope = $func->class ? $func->class->value . '::' : '';
+            $output .= "\nFunction $scope$func->name():";
+            $output .= $this->printFunc($func);
+        }
+        return $output;
+    }
 
-    public function printCFG(array $blocks) {
-        $rendered = $this->render($blocks);
+    public function printFunc(Func $func) {
+        $rendered = $this->render($func);
         $output = '';
         foreach ($rendered['blocks'] as $block) {
             $ops = $rendered['blocks'][$block];
@@ -35,8 +47,8 @@ class Text extends Printer {
         return $output;
     }
 
-    public function printVars(array $blocks) {
-        $rendered = $this->render($blocks);
+    public function printVars(Func $func) {
+        $rendered = $this->render($fun);
         $output = '';
         foreach ($rendered['varIds'] as $var) {
             $id = $rendered['varIds'][$var];

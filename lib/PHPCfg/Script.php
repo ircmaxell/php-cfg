@@ -7,7 +7,11 @@
  * @license MIT See LICENSE at the root of the project for more info
  */
 
-namespace PHPCfg\Op\Stmt;
+namespace PHPCfg;
 
-class ClassMethod extends Function_ {
+class Script {
+    /** @var Func[] */
+    public $functions = [];
+    /** @var Func */
+    public $main;
 }
