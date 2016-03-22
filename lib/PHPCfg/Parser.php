@@ -866,7 +866,13 @@ class Parser {
     }
     
     protected function parseExpr_ConstFetch(Expr\ConstFetch $expr) {
-        return new Op\Expr\ConstFetch($this->readVariable($this->parseExprNode($expr->name)), $this->mapAttributes($expr));
+        $nsName = null;
+        if ($this->currentNamespace && $expr->name->isUnqualified()
+            && !in_array(strtolower($expr->name), ['true', 'false', 'null'])) {
+            // true, false, null are protected from being overwritten in namespaces
+            $nsName = $this->parseExprNode(Node\Name::concat($this->currentNamespace, $expr->name));
+        }
+        return new Op\Expr\ConstFetch($this->parseExprNode($expr->name), $nsName, $this->mapAttributes($expr));
     }
 
     protected function parseExpr_Empty(Expr\Empty_ $expr) {
@@ -902,8 +908,8 @@ class Parser {
         $name = $this->parseExprNode($expr->name);
         if ($this->currentNamespace && $expr->name instanceof Node\Name && $expr->name->isUnqualified()) {
             $op = new Op\Expr\NsFuncCall(
-                $this->parseExprNode(Node\Name::concat($this->currentNamespace, $expr->name)),
                 $name,
+                $this->parseExprNode(Node\Name::concat($this->currentNamespace, $expr->name)),
                 $args,
                 $this->mapAttributes($expr)
             );

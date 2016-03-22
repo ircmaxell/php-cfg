@@ -1,0 +1,23 @@
+<?php
+
+namespace Foo;
+
+BAR;
+true;
+false;
+null;
+-----
+Block#1
+    Expr_ConstFetch
+        nsName: LITERAL('Foo\\BAR')
+        name: LITERAL('BAR')
+        result: Var#1
+    Expr_ConstFetch
+        name: LITERAL('true')
+        result: Var#2
+    Expr_ConstFetch
+        name: LITERAL('false')
+        result: Var#3
+    Expr_ConstFetch
+        name: LITERAL('null')
+        result: Var#4

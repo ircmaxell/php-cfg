@@ -6,5 +6,5 @@ call();
 Block#1
     Expr_NsFuncCall
         nsName: LITERAL('Foo\\call')
-        globalName: LITERAL('call')
+        name: LITERAL('call')
         result: Var#1

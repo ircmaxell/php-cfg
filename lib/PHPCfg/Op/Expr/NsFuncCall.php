@@ -19,17 +19,17 @@ use PhpCfg\Operand;
 class NsFuncCall extends Expr {
 
     public $nsName;
-    public $globalName;
+    public $name;
     public $args;
 
-    public function __construct(Operand $nsName, Operand $globalName, array $args, array $attributes = []) {
+    public function __construct(Operand $name, Operand $nsName, array $args, array $attributes = []) {
         parent::__construct($attributes);
         $this->nsName = $this->addReadRef($nsName);
-        $this->globalName = $this->addReadRef($globalName);
+        $this->name = $this->addReadRef($name);
         $this->args = $this->addReadRef($args);
     }
 
     public function getVariableNames() {
-        return ["nsName", "globalName", "args", "result"];
+        return ["nsName", "name", "args", "result"];
     }
 }
