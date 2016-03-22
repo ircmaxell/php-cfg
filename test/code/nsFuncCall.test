@@ -1,0 +1,10 @@
+<?php
+
+namespace Foo;
+call();
+-----
+Block#1
+    Expr_NsFuncCall
+        nsName: LITERAL('Foo\\call')
+        globalName: LITERAL('call')
+        result: Var#1

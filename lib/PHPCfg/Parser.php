@@ -39,6 +39,7 @@ class Parser {
 
     /** @var Literal|null */
     protected $currentClass = null;
+    protected $currentNamespace = null;
     /** @var Script */
     protected $script;
     protected $anonId = 0;
@@ -73,6 +74,7 @@ class Parser {
 
         // Reset script specific state
         $this->script = null;
+        $this->currentNamespace = null;
         $this->currentClass = null;
 
         return $script;
@@ -414,7 +416,7 @@ class Parser {
     }
 
     protected function parseStmt_Namespace(Stmt\Namespace_ $node) {
-        // ignore namespace nodes
+        $this->currentNamespace = $node->name;
         $this->parseNodes($node->stmts, $this->block);
     }
 
@@ -897,12 +899,19 @@ class Parser {
 
     protected function parseExpr_FuncCall(Expr\FuncCall $expr) {
         $args = $this->parseExprList($expr->args, self::MODE_READ);
-        $op = new Op\Expr\FuncCall(
-            $this->parseExprNode($expr->name),
-            $args,
-            $this->mapAttributes($expr)
-        );
-        if ($op->name instanceof Operand\Literal) {
+        $name = $this->parseExprNode($expr->name);
+        if ($this->currentNamespace && $expr->name instanceof Node\Name && $expr->name->isUnqualified()) {
+            $op = new Op\Expr\NsFuncCall(
+                $this->parseExprNode(Node\Name::concat($this->currentNamespace, $expr->name)),
+                $name,
+                $args,
+                $this->mapAttributes($expr)
+            );
+        } else {
+            $op = new Op\Expr\FuncCall($name, $args, $this->mapAttributes($expr));
+        }
+
+        if ($name instanceof Operand\Literal) {
             static $assertionFunctions = [
                 'is_array'    => 'array',
                 'is_bool'     => 'bool',
@@ -919,7 +928,7 @@ class Parser {
                 'is_string'   => 'string',
                 'is_resource' => 'resource',
             ];
-            $lname = strtolower($op->name->value);
+            $lname = strtolower($name->value);
             if (isset($assertionFunctions[$lname])) {
                 $op->result->addAssertion(
                     $args[0],
