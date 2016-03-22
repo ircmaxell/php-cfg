@@ -2,22 +2,29 @@
 
 namespace Foo;
 
-BAR;
-true;
-false;
-null;
+\var_dump(BAR);
+\var_dump(true);
+\var_dump(false);
+\var_dump(null);
 -----
 Block#1
     Expr_ConstFetch
         nsName: LITERAL('Foo\\BAR')
         name: LITERAL('BAR')
         result: Var#1
-    Expr_ConstFetch
-        name: LITERAL('true')
+    Expr_FuncCall
+        name: LITERAL('var_dump')
+        args[0]: Var#1
         result: Var#2
-    Expr_ConstFetch
-        name: LITERAL('false')
+    Expr_FuncCall
+        name: LITERAL('var_dump')
+        args[0]: LITERAL(true)
         result: Var#3
-    Expr_ConstFetch
-        name: LITERAL('null')
+    Expr_FuncCall
+        name: LITERAL('var_dump')
+        args[0]: LITERAL(false)
         result: Var#4
+    Expr_FuncCall
+        name: LITERAL('var_dump')
+        args[0]: LITERAL(NULL)
+        result: Var#5

@@ -866,10 +866,20 @@ class Parser {
     }
     
     protected function parseExpr_ConstFetch(Expr\ConstFetch $expr) {
+        if ($expr->name->isUnqualified()) {
+            $lcname = strtolower($expr->name);
+            switch ($lcname) {
+                case 'null':
+                    return new Literal(null);
+                case 'true':
+                    return new Literal(true);
+                case 'false':
+                    return new Literal(false);
+            }
+        }
+
         $nsName = null;
-        if ($this->currentNamespace && $expr->name->isUnqualified()
-            && !in_array(strtolower($expr->name), ['true', 'false', 'null'])) {
-            // true, false, null are protected from being overwritten in namespaces
+        if ($this->currentNamespace && $expr->name->isUnqualified()) {
             $nsName = $this->parseExprNode(Node\Name::concat($this->currentNamespace, $expr->name));
         }
         return new Op\Expr\ConstFetch($this->parseExprNode($expr->name), $nsName, $this->mapAttributes($expr));
