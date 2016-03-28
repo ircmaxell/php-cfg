@@ -26,6 +26,7 @@ abstract class Printer {
         $this->reset();
     }
 
+    abstract public function printScript(Script $script);
     abstract public function printFunc(Func $func);
     abstract public function printVars(Func $func);
 
