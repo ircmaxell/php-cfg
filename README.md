@@ -20,10 +20,10 @@ $parser = new PHPCfg\Parser(
 ```
 Then, just call parse on a block of code, giving it a filename:
 ```php
-$block = $parser->parse(file_get_contents(__FILE__), __FILE__);
+$script = $parser->parse(file_get_contents(__FILE__), __FILE__);
 ```
 To dump the graph, simply use the built-in dumper:
 ```php
 $dumper = new PHPCfg\Printer\Text();
-echo $dumper->printCFG(array($block));
+echo $dumper->printScript($script);
 ```
