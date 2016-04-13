@@ -11,9 +11,9 @@ namespace PHPCfg\Visitor;
 
 use PHPCfg\Block;
 use PHPCfg\Op;
-use PHPCfg\Visitor;
+use PHPCfg\AbstractVisitor;
 
-class VariableFinder implements Visitor{
+class VariableFinder extends AbstractVisitor {
     protected $variables;
 
     public function __construct() {
@@ -22,12 +22,6 @@ class VariableFinder implements Visitor{
 
     public function getVariables() {
         return $this->variables;
-    }
-
-    public function beforeTraverse(Block $block) {
-    }
-
-    public function afterTraverse(Block $block) {
     }
 
     public function enterBlock(Block $block, Block $prior = null) {
@@ -49,15 +43,6 @@ class VariableFinder implements Visitor{
                 $this->variables->attach($v);
             }
         }
-    }
-
-    public function leaveOp(Op $op, Block $block) {
-    }
-
-    public function leaveBlock(Block $block, Block $prior = null) {
-    }
-
-    public function skipBlock(Block $block, Block $prior = null) {
     }
 
 }

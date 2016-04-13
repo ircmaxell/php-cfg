@@ -18,8 +18,8 @@ class Text extends Printer {
         $output = '';
         $output .= $this->printFunc($script->main);
         foreach ($script->functions as $func) {
-            $scope = $func->class ? $func->class->value . '::' : '';
-            $output .= "\nFunction $scope$func->name():";
+            $name = $func->getScopedName();
+            $output .= "\nFunction $name():";
             $output .= $this->printFunc($func);
         }
         return $output;

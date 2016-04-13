@@ -14,6 +14,7 @@ use PHPCfg\Operand;
 use PHPCfg\Block;
 
 class Const_ extends Terminal {
+    /** @var Operand\Literal */
     public $name;
     public $value;
     public $valueBlock;

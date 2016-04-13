@@ -10,11 +10,12 @@
 namespace PHPCfg\Visitor;
 
 use PHPCfg\Block;
+use PHPCfg\Func;
 use PHPCfg\Op;
 use PHPCfg\Operand;
-use PHPCfg\Visitor;
+use PHPCfg\AbstractVisitor;
 
-class Simplifier implements Visitor {
+class Simplifier extends AbstractVisitor {
     /** @var \SplObjectStorage */
     protected $removed;
     /** @var \SplObjectStorage */
@@ -22,15 +23,17 @@ class Simplifier implements Visitor {
     /** @var \SplObjectStorage */
     protected $trivialPhiCandidates;
 
-    public function beforeTraverse(Block $block) {
+    public function enterFunc(Func $func) {
         $this->removed = new \SplObjectStorage;
         $this->recursionProtection = new \SplObjectStorage;
     }
 
-    public function afterTraverse(Block $block) {
+    public function leaveFunc(Func $func) {
         // Remove trivial PHI functions
-        $this->trivialPhiCandidates = new \SplObjectStorage;
-        $this->removeTrivialPhi($block);
+        if ($func->cfg) {
+            $this->trivialPhiCandidates = new \SplObjectStorage;
+            $this->removeTrivialPhi($func->cfg);
+        }
     }
 
     public function enterOp(Op $op, Block $block) {
@@ -123,11 +126,6 @@ class Simplifier implements Visitor {
         }
         $this->recursionProtection->detach($op);
     }
-
-    public function leaveOp(Op $op, Block $block) {}
-    public function enterBlock(Block $block, Block $prior = null) {}
-    public function leaveBlock(Block $block, Block $prior = null) {}
-    public function skipBlock(Block $block, Block $prior = null) {}
 
     private function removeTrivialPhi(Block $block) {
         $toReplace = new \SplObjectStorage;

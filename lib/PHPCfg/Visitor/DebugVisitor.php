@@ -10,11 +10,13 @@
 namespace PHPCfg\Visitor;
 
 use PHPCfg\Block;
+use PHPCfg\Func;
 use PHPCfg\Op;
 use PHPCfg\Visitor;
 
 class DebugVisitor implements Visitor {
 
+    /** @var \SplObjectStorage */
     protected $blocks;
 
     public function enterBlock(Block $block, Block $prior = null) {
@@ -37,13 +39,13 @@ class DebugVisitor implements Visitor {
         echo "Skip Block #" . $this->getBlockId($block) . "\n";
     }
 
-    public function beforeTraverse(Block $block) {
+    public function enterFunc(Func $func) {
         $this->blocks = new \SplObjectStorage;
-        echo "Before Traverse Block #" . $this->getBlockId($block) . "\n";
+        echo "Enter Func " . $func->getScopedName() . "\n";
     }
 
-    public function afterTraverse(Block $block) {
-        echo "After Traverse Block #" . $this->getBlockId($block) . "\n";
+    public function leaveFunc(Func $func) {
+        echo "Leave Func " . $func->getScopedName() . "\n";
         $this->blocks = null;
     }
 

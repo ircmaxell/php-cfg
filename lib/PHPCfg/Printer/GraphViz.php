@@ -48,9 +48,9 @@ class GraphViz extends Printer {
     }
 
     protected function printFuncWithHeader(Func $func, Graph $graph, $prefix) {
-        $scope = $func->class ? $func->class->value . '::' : '';
+        $name = $func->getScopedName();
         $header = $this->createNode(
-            $prefix . 'header', "Function $scope$func->name():"
+            $prefix . 'header', "Function $name():"
         );
         $graph->setNode($header);
 

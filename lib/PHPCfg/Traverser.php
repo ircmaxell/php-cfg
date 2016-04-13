@@ -31,14 +31,14 @@ class Traverser {
     private function traverseFunc(Func $func) {
         $this->seen = new \SplObjectStorage;
         $block = $func->cfg;
-        $this->event("beforeTraverse", [$block]);
+        $this->event("enterFunc", [$func]);
         $result = $this->traverseBlock($block, null);
         if ($result === Visitor::REMOVE_BLOCK) {
             throw new \RuntimeException("Cannot remove function start block");
         } elseif (!is_null($result)) {
             $block = $result;
         }
-        $this->event("afterTraverse", [$block]);
+        $this->event("leaveFunc", [$func]);
         $func->cfg = $block;
     }
 

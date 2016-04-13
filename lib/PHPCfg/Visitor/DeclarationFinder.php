@@ -11,9 +11,9 @@ namespace PHPCfg\Visitor;
 
 use PHPCfg\Block;
 use PHPCfg\Op;
-use PHPCfg\Visitor;
+use PHPCfg\AbstractVisitor;
 
-class DeclarationFinder implements Visitor {
+class DeclarationFinder extends AbstractVisitor {
     
     protected $traits = [];
     protected $classes = [];
@@ -46,8 +46,6 @@ class DeclarationFinder implements Visitor {
         return $this->interfaces;
     }
 
-    public function enterBlock(Block $block, Block $prior = null) {}
-
     public function enterOp(Op $op, Block $block) {
         if ($op instanceof Op\Stmt\Trait_) {
             $this->traits[] = $op;
@@ -66,15 +64,5 @@ class DeclarationFinder implements Visitor {
             $this->constants[$op->name->value][] = $op;
         }
     }
-
-    public function leaveOp(Op $op, Block $block) {}
-
-    public function leaveBlock(Block $block, Block $prior = null) {}
-
-    public function skipBlock(Block $block, Block $prior = null) {}
-
-    public function beforeTraverse(Block $block) {}
-
-    public function afterTraverse(Block $block) {}
 
 }

@@ -12,9 +12,9 @@ namespace PHPCfg\Visitor;
 use PHPCfg\Block;
 use PHPCfg\Op;
 use PHPCfg\Operand;
-use PHPCfg\Visitor;
+use PHPCfg\AbstractVisitor;
 
-class CallFinder implements Visitor {
+class CallFinder extends AbstractVisitor {
     
     protected $calls = [];
     protected $funcStack = [];
@@ -24,8 +24,6 @@ class CallFinder implements Visitor {
         $func = strtolower($func);
         return isset($this->calls[$func]) ? $this->calls[$func] : [];
     }
-
-    public function enterBlock(Block $block, Block $prior = null) {}
 
     public function enterOp(Op $op, Block $block) {
         if ($op instanceof Op\CallableOp) {
@@ -47,13 +45,5 @@ class CallFinder implements Visitor {
             $this->func = array_pop($this->funcStack);
         }
     }
-
-    public function leaveBlock(Block $block, Block $prior = null) {}
-
-    public function skipBlock(Block $block, Block $prior = null) {}
-
-    public function beforeTraverse(Block $block) {}
-
-    public function afterTraverse(Block $block) {}
 
 }

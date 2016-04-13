@@ -16,7 +16,7 @@ class Func {
     public $returnsRef;
     /** @var */
     public $returnType;
-    /** @var */
+    /** @var Operand\Literal */
     public $class;
     /** @var Op\Expr\Param[] */
     public $params;
@@ -30,5 +30,13 @@ class Func {
         $this->class = $class;
         $this->params = [];
         $this->cfg = new Block;
+    }
+
+    public function getScopedName() {
+        if (null !== $this->class) {
+            return $this->class->value . '::' . $this->name;
+        }
+
+        return $this->name;
     }
 }
