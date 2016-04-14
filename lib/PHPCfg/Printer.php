@@ -168,7 +168,10 @@ abstract class Printer {
     }
 
     protected function render(Func $func) {
-        $this->enqueueBlock($func->cfg);
+        if (null !== $func->cfg) {
+            $this->enqueueBlock($func->cfg);
+        }
+
         $renderedOps = new \SplObjectStorage;
         $renderedBlocks = new \SplObjectStorage;
         while ($this->blockQueue->count() > 0) {
