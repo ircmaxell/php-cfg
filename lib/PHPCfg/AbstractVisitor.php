@@ -15,6 +15,9 @@ namespace PHPCfg;
  * To avoid repeating empty method bodies for the unused parts.
  */
 abstract class AbstractVisitor implements Visitor {
+    public function enterScript(Script $script) {}
+    public function leaveScript(Script $script) {}
+
     public function enterFunc(Func $block) {}
     public function leaveFunc(Func $block) {}
 
