@@ -26,7 +26,6 @@ class Traverser {
         foreach ($script->functions as $func) {
             $this->traverseFunc($func);
         }
-        $this->seen = null;
         $this->event('leaveScript', [$script]);
     }
 
@@ -44,6 +43,7 @@ class Traverser {
             $func->cfg = $block;
         }
         $this->event("leaveFunc", [$func]);
+        $this->seen = null;
     }
 
     private function traverseBlock(Block $block, Block $prior = null) {
