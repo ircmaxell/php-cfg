@@ -14,6 +14,10 @@ interface Visitor {
     const REMOVE_OP = -1;
     const REMOVE_BLOCK = -2;
 
+    public function enterScript(Script $script);
+
+    public function leaveScript(Script $script);
+
     public function enterFunc(Func $block);
 
     public function leaveFunc(Func $block);

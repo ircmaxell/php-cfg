@@ -21,14 +21,16 @@ class Traverser {
     }
 
     public function traverse(Script $script) {
+        $this->event('enterScript', [$script]);
         $this->traverseFunc($script->main);
         foreach ($script->functions as $func) {
             $this->traverseFunc($func);
         }
         $this->seen = null;
+        $this->event('leaveScript', [$script]);
     }
 
-    private function traverseFunc(Func $func) {
+    public function traverseFunc(Func $func) {
         $this->seen = new \SplObjectStorage;
         $this->event("enterFunc", [$func]);
         $block = $func->cfg;
