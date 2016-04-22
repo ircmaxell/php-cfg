@@ -44,6 +44,12 @@ class Parser {
     protected $script;
     protected $anonId = 0;
 
+    protected $unresolvedGotos = [];
+    protected $unresolvedThrows = [];
+    protected $unresolvedReturns = [];
+    protected $unresolvedRaises = [];
+    protected $inCatchOrFinally = false;
+
     public function __construct(AstParser $astParser, AstTraverser $astTraverser = null) {
         $this->astParser = $astParser;
         if (!$astTraverser) {
@@ -85,9 +91,18 @@ class Parser {
         $prevScope = $this->scope;
         $prevIncompletePhis = $this->incompletePhis;
         $prevLabels = $this->labels;
+        $prevUnresolvedGotos = $this->unresolvedGotos;
+        $prevUnresolvedThrows = $this->unresolvedThrows;
+        $prevUnresolvedReturns = $this->unresolvedReturns;
+        $prevUnresolvedRaises = $this->unresolvedRaises;
+
         $this->scope = new \SplObjectStorage;
         $this->incompletePhis = new \SplObjectStorage;
         $this->labels = [];
+        $this->unresolvedGotos = [];
+        $this->unresolvedThrows = [];
+        $this->unresolvedReturns = [];
+        $this->unresolvedRaises = [];
 
         $start = $func->cfg;
 
@@ -97,7 +112,45 @@ class Parser {
             $this->writeVariableName($param->name->value, $param->result, $start);
         }
 
-        $this->parseNodes($stmts, $start);
+        $last = $this->parseNodes($stmts, $start);
+        if (!$last->dead) {
+            $last->children[] = new Jump($func->stopNormal);
+            $func->stopNormal->addParent($last);
+        }
+        
+        // All of these should have already been resolved, otherwise there is a missing label
+        assert(empty($this->unresolvedGotos));
+
+        /**
+         * @var Block $returnEnd
+         * @var array $returnAttributes
+         */
+        foreach ($this->unresolvedReturns as list($returnEnd, $returnAttributes)) {
+            $returnEnd->children[] = new Jump($func->stopNormal, $returnAttributes);
+            $func->stopNormal->addParent($returnEnd);
+        }
+
+        /**
+         * @var Block $throwEnd
+         * @var array $throwAttributes
+         */
+        foreach ($this->unresolvedThrows as list($throwEnd, $throwAttributes)) {
+            $throwEnd->children[] = new Jump($func->stopException, $throwAttributes);
+            $func->stopException->addParent($throwEnd);
+        }
+
+        /**
+         * @var Block $raiseEnd
+         * @var Operand $raiseMatchResult
+         * @var Block $raiseBody
+         * @var array $raiseAttributes
+         */
+        foreach ($this->unresolvedRaises as list($raiseEnd, $raiseMatchResult, $raiseBody, $raiseAttributes)) {
+            $raiseEnd->children[] = new JumpIf($raiseMatchResult, $raiseBody, $func->stopException, $raiseAttributes);
+            $raiseBody->addParent($raiseEnd);
+            $func->stopException->addParent($raiseEnd);
+        }
+
         $this->complete = true;
 
         foreach ($this->incompletePhis as $block) {
@@ -118,6 +171,10 @@ class Parser {
         $this->scope = $prevScope;
         $this->incompletePhis = $prevIncompletePhis;
         $this->labels = $prevLabels;
+        $this->unresolvedGotos = $prevUnresolvedGotos;
+        $this->unresolvedThrows = $prevUnresolvedThrows;
+        $this->unresolvedReturns = $prevUnresolvedReturns;
+        $this->unresolvedRaises = $prevUnresolvedRaises;
     }
 
     public function parseNodes(array $nodes, Block $block) {
@@ -334,11 +391,15 @@ class Parser {
     }
 
     protected function parseStmt_Goto(Stmt\Goto_ $node) {
-        if (!isset($this->labels[$node->name])) {
-            $this->labels[$node->name] = new Block;
+        $attributes = $this->mapAttributes($node);
+        if (isset($this->labels[$node->name])) {
+            $labelBlock = $this->labels[$node->name];
+            $this->block->children[] = new Jump($labelBlock, $attributes);
+            $labelBlock->addParent($this->block);
+        } else {
+            $this->unresolvedGotos[$node->name][] = [$this->block, $attributes];
         }
-        $this->block->children[] = new Jump($this->labels[$node->name], $this->mapAttributes($node));
-        $this->labels[$node->name]->addParent($this->block);
+
         $this->block = new Block;
         $this->block->dead = true;
     }
@@ -406,13 +467,21 @@ class Parser {
     }
 
     protected function parseStmt_Label(Stmt\Label $node) {
-        if (!isset($this->labels[$node->name])) {
-            $this->labels[$node->name] = new Block;
+        $labelBlock = new Block;
+        $this->block->children[] = new Jump($labelBlock, $this->mapAttributes($node));
+        $labelBlock->addParent($this->block);
+        if (isset($this->unresolvedGotos[$node->name])) {
+            /**
+             * @var Block $block
+             * @var array $attributes
+             */
+            foreach ($this->unresolvedGotos[$node->name] as list($block, $attributes)) {
+                $block->children[] = new Op\Stmt\Jump($labelBlock, $attributes);
+                $labelBlock->addParent($block);
+            }
+            unset($this->unresolvedGotos[$node->name]);
         }
-        $this->block->children[] = new Jump($this->labels[$node->name], $this->mapAttributes($node));
-        $this->labels[$node->name]->addParent($this->block);
-        $this->block = $this->labels[$node->name];
-        assert(empty($this->block->children));
+        $this->block = $this->labels[$node->name] = $labelBlock;
     }
 
     protected function parseStmt_Namespace(Stmt\Namespace_ $node) {
@@ -449,7 +518,16 @@ class Parser {
         if ($node->expr) {
             $expr = $this->readVariable($this->parseExprNode($node->expr));
         }
-        $this->block->children[] = new Op\Terminal\Return_($expr, $this->mapAttributes($node));
+        $attributes = $this->mapAttributes($node);
+
+        // A return in a finally should cancel any exception currently being thrown
+        if ($this->inCatchOrFinally) {
+            $this->block->children[] = new Op\Exception\Recover($attributes);
+        }
+
+        $this->block->children[] = new Op\Terminal\Return_($expr, $attributes);
+        $this->unresolvedReturns[] = [$this->block, $attributes];
+
         // Dump everything after the return
         $this->block = new Block;
         $this->block->dead = true;
@@ -569,10 +647,13 @@ class Parser {
     }
 
     protected function parseStmt_Throw(Stmt\Throw_ $node) {
-        $this->block->children[] = new Op\Terminal\Throw_(
+        $attributes = $this->mapAttributes($node);
+        $this->block->children[] = new Op\Exception\Throw_(
             $this->readVariable($this->parseExprNode($node->expr)),
-            $this->mapAttributes($node)
+            $attributes
         );
+        $this->unresolvedThrows[] = [$this->block, $attributes];
+
         $this->block = new Block; // dead code
         $this->block->dead = true;
     }
@@ -593,8 +674,162 @@ class Parser {
         // TODO
     }
 
+    protected function handleTryCatchWithoutFinally(Stmt\TryCatch $node) {
+        $this->block = $this->parseNodes($node->stmts, $this->block);
+
+        if (!empty($node->catches)) {
+            $tryCatchEnd = new Block;
+            $this->block->children[] = new Jump($tryCatchEnd);
+            $tryCatchEnd->addParent($this->block);
+
+            foreach ($node->catches as $catch) {
+                $attributes = $this->mapAttributes($catch);
+                $catchHeader = new Block;
+                $catchHeader->children[] = $currentException = new Op\Exception\Current($this->mapAttributes($catch));
+                $catchHeader->children[] = $match = new Op\Expr\InstanceOf_($currentException->result, $this->readVariable($this->parseExprNode($catch->type)), $this->mapAttributes($catch));
+
+                // The catch statements can throw new exceptions, so create a new scope for tracking them
+                $prevUnresolvedThrows = $this->unresolvedThrows;
+                $this->unresolvedThrows = [];
+                /**
+                 * @var Block $throwEnd
+                 * @var array $throwAttributes
+                 */
+                foreach ($prevUnresolvedThrows as list($throwEnd, $throwAttributes)) {
+                    $throwEnd->children[] = new Jump($catchHeader, $throwAttributes);
+                    $catchHeader->addParent($throwEnd);
+                }
+
+                $prevUnresolvedRaises = $this->unresolvedRaises;
+                $this->unresolvedRaises = [];
+                /**
+                 * @var Block $raiseHeader
+                 * @var Block $raiseHeader
+                 * @var Block $raiseBody
+                 * @var array $raiseAttributes
+                 */
+                foreach ($prevUnresolvedRaises as list($raiseHeader, $raiseMatch, $raiseBody, $raiseAttributes)) {
+                    $raiseHeader->children[] = new JumpIf($raiseMatch, $raiseBody, $catchHeader, $raiseAttributes);
+                    $raiseBody->addParent($raiseHeader);
+                    $catchHeader->addParent($raiseHeader);
+                }
+
+                $catchBody = new Block;
+                $prevInCatchOrFinally = $this->inCatchOrFinally;
+                $this->inCatchOrFinally = true;
+                $catchBodyEnd = $this->parseNodes($catch->stmts, $catchBody);
+                $this->inCatchOrFinally = $prevInCatchOrFinally;
+                if (!$catchBodyEnd->dead) {
+                    $catchBodyEnd->children[] = new Op\Exception\Recover($attributes);
+                    $catchBodyEnd->children[] = new Jump($tryCatchEnd);
+                    $tryCatchEnd->addParent($catchBodyEnd);
+                }
+
+                // Any exceptions not caught by this catch should be raised to enclosing catches or a Func's stopException
+                $this->unresolvedRaises[] = [$catchHeader, $match->result, $catchBody, $attributes];
+            }
+            
+            $this->block = $tryCatchEnd;
+        }
+    }
+
     protected function parseStmt_TryCatch(Stmt\TryCatch $node) {
-        // TODO: implement this!!!
+        // finally statements will be inlined in all paths going through the finally - perhaps this can be done differently at some point?
+        if ($node->finallyStmts !== null) {
+            $parentLabels = $this->labels;
+            $parentUnresolvedGotos = $this->unresolvedGotos;
+            $parentUnresolvedThrows = $this->unresolvedThrows;
+            $parentUnresolvedReturns = $this->unresolvedReturns;
+            $parentUnresolvedRaises = $this->unresolvedRaises;
+
+            $this->labels = [];
+            $this->unresolvedGotos = [];
+            $this->unresolvedThrows = [];
+            $this->unresolvedReturns = [];
+            $this->unresolvedRaises = [];
+
+            $this->handleTryCatchWithoutFinally($node);
+
+            $parentInFinally = $this->inCatchOrFinally;
+            $this->inCatchOrFinally = true;
+            if (!$this->block->dead) {
+                $this->block = $this->parseNodes($node->finallyStmts, $this->block);
+            }
+
+            $prevUnresolvedGotos = $this->unresolvedGotos;
+            $this->unresolvedGotos = [];
+            foreach ($prevUnresolvedGotos as $label => $gotos) {
+                /**
+                 * @var Block $gotoEnd
+                 * @var array $attributes
+                 */
+                foreach ($gotos as $index => list($gotoEnd, $attributes)) {
+                    $finallyEnd = $this->parseNodes($node->finallyStmts, $gotoEnd);
+                    if (!$finallyEnd->dead) {
+                        if (isset($parentLabels[$label])) {
+                            $labelBlock = $parentLabels[$label];
+                            $finallyEnd->children[] = new Jump($labelBlock, $attributes);
+                            $labelBlock->addParent($finallyEnd);
+                        } else {
+                            $this->unresolvedGotos[$label][] = [$finallyEnd, $attributes];
+                        }
+                    }
+                }
+            }
+
+            $prevUnresolvedThrows = $this->unresolvedThrows;
+            $this->unresolvedThrows = [];
+            /**
+             * @var Block $throwEnd
+             * @var array $attributes
+             */
+            foreach ($prevUnresolvedThrows as list($throwEnd, $attributes)) {
+                $finallyEnd = $this->parseNodes($node->finallyStmts, $throwEnd);
+                if (!$finallyEnd->dead) {
+                    $this->unresolvedThrows[] = [$finallyEnd, $attributes];
+                }
+            }
+
+            $prevUnresolvedReturns = $this->unresolvedReturns;
+            $this->unresolvedReturns = [];
+            /**
+             * @var Block $returnEnd
+             * @var array $attributes
+             */
+            foreach ($prevUnresolvedReturns as list($returnEnd, $attributes)) {
+                $finallyEnd = $this->parseNodes($node->finallyStmts, $returnEnd);
+                if (!$finallyEnd->dead) {
+                    $this->unresolvedReturns[] = [$finallyEnd, $attributes];
+                }
+            }
+
+            $prevUnresolvedRaises = $this->unresolvedRaises;
+            $this->unresolvedRaises = [];
+            /**
+             * @var Block $raiseHeader
+             * @var Block $raiseBody
+             * @var array $attributes
+             */
+            foreach ($prevUnresolvedRaises as list($raiseHeader, $raiseMatchResult, $raiseBody, $attributes)) {
+                $finallyEnd = $this->parseNodes($node->finallyStmts, $raiseHeader);
+                if (!$finallyEnd->dead) {
+                    $this->unresolvedRaises[] = [$finallyEnd, $raiseMatchResult, $raiseBody, $attributes];
+                }
+            }
+            
+            $this->inCatchOrFinally = $parentInFinally;
+
+            // labels from this finally scope can be jumped into from other scopes, so merge with those in parent scope
+            $this->labels = array_merge($this->labels, $parentLabels);
+
+            // all remaining unresolved can be added to those that were already unresolved in the parent finally scope
+            $this->unresolvedGotos = array_merge($this->unresolvedGotos, $parentUnresolvedGotos);
+            $this->unresolvedThrows = array_merge($this->unresolvedThrows, $parentUnresolvedThrows);
+            $this->unresolvedReturns = array_merge($this->unresolvedReturns, $parentUnresolvedReturns);
+            $this->unresolvedRaises = array_merge($this->unresolvedRaises, $parentUnresolvedRaises);
+        } else {
+            $this->handleTryCatchWithoutFinally($node);
+        }
     }
 
     protected function parseStmt_Unset(Stmt\Unset_ $node) {
