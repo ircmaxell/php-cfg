@@ -7,7 +7,7 @@
  * @license MIT See LICENSE at the root of the project for more info
  */
 
-namespace PHPCfg\Op\Terminal;
+namespace PHPCfg\Op\Exception;
 
 use PHPCfg\Op\Terminal;
 use PHPCfg\Operand;
@@ -23,9 +23,4 @@ class Throw_ extends Terminal {
     public function getVariableNames() {
         return ['expr'];
     }
-
-    public function getSubBlocks() {
-        return [];
-    }
-
 }

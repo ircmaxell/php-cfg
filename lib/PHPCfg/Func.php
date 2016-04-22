@@ -22,6 +22,10 @@ class Func {
     public $params;
     /** @var Block|null */
     public $cfg;
+    /** @var  Block */
+    public $stopNormal;
+    /** @var  Block */
+    public $stopException;
 
     public function __construct($name, $returnsRef, $returnType, $class) {
         $this->name = $name;
@@ -30,6 +34,8 @@ class Func {
         $this->class = $class;
         $this->params = [];
         $this->cfg = new Block;
+        $this->stopNormal = new Block;
+        $this->stopException = new Block;
     }
 
     public function getScopedName() {
