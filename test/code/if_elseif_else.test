@@ -35,6 +35,8 @@ Block#4
     Parent: Block#6
     Terminal_Echo
         expr: LITERAL('d')
+    Terminal_Return
+        expr: LITERAL(1)
 
 Block#5
     Parent: Block#3

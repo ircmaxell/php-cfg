@@ -22,6 +22,8 @@ Block#2
     Parent: Block#1
     Terminal_Echo
         expr: LITERAL('C')
+    Terminal_Return
+        expr: LITERAL(1)
 
 Function test():
 Block#1
@@ -32,3 +34,5 @@ Block#2
     Parent: Block#1
     Terminal_Echo
         expr: LITERAL('D')
+    Terminal_Return
+        expr: LITERAL(NULL)

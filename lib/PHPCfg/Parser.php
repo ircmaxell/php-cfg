@@ -11,6 +11,7 @@ namespace PHPCfg;
 
 use PHPCfg\Op\Stmt\Jump;
 use PHPCfg\Op\Stmt\JumpIf;
+use PHPCfg\Op\Terminal\Return_;
 use PHPCfg\Operand\Literal;
 use PHPCfg\Operand\Temporary;
 use PHPCfg\Operand\Variable;
@@ -70,7 +71,7 @@ class Parser {
         $this->script = $script = new Script();
         $script->functions = [];
         $script->main = new Func('{main}', false, null, null);
-        $this->parseFunc($script->main, [], $ast);
+        $this->parseFunc($script->main, [], $ast, 1);
 
         // Reset script specific state
         $this->script = null;
@@ -80,7 +81,7 @@ class Parser {
         return $script;
     }
 
-    protected function parseFunc(Func $func, array $params, array $stmts) {
+    protected function parseFunc(Func $func, array $params, array $stmts, $implicitReturnValue) {
         // Back up function specific structures
         $prevScope = $this->scope;
         $prevIncompletePhis = $this->incompletePhis;
@@ -97,7 +98,10 @@ class Parser {
             $this->writeVariableName($param->name->value, $param->result, $start);
         }
 
-        $this->parseNodes($stmts, $start);
+        $end = $this->parseNodes($stmts, $start);
+        if (!$end->dead) {
+            $end->children[] = new Return_(new Literal($implicitReturnValue));
+        }
         $this->complete = true;
 
         foreach ($this->incompletePhis as $block) {
@@ -190,7 +194,7 @@ class Parser {
         );
 
         if ($node->stmts) {
-            $this->parseFunc($func, $node->params, $node->stmts);
+            $this->parseFunc($func, $node->params, $node->stmts, null);
         } else {
             $func->params = $this->parseParameterList($func, $node->params);
             $func->cfg = null;
@@ -319,7 +323,7 @@ class Parser {
             $this->parseExprNode($node->returnType),
             null
         );
-        $this->parseFunc($func, $node->params, $node->stmts);
+        $this->parseFunc($func, $node->params, $node->stmts, null);
         $this->block->children[] = new Op\Stmt\Function_($func, $this->mapAttributes($node));
     }
 
@@ -850,7 +854,7 @@ class Parser {
             $this->parseExprNode($expr->returnType),
             null
         );
-        $this->parseFunc($func, $expr->params, $expr->stmts);
+        $this->parseFunc($func, $expr->params, $expr->stmts, null);
 
         return new Op\Expr\Closure($func, $uses, $this->mapAttributes($expr));
     }

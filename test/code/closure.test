@@ -33,6 +33,8 @@ Block#1
         name: LITERAL('var_dump')
         args[0]: Var#3<$c>
         result: Var#9
+    Terminal_Return
+        expr: LITERAL(1)
 
 Function {anonymous}#1():
 Block#1
@@ -51,3 +53,5 @@ Block#1
         var: Var#6<$c>
         expr: Var#5
         result: Var#7
+    Terminal_Return
+        expr: LITERAL(NULL)

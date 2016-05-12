@@ -27,3 +27,5 @@ Block#4
     Parent: Block#2
     Terminal_Echo
         expr: LITERAL(2)
+    Terminal_Return
+        expr: LITERAL(1)

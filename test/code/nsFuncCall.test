@@ -8,3 +8,5 @@ Block#1
         nsName: LITERAL('Foo\\call')
         name: LITERAL('call')
         result: Var#1
+    Terminal_Return
+        expr: LITERAL(1)

@@ -62,3 +62,5 @@ Block#6
         name: LITERAL('var_dump')
         args[0]: Var#8<$a>
         result: Var#9
+    Terminal_Return
+        expr: LITERAL(1)
