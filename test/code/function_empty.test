@@ -1,0 +1,15 @@
+<?php
+function foo($a) {}
+-----
+Block#1
+    Stmt_Function<foo>
+    Terminal_Return
+        expr: LITERAL(1)
+
+Function foo():
+Block#1
+    Expr_Param
+        name: LITERAL('a')
+        result: Var#1<$a>
+    Terminal_Return
+        expr: LITERAL(NULL)
