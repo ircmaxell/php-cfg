@@ -22,3 +22,5 @@ Block#1
         name: LITERAL('var_dump')
         args[0]: Var#5
         result: Var#6
+    Terminal_Return
+        expr: LITERAL(1)

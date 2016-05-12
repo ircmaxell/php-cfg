@@ -32,3 +32,5 @@ Block#4
     Parent: Block#3
     Terminal_Echo
         expr: LITERAL('c')
+    Terminal_Return
+        expr: LITERAL(1)

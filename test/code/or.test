@@ -19,6 +19,8 @@ Block#2
         var: Var#4<$x>
         expr: Var#2
         result: Var#5
+    Terminal_Return
+        expr: LITERAL(1)
 
 Block#3
     Parent: Block#1

@@ -11,3 +11,5 @@ Block#1
         name: LITERAL('shell_exec')
         args[0]: Var#2
         result: Var#3
+    Terminal_Return
+        expr: LITERAL(1)

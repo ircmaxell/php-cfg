@@ -30,3 +30,5 @@ Block#3
         var: Var#5<$x>
         expr: Var#4
         result: Var#6
+    Terminal_Return
+        expr: LITERAL(1)

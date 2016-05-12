@@ -27,6 +27,8 @@ Block#1
         var: Var#2<$obj>
         expr: Var#1
         result: Var#3
+    Terminal_Return
+        expr: LITERAL(1)
 
 Block#2
 
@@ -37,3 +39,5 @@ Function NS\NameOfClass::doSomething():
 Block#1
     Terminal_Echo
         expr: LITERAL('Hello World')
+    Terminal_Return
+        expr: LITERAL(NULL)

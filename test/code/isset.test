@@ -26,3 +26,5 @@ Block#2
 Block#3
     Parent: Block#2
     Parent: Block#1
+    Terminal_Return
+        expr: LITERAL(1)
