@@ -193,7 +193,7 @@ class Parser {
             $this->currentClass
         );
 
-        if ($node->stmts) {
+        if ($node->stmts !== null) {
             $this->parseFunc($func, $node->params, $node->stmts, null);
         } else {
             $func->params = $this->parseParameterList($func, $node->params);

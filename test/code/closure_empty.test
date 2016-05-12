@@ -1,0 +1,20 @@
+<?php
+$fn = function($a) {};
+-----
+Block#1
+    Expr_Closure<{anonymous}#1>
+        result: Var#1
+    Expr_Assign
+        var: Var#2<$fn>
+        expr: Var#1
+        result: Var#3
+    Terminal_Return
+        expr: LITERAL(1)
+
+Function {anonymous}#1():
+Block#1
+    Expr_Param
+        name: LITERAL('a')
+        result: Var#1<$a>
+    Terminal_Return
+        expr: LITERAL(NULL)
