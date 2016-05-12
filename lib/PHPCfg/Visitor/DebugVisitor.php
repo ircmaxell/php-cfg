@@ -16,9 +16,6 @@ use PHPCfg\Script;
 use PHPCfg\Visitor;
 
 class DebugVisitor implements Visitor {
-
-    /** @var  \SplObjectStorage */
-    protected $scripts;
     /** @var \SplObjectStorage */
     protected $blocks;
 
