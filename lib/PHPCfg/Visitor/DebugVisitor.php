@@ -12,12 +12,20 @@ namespace PHPCfg\Visitor;
 use PHPCfg\Block;
 use PHPCfg\Func;
 use PHPCfg\Op;
+use PHPCfg\Script;
 use PHPCfg\Visitor;
 
 class DebugVisitor implements Visitor {
-
     /** @var \SplObjectStorage */
     protected $blocks;
+
+    public function enterScript(Script $script) {
+        echo "Enter Script\n";
+    }
+
+    public function leaveScript(Script $script) {
+        echo "Leave Script\n";
+    }
 
     public function enterBlock(Block $block, Block $prior = null) {
         echo "Enter Block #" . $this->getBlockId($block) . "\n";
