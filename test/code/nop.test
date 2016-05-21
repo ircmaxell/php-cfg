@@ -1,0 +1,15 @@
+<?php
+$a = 1;
+/* foo */
+;
+echo $a;
+-----
+Block#1
+    Expr_Assign
+        var: Var#1<$a>
+        expr: LITERAL(1)
+        result: Var#2
+    Terminal_Echo
+        expr: Var#1<$a>
+    Terminal_Return
+        expr: LITERAL(1)

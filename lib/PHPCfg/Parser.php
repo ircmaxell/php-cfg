@@ -424,6 +424,10 @@ class Parser {
         $this->parseNodes($node->stmts, $this->block);
     }
 
+    protected function parseStmt_Nop(Stmt\Nop $node) {
+        // Nothing to see here, move along
+    }
+
     protected function parseStmt_Property(Stmt\Property $node) {
         $visibility = $node->type & Node\Stmt\Class_::VISIBILITY_MODIFER_MASK;
         $static = $node->type & Node\Stmt\Class_::MODIFIER_STATIC;
