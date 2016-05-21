@@ -32,10 +32,9 @@ class Parser {
     protected $astParser;
     protected $astTraverser;
     protected $fileName;
-    /** @var Block[] */
-    protected $labels = [];
-    protected $scope;
-    protected $incompletePhis;
+
+    /** @var FuncContext */
+    protected $ctx;
     protected $complete = false;
 
     /** @var Literal|null */
@@ -54,8 +53,6 @@ class Parser {
         $this->astTraverser->addVisitor(new AstVisitor\NameResolver);
         $this->astTraverser->addVisitor(new AstVisitor\LoopResolver);
         $this->astTraverser->addVisitor(new AstVisitor\MagicStringResolver);
-        $this->scope = new \SplObjectStorage;
-        $this->incompletePhis = new \SplObjectStorage;
     }
 
     /**
@@ -82,13 +79,9 @@ class Parser {
     }
 
     protected function parseFunc(Func $func, array $params, array $stmts, $implicitReturnValue) {
-        // Back up function specific structures
-        $prevScope = $this->scope;
-        $prevIncompletePhis = $this->incompletePhis;
-        $prevLabels = $this->labels;
-        $this->scope = new \SplObjectStorage;
-        $this->incompletePhis = new \SplObjectStorage;
-        $this->labels = [];
+        // Switch to new function context
+        $prevCtx = $this->ctx;
+        $this->ctx = new FuncContext;
 
         $start = $func->cfg;
 
@@ -104,9 +97,9 @@ class Parser {
         }
         $this->complete = true;
 
-        foreach ($this->incompletePhis as $block) {
+        foreach ($this->ctx->incompletePhis as $block) {
             /** @var Op\Phi $phi */
-            foreach ($this->incompletePhis[$block] as $name => $phi) {
+            foreach ($this->ctx->incompletePhis[$block] as $name => $phi) {
                 // add phi operands
                 foreach ($block->parents as $parent) {
                     if ($parent->dead) {
@@ -119,9 +112,7 @@ class Parser {
             }
         }
 
-        $this->scope = $prevScope;
-        $this->incompletePhis = $prevIncompletePhis;
-        $this->labels = $prevLabels;
+        $this->ctx = $prevCtx;
     }
 
     public function parseNodes(array $nodes, Block $block) {
@@ -338,11 +329,11 @@ class Parser {
     }
 
     protected function parseStmt_Goto(Stmt\Goto_ $node) {
-        if (!isset($this->labels[$node->name])) {
-            $this->labels[$node->name] = new Block;
+        if (!isset($this->ctx->labels[$node->name])) {
+            $this->ctx->labels[$node->name] = new Block;
         }
-        $this->block->children[] = new Jump($this->labels[$node->name], $this->mapAttributes($node));
-        $this->labels[$node->name]->addParent($this->block);
+        $this->block->children[] = new Jump($this->ctx->labels[$node->name], $this->mapAttributes($node));
+        $this->ctx->labels[$node->name]->addParent($this->block);
         $this->block = new Block;
         $this->block->dead = true;
     }
@@ -410,12 +401,12 @@ class Parser {
     }
 
     protected function parseStmt_Label(Stmt\Label $node) {
-        if (!isset($this->labels[$node->name])) {
-            $this->labels[$node->name] = new Block;
+        if (!isset($this->ctx->labels[$node->name])) {
+            $this->ctx->labels[$node->name] = new Block;
         }
-        $this->block->children[] = new Jump($this->labels[$node->name], $this->mapAttributes($node));
-        $this->labels[$node->name]->addParent($this->block);
-        $this->block = $this->labels[$node->name];
+        $this->block->children[] = new Jump($this->ctx->labels[$node->name], $this->mapAttributes($node));
+        $this->ctx->labels[$node->name]->addParent($this->block);
+        $this->block = $this->ctx->labels[$node->name];
         assert(empty($this->block->children));
     }
 
@@ -1285,14 +1276,14 @@ class Parser {
     }
 
     private function readVariableName($name, Block $block) {
-        if ($this->isLocalVariable($name, $block)) {
-            return $this->scope[$block][$name];
+        if ($this->ctx->isLocalVariable($block, $name)) {
+            return $this->ctx->scope[$block][$name];
         }
         return $this->readVariableRecursive($name, $block);
     }
 
     private function writeVariableName($name, Operand $value, Block $block) {
-        $this->writeKeyToArray("scope", $block, $name, $value);
+        $this->ctx->setValueInScope($block, $name, $value);
     }
 
     private function readVariableRecursive($name, Block $block) {
@@ -1317,29 +1308,9 @@ class Parser {
         }
         $var = new Operand\Temporary(new Variable(new Literal($name)));
         $phi = new Op\Phi($var, ["block" => $block]);
-        $this->writeKeyToArray("incompletePhis", $block, $name, $phi);
+        $this->ctx->addToIncompletePhis($block, $name, $phi);
         $this->writeVariableName($name, $var, $block);
         return $var;
-    }
-
-    private function writeKeyToArray($name, $first, $second, $value) {
-        if (!$this->$name->offsetExists($first)) {
-            $this->$name->offsetSet($first, []);
-        }
-        $array = $this->$name->offsetGet($first);
-        $array[$second] = $value;
-        $this->$name->offsetSet($first, $array);
-        return $value;
-    }
-
-    private function isLocalVariable($name, Block $block) {
-        if (isset($this->scope[$block])) {
-            $vars = $this->scope[$block];
-            if (isset($vars[$name])) {
-                return true;
-            }
-        }
-        return false;
     }
 
     private function getVariableName(Operand\Variable $var) {
