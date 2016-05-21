@@ -94,6 +94,10 @@ class Parser {
             $end->children[] = new Return_(new Literal($implicitReturnValue));
         }
 
+        if ($this->ctx->unresolvedGotos) {
+            $this->throwUndefinedLabelError();
+        }
+
         $this->ctx->complete = true;
         foreach ($this->ctx->incompletePhis as $block) {
             /** @var Op\Phi $phi */
@@ -327,11 +331,14 @@ class Parser {
     }
 
     protected function parseStmt_Goto(Stmt\Goto_ $node) {
-        if (!isset($this->ctx->labels[$node->name])) {
-            $this->ctx->labels[$node->name] = new Block;
+        $attributes = $this->mapAttributes($node);
+        if (isset($this->ctx->labels[$node->name])) {
+            $labelBlock = $this->ctx->labels[$node->name];
+            $this->block->children[] = new Jump($labelBlock, $attributes);
+            $labelBlock->addParent($this->block);
+        } else {
+            $this->ctx->unresolvedGotos[$node->name][] = [$this->block, $attributes];
         }
-        $this->block->children[] = new Jump($this->ctx->labels[$node->name], $this->mapAttributes($node));
-        $this->ctx->labels[$node->name]->addParent($this->block);
         $this->block = new Block;
         $this->block->dead = true;
     }
@@ -399,13 +406,25 @@ class Parser {
     }
 
     protected function parseStmt_Label(Stmt\Label $node) {
-        if (!isset($this->ctx->labels[$node->name])) {
-            $this->ctx->labels[$node->name] = new Block;
+        if (isset($this->ctx->labels[$node->name])) {
+            throw new \RuntimeException("Label '$node->name' already defined");
         }
-        $this->block->children[] = new Jump($this->ctx->labels[$node->name], $this->mapAttributes($node));
-        $this->ctx->labels[$node->name]->addParent($this->block);
-        $this->block = $this->ctx->labels[$node->name];
-        assert(empty($this->block->children));
+
+        $labelBlock = new Block;
+        $this->block->children[] = new Jump($labelBlock, $this->mapAttributes($node));
+        $labelBlock->addParent($this->block);
+        if (isset($this->ctx->unresolvedGotos[$node->name])) {
+            /**
+             * @var Block $block
+             * @var array $attributes
+             */
+            foreach ($this->ctx->unresolvedGotos[$node->name] as list($block, $attributes)) {
+                $block->children[] = new Op\Stmt\Jump($labelBlock, $attributes);
+                $labelBlock->addParent($block);
+            }
+            unset($this->ctx->unresolvedGotos[$node->name]);
+        }
+        $this->block = $this->ctx->labels[$node->name] = $labelBlock;
     }
 
     protected function parseStmt_Namespace(Stmt\Namespace_ $node) {
@@ -1346,4 +1365,9 @@ class Parser {
         return new $assert($vars, $assert->mode);
     }
 
+    protected function throwUndefinedLabelError() {
+        foreach ($this->ctx->unresolvedGotos as $name => $_) {
+            throw new \RuntimeException("'goto' to undefined label '$name'");
+        }
+    }
 }

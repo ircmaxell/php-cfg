@@ -21,6 +21,8 @@ class FuncContext {
     public $incompletePhis;
     /** @var bool */
     public $complete = false;
+    /** @var array[] */
+    public $unresolvedGotos = [];
 
     public function __construct() {
         $this->scope = new \SplObjectStorage;

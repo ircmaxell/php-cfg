@@ -19,16 +19,21 @@ class ParserTest extends \PHPUnit_Framework_TestCase {
         $astTraverser = new PhpParser\NodeTraverser;
         $astTraverser->addVisitor(new PhpParser\NodeVisitor\NameResolver);
         $parser = new Parser((new ParserFactory)->create(ParserFactory::PREFER_PHP7), $astTraverser);
-        $script = $parser->parse($code, 'foo.php');
-
         $traverser = new Traverser();
         $traverser->addVisitor(new Visitor\Simplifier());
-        $traverser->traverse($script);
-
         $printer = new Printer\Text();
+
+        try {
+            $script = $parser->parse($code, 'foo.php');
+            $traverser->traverse($script);
+            $result = $printer->printScript($script);
+        } catch (\RuntimeException $e) {
+            $result = $e->getMessage();
+        }
+
         $this->assertEquals(
             $this->canonicalize($expectedDump),
-            $this->canonicalize($printer->printScript($script))
+            $this->canonicalize($result)
         );
     }
 
