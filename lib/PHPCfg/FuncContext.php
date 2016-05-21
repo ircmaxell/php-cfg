@@ -19,6 +19,8 @@ class FuncContext {
     public $scope;
     /** @var \SplObjectStorage */
     public $incompletePhis;
+    /** @var bool */
+    public $complete = false;
 
     public function __construct() {
         $this->scope = new \SplObjectStorage;

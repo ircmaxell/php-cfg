@@ -35,7 +35,6 @@ class Parser {
 
     /** @var FuncContext */
     protected $ctx;
-    protected $complete = false;
 
     /** @var Literal|null */
     protected $currentClass = null;
@@ -85,7 +84,6 @@ class Parser {
 
         $start = $func->cfg;
 
-        $this->complete = false;
         $func->params = $this->parseParameterList($func, $params);
         foreach ($func->params as $param) {
             $this->writeVariableName($param->name->value, $param->result, $start);
@@ -95,8 +93,8 @@ class Parser {
         if (!$end->dead) {
             $end->children[] = new Return_(new Literal($implicitReturnValue));
         }
-        $this->complete = true;
 
+        $this->ctx->complete = true;
         foreach ($this->ctx->incompletePhis as $block) {
             /** @var Op\Phi $phi */
             foreach ($this->ctx->incompletePhis[$block] as $name => $phi) {
@@ -1287,7 +1285,7 @@ class Parser {
     }
 
     private function readVariableRecursive($name, Block $block) {
-        if ($this->complete) {
+        if ($this->ctx->complete) {
             if (count($block->parents) === 1 && !$block->parents[0]->dead) {
                 // Special case, just return the read var
                 return $this->readVariableName($name, $block->parents[0]);
