@@ -48,7 +48,7 @@ class Text extends Printer {
     }
 
     public function printVars(Func $func) {
-        $rendered = $this->render($fun);
+        $rendered = $this->render($func);
         $output = '';
         foreach ($rendered['varIds'] as $var) {
             $id = $rendered['varIds'][$var];

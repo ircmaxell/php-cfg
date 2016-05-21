@@ -28,7 +28,6 @@ abstract class Printer {
 
     abstract public function printScript(Script $script);
     abstract public function printFunc(Func $func);
-    abstract public function printVars(Func $func);
 
     protected function reset() {
         $this->varIds = new \SplObjectStorage;
