@@ -10,10 +10,21 @@
 namespace PHPCfg;
 
 class Func {
+    /* Constants for the $flags property.
+     * The first six flags match PhpParser Class_ flags. */
+    const FLAG_PUBLIC      = 0x01;
+    const FLAG_PROTECTED   = 0x02;
+    const FLAG_PRIVATE     = 0x04;
+    const FLAG_STATIC      = 0x08;
+    const FLAG_ABSTRACT    = 0x10;
+    const FLAG_FINAL       = 0x20;
+    const FLAG_RETURNS_REF = 0x40;
+    const FLAG_CLOSURE     = 0x80;
+
     /** @var string */
     public $name;
-    /** @var bool */
-    public $returnsRef;
+    /** @var int */
+    public $flags;
     /** @var */
     public $returnType;
     /** @var Operand\Literal */
@@ -23,9 +34,9 @@ class Func {
     /** @var Block|null */
     public $cfg;
 
-    public function __construct($name, $returnsRef, $returnType, $class) {
+    public function __construct($name, $flags, $returnType, $class) {
         $this->name = $name;
-        $this->returnsRef = $returnsRef;
+        $this->flags = $flags;
         $this->returnType = $returnType;
         $this->class = $class;
         $this->params = [];

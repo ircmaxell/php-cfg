@@ -66,7 +66,7 @@ class Parser {
 
         $this->script = $script = new Script();
         $script->functions = [];
-        $script->main = new Func('{main}', false, null, null);
+        $script->main = new Func('{main}', 0, null, null);
         $this->parseFunc($script->main, [], $ast, 1);
 
         // Reset script specific state
@@ -181,7 +181,7 @@ class Parser {
 
         $this->script->functions[] = $func = new Func(
             $node->name,
-            $node->byRef,
+            $node->type | ($node->byRef ? Func::FLAG_RETURNS_REF : 0),
             $this->parseExprNode($node->returnType),
             $this->currentClass
         );
@@ -312,7 +312,7 @@ class Parser {
     protected function parseStmt_Function(Stmt\Function_ $node) {
         $this->script->functions[] = $func = new Func(
             $node->namespacedName->toString(),
-            $node->byRef,
+            $node->byRef ? Func::FLAG_RETURNS_REF : 0,
             $this->parseExprNode($node->returnType),
             null
         );
@@ -860,9 +860,13 @@ class Parser {
             );
         }
 
+        $flags = Func::FLAG_CLOSURE;
+        $flags |= $expr->byRef ? Func::FLAG_RETURNS_REF : 0;
+        $flags |= $expr->static ? Func::FLAG_STATIC : 0;
+
         $this->script->functions[] = $func = new Func(
             '{anonymous}#' . ++$this->anonId,
-            $expr->byRef,
+            $flags,
             $this->parseExprNode($expr->returnType),
             null
         );
