@@ -311,7 +311,7 @@ class Parser {
 
     protected function parseStmt_Function(Stmt\Function_ $node) {
         $this->script->functions[] = $func = new Func(
-            $node->namespacedName,
+            $node->namespacedName->toString(),
             $node->byRef,
             $this->parseExprNode($node->returnType),
             null
