@@ -10,33 +10,76 @@
 namespace PHPCfg\Visitor;
 
 use PHPCfg\Block;
+use PHPCfg\Func;
 use PHPCfg\Op;
 use PHPCfg\Operand;
 use PHPCfg\AbstractVisitor;
 
 class CallFinder extends AbstractVisitor {
-    
-    protected $calls = [];
+    /** @var Op\CallableOp[] */
     protected $funcStack = [];
+    /** @var Op\CallableOp */
     protected $func;
+    /** @var Op\Expr\FuncCall[] */
+    protected $funcCalls = [];
+    /** @var Op\Expr\NsFuncCall[] */
+    protected $nsFuncCalls = [];
+    /** @var Op\Expr\MethodCall[] */
+    protected $methodCalls = [];
+    /** @var Op\Expr\StaticCall[] */
+    protected $staticCalls = [];
+    /** @var Op\Expr\New_[] */
+    protected $newCalls = [];
 
-    public function getCallsForFunction($func) {
-        $func = strtolower($func);
-        return isset($this->calls[$func]) ? $this->calls[$func] : [];
+    /**
+     * @return Op\Expr\New_[]
+     */
+    public function getNewCalls() {
+        return $this->newCalls;
+    }
+
+    /**
+     * @return Op\Expr\MethodCall[]
+     */
+    public function getMethodCalls() {
+        return $this->methodCalls;
+    }
+
+    /**
+     * @return Op\Expr\StaticCall[]
+     */
+    public function getStaticCalls() {
+        return $this->staticCalls;
+    }
+
+    /**
+     * @return Op\Expr\NsFuncCall[]
+     */
+    public function getNsFuncCalls() {
+        return $this->nsFuncCalls;
+    }
+
+    /**
+     * @return Op\Expr\FuncCall[]
+     */
+    public function getFuncCalls() {
+        return $this->funcCalls;
     }
 
     public function enterOp(Op $op, Block $block) {
         if ($op instanceof Op\CallableOp) {
             $this->funcStack[] = $this->func;
             $this->func = $op;
-        }
-        if ($op instanceof Op\Expr\FuncCall) {
-            if ($op->name instanceof Operand\Literal) {
-                $this->calls[strtolower($op->name->value)][] = [
-                    $op,
-                    $this->func
-                ];
-            }
+        } elseif ($op instanceof Op\Expr\FuncCall) {
+            $this->funcCalls[] = [$op, $this->func];
+        } elseif ($op instanceof Op\Expr\NsFuncCall) {
+            $this->nsFuncCalls[] = [$op, $this->func];
+        } elseif ($op instanceof Op\Expr\MethodCall) {
+            $this->methodCalls[] = [$op, $this->func];
+        } elseif ($op instanceof Op\Expr\StaticCall) {
+            $this->staticCalls[] = [$op, $this->func];
+        } elseif ($op instanceof Op\Expr\New_) {
+            $this->newCalls[] = [$op, $this->func];
         }
     }
 
@@ -45,5 +88,4 @@ class CallFinder extends AbstractVisitor {
             $this->func = array_pop($this->funcStack);
         }
     }
-
 }
