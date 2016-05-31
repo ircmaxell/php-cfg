@@ -193,7 +193,8 @@ class Parser {
             $func->cfg = null;
         }
 
-        $this->block->children[] = new Op\Stmt\ClassMethod($func, $this->mapAttributes($node));
+        $this->block->children[] = $class_method = new Op\Stmt\ClassMethod($func, $this->mapAttributes($node));
+        $func->callable_op = $class_method;
     }
 
     protected function parseStmt_Const(Stmt\Const_ $node) {
@@ -317,7 +318,8 @@ class Parser {
             null
         );
         $this->parseFunc($func, $node->params, $node->stmts, null);
-        $this->block->children[] = new Op\Stmt\Function_($func, $this->mapAttributes($node));
+        $this->block->children[] = $function = new Op\Stmt\Function_($func, $this->mapAttributes($node));
+        $func->callable_op = $function;
     }
 
     protected function parseStmt_Global(Stmt\Global_ $node) {
@@ -872,7 +874,9 @@ class Parser {
         );
         $this->parseFunc($func, $expr->params, $expr->stmts, null);
 
-        return new Op\Expr\Closure($func, $uses, $this->mapAttributes($expr));
+        $closure = new Op\Expr\Closure($func, $uses, $this->mapAttributes($expr));
+        $func->callable_op = $closure;
+        return $closure;
     }
 
     protected function parseExpr_ClassConstFetch(Expr\ClassConstFetch $expr) {
