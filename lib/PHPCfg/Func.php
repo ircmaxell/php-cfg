@@ -9,6 +9,8 @@
 
 namespace PHPCfg;
 
+use PHPCfg\Op\CallableOp;
+
 class Func {
     /* Constants for the $flags property.
      * The first six flags match PhpParser Class_ flags. */
@@ -33,6 +35,8 @@ class Func {
     public $params;
     /** @var Block|null */
     public $cfg;
+    /** @var CallableOp|null */
+    public $callableOp;
 
     public function __construct($name, $flags, $returnType, $class) {
         $this->name = $name;
