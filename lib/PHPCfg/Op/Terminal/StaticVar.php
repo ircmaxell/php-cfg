@@ -15,7 +15,7 @@ use PHPCfg\Operand;
 
 class StaticVar extends Terminal {
     public $var;
-    public $default;
+    public $defaultBlock;
     public $defaultVar;
 
     public function __construct(Operand $var, Block $defaultBlock = null, Operand $defaultVar = null, array $attributes = []) {
