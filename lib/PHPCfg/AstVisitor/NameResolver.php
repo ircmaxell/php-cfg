@@ -49,10 +49,7 @@ class NameResolver extends NameResolverParent {
                 preg_replace_callback(
                     $regex,
                     function ($match) {
-                        $type = $match[2];
-                        if (($new_type = $this->parseTypeDecl($type)) !== false) {
-                            $type = $new_type;
-                        }
+                        $type = $this->parseTypeDecl($match[2]);
                         return "@{$match[1]} {$type}";
                     },
                     $comment->getText()
@@ -84,7 +81,7 @@ class NameResolver extends NameResolverParent {
         }
         $regex = '(^([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*\\\\)*[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$)';
         if (!preg_match($regex, $type)) {
-            return false;
+            return $type;   // malformed Type, return original string
         }
         if (in_array(strtolower($type), self::$builtInTypes)) {
             return $type;
