@@ -44,7 +44,7 @@ class NameResolver extends NameResolverParent {
         parent::enterNode($node);
         $comment = $node->getDocComment();
         if ($comment) {
-            $regex = "(@(param|return|var|type)\s+(\S+))";
+            $regex = "(@(param|return|var|type)\h+(\S+))";
             $comment->setText(
                 preg_replace_callback(
                     $regex,
@@ -81,7 +81,7 @@ class NameResolver extends NameResolverParent {
         }
         $regex = '(^([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*\\\\)*[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$)';
         if (!preg_match($regex, $type)) {
-            throw new \RuntimeException("Unknown type declaration found: $type");
+            return $type;   // malformed Type, return original string
         }
         if (in_array(strtolower($type), self::$builtInTypes)) {
             return $type;
