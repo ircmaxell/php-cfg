@@ -20,18 +20,19 @@ Block#2
 Block#3
     Parent: Block#1
     Expr_Assign
-        var: Var#2
-        expr: Var#5<$d>
-        result: Var#6
+        var: Var#5
+        expr: Var#6<$d>
+        result: Var#7
     Stmt_Jump
         target: Block#4
 
 Block#4
     Parent: Block#2
     Parent: Block#3
+    Var#8 = Phi(Var#2, Var#5)
     Expr_Assign
-        var: Var#7<$a>
-        expr: Var#2
-        result: Var#8
+        var: Var#9<$a>
+        expr: Var#8
+        result: Var#10
     Terminal_Return
         expr: LITERAL(1)

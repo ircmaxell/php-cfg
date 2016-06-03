@@ -1112,28 +1112,38 @@ class Parser {
         $ifBlock = $this->block->create();
         $elseBlock = $this->block->create();
         $endBlock = $this->block->create();
-        $result = new Temporary;
         $this->block->children[] = new JumpIf($cond, $ifBlock, $elseBlock, $attrs);
         $this->processAssertions($cond, $ifBlock, $elseBlock);
         $ifBlock->addParent($this->block);
         $elseBlock->addParent($this->block);
+
         $this->block = $ifBlock;
+        $ifVar = new Temporary;
         if ($expr->if) {
             $this->block->children[] = new Op\Expr\Assign(
-                $result, $this->readVariable($this->parseExprNode($expr->if)), $attrs
+                $ifVar, $this->readVariable($this->parseExprNode($expr->if)), $attrs
             );
         } else {
-            $this->block->children[] = new Op\Expr\Assign($result, $cond, $attrs);
+            $this->block->children[] = new Op\Expr\Assign($ifVar, $cond, $attrs);
         }
         $this->block->children[] = new Jump($endBlock, $attrs);
         $endBlock->addParent($this->block);
+
         $this->block = $elseBlock;
+        $elseVar = new Temporary;
         $this->block->children[] = new Op\Expr\Assign(
-            $result, $this->readVariable($this->parseExprNode($expr->else)), $attrs
+            $elseVar, $this->readVariable($this->parseExprNode($expr->else)), $attrs
         );
         $this->block->children[] = new Jump($endBlock, $attrs);
         $endBlock->addParent($this->block);
+
         $this->block = $endBlock;
+        $result = new Temporary;
+        $phi = new Op\Phi($result, ['block' => $this->block]);
+        $phi->addOperand($ifVar);
+        $phi->addOperand($elseVar);
+        $this->block->phi[] = $phi;
+
         return $result;
     }
 
