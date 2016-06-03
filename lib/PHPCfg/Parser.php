@@ -1119,14 +1119,18 @@ class Parser {
         $elseBlock->addParent($this->block);
         $this->block = $ifBlock;
         if ($expr->if) {
-            $this->block->children[] = new Op\Expr\Assign($result, $this->parseExprNode($expr->if), $attrs);
+            $this->block->children[] = new Op\Expr\Assign(
+                $result, $this->readVariable($this->parseExprNode($expr->if)), $attrs
+            );
         } else {
             $this->block->children[] = new Op\Expr\Assign($result, $cond, $attrs);
         }
         $this->block->children[] = new Jump($endBlock, $attrs);
-        $elseBlock->addParent($this->block);
+        $endBlock->addParent($this->block);
         $this->block = $elseBlock;
-        $this->block->children[] = new Op\Expr\Assign($result, $this->parseExprNode($expr->else), $attrs);
+        $this->block->children[] = new Op\Expr\Assign(
+            $result, $this->readVariable($this->parseExprNode($expr->else)), $attrs
+        );
         $elseBlock->children[] = new Jump($endBlock, $attrs);
         $endBlock->addParent($elseBlock);
         $this->block = $endBlock;

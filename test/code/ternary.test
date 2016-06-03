@@ -1,0 +1,37 @@
+<?php
+
+$a = $b ? $c : $d;
+-----
+Block#1
+    Stmt_JumpIf
+        cond: Var#1<$b>
+        if: Block#2
+        else: Block#3
+
+Block#2
+    Parent: Block#1
+    Expr_Assign
+        var: Var#2
+        expr: Var#3<$c>
+        result: Var#4
+    Stmt_Jump
+        target: Block#4
+
+Block#3
+    Parent: Block#1
+    Expr_Assign
+        var: Var#2
+        expr: Var#5<$d>
+        result: Var#6
+    Stmt_Jump
+        target: Block#4
+
+Block#4
+    Parent: Block#2
+    Parent: Block#3
+    Expr_Assign
+        var: Var#7<$a>
+        expr: Var#2
+        result: Var#8
+    Terminal_Return
+        expr: LITERAL(1)
