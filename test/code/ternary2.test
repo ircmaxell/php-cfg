@@ -1,0 +1,63 @@
+<?php
+
+$a = $b ?: ($b ?: $c);
+-----
+Block#1
+    Stmt_JumpIf
+        cond: Var#1<$b>
+        if: Block#2
+        else: Block#3
+
+Block#2
+    Parent: Block#1
+    Expr_Assign
+        var: Var#2
+        expr: Var#1<$b>
+        result: Var#3
+    Stmt_Jump
+        target: Block#4
+
+Block#3
+    Parent: Block#1
+    Stmt_JumpIf
+        cond: Var#1<$b>
+        if: Block#5
+        else: Block#6
+
+Block#4
+    Parent: Block#2
+    Parent: Block#7
+    Expr_Assign
+        var: Var#4<$a>
+        expr: Var#2
+        result: Var#5
+    Terminal_Return
+        expr: LITERAL(1)
+
+Block#5
+    Parent: Block#3
+    Expr_Assign
+        var: Var#6
+        expr: Var#1<$b>
+        result: Var#7
+    Stmt_Jump
+        target: Block#7
+
+Block#6
+    Parent: Block#3
+    Expr_Assign
+        var: Var#6
+        expr: Var#8<$c>
+        result: Var#9
+    Stmt_Jump
+        target: Block#7
+
+Block#7
+    Parent: Block#5
+    Parent: Block#6
+    Expr_Assign
+        var: Var#2
+        expr: Var#6
+        result: Var#10
+    Stmt_Jump
+        target: Block#4
