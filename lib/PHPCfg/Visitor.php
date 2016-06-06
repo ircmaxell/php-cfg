@@ -18,9 +18,9 @@ interface Visitor {
 
     public function leaveScript(Script $script);
 
-    public function enterFunc(Func $block);
+    public function enterFunc(Func $func);
 
-    public function leaveFunc(Func $block);
+    public function leaveFunc(Func $func);
     
     public function enterBlock(Block $block, Block $prior = null);
 
