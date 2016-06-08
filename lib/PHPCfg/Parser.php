@@ -60,8 +60,16 @@ class Parser {
      * @returns Script
      */
     public function parse($code, $fileName) {
+        return $this->parseAst($this->astParser->parse($code), $fileName);
+    }
+
+    /**
+     * @param array $ast PHP-Parser AST
+     * @param string $fileName
+     * @return Script
+     */
+    public function parseAst($ast, $fileName) {
         $this->fileName = $fileName;
-        $ast = $this->astParser->parse($code);
         $ast = $this->astTraverser->traverse($ast);
 
         $this->script = $script = new Script();
