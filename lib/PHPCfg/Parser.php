@@ -61,7 +61,7 @@ class Parser {
      */
     public function parse($code, $fileName) {
         $this->fileName = $fileName;
-        $ast = $this->astParser->parse($code);
+        $ast = is_string($code) ? $this->astParser->parse($code) : $code;
         $ast = $this->astTraverser->traverse($ast);
 
         $this->script = $script = new Script();
