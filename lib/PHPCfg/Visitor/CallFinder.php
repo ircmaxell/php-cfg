@@ -16,9 +16,9 @@ use PHPCfg\Operand;
 use PHPCfg\AbstractVisitor;
 
 class CallFinder extends AbstractVisitor {
-    /** @var Op\CallableOp[] */
+    /** @var Func[] */
     protected $funcStack = [];
-    /** @var Op\CallableOp */
+    /** @var Func */
     protected $func;
     /** @var Op\Expr\FuncCall[] */
     protected $funcCalls = [];
@@ -66,11 +66,17 @@ class CallFinder extends AbstractVisitor {
         return $this->funcCalls;
     }
 
+    public function enterFunc(Func $func) {
+        $this->funcStack[] = $this->func;
+        $this->func = $func;
+    }
+
+    public function leaveFunc(Func $func) {
+        $this->func = array_pop($this->funcStack);
+    }
+
     public function enterOp(Op $op, Block $block) {
-        if ($op instanceof Op\CallableOp) {
-            $this->funcStack[] = $this->func;
-            $this->func = $op;
-        } elseif ($op instanceof Op\Expr\FuncCall) {
+        if ($op instanceof Op\Expr\FuncCall) {
             $this->funcCalls[] = [$op, $this->func];
         } elseif ($op instanceof Op\Expr\NsFuncCall) {
             $this->nsFuncCalls[] = [$op, $this->func];
@@ -80,12 +86,6 @@ class CallFinder extends AbstractVisitor {
             $this->staticCalls[] = [$op, $this->func];
         } elseif ($op instanceof Op\Expr\New_) {
             $this->newCalls[] = [$op, $this->func];
-        }
-    }
-
-    public function leaveOp(Op $op, Block $block) {
-        if ($op instanceof Op\CallableOp) {
-            $this->func = array_pop($this->funcStack);
         }
     }
 }
