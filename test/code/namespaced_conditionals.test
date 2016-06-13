@@ -1,0 +1,47 @@
+<?php
+
+namespace Foo {
+	if (true) {
+		echo 'foo';
+	}
+}
+
+namespace Bar {
+	if (false) {
+		echo 'bar';
+	}
+}
+-----
+Block#1
+    Stmt_JumpIf
+        cond: LITERAL(true)
+        if: Block#2
+        else: Block#3
+
+Block#2
+    Parent: Block#1
+    Terminal_Echo
+        expr: LITERAL('foo')
+    Stmt_Jump
+        target: Block#3
+
+Block#3
+    Parent: Block#2
+    Parent: Block#1
+    Stmt_JumpIf
+        cond: LITERAL(false)
+        if: Block#4
+        else: Block#5
+
+Block#4
+    Parent: Block#3
+    Terminal_Echo
+        expr: LITERAL('bar')
+    Stmt_Jump
+        target: Block#5
+
+Block#5
+    Parent: Block#4
+    Parent: Block#3
+    Terminal_Return
+        expr: LITERAL(1)
