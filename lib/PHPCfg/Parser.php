@@ -1012,10 +1012,12 @@ class Parser {
 
     protected function parseListAssignment(Expr\List_ $expr, Operand $rhs) {
         $attributes = $this->mapAttributes($expr);
-        foreach ($expr->vars as $i => $var) {
-            if (null === $var) {
+        foreach ($expr->items as $i => $item) {
+            if (null === $item) {
                 continue;
             }
+
+            $var = $item->value;
 
             $fetch = new Op\Expr\ArrayDimFetch($rhs, new Operand\Literal($i), $attributes);
             $this->block->children[] = $fetch;
