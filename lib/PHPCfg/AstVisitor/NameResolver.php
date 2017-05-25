@@ -9,6 +9,7 @@
 
 namespace PHPCfg\AstVisitor;
 
+use PhpParser\Comment\Doc;
 use PhpParser\Node;
 use PhpParser\Node\Name;
 use PhpParser\NodeVisitor\NameResolver as NameResolverParent;
@@ -45,7 +46,8 @@ class NameResolver extends NameResolverParent {
         $comment = $node->getDocComment();
         if ($comment) {
             $regex = "(@(param|return|var|type)\h+(\S+))";
-            $comment->setText(
+
+            $comment = new Doc(
                 preg_replace_callback(
                     $regex,
                     function ($match) {
@@ -53,8 +55,12 @@ class NameResolver extends NameResolverParent {
                         return "@{$match[1]} {$type}";
                     },
                     $comment->getText()
-                )
+                ),
+                $comment->getLine(),
+                $comment->getFilePos()
             );
+
+            $node->setDocComment($comment);
         }
     }
 

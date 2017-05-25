@@ -9,6 +9,7 @@
 
 namespace PHPCfg\AstVisitor;
 
+use PhpParser\Comment\Doc;
 use PhpParser\Node;
 use PhpParser\NodeVisitorAbstract;
 
@@ -97,7 +98,8 @@ class MagicStringResolver extends NodeVisitorAbstract {
         $comment = $node->getDocComment();
         if ($comment && !empty($this->classStack)) {
             $regex = "(@(param|return|var|type)\s+(\S+))i";
-            $comment->setText(
+
+            $comment = new Doc(
                 preg_replace_callback(
                     $regex,
                     function ($match) {
@@ -106,8 +108,12 @@ class MagicStringResolver extends NodeVisitorAbstract {
                         return '@' . $match[1] . ' ' . $type;
                     },
                     $comment->getText()
-                )
+                ),
+                $comment->getLine(),
+                $comment->getFilePos()
             );
+
+            $node->setDocComment($comment);
         }
     }
 
