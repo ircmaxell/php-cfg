@@ -820,6 +820,10 @@ class Parser {
         return new Op\Expr\Array_($keys, $values, $byRef, $this->mapAttributes($expr));
     }
 
+	protected function parseExpr_ArrayItem(Expr\ArrayItem $expr) {
+		return new Op\Expr\ArrayItem($this->parseExprNode($expr->value), $this->parseExprNode($expr->key), $expr->byRef, $this->mapAttributes($expr));
+	}
+
     protected function parseExpr_ArrayDimFetch(Expr\ArrayDimFetch $expr) {
         $v = $this->readVariable($this->parseExprNode($expr->var));
         if (!is_null($expr->dim)) {
@@ -1012,10 +1016,12 @@ class Parser {
 
     protected function parseListAssignment(Expr\List_ $expr, Operand $rhs) {
         $attributes = $this->mapAttributes($expr);
-        foreach ($expr->vars as $i => $var) {
-            if (null === $var) {
+        foreach ($expr->items as $i => $item) {
+            if (null === $item) {
                 continue;
             }
+
+            $var = $item->value;
 
             $fetch = new Op\Expr\ArrayDimFetch($rhs, new Operand\Literal($i), $attributes);
             $this->block->children[] = $fetch;
