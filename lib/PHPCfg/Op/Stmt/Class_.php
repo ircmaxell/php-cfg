@@ -12,13 +12,13 @@ namespace PHPCfg\Op\Stmt;
 use PhpCfg\Block;
 
 class Class_ extends ClassLike {
-    public $type;
+    public $flags;
     public $extends;
     public $implements;
 
-    public function __construct($name, $type, $extends, array $implements, Block $stmts, array $attributes = []) {
+    public function __construct($name, $flags, $extends, array $implements, Block $stmts, array $attributes = []) {
         parent::__construct($name, $stmts, $attributes);
-        $this->type = $type;
+        $this->flags = $flags;
         $this->extends = $extends;
         $this->implements = $implements;
     }

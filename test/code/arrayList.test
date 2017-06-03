@@ -1,0 +1,35 @@
+<?php
+
+[$a, $b, [$c]] = $array;
+-----
+Block#1
+    Expr_ArrayDimFetch
+        var: Var#1<$array>
+        dim: LITERAL(0)
+        result: Var#2
+    Expr_Assign
+        var: Var#3<$a>
+        expr: Var#2
+        result: Var#4
+    Expr_ArrayDimFetch
+        var: Var#1<$array>
+        dim: LITERAL(1)
+        result: Var#5
+    Expr_Assign
+        var: Var#6<$b>
+        expr: Var#5
+        result: Var#7
+    Expr_ArrayDimFetch
+        var: Var#1<$array>
+        dim: LITERAL(2)
+        result: Var#8
+    Expr_ArrayDimFetch
+        var: Var#8
+        dim: LITERAL(0)
+        result: Var#9
+    Expr_Assign
+        var: Var#10<$c>
+        expr: Var#9
+        result: Var#11
+    Terminal_Return
+        expr: LITERAL(1)

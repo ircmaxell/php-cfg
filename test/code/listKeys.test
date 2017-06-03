@@ -1,0 +1,28 @@
+<?php
+
+$key = 'b';
+list('a' => $a, $key => $b) = $array;
+-----
+Block#1
+    Expr_Assign
+        var: Var#1<$key>
+        expr: LITERAL('b')
+        result: Var#2
+    Expr_ArrayDimFetch
+        var: Var#3<$array>
+        dim: LITERAL('a')
+        result: Var#4
+    Expr_Assign
+        var: Var#5<$a>
+        expr: Var#4
+        result: Var#6
+    Expr_ArrayDimFetch
+        var: Var#3<$array>
+        dim: Var#1<$key>
+        result: Var#7
+    Expr_Assign
+        var: Var#8<$b>
+        expr: Var#7
+        result: Var#9
+    Terminal_Return
+        expr: LITERAL(1)

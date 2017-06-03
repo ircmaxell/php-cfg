@@ -155,7 +155,7 @@ class Parser {
         $this->currentClass = $name;
         $this->block->children[] = new Op\Stmt\Class_(
             $name,
-            $node->type,
+            $node->flags,
             $this->parseExprNode($node->extends),
             $this->parseExprList($node->implements),
             $this->parseNodes($node->stmts, new Block),
@@ -189,7 +189,7 @@ class Parser {
 
         $this->script->functions[] = $func = new Func(
             $node->name,
-            $node->type | ($node->byRef ? Func::FLAG_RETURNS_REF : 0),
+            $node->flags | ($node->byRef ? Func::FLAG_RETURNS_REF : 0),
             $this->parseExprNode($node->returnType),
             $this->currentClass
         );
@@ -302,7 +302,7 @@ class Parser {
 
         $this->block->children[] = $valueOp = new Op\Iterator\Value($iterable, $node->byRef, $attrs);
 
-        if ($node->valueVar instanceof Expr\List_) {
+        if ($node->valueVar instanceof Expr\List_ || $node->valueVar instanceof Expr\Array_) {
             $this->parseListAssignment($node->valueVar, $valueOp->result);
         } elseif ($node->byRef) {
             $this->block->children[] = new Op\Expr\AssignRef($this->writeVariable($this->parseExprNode($node->valueVar)), $valueOp->result, $attrs);
@@ -447,8 +447,8 @@ class Parser {
     }
 
     protected function parseStmt_Property(Stmt\Property $node) {
-        $visibility = $node->type & Node\Stmt\Class_::VISIBILITY_MODIFER_MASK;
-        $static = $node->type & Node\Stmt\Class_::MODIFIER_STATIC;
+        $visibility = $node->flags & Node\Stmt\Class_::VISIBILITY_MODIFER_MASK;
+        $static = $node->flags & Node\Stmt\Class_::MODIFIER_STATIC;
         foreach ($node->props as $prop) {
             if ($prop->default) {
                 $tmp = $this->block;
@@ -832,7 +832,7 @@ class Parser {
     
     protected function parseExpr_Assign(Expr\Assign $expr) {
         $e = $this->readVariable($this->parseExprNode($expr->expr));
-        if ($expr->var instanceof Expr\List_) {
+        if ($expr->var instanceof Expr\List_ || $expr->var instanceof Expr\Array_) {
             $this->parseListAssignment($expr->var, $e);
             return $e;
         }
@@ -991,7 +991,7 @@ class Parser {
         return new Op\Expr\Include_($this->readVariable($this->parseExprNode($expr->expr)), $expr->type, $this->mapAttributes($expr));
     }
     
-    protected function parseExpr_Instanceof(Expr\InstanceOf_ $expr) {
+    protected function parseExpr_Instanceof(Expr\Instanceof_ $expr) {
         $var = $this->readVariable($this->parseExprNode($expr->expr));
         $class = $this->readVariable($this->parseExprNode($expr->class));
         $op = new Op\Expr\InstanceOf_(
@@ -1010,18 +1010,27 @@ class Parser {
         );
     }
 
-    protected function parseListAssignment(Expr\List_ $expr, Operand $rhs) {
+    /**
+     * @param Expr\List_|Expr\Array_ $expr
+     * @param Operand $rhs
+     */
+    protected function parseListAssignment($expr, Operand $rhs) {
         $attributes = $this->mapAttributes($expr);
         foreach ($expr->items as $i => $item) {
             if (null === $item) {
                 continue;
             }
 
-            $var = $item->value;
+            if ($item->key === null) {
+                $key = new Operand\Literal($i);
+            } else {
+                $key = $this->readVariable($this->parseExprNode($item->key));
+            }
 
-            $fetch = new Op\Expr\ArrayDimFetch($rhs, new Operand\Literal($i), $attributes);
+            $var = $item->value;
+            $fetch = new Op\Expr\ArrayDimFetch($rhs, $key, $attributes);
             $this->block->children[] = $fetch;
-            if ($var instanceof Expr\List_) {
+            if ($var instanceof Expr\List_ || $var instanceof Expr\Array_) {
                 $this->parseListAssignment($var, $fetch->result);
                 continue;
             }
