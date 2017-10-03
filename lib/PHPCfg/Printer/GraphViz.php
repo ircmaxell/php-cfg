@@ -36,7 +36,7 @@ class GraphViz extends Printer {
         $graph = $this->createGraph();
         $this->printFuncWithHeader($script->main, $graph, 'func_' . ++$i . '_');
         foreach ($script->functions as $func) {
-            $this->printFuncWithHeader($func, $graph, 'func_' - ++$i . '_');
+            $this->printFuncWithHeader($func, $graph, 'func_' . ++$i . '_');
         }
         return $graph;
     }
