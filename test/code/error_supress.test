@@ -1,0 +1,24 @@
+<?php
+$dbname = 'database name';
+
+print @'hostname';
+
+echo $dbname;
+-----
+Block#1
+    Expr_Assign
+        var: Var#1<$dbname>
+        expr: LITERAL('database name')
+        result: Var#2
+    Stmt_Jump
+        target: Block#2
+
+Block#2
+    Parent: Block#1
+    Expr_Print
+        expr: LITERAL('hostname')
+        result: Var#3
+    Terminal_Echo
+        expr: Var#1<$dbname>
+    Terminal_Return
+        expr: LITERAL(1)

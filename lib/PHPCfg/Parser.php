@@ -928,10 +928,12 @@ class Parser {
         $attrs = $this->mapAttributes($expr);
         $block = new ErrorSuppressBlock;
         $this->block->children[] = new Jump($block, $attrs);
+        $block->addParent($this->block);
         $this->block = $block;
         $result = $this->parseExprNode($expr->expr);
         $end = new Block;
         $this->block->children[] = new Jump($end, $attrs);
+        $end->addParent($this->block);
         $this->block = $end;
         return $result;
     }
