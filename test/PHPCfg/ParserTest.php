@@ -11,8 +11,9 @@ namespace PHPCfg;
 
 use PhpParser;
 use PhpParser\ParserFactory;
+use PHPUnit\Framework\TestCase;
 
-class ParserTest extends \PHPUnit_Framework_TestCase {
+class ParserTest extends TestCase {
 
     /** @dataProvider provideTestParseAndDump */
     public function testParseAndDump($code, $expectedDump) {
