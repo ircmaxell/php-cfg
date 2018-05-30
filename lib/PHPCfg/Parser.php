@@ -950,7 +950,7 @@ class Parser {
 
     protected function parseExpr_FuncCall(Expr\FuncCall $expr) {
         $args = $this->parseExprList($expr->args, self::MODE_READ);
-        $name = $this->parseExprNode($expr->name);
+        $name = $this->readVariable($this->parseExprNode($expr->name));
         if ($this->currentNamespace && $expr->name instanceof Node\Name && $expr->name->isUnqualified()) {
             $op = new Op\Expr\NsFuncCall(
                 $name,
