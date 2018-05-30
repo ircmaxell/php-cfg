@@ -1,0 +1,18 @@
+<?php
+static $flag = FALSE;
+echo $flag;
+-----
+Block#1
+    Terminal_StaticVar
+        var: Var#1<static<&$flag>>
+        defaultVar: Var#2
+        defaultBlock: Block#2
+    Terminal_Echo
+        expr: Var#1<static<&$flag>>
+    Terminal_Return
+        expr: LITERAL(1)
+
+Block#2
+    Expr_ConstFetch
+        name: LITERAL('FALSE')
+        result: Var#2

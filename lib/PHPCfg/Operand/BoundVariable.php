@@ -18,9 +18,9 @@ class BoundVariable extends Variable {
     public $scope;
     public $extra;
 
-    public function __construct($name, $byRef, $scope = self::SCOPE_GLOBAL, $extra = null) {
+    public function __construct($name, bool $byRef, int $scope = self::SCOPE_GLOBAL, $extra = null) {
         parent::__construct($name);
-        $this->byRef = (bool) $byRef;
+        $this->byRef = $byRef;
         $this->scope = $scope;
         $this->extra = $extra;
     }

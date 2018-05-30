@@ -496,7 +496,7 @@ class Parser {
                 $this->block = $tmp;
             }
             $this->block->children[] = new Op\Terminal\StaticVar(
-                $this->writeVariable(new Operand\BoundVariable($this->parseExprNode($var->var), true, Operand\BoundVariable::SCOPE_FUNCTION)),
+                $this->writeVariable(new Operand\BoundVariable($this->parseExprNode($var->var->name), true, Operand\BoundVariable::SCOPE_FUNCTION)),
                 $defaultBlock,
                 $defaultVar,
                 $this->mapAttributes($node)
