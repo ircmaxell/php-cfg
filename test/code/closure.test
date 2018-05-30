@@ -26,7 +26,7 @@ Block#1
         expr: Var#5
         result: Var#7
     Expr_FuncCall
-        name: $fn
+        name: Var#6<$fn>
         args[0]: LITERAL(3)
         result: Var#8
     Expr_FuncCall

@@ -1,0 +1,16 @@
+<?php
+
+$a = "print_r";
+$a("some string");
+-----
+Block#1
+    Expr_Assign
+        var: Var#1<$a>
+        expr: LITERAL('print_r')
+        result: Var#2
+    Expr_FuncCall
+        name: Var#1<$a>
+        args[0]: LITERAL('some string')
+        result: Var#3
+    Terminal_Return
+        expr: LITERAL(1)
