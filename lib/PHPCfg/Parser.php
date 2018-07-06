@@ -192,7 +192,7 @@ class Parser {
         }
 
         $this->script->functions[] = $func = new Func(
-            $node->name,
+            $node->name->toString(),
             $node->flags | ($node->byRef ? Func::FLAG_RETURNS_REF : 0),
             $this->parseExprNode($node->returnType),
             $this->currentClass
