@@ -52,7 +52,7 @@ Block#6
 Block#7
     Parent: Block#5
     Parent: Block#6
-    Var#13 = Phi(Var#6, Var#8)
+    Var#11 = Phi(Var#6, Var#8)
     Expr_Assign
         var: Var#5<$a>
         expr: Var#11
