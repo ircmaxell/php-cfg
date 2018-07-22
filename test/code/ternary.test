@@ -11,7 +11,7 @@ Block#1
 Block#2
     Parent: Block#1
     Expr_Assign
-        var: Var#2
+        var: Var#2<$a>
         expr: Var#3<$c>
         result: Var#4
     Stmt_Jump
@@ -20,7 +20,7 @@ Block#2
 Block#3
     Parent: Block#1
     Expr_Assign
-        var: Var#5
+        var: Var#5<$a>
         expr: Var#6<$d>
         result: Var#7
     Stmt_Jump
@@ -29,10 +29,6 @@ Block#3
 Block#4
     Parent: Block#2
     Parent: Block#3
-    Var#8 = Phi(Var#2, Var#5)
-    Expr_Assign
-        var: Var#9<$a>
-        expr: Var#8
-        result: Var#10
+    Var#8 = Phi(Var#2<$a>, Var#5<$a>)
     Terminal_Return
         expr: LITERAL(1)
