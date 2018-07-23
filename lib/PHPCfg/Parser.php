@@ -834,18 +834,13 @@ class Parser {
     }
 
     protected function parseExpr_Assign(Expr\Assign $expr) {
-    
-        if($expr->expr instanceof Expr\Ternary) {
-            return $this->parseExpr_Ternary($expr->expr, $expr);
-        } else {
-            $e = $this->readVariable($this->parseExprNode($expr->expr));
-            if ($expr->var instanceof Expr\List_ || $expr->var instanceof Expr\Array_) {
-                $this->parseListAssignment($expr->var, $e);
-                return $e;
-            }
-            $v = $this->writeVariable($this->parseExprNode($expr->var));
-            return new Op\Expr\Assign($v, $e, $this->mapAttributes($expr));
+        $e = $this->readVariable($this->parseExprNode($expr->expr));
+        if ($expr->var instanceof Expr\List_ || $expr->var instanceof Expr\Array_) {
+            $this->parseListAssignment($expr->var, $e);
+            return $e;
         }
+        $v = $this->writeVariable($this->parseExprNode($expr->var));
+        return new Op\Expr\Assign($v, $e, $this->mapAttributes($expr));
     }
 
     protected function parseExpr_AssignRef(Expr\AssignRef $expr) {
@@ -1135,7 +1130,7 @@ class Parser {
         );
     }
 
-    protected function parseExpr_Ternary(Expr\Ternary $expr, Expr\Assign $assign = null) {
+    protected function parseExpr_Ternary(Expr\Ternary $expr) {
         $attrs = $this->mapAttributes($expr);
         $cond = $this->readVariable($this->parseExprNode($expr->cond));
         $ifBlock = $this->block->create();
@@ -1147,31 +1142,16 @@ class Parser {
         $elseBlock->addParent($this->block);
 
         $this->block = $ifBlock;
-        
-        if(is_null($assign)) {
-            $ifVar = new Temporary;
+        if(is_null($expr->if)) {
+            $ifVar = $cond;
         } else {
-            $ifVar = $this->writeVariable($this->parseExprNode($assign->var));
-        }
-        if ($expr->if) {
-            $this->block->children[] = new Op\Expr\Assign(
-                $ifVar, $this->readVariable($this->parseExprNode($expr->if)), $attrs
-            );
-        } else {
-            $this->block->children[] = new Op\Expr\Assign($ifVar, $cond, $attrs);
+            $ifVar = $this->parseExprNode($expr->if);
         }
         $this->block->children[] = new Jump($endBlock, $attrs);
         $endBlock->addParent($this->block);
 
         $this->block = $elseBlock;
-        if(is_null($assign)) {
-            $elseVar = new Temporary;
-        } else {
-            $elseVar = $this->writeVariable($this->parseExprNode($assign->var));
-        }
-        $this->block->children[] = new Op\Expr\Assign(
-            $elseVar, $this->readVariable($this->parseExprNode($expr->else)), $attrs
-        );
+        $elseVar = $this->parseExprNode($expr->else);
         $this->block->children[] = new Jump($endBlock, $attrs);
         $endBlock->addParent($this->block);
 
