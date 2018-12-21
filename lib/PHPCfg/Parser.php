@@ -634,6 +634,10 @@ class Parser {
         );
     }
 
+    protected function parseStmt_GroupUse(Stmt\GroupUse $node) {
+        // ignore _GroupUse statements, since names are already resolved
+    }
+    
     protected function parseStmt_Use(Stmt\Use_ $node) {
         // ignore use statements, since names are already resolved
     }
@@ -684,6 +688,8 @@ class Parser {
             return end($list);
         } elseif ($expr instanceof Node\Identifier) {
             return new Literal($expr->name);
+        } elseif ($expr instanceof Node\NullableType) {
+            return $this->parseExprNode($expr->type);
         } elseif ($expr instanceof Node\Expr\Variable) {
             if ($expr->name === "this") {
                 return new Operand\BoundVariable(
