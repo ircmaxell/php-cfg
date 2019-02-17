@@ -8,9 +8,15 @@
             "email": "ircmaxell@gmail.com"
         }
     ],
+    "repositories": [
+        {
+            "type": "git",
+            "url": "https://github.com/codelingo/php-parser"
+        }
+    ],
     "require": {
         "php": "^7.0",
-        "nikic/php-parser": "^4.0",
+        "nikic/php-parser": "dev-master",
         "phpdocumentor/graphviz": "^1.0.4"
     },
     "require-dev": {
