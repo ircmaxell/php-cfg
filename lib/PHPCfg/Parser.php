@@ -75,7 +75,7 @@ class Parser {
         $this->script = $script = new Script();
         $script->functions = [];
         $script->main = new Func('{main}', 0, null, null);
-        $this->parseFunc($script->main, [], $ast, 1);
+        $this->parseFunc($script->main, [], $ast, null);
 
         // Reset script specific state
         $this->script = null;
@@ -99,7 +99,11 @@ class Parser {
 
         $end = $this->parseNodes($stmts, $start);
         if (!$end->dead) {
-            $end->children[] = new Return_(new Literal($implicitReturnValue));
+            if ($implicitReturnValue === null) {
+                $end->children[] = new Return_;
+            } else {
+                $end->children[] = new Return_(new Literal($implicitReturnValue));
+            }
         }
 
         if ($this->ctx->unresolvedGotos) {
