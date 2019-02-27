@@ -967,7 +967,7 @@ class Parser
     protected function parseExpr_ConstFetch(Expr\ConstFetch $expr)
     {
         if ($expr->name->isUnqualified()) {
-            $lcname = strtolower($expr->name);
+            $lcname = strtolower($expr->name->toString());
             switch ($lcname) {
                 case 'null':
                     return new Literal(null);

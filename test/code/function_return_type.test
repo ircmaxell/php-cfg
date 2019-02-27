@@ -1,0 +1,17 @@
+<?php
+function foo(string $a): string {
+    return $a;
+}
+-----
+Block#1
+    Stmt_Function<foo>
+    Terminal_Return
+        expr: LITERAL(1)
+
+Function foo():string
+Block#1
+    Expr_Param<string>
+        name: LITERAL('a')
+        result: Var#1<$a>
+    Terminal_Return
+        expr: Var#1<$a>

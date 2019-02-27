@@ -24,6 +24,9 @@ class Text extends Printer
         foreach ($script->functions as $func) {
             $name = $func->getScopedName();
             $output .= "\nFunction ${name}():";
+            if ($func->returnType) {
+                $output .= $func->returnType;
+            }
             $output .= $this->printFunc($func);
         }
 

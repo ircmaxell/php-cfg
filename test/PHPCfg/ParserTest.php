@@ -52,7 +52,7 @@ class ParserTest extends TestCase
                 continue;
             }
 
-            $contents = file_get_contents($file);
+            $contents = file_get_contents($file->getPathname());
             yield $file->getBasename() => explode('-----', $contents);
         }
     }

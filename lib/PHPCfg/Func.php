@@ -58,7 +58,13 @@ class Func
     {
         $this->name = $name;
         $this->flags = $flags;
-        $this->returnType = $returnType;
+        if ($returnType instanceof Operand\Literal) {
+            $this->returnType = $returnType->value;
+        } elseif (! empty($returnType)) {
+            throw new \LogicException('Only literal return types are supported');
+        } else {
+            $this->returnType = null;
+        }
         $this->class = $class;
         $this->params = [];
         $this->cfg = new Block();

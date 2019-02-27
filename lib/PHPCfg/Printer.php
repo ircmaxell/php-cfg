@@ -114,6 +114,9 @@ abstract class Printer
                 $result .= '<'.$op->declaredType.'>';
             }
         }
+        if ($op instanceof Op\Expr\Param && $op->type) {
+            $result .= '<'.$op->type.'>';
+        }
 
         foreach ($op->getVariableNames() as $varName) {
             $vars = $op->{$varName};

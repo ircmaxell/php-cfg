@@ -37,7 +37,13 @@ class Param extends Expr
         parent::__construct($attributes);
         $this->result->original = $name;
         $this->name = $this->addReadRef($name);
-        $this->type = $type;
+        if ($type instanceof Operand\Literal) {
+            $this->type = $type->value;
+        } elseif (! empty($type)) {
+            throw new \LogicException('Only literal param types are supported');
+        } else {
+            $this->type = null;
+        }
         $this->byRef = (bool) $byRef;
         $this->variadic = (bool) $variadic;
         $this->defaultVar = $this->addReadRef($defaultVar);
