@@ -13,7 +13,7 @@ namespace PHPCfg;
 
 use PHPCfg\Op\CallableOp;
 
-class Func
+class Func extends Op
 {
     /* Constants for the $flags property.
      * The first six flags match PhpParser Class_ flags. */
@@ -54,8 +54,9 @@ class Func
     /** @var CallableOp|null */
     public $callableOp;
 
-    public function __construct(string $name, int $flags, Op\Type $returnType, ?Operand $class)
+    public function __construct(string $name, int $flags, Op\Type $returnType, ?Operand $class, array $attributes = [])
     {
+        parent::__construct($attributes);
         $this->name = $name;
         $this->flags = $flags;
         $this->returnType = $returnType;
