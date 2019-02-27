@@ -47,6 +47,7 @@ class PhiResolver extends AbstractVisitor
     {
         // resolve to result var
         $replacement = new Operand\Temporary($phi->result);
+        $replacement->type = $phi->result->type;
         $vars = [];
         foreach ($phi->vars as $var) {
             $var->replaceWith($replacement);

@@ -18,53 +18,9 @@ use PHPUnit\Framework\TestCase;
 
 class PhiResolverTest extends TestCase
 {
-    public function testBasicBranch()
+    /** @dataProvider provideTestParseAndDump */
+    public function testParseAndDumpPhiResolution($code, $expectedDump)
     {
-        $expectedDump = <<<'EOF'
-Block#1
-    Stmt_Function<foo>
-    Terminal_Return
-
-Function foo(): mixed
-Block#1
-    Expr_Param
-        declaredType: bool
-        name: LITERAL('test')
-        result: Var#1<$test>
-    Expr_Assign
-        var: Var#2<Var#3<$a>>
-        expr: LITERAL(0)
-        result: Var#4
-    Stmt_JumpIf
-        cond: Var#1<$test>
-        if: Block#2
-        else: Block#3
-
-Block#2
-    Parent: Block#1
-    Expr_Assign
-        var: Var#2<Var#3<$a>>
-        expr: LITERAL(2)
-        result: Var#5
-    Stmt_Jump
-        target: Block#3
-
-Block#3
-    Parent: Block#2
-    Parent: Block#1
-    Terminal_Return
-        expr: Var#2<Var#3<$a>>
-EOF;
-        $code = <<<'EOF'
-<?php
-function foo(bool $test) {
-    $a = 0;
-    if ($test) {
-        $a = 2;
-    }
-    return $a;
-}
-EOF;
         $astTraverser = new NodeTraverser();
         $astTraverser->addVisitor(new NameResolver());
         $parser = new Parser((new ParserFactory())->create(ParserFactory::PREFER_PHP7), $astTraverser);
@@ -88,6 +44,22 @@ EOF;
             $this->canonicalize($expectedDump),
             $this->canonicalize($result)
         );
+    }
+
+    public static function provideTestParseAndDump()
+    {
+        $dir = __DIR__.'/../phicode';
+        $iter = new \RecursiveIteratorIterator(
+            new \RecursiveDirectoryIterator($dir), \RecursiveIteratorIterator::LEAVES_ONLY);
+
+        foreach ($iter as $file) {
+            if (! $file->isFile()) {
+                continue;
+            }
+
+            $contents = file_get_contents($file->getPathname());
+            yield $file->getBasename() => explode('-----', $contents);
+        }
     }
 
     private function canonicalize($str)

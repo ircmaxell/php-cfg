@@ -1,0 +1,42 @@
+<?php
+function foo(bool $test) {
+    $a = 0;
+    if ($test) {
+        $a = 2;
+    }
+    return $a;
+}
+-----
+Block#1
+    Stmt_Function<foo>
+    Terminal_Return
+
+Function foo(): mixed
+Block#1
+    Expr_Param
+        declaredType: bool
+        name: LITERAL('test')
+        result: Var#1<$test>
+    Expr_Assign
+        var: Var#2<Var#3<$a>>
+        expr: LITERAL(0)
+        result: Var#4
+    Stmt_JumpIf
+        cond: Var#1<$test>
+        if: Block#2
+        else: Block#3
+
+Block#2
+    Parent: Block#1
+    Expr_Assign
+        var: Var#2<Var#3<$a>>
+        expr: LITERAL(2)
+        result: Var#5
+    Stmt_Jump
+        target: Block#3
+
+Block#3
+    Parent: Block#2
+    Parent: Block#1
+    Terminal_Return
+        expr: Var#2<Var#3<$a>>
