@@ -13,9 +13,9 @@ namespace PHPCfg;
 
 abstract class Op
 {
-    protected array $attributes = [];
+    protected $attributes = [];
 
-    protected array $writeVariables = [];
+    protected $writeVariables = [];
 
     public function __construct(array $attributes = [])
     {
@@ -61,11 +61,13 @@ abstract class Op
         return $this->attributes;
     }
 
-    public function getVariableNames(): array {
+    public function getVariableNames(): array
+    {
         return [];
     }
 
-    public function getSubBlocks(): array {
+    public function getSubBlocks(): array
+    {
         return [];
     }
 
@@ -84,7 +86,8 @@ abstract class Op
         return $result;
     }
 
-    protected function addReadRef(Operand $op): Operand {
+    protected function addReadRef(Operand $op): Operand
+    {
         return $op->addUsage($this);
     }
 

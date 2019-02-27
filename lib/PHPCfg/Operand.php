@@ -11,17 +11,15 @@ declare(strict_types=1);
 
 namespace PHPCfg;
 
-use PHPTypes\Type;
-
 abstract class Operand
 {
-    public ?Type $type = null;
+    public $type = null;
 
-    public array $assertions = [];
+    public $assertions = [];
 
-    public array $ops = [];
+    public $ops = [];
 
-    public array $usages = [];
+    public $usages = [];
 
     public function getType(): string
     {
@@ -58,10 +56,11 @@ abstract class Operand
         if ($key !== false) {
             unset($this->usages[$key]);
         }
+
         return $this;
     }
 
-    public function addAssertion(self $op, Assertion $assert, $mode = Assertion::MODE_INTERSECTION): void
+    public function addAssertion(self $op, Assertion $assert, $mode = Assertion::MODE_INTERSECTION)
     {
         $isTemorary = $op instanceof Operand\Temporary;
         $isNamed = $isTemorary && $op->original instanceof Operand\Variable && $op->original->name instanceof Operand\Literal;

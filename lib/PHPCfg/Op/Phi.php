@@ -16,11 +16,11 @@ use PHPCfg\Operand;
 
 class Phi extends Op
 {
-    public array $vars = [];
+    public $vars = [];
 
-    public Operand $result;
+    public $result;
 
-    protected array $writeVariables = ['result'];
+    protected $writeVariables = ['result'];
 
     public function __construct(Operand $result, array $attributes = [])
     {
@@ -28,7 +28,7 @@ class Phi extends Op
         $this->result = $this->addWriteRef($result);
     }
 
-    public function addOperand(Operand $op): void
+    public function addOperand(Operand $op)
     {
         if ($op === $this->result) {
             return;
@@ -43,7 +43,7 @@ class Phi extends Op
         return in_array($op, $this->vars, true);
     }
 
-    public function removeOperand(Operand $op): void
+    public function removeOperand(Operand $op)
     {
         foreach ($this->vars as $key => $value) {
             if ($op === $value) {
@@ -58,5 +58,4 @@ class Phi extends Op
     {
         return ['vars', 'result'];
     }
-
 }

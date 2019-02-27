@@ -16,15 +16,13 @@ use PhpCfg\Operand;
 
 class Exit_ extends Expr
 {
-    public ?Operand $expr;
+    public $expr = null;
 
     public function __construct(Operand $expr = null, array $attributes = [])
     {
         parent::__construct($attributes);
-        if ($expr) {
+        if (null !== $expr) {
             $this->expr = $this->addReadRef($expr);
-        } else {
-            $this->expr = null;
         }
     }
 

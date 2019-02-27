@@ -16,7 +16,7 @@ use PHPCfg\Operand;
 
 class Throw_ extends Terminal
 {
-    public Operand $expr;
+    public $expr;
 
     public function __construct(Operand $expr, array $attributes = [])
     {
@@ -28,5 +28,4 @@ class Throw_ extends Terminal
     {
         return ['expr'];
     }
-
 }

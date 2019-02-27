@@ -17,12 +17,11 @@ use PHPCfg\Operand;
 
 class Const_ extends Terminal
 {
+    public $name;
 
-    public Operand $name;
+    public $value;
 
-    public Operand $value;
-
-    public Block $valueBlock;
+    public $valueBlock;
 
     public function __construct(Operand $name, Operand $value, Block $valueBlock, array $attributes = [])
     {

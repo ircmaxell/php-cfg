@@ -12,20 +12,17 @@ declare(strict_types=1);
 namespace PHPCfg\Op;
 
 use PHPCfg\Op;
-use PHPCfg\Operand;
 use PHPCfg\Operand\Temporary;
 
 abstract class Expr extends Op
 {
+    public $result;
 
-    public Operand $result;
-
-    protected array $writeVariables = ['result'];
+    protected $writeVariables = ['result'];
 
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
         $this->result = $this->addWriteRef(new Temporary());
     }
-
 }

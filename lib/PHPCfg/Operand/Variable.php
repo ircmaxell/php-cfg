@@ -15,7 +15,7 @@ use PHPCfg\Operand;
 
 class Variable extends Operand
 {
-    public Operand $name;
+    public $name;
 
     public function __construct(Operand $name)
     {

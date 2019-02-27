@@ -17,13 +17,13 @@ use PhpCfg\Operand;
 
 class Switch_ extends Stmt
 {
-    public Operand $target;
+    public $target;
 
-    public array $cases;
+    public $cases;
 
-    public array $targets;
+    public $targets;
 
-    public Block $default;
+    public $default;
 
     public function __construct(Operand $cond, array $cases, array $targets, Block $default, array $attributes = [])
     {

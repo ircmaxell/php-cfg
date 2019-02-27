@@ -16,9 +16,9 @@ use PhpCfg\Operand;
 
 class Value extends Expr
 {
-    public Operand $var;
+    public $var;
 
-    public bool $byRef;
+    public $byRef;
 
     public function __construct(Operand $var, bool $byRef, array $attributes = [])
     {

@@ -19,28 +19,28 @@ use PhpCfg\Operand;
 
 class Param extends Expr
 {
-    public Operand $name;
+    public $name;
 
-    public bool $byRef;
+    public $byRef;
 
-    public bool $variadic;
+    public $variadic;
 
-    public ?Operand $defaultVar = null;
+    public $defaultVar = null;
 
-    public ?Block $defaultBlock = null;
+    public $defaultBlock = null;
 
-    public Op\Type $declaredType;
+    public $declaredType;
 
     // A helper
     public $function;
 
     public function __construct(
-        Operand $name, 
-        Op\Type $type, 
-        bool $byRef, 
-        bool $variadic, 
-        ?Operand $defaultVar = null, 
-        ?Block $defaultBlock = null, 
+        Operand $name,
+        Op\Type $type,
+        bool $byRef,
+        bool $variadic,
+        Operand $defaultVar = null,
+        Block $defaultBlock = null,
         array $attributes = []
     ) {
         parent::__construct($attributes);
@@ -49,7 +49,7 @@ class Param extends Expr
         $this->declaredType = $type;
         $this->byRef = $byRef;
         $this->variadic = $variadic;
-        if (!is_null($defaultVar)) {
+        if (null !== $defaultVar) {
             $this->defaultVar = $this->addReadRef($defaultVar);
         }
         $this->defaultBlock = $defaultBlock;

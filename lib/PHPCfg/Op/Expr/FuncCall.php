@@ -16,9 +16,9 @@ use PhpCfg\Operand;
 
 class FuncCall extends Expr
 {
-    public Operand $name;
+    public $name;
 
-    public array $args;
+    public $args;
 
     public function __construct(Operand $name, array $args, array $attributes = [])
     {

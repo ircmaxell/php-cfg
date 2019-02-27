@@ -16,7 +16,7 @@ use PHPCfg\Op\Stmt;
 
 class Jump extends Stmt
 {
-    public Block $target;
+    public $target;
 
     public function __construct(Block $target, array $attributes = [])
     {

@@ -11,14 +11,14 @@ declare(strict_types=1);
 
 namespace PHPCfg\Op\Type;
 
-use PHPCfg\Block;
 use PHPCfg\Op\Type;
 
 class Nullable extends Type
 {
-    public Type $subtype;
+    public $subtype;
 
-    public function __construct(Type $subtype, array $attributes = []) {
+    public function __construct(Type $subtype, array $attributes = [])
+    {
         $this->subtype = $subtype;
     }
 
@@ -26,5 +26,4 @@ class Nullable extends Type
     {
         return ['subtype'];
     }
-
 }

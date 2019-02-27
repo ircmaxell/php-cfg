@@ -24,9 +24,9 @@ class Include_ extends Expr
 
     const TYPE_REQUIRE_ONCE = 4;
 
-    public int $type;
+    public $type;
 
-    public Operand $expr;
+    public $expr;
 
     public function __construct(Operand $expr, int $type, array $attributes = [])
     {

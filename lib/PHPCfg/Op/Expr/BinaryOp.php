@@ -16,9 +16,9 @@ use PhpCfg\Operand;
 
 abstract class BinaryOp extends Expr
 {
-    public Operand $left;
+    public $left;
 
-    public Operand $right;
+    public $right;
 
     public function __construct(Operand $left, Operand $right, array $attributes = [])
     {

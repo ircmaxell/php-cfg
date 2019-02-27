@@ -16,11 +16,11 @@ use PhpCfg\Operand;
 
 class Assign extends Expr
 {
-    public Operand $var;
+    public $var;
 
-    public Operand $expr;
+    public $expr;
 
-    protected array $writeVariables = ['var', 'result'];
+    protected $writeVariables = ['var', 'result'];
 
     public function __construct(Operand $var, Operand $expr, array $attributes = [])
     {

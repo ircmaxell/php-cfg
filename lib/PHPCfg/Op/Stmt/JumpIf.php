@@ -17,11 +17,11 @@ use PHPCfg\Operand;
 
 class JumpIf extends Stmt
 {
-    public Operand $cond;
+    public $cond;
 
-    public Block $if;
+    public $if;
 
-    public Block $else;
+    public $else;
 
     public function __construct(Operand $cond, Block $if, Block $else, array $attributes = [])
     {

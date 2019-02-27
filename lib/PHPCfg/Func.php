@@ -40,7 +40,7 @@ class Func
     public $flags;
 
     /** @var */
-    public Op\Type $returnType;
+    public $returnType;
 
     /** @var Operand\Literal */
     public $class;
@@ -54,7 +54,7 @@ class Func
     /** @var CallableOp|null */
     public $callableOp;
 
-    public function __construct(string $name, int $flags, Op\Type $returnType, ?Operand $class)
+    public function __construct(string $name, int $flags, Op\Type $returnType, Operand $class = null)
     {
         $this->name = $name;
         $this->flags = $flags;

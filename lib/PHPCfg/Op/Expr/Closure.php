@@ -17,9 +17,9 @@ use PHPCfg\Op\Expr;
 
 class Closure extends Expr implements CallableOp
 {
-    public Func $func;
+    public $func;
 
-    public array $useVars;
+    public $useVars;
 
     public function __construct(Func $func, array $useVars, array $attributes = [])
     {
@@ -33,7 +33,8 @@ class Closure extends Expr implements CallableOp
         return ['useVars', 'result'];
     }
 
-    public function getFunc(): Func {
+    public function getFunc(): Func
+    {
         return $this->func;
     }
 }

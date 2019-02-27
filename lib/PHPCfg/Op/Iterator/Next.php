@@ -16,9 +16,9 @@ use PhpCfg\Operand;
 
 class Next extends Terminal
 {
-    public Operand $var;
+    public $var;
 
-    protected array $writeVariables = ['var'];
+    protected $writeVariables = ['var'];
 
     public function __construct(Operand $var, array $attributes = [])
     {
@@ -30,5 +30,4 @@ class Next extends Terminal
     {
         return ['var'];
     }
-
 }

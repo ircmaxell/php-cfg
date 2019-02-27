@@ -15,7 +15,7 @@ use PHPCfg\Op\Terminal;
 
 class Unset_ extends Terminal
 {
-    public array $exprs;
+    public $exprs;
 
     public function __construct(array $exprs, array $attributes = [])
     {

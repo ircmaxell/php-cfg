@@ -16,9 +16,9 @@ use PhpCfg\Operand;
 
 class InstanceOf_ extends Expr
 {
-    public Operand $expr;
+    public $expr;
 
-    public Operand $class;
+    public $class;
 
     public function __construct(Operand $expr, Operand $class, array $attributes = [])
     {

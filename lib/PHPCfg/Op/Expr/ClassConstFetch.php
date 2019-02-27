@@ -16,9 +16,9 @@ use PhpCfg\Operand;
 
 class ClassConstFetch extends Expr
 {
-    public Operand $class;
+    public $class;
 
-    public Operand $name;
+    public $name;
 
     public function __construct(Operand $class, Operand $name = null, array $attributes = [])
     {

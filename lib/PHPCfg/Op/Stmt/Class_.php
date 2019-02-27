@@ -16,13 +16,13 @@ use PhpCfg\Operand;
 
 class Class_ extends ClassLike
 {
-    public int $flags;
+    public $flags;
 
-    public ?Operand $extends = null;
+    public $extends = null;
 
-    public array $implements;
+    public $implements;
 
-    public function __construct(Operand $name, int $flags, ?Operand $extends, array $implements, Block $stmts, array $attributes = [])
+    public function __construct(Operand $name, int $flags, Operand $extends = null, array $implements, Block $stmts, array $attributes = [])
     {
         parent::__construct($name, $stmts, $attributes);
         $this->flags = $flags;

@@ -17,9 +17,9 @@ use PhpCfg\Operand;
 
 abstract class ClassLike extends Stmt
 {
-    public Operand $name;
+    public $name;
 
-    public Block $stmts;
+    public $stmts;
 
     public function __construct(Operand $name, Block $stmts, array $attributes = [])
     {

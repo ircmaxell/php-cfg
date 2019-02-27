@@ -13,9 +13,9 @@ namespace PHPCfg;
 
 use PHPCfg\Operand\BoundVariable;
 use PHPCfg\Operand\Literal;
+use PHPCfg\Operand\NullOperand;
 use PHPCfg\Operand\Temporary;
 use PHPCfg\Operand\Variable;
-use PHPCfg\Operand\NullOperand;
 
 abstract class Printer
 {
@@ -87,7 +87,7 @@ abstract class Printer
             return "Var{$type}#".$this->getVarId($var);
         }
         if ($var instanceof NullOperand) {
-            return "NULL";
+            return 'NULL';
         }
         if (is_array($var)) {
             $result = 'array'.$type;
@@ -112,10 +112,10 @@ abstract class Printer
             $result .= '<'.$this->renderAssertion($op->assertion).'>';
         }
         if ($op instanceof Op\Stmt\Property) {
-            $result .= "\n    declaredType: " . $this->indent($this->renderType($op->declaredType));
+            $result .= "\n    declaredType: ".$this->indent($this->renderType($op->declaredType));
         }
         if ($op instanceof Op\Expr\Param) {
-            $result .= "\n    declaredType: " . $this->indent($this->renderType($op->declaredType));
+            $result .= "\n    declaredType: ".$this->indent($this->renderType($op->declaredType));
         }
 
         foreach ($op->getVariableNames() as $varName) {
@@ -244,7 +244,8 @@ abstract class Printer
         ];
     }
 
-    protected function renderType(?Op\Type $type): string {
+    protected function renderType(Op\Type $type = null): string
+    {
         if ($type instanceof Op\Type\Mixed) {
             return 'mixed';
         }
@@ -252,7 +253,7 @@ abstract class Printer
             return 'void';
         }
         if ($type instanceof Op\Type\Nullable) {
-            return '?' . $this->renderType($type->subtype);
+            return '?'.$this->renderType($type->subtype);
         }
         if ($type instanceof Op\Type\Reference) {
             return $this->renderOperand($type->declaration);
@@ -260,9 +261,10 @@ abstract class Printer
         if ($type instanceof Op\Type\Literal) {
             return $type->name;
         }
-        if (is_null($type)) {
+        if (null === $type) {
             return '';
         }
-        throw new \LogicException("Unknown type rendering: " . get_class($type));
+
+        throw new \LogicException('Unknown type rendering: '.get_class($type));
     }
 }

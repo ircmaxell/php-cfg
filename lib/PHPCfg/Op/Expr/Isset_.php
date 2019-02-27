@@ -15,7 +15,7 @@ use PHPCfg\Op\Expr;
 
 class Isset_ extends Expr
 {
-    public array $vars;
+    public $vars;
 
     public function __construct(array $vars, array $attributes = [])
     {

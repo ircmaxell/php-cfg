@@ -16,7 +16,7 @@ use PHPCfg\Operand;
 
 class GlobalVar extends Terminal
 {
-    public Operand $var;
+    public $var;
 
     public function __construct(Operand $var, array $attributes = [])
     {
@@ -28,5 +28,4 @@ class GlobalVar extends Terminal
     {
         return ['var'];
     }
-    
 }

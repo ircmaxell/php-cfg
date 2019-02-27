@@ -16,11 +16,11 @@ use PhpCfg\Operand;
 
 class MethodCall extends Expr
 {
-    public Operand $var;
+    public $var;
 
-    public Operand $name;
+    public $name;
 
-    public array $args;
+    public $args;
 
     public function __construct(Operand $var, Operand $name, array $args, array $attributes = [])
     {

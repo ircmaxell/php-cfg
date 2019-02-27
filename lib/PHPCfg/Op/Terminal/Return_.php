@@ -16,12 +16,12 @@ use PhpCfg\Operand;
 
 class Return_ extends Terminal
 {
-    public ?Operand $expr = null;
+    public $expr = null;
 
     public function __construct(Operand $expr = null, array $attributes = [])
     {
         parent::__construct($attributes);
-        if (!is_null($expr)) {
+        if (null !== $expr) {
             $this->expr = $this->addReadRef($expr);
         }
     }

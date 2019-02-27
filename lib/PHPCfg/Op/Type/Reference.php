@@ -11,15 +11,15 @@ declare(strict_types=1);
 
 namespace PHPCfg\Op\Type;
 
-use PHPCfg\Block;
 use PHPCfg\Op\Type;
 use PHPCfg\Operand;
 
 class Reference extends Type
 {
-    public Operand $declaration;
+    public $declaration;
 
-    public function __construct(Operand $declaration, array $attributes = []) {
+    public function __construct(Operand $declaration, array $attributes = [])
+    {
         $this->declaration = $declaration;
     }
 
@@ -27,5 +27,4 @@ class Reference extends Type
     {
         return ['declaration'];
     }
-
 }

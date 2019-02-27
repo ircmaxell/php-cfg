@@ -16,15 +16,15 @@ use PhpCfg\Operand;
 
 class ConstFetch extends Expr
 {
-    public ?Operand $nsName = null;
+    public $nsName = null;
 
-    public Operand $name;
+    public $name;
 
-    public function __construct(Operand $name, ?Operand $nsName = null, array $attributes = [])
+    public function __construct(Operand $name, Operand $nsName = null, array $attributes = [])
     {
         parent::__construct($attributes);
         $this->name = $this->addReadRef($name);
-        if (!is_null($nsName)) {
+        if (null !== $nsName) {
             $this->nsName = $this->addReadRef($nsName);
         }
     }

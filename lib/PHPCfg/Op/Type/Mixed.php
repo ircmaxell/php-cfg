@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace PHPCfg\Op\Type;
 
-use PHPCfg\Block;
 use PHPCfg\Op\Type;
 
 class Mixed extends Type

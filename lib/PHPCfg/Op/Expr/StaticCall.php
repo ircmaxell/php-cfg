@@ -16,11 +16,11 @@ use PhpCfg\Operand;
 
 class StaticCall extends Expr
 {
-    public Operand$class;
+    public $class;
 
-    public Operand$name;
+    public $name;
 
-    public array $args;
+    public $args;
 
     public function __construct(Operand $class, Operand $name, array $args, array $attributes = [])
     {

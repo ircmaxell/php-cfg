@@ -87,7 +87,7 @@ class Parser
 
         $this->script = $script = new Script();
         $script->functions = [];
-        $script->main = new Func('{main}', 0, new Op\Type\Void_, null);
+        $script->main = new Func('{main}', 0, new Op\Type\Void_(), null);
         $this->parseFunc($script->main, [], $ast);
 
         // Reset script specific state
@@ -126,8 +126,8 @@ class Parser
 
         $end = $this->parseNodes($stmts, $start);
 
-        if (!$end->dead) {
-            $end->children[] = new Return_;
+        if (! $end->dead) {
+            $end->children[] = new Return_();
         }
 
         if ($this->ctx->unresolvedGotos) {
@@ -170,9 +170,10 @@ class Parser
         throw new \RuntimeException('Unknown Node Encountered : '.$type);
     }
 
-    protected function parseTypeNode(?Node $node): Op\Type {
-        if (is_null($node)) {
-            return new Op\Type\Mixed;
+    protected function parseTypeNode(Node $node = null): Op\Type
+    {
+        if (null === $node) {
+            return new Op\Type\Mixed();
         }
         if ($node instanceof Node\Name) {
             return new Op\Type\Reference(
@@ -192,7 +193,8 @@ class Parser
                 $this->mapAttributes($node)
             );
         }
-        throw new \LogicException("Unknown type node: " . $node->getType());
+
+        throw new \LogicException('Unknown type node: '.$node->getType());
     }
 
     protected function parseStmt_Expression(Stmt\Expression $node)
@@ -384,7 +386,7 @@ class Parser
             $node->namespacedName->toString(),
             $node->byRef ? Func::FLAG_RETURNS_REF : 0,
             $this->parseTypeNode($node->returnType),
-            null,
+            null
         );
         $this->parseFunc($func, $node->params, $node->stmts, null);
         $this->block->children[] = $function = new Op\Stmt\Function_($func, $this->mapAttributes($node));
@@ -871,7 +873,7 @@ class Parser
                 if ($item->key) {
                     $keys[] = $this->readVariable($this->parseExprNode($item->key));
                 } else {
-                    $keys[] = new Operand\NullOperand;
+                    $keys[] = new Operand\NullOperand();
                 }
                 $values[] = $this->readVariable($this->parseExprNode($item->value));
                 $byRef[] = $item->byRef;
@@ -887,7 +889,7 @@ class Parser
         if (null !== $expr->dim) {
             $d = $this->readVariable($this->parseExprNode($expr->dim));
         } else {
-            $d = new Operand\NullOperand;
+            $d = new Operand\NullOperand();
         }
 
         return new Op\Expr\ArrayDimFetch($v, $d, $this->mapAttributes($expr));

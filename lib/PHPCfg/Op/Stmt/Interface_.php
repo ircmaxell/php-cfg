@@ -16,7 +16,7 @@ use PhpCfg\Operand;
 
 class Interface_ extends ClassLike
 {
-    public array $extends;
+    public $extends;
 
     public function __construct(Operand $name, array $extends, Block $stmts, array $attributes = [])
     {

@@ -16,7 +16,7 @@ use PHPCfg\Operand;
 
 class Echo_ extends Terminal
 {
-    public Operand $expr;
+    public $expr;
 
     public function __construct(Operand $expr, array $attributes = [])
     {

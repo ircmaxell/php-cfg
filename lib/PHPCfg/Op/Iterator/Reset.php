@@ -16,7 +16,7 @@ use PhpCfg\Operand;
 
 class Reset extends Terminal
 {
-    public Operand $var;
+    public $var;
 
     public function __construct(Operand $var, array $attributes = [])
     {

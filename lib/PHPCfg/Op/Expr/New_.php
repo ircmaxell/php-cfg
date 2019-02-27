@@ -16,9 +16,9 @@ use PhpCfg\Operand;
 
 class New_ extends Expr
 {
-    public Operand $class;
+    public $class;
 
-    public array $args;
+    public $args;
 
     public function __construct(Operand $class, array $args, array $attributes = [])
     {

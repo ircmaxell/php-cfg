@@ -15,5 +15,4 @@ use PHPCfg\Op;
 
 abstract class Terminal extends Op
 {
-
 }

@@ -17,7 +17,7 @@ use PHPCfg\Op\Stmt;
 
 class Function_ extends Stmt implements CallableOp
 {
-    public Func $func;
+    public $func;
 
     public function __construct(Func $func, array $attributes = [])
     {
@@ -25,8 +25,8 @@ class Function_ extends Stmt implements CallableOp
         $this->func = $func;
     }
 
-    public function getFunc(): Func {
+    public function getFunc(): Func
+    {
         return $this->func;
     }
-
 }

@@ -17,18 +17,18 @@ use PHPCfg\Operand;
 
 class StaticVar extends Terminal
 {
-    public Operand $var;
+    public $var;
 
-    public ?Block $defaultBlock;
+    public $defaultBlock;
 
-    public ?Operand $defaultVar;
+    public $defaultVar;
 
     public function __construct(Operand $var, Block $defaultBlock = null, Operand $defaultVar = null, array $attributes = [])
     {
         parent::__construct($attributes);
         $this->var = $this->addWriteRef($var);
         $this->defaultBlock = $defaultBlock;
-        if (!is_null($defaultVar)) {
+        if (null !== $defaultVar) {
             $this->defaultVar = $this->addReadRef($defaultVar);
         }
     }

@@ -16,7 +16,7 @@ use PhpCfg\Operand;
 
 class UnaryMinus extends Expr
 {
-    public Operand $expr;
+    public $expr;
 
     public function __construct(Operand $expr, array $attributes = [])
     {

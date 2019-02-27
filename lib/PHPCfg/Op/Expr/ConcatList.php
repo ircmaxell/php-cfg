@@ -15,7 +15,7 @@ use PHPCfg\Op\Expr;
 
 class ConcatList extends Expr
 {
-    public array $list;
+    public $list;
 
     public function __construct(array $list, array $attributes = [])
     {

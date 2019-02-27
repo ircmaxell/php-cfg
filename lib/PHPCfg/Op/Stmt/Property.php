@@ -12,32 +12,32 @@ declare(strict_types=1);
 namespace PHPCfg\Op\Stmt;
 
 use PHPCfg\Block;
-use PHPCfg\Op\Stmt;
 use PHPCfg\Op;
+use PHPCfg\Op\Stmt;
 use PhpCfg\Operand;
 
 class Property extends Stmt
 {
-    public Operand $name;
+    public $name;
 
-    public int $visibility;
+    public $visibility;
 
-    public bool $static;
+    public $static;
 
-    public ?Operand $defaultVar = null;
+    public $defaultVar = null;
 
-    public ?Block $defaultBlock = null;
+    public $defaultBlock = null;
 
-    public Op\Type $declaredType ;
+    public $declaredType;
 
-    public function __construct(Operand $name, int $visiblity, bool $static, Op\Type $declaredType = null, Operand $defaultVar = null, Block $defaultBlock = null, array $attributes = [])
+    public function __construct(Operand $name, int $visiblity, bool $static, Op\Type $declaredType, Operand $defaultVar = null, Block $defaultBlock = null, array $attributes = [])
     {
         parent::__construct($attributes);
         $this->name = $this->addReadRef($name);
         $this->visiblity = $visiblity;
         $this->static = $static;
         $this->declaredType = $declaredType;
-        if (!is_null($defaultVar)) {
+        if (null !== $defaultVar) {
             $this->defaultVar = $this->addReadRef($defaultVar);
         }
         $this->defaultBlock = $defaultBlock;

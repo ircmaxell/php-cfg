@@ -20,11 +20,11 @@ use PhpCfg\Operand;
  */
 class NsFuncCall extends Expr
 {
-    public Operand $nsName;
+    public $nsName;
 
-    public Operand $name;
+    public $name;
 
-    public array $args;
+    public $args;
 
     public function __construct(Operand $name, Operand $nsName, array $args, array $attributes = [])
     {

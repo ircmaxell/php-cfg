@@ -17,9 +17,9 @@ use PHPCfg\Operand;
 
 class Assertion extends Expr
 {
-    public Operand $read;
+    public $read;
 
-    public Assert $assertion;
+    public $assertion;
 
     public function __construct(Operand $read, Operand $write, Assert $assertion, array $attributes = [])
     {

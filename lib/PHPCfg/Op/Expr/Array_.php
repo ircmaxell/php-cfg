@@ -15,11 +15,11 @@ use PHPCfg\Op\Expr;
 
 class Array_ extends Expr
 {
-    public array $keys;
+    public $keys;
 
-    public array $values;
+    public $values;
 
-    public array $byRef;
+    public $byRef;
 
     public function __construct(array $keys, array $values, array $byRef, array $attributes = [])
     {

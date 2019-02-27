@@ -16,23 +16,19 @@ use PhpCfg\Operand;
 
 class Yield_ extends Expr
 {
-    public ?Operand $value;
+    public $value = null;
 
-    public ?Operand $key;
+    public $key = null;
 
     protected $writeVariables = ['result'];
 
     public function __construct(Operand $value = null, Operand $key = null, array $attributes = [])
     {
         parent::__construct($attributes);
-        if (is_null($value)) {
-            $this->value = null;
-        } else {
+        if (null !== $value) {
             $this->value = $this->addReadRef($value);
         }
-        if (is_null($key)) {
-            $this->key = null;
-        } else {
+        if (null !== $key) {
             $this->key = $this->addReadRef($key);
         }
     }

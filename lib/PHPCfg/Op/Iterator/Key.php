@@ -16,7 +16,7 @@ use PhpCfg\Operand;
 
 class Key extends Expr
 {
-    public Operand $var;
+    public $var;
 
     public function __construct(Operand $var, array $attributes = [])
     {
@@ -28,5 +28,4 @@ class Key extends Expr
     {
         return ['var', 'result'];
     }
-
 }
