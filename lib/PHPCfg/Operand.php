@@ -50,12 +50,31 @@ abstract class Operand
         return $this;
     }
 
-    public function removeUsage(Op $op): self
+    public function removeWriteOp(Op $op): self
     {
-        $key = array_search($op, $this->usages, true);
-        if ($key !== false) {
-            unset($this->usages[$key]);
-        }
+        do {
+            $key = array_search($op, $this->ops, true);
+            if ($key !== false) {
+                unset($this->ops[$key]);
+            } else {
+                break;
+            }
+        } while (true);
+
+        return $this;
+    }
+
+    public function removeUsage(Op $op, bool $fromOp = true): self
+    {
+        do {
+            $key = array_search($op, $this->usages, true);
+            if ($key !== false) {
+                unset($this->usages[$key]);
+            } else {
+                break;
+            }
+        } while (true);
+        $this->removeUsageFromOp($op);
 
         return $this;
     }
@@ -94,5 +113,68 @@ abstract class Operand
             }
         }
         $this->assertions[] = ['var' => $op, 'assertion' => $assert];
+    }
+
+    public function replaceWith(self $to)
+    {
+        foreach ($this->usages as $usage) {
+            $this->replaceWithInOp($usage, $to, true);
+            $this->removeUsage($usage, false);
+        }
+        foreach ($this->ops as $op) {
+            $this->replaceWithInOp($op, $to, false);
+            $this->removeWriteOp($op, false);
+        }
+    }
+
+    public function removeUsageFromOp(Op $op)
+    {
+        foreach ($op->getVariableNames() as $varName) {
+            $vars = $op->{$varName};
+            $newVars = [];
+            if (! is_array($vars)) {
+                $vars = [$vars];
+            }
+            foreach ($vars as $key => $value) {
+                if ($value !== $this) {
+                    $newVars[$key] = $value;
+                }
+            }
+
+            if (! is_array($op->{$varName})) {
+                $op->{$varName} = array_shift($newVars);
+            } else {
+                $op->{$varName} = array_values($newVars);
+            }
+        }
+    }
+
+    private function replaceWithInOp(Op $usage, self $to, bool $isUsage)
+    {
+        foreach ($usage->getVariableNames() as $varName) {
+            $vars = $usage->{$varName};
+            $newVars = [];
+            if (! is_array($vars)) {
+                $vars = [$vars];
+            }
+            foreach ($vars as $key => $value) {
+                if ($value === $this) {
+                    $newVars[$key] = $to;
+                    if ($isUsage) {
+                        $to->addUsage($usage);
+                    } else {
+                        $to->addWriteOp($usage);
+                    }
+                } else {
+                    $newVars[$key] = $value;
+                }
+            }
+
+            if (! is_array($usage->{$varName})) {
+                $usage->{$varName} = array_shift($newVars);
+            } else {
+                $usage->{$varName} = $newVars;
+            }
+        }
     }
 }

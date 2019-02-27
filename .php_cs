@@ -8,7 +8,6 @@ This file is part of PHP-CFG, a Control flow graph implementation for PHP
 EOF;
 
 $finder = PhpCsFixer\Finder::create()
-	->name('.php_cs')
 	->exclude('vendor')
 	->exclude('.git')
     ->in(__DIR__);

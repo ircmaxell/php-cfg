@@ -51,7 +51,7 @@ abstract class Printer
 
     protected function renderOperand(Operand $var)
     {
-        $type = isset($var->type) ? '<inferred:' . $var->type->toString() . '>' : '';
+        $type = isset($var->type) ? '<inferred:'.$var->type->toString().'>' : '';
         if ($var instanceof Literal) {
             return "LITERAL{$type}(".var_export($var->value, true).')';
         }
