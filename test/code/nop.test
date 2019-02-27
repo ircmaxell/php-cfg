@@ -12,4 +12,3 @@ Block#1
     Terminal_Echo
         expr: Var#1<$a>
     Terminal_Return
-        expr: LITERAL(1)

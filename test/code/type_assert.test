@@ -63,4 +63,3 @@ Block#6
         args[0]: Var#8<$a>
         result: Var#9
     Terminal_Return
-        expr: LITERAL(1)

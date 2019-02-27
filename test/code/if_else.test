@@ -33,4 +33,3 @@ Block#4
     Terminal_Echo
         expr: LITERAL('c')
     Terminal_Return
-        expr: LITERAL(1)

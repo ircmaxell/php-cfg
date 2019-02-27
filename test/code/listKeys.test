@@ -25,4 +25,3 @@ Block#1
         expr: Var#7
         result: Var#9
     Terminal_Return
-        expr: LITERAL(1)

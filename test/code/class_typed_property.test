@@ -17,7 +17,6 @@ Block#1
         expr: Var#1
         result: Var#3
     Terminal_Return
-        expr: LITERAL(1)
 
 Block#2
     Stmt_Property<NS\NameOfClass|null>

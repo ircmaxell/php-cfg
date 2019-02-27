@@ -9,4 +9,3 @@ Block#1
         name: LITERAL('call')
         result: Var#1
     Terminal_Return
-        expr: LITERAL(1)

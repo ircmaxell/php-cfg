@@ -44,4 +44,3 @@ Block#5
     Parent: Block#4
     Parent: Block#3
     Terminal_Return
-        expr: LITERAL(1)

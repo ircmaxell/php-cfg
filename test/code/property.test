@@ -9,7 +9,6 @@ Block#1
         name: LITERAL('A')
         stmts: Block#2
     Terminal_Return
-        expr: LITERAL(1)
 
 Block#2
     Stmt_Property<mixed>

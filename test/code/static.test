@@ -10,7 +10,6 @@ Block#1
     Terminal_Echo
         expr: Var#1<static<&$flag>>
     Terminal_Return
-        expr: LITERAL(1)
 
 Block#2
     Expr_ConstFetch

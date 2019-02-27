@@ -60,7 +60,6 @@ Block#4
     Terminal_Echo
         expr: Var#4<$a>
     Terminal_Return
-        expr: LITERAL(1)
 
 Block#5
     Parent: Block#3

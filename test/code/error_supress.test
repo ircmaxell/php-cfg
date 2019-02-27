@@ -21,4 +21,3 @@ Block#2
     Terminal_Echo
         expr: Var#1<$dbname>
     Terminal_Return
-        expr: LITERAL(1)

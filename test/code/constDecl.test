@@ -30,7 +30,6 @@ Block#1
         args[1]: Var#3
         result: Var#4
     Terminal_Return
-        expr: LITERAL(1)
 
 Block#2
 

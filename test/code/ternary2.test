@@ -33,7 +33,6 @@ Block#4
         expr: Var#4
         result: Var#7
     Terminal_Return
-        expr: LITERAL(1)
 
 Block#5
     Parent: Block#3

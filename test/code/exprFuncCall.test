@@ -13,4 +13,3 @@ Block#1
         args[0]: LITERAL('some string')
         result: Var#3
     Terminal_Return
-        expr: LITERAL(1)
