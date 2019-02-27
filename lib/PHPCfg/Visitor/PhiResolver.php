@@ -38,21 +38,33 @@ class PhiResolver extends AbstractVisitor
     {
         // eliminate phi nodes
         foreach ($this->phiNodes as $phi) {
-            $this->resolvePhi($phi);
+            $this->resolvePhi($func, $phi);
         }
         $this->phiNodes = null;
     }
 
-    private function resolvePhi(Op\Phi $phi)
+    private function resolvePhi(Func $func, Op\Phi $phi)
     {
         // resolve to result var
         $replacement = new Operand\Temporary($phi->result);
         $replacement->type = $phi->result->type;
-        $vars = [];
         foreach ($phi->vars as $var) {
             $var->replaceWith($replacement);
-            $vars[] = $var;
+            if (count($var->ops) === 1 && $var->ops[0] instanceof Op\Expr\Param) {
+                $this->emitParamFetch($func, $var, $replacement, $var->ops[0]);
+            }
         }
         $phi->result->replaceWith($replacement);
+    }
+
+    private function emitParamFetch(Func $func, Op\Variable $var, Op\Temporary $result, Op\Expr\Param $param)
+    {
+        if ((empty($var->type) && empty($result->type)) || ($var->type->equals($result->type))) {
+            // if types match, just compile to the same
+            return;
+        }
+        $op = new Op\Expr\Assign($result, $var, $param->getAttributes());
+        $block = $func->cfg;
+        array_unshift($block->children, $op);
     }
 }
