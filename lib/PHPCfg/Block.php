@@ -1,6 +1,8 @@
 <?php
 
-/*
+declare(strict_types=1);
+
+/**
  * This file is part of PHP-CFG, a Control flow graph implementation for PHP
  *
  * @copyright 2015 Anthony Ferrara. All rights reserved
@@ -9,7 +11,8 @@
 
 namespace PHPCfg;
 
-class Block {
+class Block
+{
     /** @var Op[] */
     public $children = [];
 
@@ -21,18 +24,21 @@ class Block {
 
     public $dead = false;
 
-    public function __construct(Block $parent = null) {
+    public function __construct(self $parent = null)
+    {
         if ($parent) {
             $this->parents[] = $parent;
         }
     }
 
-    public function create() {
-        return new static;
+    public function create()
+    {
+        return new static();
     }
 
-    public function addParent(Block $parent) {
-        if (!in_array($parent, $this->parents, true)) {
+    public function addParent(self $parent)
+    {
+        if (! in_array($parent, $this->parents, true)) {
             $this->parents[] = $parent;
         }
     }

@@ -1,6 +1,8 @@
 <?php
 
-/*
+declare(strict_types=1);
+
+/**
  * This file is part of PHP-CFG, a Control flow graph implementation for PHP
  *
  * @copyright 2015 Anthony Ferrara. All rights reserved
@@ -13,21 +15,26 @@ use PHPCfg\Func;
 use PHPCfg\Op\CallableOp;
 use PHPCfg\Op\Expr;
 
-class Closure extends Expr implements CallableOp {
+class Closure extends Expr implements CallableOp
+{
     public $func;
+
     public $useVars;
 
-    public function __construct(Func $func, array $useVars, array $attributes = []) {
+    public function __construct(Func $func, array $useVars, array $attributes = [])
+    {
         parent::__construct($attributes);
         $this->func = $func;
         $this->useVars = $this->addReadRef($useVars);
     }
 
-    public function getFunc() {
+    public function getFunc()
+    {
         return $this->func;
     }
 
-    public function getVariableNames() {
-        return ["useVars", "result"];
+    public function getVariableNames()
+    {
+        return ['useVars', 'result'];
     }
 }

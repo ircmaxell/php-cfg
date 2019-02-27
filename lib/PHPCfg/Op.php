@@ -1,6 +1,8 @@
 <?php
 
-/*
+declare(strict_types=1);
+
+/**
  * This file is part of PHP-CFG, a Control flow graph implementation for PHP
  *
  * @copyright 2015 Anthony Ferrara. All rights reserved
@@ -9,43 +11,53 @@
 
 namespace PHPCfg;
 
-abstract class Op {
-    
+abstract class Op
+{
     protected $attributes = [];
+
     protected $writeVariables = [];
 
-    public function __construct(array $attributes = []) {
+    public function __construct(array $attributes = [])
+    {
         $this->attributes = $attributes;
     }
 
-    public function getType() {
+    public function getType()
+    {
         return strtr(substr(rtrim(get_class($this), '_'), strlen(__CLASS__) + 1), '\\', '_');
     }
 
-    public function getLine() {
+    public function getLine()
+    {
         return $this->getAttribute('startLine', -1);
     }
 
-    public function getFile() {
-        return $this->getAttribute("filename", "unknown");
+    public function getFile()
+    {
+        return $this->getAttribute('filename', 'unknown');
     }
 
-    public function &getAttribute($key, $default = null) {
-        if (!$this->hasAttribute($key)) {
+    public function &getAttribute($key, $default = null)
+    {
+        if (! $this->hasAttribute($key)) {
             return $default;
         }
+
         return $this->attributes[$key];
     }
 
-    public function setAttribute($key, &$value) {
+    public function setAttribute($key, &$value)
+    {
         $this->attributes[$key] = $value;
     }
 
-    public function hasAttribute($key) {
+    public function hasAttribute($key)
+    {
         return array_key_exists($key, $this->attributes);
     }
 
-    public function getAttributes() {
+    public function getAttributes()
+    {
         return $this->attributes;
     }
 
@@ -53,34 +65,42 @@ abstract class Op {
 
     abstract public function getSubBlocks();
 
-    public function isWriteVariable($name) {
-        return in_array($name, $this->writeVariables);
+    public function isWriteVariable($name)
+    {
+        return in_array($name, $this->writeVariables, true);
     }
 
-    protected function addReadRef($op) {
+    protected function addReadRef($op)
+    {
         if (is_array($op)) {
             $new = [];
             foreach ($op as $key => $o) {
                 $new[$key] = $this->addReadRef($o);
             }
+
             return $new;
-        } elseif (!$op instanceof Operand) {
+        }
+        if (! $op instanceof Operand) {
             return $op;
         }
+
         return $op->addUsage($this);
     }
 
-    protected function addWriteRef($op) {
+    protected function addWriteRef($op)
+    {
         if (is_array($op)) {
             $new = [];
             foreach ($op as $key => $o) {
                 $new[$key] = $this->addWriteRef($o);
             }
+
             return $new;
-        } elseif (!$op instanceof Operand) {
+        }
+        if (! $op instanceof Operand) {
             return $op;
         }
+
         return $op->addWriteOp($this);
     }
-
 }

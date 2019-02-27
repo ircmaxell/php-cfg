@@ -1,6 +1,8 @@
 <?php
 
-/*
+declare(strict_types=1);
+
+/**
  * This file is part of PHP-CFG, a Control flow graph implementation for PHP
  *
  * @copyright 2015 Anthony Ferrara. All rights reserved
@@ -9,40 +11,55 @@
 
 namespace PHPCfg;
 
-abstract class Operand {
+abstract class Operand
+{
     public $type = null;
+
     public $assertions = [];
+
     public $ops = [];
+
     public $usages = [];
 
-    public function addUsage(Op $op) {
+    public function getType(): string
+    {
+        return strtr(substr(rtrim(get_class($this), '_'), strlen(__CLASS__) + 1), '\\', '_');
+    }
+
+    public function addUsage(Op $op)
+    {
         foreach ($this->usages as $test) {
             if ($test === $op) {
                 return $this;
             }
         }
         $this->usages[] = $op;
+
         return $this;
     }
 
-    public function addWriteOp(Op $op) {
+    public function addWriteOp(Op $op)
+    {
         foreach ($this->ops as $test) {
             if ($test === $op) {
                 return $this;
             }
         }
         $this->ops[] = $op;
+
         return $this;
     }
 
-    public function removeUsage(Op $op) {
+    public function removeUsage(Op $op)
+    {
         $key = array_search($op, $this->usages, true);
-        if ($key !== false){
+        if ($key !== false) {
             unset($this->usages[$key]);
         }
     }
 
-    public function addAssertion(Operand $op, Assertion $assert, $mode = Assertion::MODE_INTERSECTION) {
+    public function addAssertion(self $op, Assertion $assert, $mode = Assertion::MODE_INTERSECTION)
+    {
         $isTemorary = $op instanceof Operand\Temporary;
         $isNamed = $isTemorary && $op->original instanceof Operand\Variable && $op->original->name instanceof Operand\Literal;
         foreach ($this->assertions as $key => $orig) {
@@ -52,15 +69,16 @@ abstract class Operand {
                     [$orig['assertion'], $assert],
                     $mode
                 );
+
                 return;
             }
-            if (!$isNamed) {
+            if (! $isNamed) {
                 continue;
             }
             if (
-                !$orig['var'] instanceof Operand\Temporary
-                || !$orig['var']->original instanceof Operand\Variable
-                || !$orig['var']->original->name instanceof Operand\Literal) {
+                ! $orig['var'] instanceof Operand\Temporary
+                || ! $orig['var']->original instanceof Operand\Variable
+                || ! $orig['var']->original->name instanceof Operand\Literal) {
                 continue;
             }
             if ($orig['var']->original->name->value === $op->original->name->value) {
@@ -69,9 +87,10 @@ abstract class Operand {
                     [$orig['assertion'], $assert],
                     $mode
                 );
+
                 return;
             }
         }
-        $this->assertions[] = ["var" => $op, "assertion" => $assert];
+        $this->assertions[] = ['var' => $op, 'assertion' => $assert];
     }
 }

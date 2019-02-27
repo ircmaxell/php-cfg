@@ -1,6 +1,8 @@
 <?php
 
-/*
+declare(strict_types=1);
+
+/**
  * This file is part of PHP-CFG, a Control flow graph implementation for PHP
  *
  * @copyright 2015 Anthony Ferrara. All rights reserved
@@ -11,5 +13,6 @@ namespace PHPCfg\Op\Expr\BinaryOp;
 
 use PHPCfg\Op\Expr\BinaryOp;
 
-class Mod extends BinaryOp {
+class Mod extends BinaryOp
+{
 }

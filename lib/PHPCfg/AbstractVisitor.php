@@ -1,6 +1,8 @@
 <?php
 
-/*
+declare(strict_types=1);
+
+/**
  * This file is part of PHP-CFG, a Control flow graph implementation for PHP
  *
  * @copyright 2015 Anthony Ferrara. All rights reserved
@@ -14,17 +16,41 @@ namespace PHPCfg;
  *
  * To avoid repeating empty method bodies for the unused parts.
  */
-abstract class AbstractVisitor implements Visitor {
-    public function enterScript(Script $script) {}
-    public function leaveScript(Script $script) {}
+abstract class AbstractVisitor implements Visitor
+{
+    public function enterScript(Script $script)
+    {
+    }
 
-    public function enterFunc(Func $func) {}
-    public function leaveFunc(Func $func) {}
+    public function leaveScript(Script $script)
+    {
+    }
 
-    public function enterBlock(Block $block, Block $prior = null) {}
-    public function leaveBlock(Block $block, Block $prior = null) {}
-    public function skipBlock(Block $block, Block $prior = null) {}
+    public function enterFunc(Func $func)
+    {
+    }
 
-    public function enterOp(Op $op, Block $block) {}
-    public function leaveOp(Op $op, Block $block) {}
+    public function leaveFunc(Func $func)
+    {
+    }
+
+    public function enterBlock(Block $block, Block $prior = null)
+    {
+    }
+
+    public function leaveBlock(Block $block, Block $prior = null)
+    {
+    }
+
+    public function skipBlock(Block $block, Block $prior = null)
+    {
+    }
+
+    public function enterOp(Op $op, Block $block)
+    {
+    }
+
+    public function leaveOp(Op $op, Block $block)
+    {
+    }
 }

@@ -1,6 +1,8 @@
 <?php
 
-/*
+declare(strict_types=1);
+
+/**
  * This file is part of PHP-CFG, a Control flow graph implementation for PHP
  *
  * @copyright 2015 Anthony Ferrara. All rights reserved
@@ -11,9 +13,8 @@ namespace PHPCfg\Op;
 
 use PHPCfg\Func;
 
-interface CallableOp {
-
+interface CallableOp
+{
     /** @returns Func */
     public function getFunc();
-
 }

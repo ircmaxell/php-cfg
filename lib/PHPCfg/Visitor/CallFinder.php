@@ -1,6 +1,8 @@
 <?php
 
-/*
+declare(strict_types=1);
+
+/**
  * This file is part of PHP-CFG, a Control flow graph implementation for PHP
  *
  * @copyright 2015 Anthony Ferrara. All rights reserved
@@ -9,73 +11,87 @@
 
 namespace PHPCfg\Visitor;
 
+use PHPCfg\AbstractVisitor;
 use PHPCfg\Block;
 use PHPCfg\Func;
 use PHPCfg\Op;
-use PHPCfg\Operand;
-use PHPCfg\AbstractVisitor;
 
-class CallFinder extends AbstractVisitor {
+class CallFinder extends AbstractVisitor
+{
     /** @var Func[] */
     protected $funcStack = [];
+
     /** @var Func */
     protected $func;
+
     /** @var Op\Expr\FuncCall[] */
     protected $funcCalls = [];
+
     /** @var Op\Expr\NsFuncCall[] */
     protected $nsFuncCalls = [];
+
     /** @var Op\Expr\MethodCall[] */
     protected $methodCalls = [];
+
     /** @var Op\Expr\StaticCall[] */
     protected $staticCalls = [];
+
     /** @var Op\Expr\New_[] */
     protected $newCalls = [];
 
     /**
      * @return Op\Expr\New_[]
      */
-    public function getNewCalls() {
+    public function getNewCalls(): array
+    {
         return $this->newCalls;
     }
 
     /**
      * @return Op\Expr\MethodCall[]
      */
-    public function getMethodCalls() {
+    public function getMethodCalls(): array
+    {
         return $this->methodCalls;
     }
 
     /**
      * @return Op\Expr\StaticCall[]
      */
-    public function getStaticCalls() {
+    public function getStaticCalls(): array
+    {
         return $this->staticCalls;
     }
 
     /**
      * @return Op\Expr\NsFuncCall[]
      */
-    public function getNsFuncCalls() {
+    public function getNsFuncCalls(): array
+    {
         return $this->nsFuncCalls;
     }
 
     /**
      * @return Op\Expr\FuncCall[]
      */
-    public function getFuncCalls() {
+    public function getFuncCalls(): array
+    {
         return $this->funcCalls;
     }
 
-    public function enterFunc(Func $func) {
+    public function enterFunc(Func $func)
+    {
         $this->funcStack[] = $this->func;
         $this->func = $func;
     }
 
-    public function leaveFunc(Func $func) {
+    public function leaveFunc(Func $func)
+    {
         $this->func = array_pop($this->funcStack);
     }
 
-    public function enterOp(Op $op, Block $block) {
+    public function enterOp(Op $op, Block $block)
+    {
         if ($op instanceof Op\Expr\FuncCall) {
             $this->funcCalls[] = [$op, $this->func];
         } elseif ($op instanceof Op\Expr\NsFuncCall) {

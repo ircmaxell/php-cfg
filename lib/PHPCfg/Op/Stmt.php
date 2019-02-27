@@ -1,6 +1,8 @@
 <?php
 
-/*
+declare(strict_types=1);
+
+/**
  * This file is part of PHP-CFG, a Control flow graph implementation for PHP
  *
  * @copyright 2015 Anthony Ferrara. All rights reserved
@@ -11,15 +13,17 @@ namespace PHPCfg\Op;
 
 use PHPCfg\Op;
 
-abstract class Stmt extends Op {
+abstract class Stmt extends Op
+{
     public $result;
 
-    public function __construct(array $attributes = []) {
+    public function __construct(array $attributes = [])
+    {
         parent::__construct($attributes);
     }
 
-    public function getVariableNames() {
+    public function getVariableNames()
+    {
         return [];
     }
-
 }

@@ -1,6 +1,8 @@
 <?php
 
-/*
+declare(strict_types=1);
+
+/**
  * This file is part of PHP-CFG, a Control flow graph implementation for PHP
  *
  * @copyright 2015 Anthony Ferrara. All rights reserved
@@ -9,9 +11,10 @@
 
 namespace PHPCfg;
 
-interface Visitor {
-
+interface Visitor
+{
     const REMOVE_OP = -1;
+
     const REMOVE_BLOCK = -2;
 
     public function enterScript(Script $script);
@@ -21,7 +24,7 @@ interface Visitor {
     public function enterFunc(Func $func);
 
     public function leaveFunc(Func $func);
-    
+
     public function enterBlock(Block $block, Block $prior = null);
 
     public function enterOp(Op $op, Block $block);
@@ -31,5 +34,4 @@ interface Visitor {
     public function leaveBlock(Block $block, Block $prior = null);
 
     public function skipBlock(Block $block, Block $prior = null);
-
 }

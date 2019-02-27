@@ -1,6 +1,8 @@
 <?php
 
-/*
+declare(strict_types=1);
+
+/**
  * This file is part of PHP-CFG, a Control flow graph implementation for PHP
  *
  * @copyright 2015 Anthony Ferrara. All rights reserved
@@ -13,13 +15,14 @@ use PhpParser;
 use PhpParser\ParserFactory;
 use PHPUnit\Framework\TestCase;
 
-class ParserTest extends TestCase {
-
+class ParserTest extends TestCase
+{
     /** @dataProvider provideTestParseAndDump */
-    public function testParseAndDump($code, $expectedDump) {
-        $astTraverser = new PhpParser\NodeTraverser;
-        $astTraverser->addVisitor(new PhpParser\NodeVisitor\NameResolver);
-        $parser = new Parser((new ParserFactory)->create(ParserFactory::PREFER_PHP7), $astTraverser);
+    public function testParseAndDump($code, $expectedDump)
+    {
+        $astTraverser = new PhpParser\NodeTraverser();
+        $astTraverser->addVisitor(new PhpParser\NodeVisitor\NameResolver());
+        $parser = new Parser((new ParserFactory())->create(ParserFactory::PREFER_PHP7), $astTraverser);
         $traverser = new Traverser();
         $traverser->addVisitor(new Visitor\Simplifier());
         $printer = new Printer\Text();
@@ -38,13 +41,14 @@ class ParserTest extends TestCase {
         );
     }
 
-    public function provideTestParseAndDump() {
-        $dir = __DIR__ . '/../code';
+    public function provideTestParseAndDump()
+    {
+        $dir = __DIR__.'/../code';
         $iter = new \RecursiveIteratorIterator(
             new \RecursiveDirectoryIterator($dir), \RecursiveIteratorIterator::LEAVES_ONLY);
 
         foreach ($iter as $file) {
-            if (!$file->isFile()) {
+            if (! $file->isFile()) {
                 continue;
             }
 
@@ -53,7 +57,8 @@ class ParserTest extends TestCase {
         }
     }
 
-    private function canonicalize($str) {
+    private function canonicalize($str)
+    {
         // trim from both sides
         $str = trim($str);
 

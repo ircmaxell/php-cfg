@@ -1,5 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
+/**
+ * This file is part of PHP-CFG, a Control flow graph implementation for PHP
+ *
+ * @copyright 2015 Anthony Ferrara. All rights reserved
+ * @license MIT See LICENSE at the root of the project for more info
+ */
+
 namespace PHPCfg;
 
 use PHPCfg\AstVisitor\NameResolver;
@@ -8,100 +17,106 @@ use PhpParser\Parser;
 use PhpParser\ParserFactory;
 use PHPUnit\Framework\TestCase;
 
-class NameResolverTest extends TestCase {
-	/** @var  Parser */
-	private $astParser;
+class NameResolverTest extends TestCase
+{
+    /** @var Parser */
+    private $astParser;
 
-	protected function setUp() {
-		$this->astParser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
-	}
+    protected function setUp()
+    {
+        $this->astParser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
+    }
 
-	/** @dataProvider getIgnoresInvalidParamTypeInDocCommentCases */
-	public function testIgnoresInvalidParamTypeInDocComment($type) {
-		$doccomment = <<< EOF
+    /** @dataProvider getIgnoresInvalidParamTypeInDocCommentCases */
+    public function testIgnoresInvalidParamTypeInDocComment($type)
+    {
+        $doccomment = <<< EOF
 /**
- * @param $type \$a
+ * @param ${type} \$a
  */
 EOF;
-		$code = <<< EOF
+        $code = <<< EOF
 <?php
-$doccomment
+${doccomment}
 function foo(\$a) {}
 EOF;
-		$ast = $this->astParser->parse($code);
-		$traverser = new NodeTraverser();
-		$traverser->addVisitor(new NameResolver());
-		$traverser->traverse($ast);
-		$this->assertEquals($doccomment, $ast[0]->getDocComment()->getText());
-	}
+        $ast = $this->astParser->parse($code);
+        $traverser = new NodeTraverser();
+        $traverser->addVisitor(new NameResolver());
+        $traverser->traverse($ast);
+        $this->assertEquals($doccomment, $ast[0]->getDocComment()->getText());
+    }
 
-	public function getIgnoresInvalidParamTypeInDocCommentCases() {
-		return [
-			['123'],
-			['*'],
-			['[]'],
-			['$b'],
-			['@param'],
-		];
-	}
+    public function getIgnoresInvalidParamTypeInDocCommentCases()
+    {
+        return [
+            ['123'],
+            ['*'],
+            ['[]'],
+            ['$b'],
+            ['@param'],
+        ];
+    }
 
-	public function testFullyQualifiesClassInDocComment() {
-		$formatString = <<< EOF
+    public function testFullyQualifiesClassInDocComment()
+    {
+        $formatString = <<< EOF
 /**
  * @param %s \$bar
  */
 EOF;
-		$original = sprintf($formatString, 'Bar');
-		$expected = sprintf($formatString, 'Foo\\Bar');
-		$code = <<< EOF
+        $original = sprintf($formatString, 'Bar');
+        $expected = sprintf($formatString, 'Foo\\Bar');
+        $code = <<< EOF
 <?php
 namespace Foo {
 	class Bar {}
 }
 
 namespace {
-	use Foo\Bar;
+	use Foo\\Bar;
 	
-	$original
+	${original}
 	function baz(Bar \$bar) {}
 }
 EOF;
 
-		$ast = $this->astParser->parse($code);
-		$traverser = new NodeTraverser();
-		$traverser->addVisitor(new NameResolver());
-		$traverser->traverse($ast);
-		$actual = $ast[1]->stmts[1]->getDocComment()->getText();
-		$this->assertEquals($expected, $actual);
-	}
+        $ast = $this->astParser->parse($code);
+        $traverser = new NodeTraverser();
+        $traverser->addVisitor(new NameResolver());
+        $traverser->traverse($ast);
+        $actual = $ast[1]->stmts[1]->getDocComment()->getText();
+        $this->assertEquals($expected, $actual);
+    }
 
-	public function testFullyQualifiesClassAliasInDocComment() {
-		$formatString = <<< EOF
+    public function testFullyQualifiesClassAliasInDocComment()
+    {
+        $formatString = <<< EOF
 /**
  * @param %s \$bar
  */
 EOF;
-		$original = sprintf($formatString, 'Quux');
-		$expected = sprintf($formatString, 'Foo\\Bar');
-		$code = <<< EOF
+        $original = sprintf($formatString, 'Quux');
+        $expected = sprintf($formatString, 'Foo\\Bar');
+        $code = <<< EOF
 <?php
 namespace Foo {
 	class Bar {}
 }
 
 namespace {
-	use Foo\Bar as Quux;
+	use Foo\\Bar as Quux;
 	
-	$original
+	${original}
 	function baz(Quux \$bar) {}
 }
 EOF;
 
-		$ast = $this->astParser->parse($code);
-		$traverser = new NodeTraverser();
-		$traverser->addVisitor(new NameResolver());
-		$traverser->traverse($ast);
-		$actual = $ast[1]->stmts[1]->getDocComment()->getText();
-		$this->assertEquals($expected, $actual);
-	}
+        $ast = $this->astParser->parse($code);
+        $traverser = new NodeTraverser();
+        $traverser->addVisitor(new NameResolver());
+        $traverser->traverse($ast);
+        $actual = $ast[1]->stmts[1]->getDocComment()->getText();
+        $this->assertEquals($expected, $actual);
+    }
 }

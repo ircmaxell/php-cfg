@@ -1,6 +1,8 @@
 <?php
 
-/*
+declare(strict_types=1);
+
+/**
  * This file is part of PHP-CFG, a Control flow graph implementation for PHP
  *
  * @copyright 2015 Anthony Ferrara. All rights reserved
@@ -13,23 +15,29 @@ use PHPCfg\Block;
 use PHPCfg\Op\Terminal;
 use PHPCfg\Operand;
 
-class StaticVar extends Terminal {
+class StaticVar extends Terminal
+{
     public $var;
+
     public $defaultBlock;
+
     public $defaultVar;
 
-    public function __construct(Operand $var, Block $defaultBlock = null, Operand $defaultVar = null, array $attributes = []) {
+    public function __construct(Operand $var, Block $defaultBlock = null, Operand $defaultVar = null, array $attributes = [])
+    {
         parent::__construct($attributes);
         $this->var = $this->addWriteRef($var);
         $this->defaultBlock = $defaultBlock;
         $this->defaultVar = $this->addReadRef($defaultVar);
     }
 
-    public function getVariableNames() {
+    public function getVariableNames()
+    {
         return ['var', 'defaultVar'];
     }
 
-    public function getSubBlocks() {
+    public function getSubBlocks()
+    {
         return ['defaultBlock'];
     }
 }

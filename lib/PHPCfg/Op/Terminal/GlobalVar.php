@@ -1,6 +1,8 @@
 <?php
 
-/*
+declare(strict_types=1);
+
+/**
  * This file is part of PHP-CFG, a Control flow graph implementation for PHP
  *
  * @copyright 2015 Anthony Ferrara. All rights reserved
@@ -12,19 +14,23 @@ namespace PHPCfg\Op\Terminal;
 use PHPCfg\Op\Terminal;
 use PHPCfg\Operand;
 
-class GlobalVar extends Terminal {
+class GlobalVar extends Terminal
+{
     public $var;
 
-    public function __construct(Operand $var, array $attributes = []) {
+    public function __construct(Operand $var, array $attributes = [])
+    {
         parent::__construct($attributes);
         $this->var = $this->addReadRef($var);
     }
 
-    public function getVariableNames() {
+    public function getVariableNames()
+    {
         return ['var'];
     }
 
-    public function getSubBlocks() {
+    public function getSubBlocks()
+    {
         return [];
     }
 }

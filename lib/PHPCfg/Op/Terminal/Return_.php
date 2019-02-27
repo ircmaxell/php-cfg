@@ -1,6 +1,8 @@
 <?php
 
-/*
+declare(strict_types=1);
+
+/**
  * This file is part of PHP-CFG, a Control flow graph implementation for PHP
  *
  * @copyright 2015 Anthony Ferrara. All rights reserved
@@ -12,19 +14,23 @@ namespace PHPCfg\Op\Terminal;
 use PHPCfg\Op\Terminal;
 use PhpCfg\Operand;
 
-class Return_ extends Terminal {
+class Return_ extends Terminal
+{
     public $expr;
 
-    public function __construct(Operand $expr = null, array $attributes = []) {
+    public function __construct(Operand $expr = null, array $attributes = [])
+    {
         parent::__construct($attributes);
         $this->expr = $this->addReadRef($expr);
     }
 
-    public function getVariableNames() {
+    public function getVariableNames()
+    {
         return ['expr'];
     }
 
-    public function getSubBlocks() {
+    public function getSubBlocks()
+    {
         return [];
     }
 }

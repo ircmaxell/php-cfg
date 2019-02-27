@@ -1,6 +1,8 @@
 <?php
 
-/*
+declare(strict_types=1);
+
+/**
  * This file is part of PHP-CFG, a Control flow graph implementation for PHP
  *
  * @copyright 2015 Anthony Ferrara. All rights reserved
@@ -11,16 +13,18 @@ namespace PHPCfg\Op\Expr;
 
 use PHPCfg\Op\Expr;
 
-class Isset_ extends Expr {
-
+class Isset_ extends Expr
+{
     public $vars;
 
-    public function __construct(array $vars, array $attributes = []) {
+    public function __construct(array $vars, array $attributes = [])
+    {
         parent::__construct($attributes);
         $this->vars = $this->addReadRef($vars);
     }
 
-    public function getVariableNames() {
-        return ["vars", "result"];
+    public function getVariableNames()
+    {
+        return ['vars', 'result'];
     }
 }
