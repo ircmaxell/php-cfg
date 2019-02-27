@@ -11,22 +11,24 @@ declare(strict_types=1);
 
 namespace PHPCfg;
 
+use PHPTypes\Type;
+
 abstract class Operand
 {
-    public $type = null;
+    public ?Type $type = null;
 
-    public $assertions = [];
+    public array $assertions = [];
 
-    public $ops = [];
+    public array $ops = [];
 
-    public $usages = [];
+    public array $usages = [];
 
     public function getType(): string
     {
         return strtr(substr(rtrim(get_class($this), '_'), strlen(__CLASS__) + 1), '\\', '_');
     }
 
-    public function addUsage(Op $op)
+    public function addUsage(Op $op): self
     {
         foreach ($this->usages as $test) {
             if ($test === $op) {
@@ -38,7 +40,7 @@ abstract class Operand
         return $this;
     }
 
-    public function addWriteOp(Op $op)
+    public function addWriteOp(Op $op): self
     {
         foreach ($this->ops as $test) {
             if ($test === $op) {
@@ -50,15 +52,16 @@ abstract class Operand
         return $this;
     }
 
-    public function removeUsage(Op $op)
+    public function removeUsage(Op $op): self
     {
         $key = array_search($op, $this->usages, true);
         if ($key !== false) {
             unset($this->usages[$key]);
         }
+        return $this;
     }
 
-    public function addAssertion(self $op, Assertion $assert, $mode = Assertion::MODE_INTERSECTION)
+    public function addAssertion(self $op, Assertion $assert, $mode = Assertion::MODE_INTERSECTION): void
     {
         $isTemorary = $op instanceof Operand\Temporary;
         $isNamed = $isTemorary && $op->original instanceof Operand\Variable && $op->original->name instanceof Operand\Literal;

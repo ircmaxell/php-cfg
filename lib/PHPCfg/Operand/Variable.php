@@ -15,11 +15,9 @@ use PHPCfg\Operand;
 
 class Variable extends Operand
 {
-    public $name;
+    public Operand $name;
 
-    public $ops = [];
-
-    public function __construct($name)
+    public function __construct(Operand $name)
     {
         $this->name = $name;
     }
