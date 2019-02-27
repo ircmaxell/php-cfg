@@ -16,18 +16,18 @@ use PhpCfg\Operand;
 
 class FuncCall extends Expr
 {
-    public $name;
+    public Operand $name;
 
-    public $args;
+    public array $args;
 
     public function __construct(Operand $name, array $args, array $attributes = [])
     {
         parent::__construct($attributes);
         $this->name = $this->addReadRef($name);
-        $this->args = $this->addReadRef($args);
+        $this->args = $this->addReadRefs(...$args);
     }
 
-    public function getVariableNames()
+    public function getVariableNames(): array
     {
         return ['name', 'args', 'result'];
     }

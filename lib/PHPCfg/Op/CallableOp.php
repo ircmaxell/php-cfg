@@ -15,6 +15,5 @@ use PHPCfg\Func;
 
 interface CallableOp
 {
-    /** @returns Func */
-    public function getFunc();
+    public function getFunc(): Func;
 }

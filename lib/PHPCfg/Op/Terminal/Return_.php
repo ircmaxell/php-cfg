@@ -16,21 +16,18 @@ use PhpCfg\Operand;
 
 class Return_ extends Terminal
 {
-    public $expr;
+    public ?Operand $expr = null;
 
     public function __construct(Operand $expr = null, array $attributes = [])
     {
         parent::__construct($attributes);
-        $this->expr = $this->addReadRef($expr);
+        if (!is_null($expr)) {
+            $this->expr = $this->addReadRef($expr);
+        }
     }
 
-    public function getVariableNames()
+    public function getVariableNames(): array
     {
         return ['expr'];
-    }
-
-    public function getSubBlocks()
-    {
-        return [];
     }
 }

@@ -19,5 +19,6 @@ Block#1
     Terminal_Return
 
 Block#2
-    Stmt_Property<NS\NameOfClass|null>
+    Stmt_Property
+        declaredType: ?LITERAL('NS\\NameOfClass')
         name: LITERAL('self')

@@ -16,9 +16,9 @@ use PhpCfg\Operand;
 
 class StaticPropertyFetch extends Expr
 {
-    public $class;
+    public Operand$class;
 
-    public $name;
+    public Operand$name;
 
     public function __construct(Operand $class, Operand $name, array $attributes = [])
     {
@@ -27,7 +27,7 @@ class StaticPropertyFetch extends Expr
         $this->name = $this->addReadRef($name);
     }
 
-    public function getVariableNames()
+    public function getVariableNames(): array
     {
         return ['class', 'name', 'result'];
     }

@@ -35,9 +35,10 @@ Block#1
         result: Var#9
     Terminal_Return
 
-Function {anonymous}#1():
+Function {anonymous}#1(): mixed
 Block#1
     Expr_Param
+        declaredType: mixed
         name: LITERAL('a')
         result: Var#1<$a>
     Expr_BinaryOp_Mul

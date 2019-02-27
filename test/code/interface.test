@@ -13,4 +13,4 @@ Block#1
 Block#2
     Stmt_ClassMethod<method>
 
-Function Test::method():
+Function Test::method(): mixed

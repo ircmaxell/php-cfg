@@ -16,9 +16,7 @@ use PhpCfg\Operand;
 
 class Reset extends Terminal
 {
-    public $var;
-
-    protected $writeVariables = [];
+    public Operand $var;
 
     public function __construct(Operand $var, array $attributes = [])
     {
@@ -26,13 +24,8 @@ class Reset extends Terminal
         $this->var = $this->addReadRef($var);
     }
 
-    public function getVariableNames()
+    public function getVariableNames(): array
     {
         return ['var'];
-    }
-
-    public function getSubBlocks()
-    {
-        return [];
     }
 }

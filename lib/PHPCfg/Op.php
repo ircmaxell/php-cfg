@@ -13,31 +13,31 @@ namespace PHPCfg;
 
 abstract class Op
 {
-    protected $attributes = [];
+    protected array $attributes = [];
 
-    protected $writeVariables = [];
+    protected array $writeVariables = [];
 
     public function __construct(array $attributes = [])
     {
         $this->attributes = $attributes;
     }
 
-    public function getType()
+    public function getType(): string
     {
         return strtr(substr(rtrim(get_class($this), '_'), strlen(__CLASS__) + 1), '\\', '_');
     }
 
-    public function getLine()
+    public function getLine(): int
     {
         return $this->getAttribute('startLine', -1);
     }
 
-    public function getFile()
+    public function getFile(): string
     {
         return $this->getAttribute('filename', 'unknown');
     }
 
-    public function &getAttribute($key, $default = null)
+    public function &getAttribute(string $key, $default = null)
     {
         if (! $this->hasAttribute($key)) {
             return $default;
@@ -46,48 +46,49 @@ abstract class Op
         return $this->attributes[$key];
     }
 
-    public function setAttribute($key, &$value)
+    public function setAttribute(string $key, &$value): void
     {
         $this->attributes[$key] = $value;
     }
 
-    public function hasAttribute($key)
+    public function hasAttribute(string $key)
     {
         return array_key_exists($key, $this->attributes);
     }
 
-    public function getAttributes()
+    public function getAttributes(): array
     {
         return $this->attributes;
     }
 
-    abstract public function getVariableNames();
+    public function getVariableNames(): array {
+        return [];
+    }
 
-    abstract public function getSubBlocks();
+    public function getSubBlocks(): array {
+        return [];
+    }
 
-    public function isWriteVariable($name)
+    public function isWriteVariable(string $name): bool
     {
         return in_array($name, $this->writeVariables, true);
     }
 
-    protected function addReadRef($op)
+    protected function addReadRefs(Operand ...$op): array
     {
-        if (is_array($op)) {
-            $new = [];
-            foreach ($op as $key => $o) {
-                $new[$key] = $this->addReadRef($o);
-            }
-
-            return $new;
-        }
-        if (! $op instanceof Operand) {
-            return $op;
+        $result = [];
+        foreach ($op as $key => $o) {
+            $result[] = $this->addReadRef($o);
         }
 
+        return $result;
+    }
+
+    protected function addReadRef(Operand $op): Operand {
         return $op->addUsage($this);
     }
 
-    protected function addWriteRef($op)
+    protected function addWriteRef(Operand $op): Operand
     {
         if (is_array($op)) {
             $new = [];

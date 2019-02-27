@@ -16,15 +16,19 @@ use PhpCfg\Operand;
 
 class Exit_ extends Expr
 {
-    public $expr;
+    public ?Operand $expr;
 
     public function __construct(Operand $expr = null, array $attributes = [])
     {
         parent::__construct($attributes);
-        $this->expr = $this->addReadRef($expr);
+        if ($expr) {
+            $this->expr = $this->addReadRef($expr);
+        } else {
+            $this->expr = null;
+        }
     }
 
-    public function getVariableNames()
+    public function getVariableNames(): array
     {
         return ['expr', 'result'];
     }

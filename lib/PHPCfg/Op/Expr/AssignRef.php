@@ -16,11 +16,11 @@ use PhpCfg\Operand;
 
 class AssignRef extends Expr
 {
-    public $var;
+    public Operand $var;
 
-    public $expr;
+    public Operand $expr;
 
-    protected $writeVariables = ['var', 'result'];
+    protected array $writeVariables = ['var', 'result'];
 
     public function __construct(Operand $var, Operand $expr, array $attributes = [])
     {
@@ -29,7 +29,7 @@ class AssignRef extends Expr
         $this->expr = $this->addReadRef($expr);
     }
 
-    public function getVariableNames()
+    public function getVariableNames(): array
     {
         return ['var', 'expr', 'result'];
     }

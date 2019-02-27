@@ -16,21 +16,21 @@ use PhpCfg\Operand;
 
 class MethodCall extends Expr
 {
-    public $var;
+    public Operand $var;
 
-    public $name;
+    public Operand $name;
 
-    public $args;
+    public array $args;
 
     public function __construct(Operand $var, Operand $name, array $args, array $attributes = [])
     {
         parent::__construct($attributes);
         $this->var = $this->addReadRef($var);
         $this->name = $this->addReadRef($name);
-        $this->args = $this->addReadRef($args);
+        $this->args = $this->addReadRefs(...$args);
     }
 
-    public function getVariableNames()
+    public function getVariableNames(): array
     {
         return ['var', 'name', 'args', 'result'];
     }

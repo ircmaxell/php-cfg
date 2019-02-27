@@ -17,11 +17,11 @@ use PHPCfg\Operand;
 
 class JumpIf extends Stmt
 {
-    public $cond;
+    public Operand $cond;
 
-    public $if;
+    public Block $if;
 
-    public $else;
+    public Block $else;
 
     public function __construct(Operand $cond, Block $if, Block $else, array $attributes = [])
     {
@@ -31,12 +31,12 @@ class JumpIf extends Stmt
         $this->cond = $this->addReadRef($cond);
     }
 
-    public function getVariableNames()
+    public function getVariableNames(): array
     {
         return ['cond'];
     }
 
-    public function getSubBlocks()
+    public function getSubBlocks(): array
     {
         return ['if', 'else'];
     }

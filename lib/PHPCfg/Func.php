@@ -40,7 +40,7 @@ class Func
     public $flags;
 
     /** @var */
-    public $returnType;
+    public Op\Type $returnType;
 
     /** @var Operand\Literal */
     public $class;
@@ -54,17 +54,11 @@ class Func
     /** @var CallableOp|null */
     public $callableOp;
 
-    public function __construct($name, $flags, $returnType, $class)
+    public function __construct(string $name, int $flags, Op\Type $returnType, ?Operand $class)
     {
         $this->name = $name;
         $this->flags = $flags;
-        if ($returnType instanceof Operand\Literal) {
-            $this->returnType = $returnType->value;
-        } elseif (! empty($returnType)) {
-            throw new \LogicException('Only literal return types are supported');
-        } else {
-            $this->returnType = null;
-        }
+        $this->returnType = $returnType;
         $this->class = $class;
         $this->params = [];
         $this->cfg = new Block();

@@ -16,7 +16,7 @@ use PhpCfg\Operand;
 
 class Valid extends Expr
 {
-    public $var;
+    public Operand $var;
 
     public function __construct(Operand $var, array $attributes = [])
     {
@@ -24,13 +24,9 @@ class Valid extends Expr
         $this->var = $this->addReadRef($var);
     }
 
-    public function getVariableNames()
+    public function getVariableNames(): array
     {
         return ['var', 'result'];
     }
 
-    public function getSubBlocks()
-    {
-        return [];
-    }
 }

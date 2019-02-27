@@ -16,9 +16,9 @@ use PhpCfg\Operand;
 
 class PropertyFetch extends Expr
 {
-    public $var;
+    public Operand$var;
 
-    public $name;
+    public Operand$name;
 
     public function __construct(Operand $var, Operand $name, array $attributes = [])
     {
@@ -27,7 +27,7 @@ class PropertyFetch extends Expr
         $this->name = $this->addReadRef($name);
     }
 
-    public function getVariableNames()
+    public function getVariableNames(): array
     {
         return ['var', 'name', 'result'];
     }

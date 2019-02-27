@@ -16,18 +16,20 @@ use PhpCfg\Operand;
 
 class ConstFetch extends Expr
 {
-    public $nsName;
+    public ?Operand $nsName = null;
 
-    public $name;
+    public Operand $name;
 
-    public function __construct(Operand $name, Operand $nsName = null, array $attributes = [])
+    public function __construct(Operand $name, ?Operand $nsName = null, array $attributes = [])
     {
         parent::__construct($attributes);
         $this->name = $this->addReadRef($name);
-        $this->nsName = $this->addReadRef($nsName);
+        if (!is_null($nsName)) {
+            $this->nsName = $this->addReadRef($nsName);
+        }
     }
 
-    public function getVariableNames()
+    public function getVariableNames(): array
     {
         return ['nsName', 'name', 'result'];
     }

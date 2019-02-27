@@ -7,9 +7,10 @@ Block#1
     Stmt_Function<foo>
     Terminal_Return
 
-Function foo():string
+Function foo(): string
 Block#1
-    Expr_Param<string>
+    Expr_Param
+        declaredType: string
         name: LITERAL('a')
         result: Var#1<$a>
     Terminal_Return

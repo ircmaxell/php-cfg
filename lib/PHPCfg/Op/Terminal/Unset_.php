@@ -15,20 +15,15 @@ use PHPCfg\Op\Terminal;
 
 class Unset_ extends Terminal
 {
-    public $exprs;
+    public array $exprs;
 
     public function __construct(array $exprs, array $attributes = [])
     {
         parent::__construct($attributes);
-        $this->exprs = $this->addReadRef($exprs);
+        $this->exprs = $this->addReadRefs(...$exprs);
     }
 
-    public function getSubBlocks()
-    {
-        return [];
-    }
-
-    public function getVariableNames()
+    public function getVariableNames(): array
     {
         return ['exprs'];
     }

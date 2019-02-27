@@ -16,7 +16,7 @@ use PHPCfg\Op\Stmt;
 
 class Jump extends Stmt
 {
-    public $target;
+    public Block $target;
 
     public function __construct(Block $target, array $attributes = [])
     {
@@ -24,7 +24,7 @@ class Jump extends Stmt
         $this->target = $target;
     }
 
-    public function getSubBlocks()
+    public function getSubBlocks(): array
     {
         return ['target'];
     }

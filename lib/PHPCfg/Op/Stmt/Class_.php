@@ -12,16 +12,17 @@ declare(strict_types=1);
 namespace PHPCfg\Op\Stmt;
 
 use PhpCfg\Block;
+use PhpCfg\Operand;
 
 class Class_ extends ClassLike
 {
-    public $flags;
+    public int $flags;
 
-    public $extends;
+    public ?Operand $extends = null;
 
-    public $implements;
+    public array $implements;
 
-    public function __construct($name, $flags, $extends, array $implements, Block $stmts, array $attributes = [])
+    public function __construct(Operand $name, int $flags, ?Operand $extends, array $implements, Block $stmts, array $attributes = [])
     {
         parent::__construct($name, $stmts, $attributes);
         $this->flags = $flags;
@@ -29,7 +30,7 @@ class Class_ extends ClassLike
         $this->implements = $implements;
     }
 
-    public function getVariableNames()
+    public function getVariableNames(): array
     {
         return ['name', 'extends', 'implements'];
     }

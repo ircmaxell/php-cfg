@@ -11,11 +11,13 @@ Block#1
     Terminal_Return
 
 Block#2
-    Stmt_Property<mixed>
+    Stmt_Property
+        declaredType: mixed
         name: LITERAL('prop')
         defaultVar: LITERAL(1)
         defaultBlock: Block#3
-    Stmt_Property<mixed>
+    Stmt_Property
+        declaredType: mixed
         name: LITERAL('prop2')
         defaultVar: Var#1
         defaultBlock: Block#4

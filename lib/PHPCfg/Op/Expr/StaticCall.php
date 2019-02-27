@@ -16,21 +16,21 @@ use PhpCfg\Operand;
 
 class StaticCall extends Expr
 {
-    public $class;
+    public Operand$class;
 
-    public $name;
+    public Operand$name;
 
-    public $args;
+    public array $args;
 
     public function __construct(Operand $class, Operand $name, array $args, array $attributes = [])
     {
         parent::__construct($attributes);
         $this->class = $this->addReadRef($class);
         $this->name = $this->addReadRef($name);
-        $this->args = $this->addReadRef($args);
+        $this->args = $this->addReadRefs(...$args);
     }
 
-    public function getVariableNames()
+    public function getVariableNames(): array
     {
         return ['class', 'name', 'args', 'result'];
     }

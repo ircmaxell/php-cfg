@@ -16,7 +16,7 @@ use PhpCfg\Operand;
 
 class BooleanNot extends Expr
 {
-    public $expr;
+    public Operand $expr;
 
     public function __construct(Operand $expr, array $attributes = [])
     {
@@ -24,7 +24,7 @@ class BooleanNot extends Expr
         $this->expr = $this->addReadRef($expr);
     }
 
-    public function getVariableNames()
+    public function getVariableNames(): array
     {
         return ['expr', 'result'];
     }

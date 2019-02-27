@@ -15,13 +15,5 @@ use PHPCfg\Op;
 
 abstract class Terminal extends Op
 {
-    public function __construct(array $attributes = [])
-    {
-        parent::__construct($attributes);
-    }
 
-    public function getSubBlocks()
-    {
-        return [];
-    }
 }

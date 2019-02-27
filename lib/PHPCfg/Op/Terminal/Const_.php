@@ -17,14 +17,14 @@ use PHPCfg\Operand;
 
 class Const_ extends Terminal
 {
-    /** @var Operand\Literal */
-    public $name;
 
-    public $value;
+    public Operand $name;
 
-    public $valueBlock;
+    public Operand $value;
 
-    public function __construct($name, Operand $value, Block $valueBlock, array $attributes = [])
+    public Block $valueBlock;
+
+    public function __construct(Operand $name, Operand $value, Block $valueBlock, array $attributes = [])
     {
         parent::__construct($attributes);
         $this->name = $this->addReadRef($name);
@@ -32,12 +32,12 @@ class Const_ extends Terminal
         $this->valueBlock = $valueBlock;
     }
 
-    public function getVariableNames()
+    public function getVariableNames(): array
     {
         return ['name', 'value'];
     }
 
-    public function getSubBlocks()
+    public function getSubBlocks(): array
     {
         return ['valueBlock'];
     }

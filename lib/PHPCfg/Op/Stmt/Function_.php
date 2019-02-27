@@ -17,7 +17,7 @@ use PHPCfg\Op\Stmt;
 
 class Function_ extends Stmt implements CallableOp
 {
-    public $func;
+    public Func $func;
 
     public function __construct(Func $func, array $attributes = [])
     {
@@ -25,13 +25,8 @@ class Function_ extends Stmt implements CallableOp
         $this->func = $func;
     }
 
-    public function getFunc()
-    {
+    public function getFunc(): Func {
         return $this->func;
     }
 
-    public function getSubBlocks()
-    {
-        return [];
-    }
 }

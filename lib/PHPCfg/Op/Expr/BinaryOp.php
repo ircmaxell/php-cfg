@@ -16,9 +16,9 @@ use PhpCfg\Operand;
 
 abstract class BinaryOp extends Expr
 {
-    public $left;
+    public Operand $left;
 
-    public $right;
+    public Operand $right;
 
     public function __construct(Operand $left, Operand $right, array $attributes = [])
     {
@@ -27,7 +27,7 @@ abstract class BinaryOp extends Expr
         $this->right = $this->addReadRef($right);
     }
 
-    public function getVariableNames()
+    public function getVariableNames(): array
     {
         return ['left', 'right', 'result'];
     }

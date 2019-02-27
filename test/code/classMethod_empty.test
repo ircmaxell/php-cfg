@@ -12,6 +12,6 @@ Block#1
 Block#2
     Stmt_ClassMethod<doSomething>
 
-Function NameOfClass::doSomething():
+Function NameOfClass::doSomething(): mixed
 Block#1
     Terminal_Return

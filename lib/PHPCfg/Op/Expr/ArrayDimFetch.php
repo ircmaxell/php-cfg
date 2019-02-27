@@ -16,18 +16,23 @@ use PhpCfg\Operand;
 
 class ArrayDimFetch extends Expr
 {
-    public $var;
+    public Operand $var;
 
-    public $dim;
+    public ?Operand $dim;
 
-    public function __construct(Operand $var, Operand $dim = null, array $attributes = [])
+    public function __construct(Operand $var, ?Operand $dim = null, array $attributes = [])
     {
         parent::__construct($attributes);
         $this->var = $this->addReadRef($var);
-        $this->dim = $this->addReadRef($dim);
+        if (!is_null($dim)) {
+            $this->dim = $this->addReadRef($dim);
+        } else {
+            $this->dim = null;
+        }
+       
     }
 
-    public function getVariableNames()
+    public function getVariableNames(): array
     {
         return ['var', 'dim', 'result'];
     }

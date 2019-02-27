@@ -17,19 +17,19 @@ use PHPCfg\Operand;
 
 class Assertion extends Expr
 {
-    public $read;
+    public Operand $read;
 
-    public $assertion;
+    public Assert $assertion;
 
     public function __construct(Operand $read, Operand $write, Assert $assertion, array $attributes = [])
     {
         parent::__construct($attributes);
         $this->expr = $this->addReadRef($read);
-        $this->assertion = $this->addReadRef($assertion);
+        $this->assertion = $assertion;
         $this->result = $this->addWriteRef($write);
     }
 
-    public function getVariableNames()
+    public function getVariableNames(): array
     {
         return ['expr', 'result'];
     }

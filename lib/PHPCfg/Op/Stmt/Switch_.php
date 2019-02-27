@@ -17,29 +17,29 @@ use PhpCfg\Operand;
 
 class Switch_ extends Stmt
 {
-    public $target;
+    public Operand $target;
 
-    public $cases;
+    public array $cases;
 
-    public $targets;
+    public array $targets;
 
-    public $default;
+    public Block $default;
 
     public function __construct(Operand $cond, array $cases, array $targets, Block $default, array $attributes = [])
     {
         parent::__construct($attributes);
         $this->cond = $this->addReadRef($cond);
-        $this->cases = $cases;
+        $this->cases = $this->addReadRefs(...$cases);
         $this->targets = $targets;
         $this->default = $default;
     }
 
-    public function getVariableNames()
+    public function getVariableNames(): array
     {
         return ['cond', 'cases'];
     }
 
-    public function getSubBlocks()
+    public function getSubBlocks(): array
     {
         return ['targets', 'default'];
     }

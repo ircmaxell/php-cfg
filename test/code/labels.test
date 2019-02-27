@@ -24,7 +24,7 @@ Block#2
         expr: LITERAL('C')
     Terminal_Return
 
-Function test():
+Function test(): mixed
 Block#1
     Stmt_Jump
         target: Block#2

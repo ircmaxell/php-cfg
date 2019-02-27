@@ -16,7 +16,7 @@ use PHPCfg\Operand;
 
 class Echo_ extends Terminal
 {
-    public $expr;
+    public Operand $expr;
 
     public function __construct(Operand $expr, array $attributes = [])
     {
@@ -24,12 +24,7 @@ class Echo_ extends Terminal
         $this->expr = $this->addReadRef($expr);
     }
 
-    public function getSubBlocks()
-    {
-        return [];
-    }
-
-    public function getVariableNames()
+    public function getVariableNames(): array
     {
         return ['expr'];
     }

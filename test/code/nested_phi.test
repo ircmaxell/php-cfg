@@ -15,6 +15,9 @@ Block#1
         expr: LITERAL(1)
         result: Var#2
     Expr_Array
+        keys[0]: NULL
+        keys[1]: NULL
+        keys[2]: NULL
         values[0]: LITERAL(1)
         values[1]: LITERAL(2)
         values[2]: LITERAL(3)

@@ -15,15 +15,15 @@ use PHPCfg\Op\Expr;
 
 class ConcatList extends Expr
 {
-    public $list;
+    public array $list;
 
     public function __construct(array $list, array $attributes = [])
     {
         parent::__construct($attributes);
-        $this->list = $this->addReadRef($list);
+        $this->list = $this->addReadRefs(...$list);
     }
 
-    public function getVariableNames()
+    public function getVariableNames(): array
     {
         return ['list', 'result'];
     }

@@ -15,15 +15,15 @@ use PHPCfg\Op\Expr;
 
 class Isset_ extends Expr
 {
-    public $vars;
+    public array $vars;
 
     public function __construct(array $vars, array $attributes = [])
     {
         parent::__construct($attributes);
-        $this->vars = $this->addReadRef($vars);
+        $this->vars = $this->addReadRefs(...$vars);
     }
 
-    public function getVariableNames()
+    public function getVariableNames(): array
     {
         return ['vars', 'result'];
     }

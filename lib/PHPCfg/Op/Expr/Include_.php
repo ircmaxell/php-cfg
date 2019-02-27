@@ -24,18 +24,18 @@ class Include_ extends Expr
 
     const TYPE_REQUIRE_ONCE = 4;
 
-    public $type;
+    public int $type;
 
-    public $expr;
+    public Operand $expr;
 
-    public function __construct(Operand $expr, $type, array $attributes = [])
+    public function __construct(Operand $expr, int $type, array $attributes = [])
     {
         parent::__construct($attributes);
         $this->expr = $this->addReadRef($expr);
         $this->type = $type;
     }
 
-    public function getVariableNames()
+    public function getVariableNames(): array
     {
         return ['expr', 'result'];
     }

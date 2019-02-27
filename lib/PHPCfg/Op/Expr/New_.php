@@ -16,18 +16,18 @@ use PhpCfg\Operand;
 
 class New_ extends Expr
 {
-    public $class;
+    public Operand $class;
 
-    public $args;
+    public array $args;
 
     public function __construct(Operand $class, array $args, array $attributes = [])
     {
         parent::__construct($attributes);
         $this->class = $this->addReadRef($class);
-        $this->args = $this->addReadRef($args);
+        $this->args = $this->addReadRefs(...$args);
     }
 
-    public function getVariableNames()
+    public function getVariableNames(): array
     {
         return ['class', 'args', 'result'];
     }

@@ -16,18 +16,18 @@ use PhpCfg\Operand;
 
 class Value extends Expr
 {
-    public $var;
+    public Operand $var;
 
-    public $byRef;
+    public bool $byRef;
 
-    public function __construct(Operand $var, $byRef, array $attributes = [])
+    public function __construct(Operand $var, bool $byRef, array $attributes = [])
     {
         parent::__construct($attributes);
         $this->var = $this->addReadRef($var);
         $this->byRef = $byRef;
     }
 
-    public function getVariableNames()
+    public function getVariableNames(): array
     {
         return ['var', 'result'];
     }

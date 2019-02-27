@@ -16,9 +16,9 @@ use PhpCfg\Operand;
 
 class Next extends Terminal
 {
-    public $var;
+    public Operand $var;
 
-    protected $writeVariables = ['var'];
+    protected array $writeVariables = ['var'];
 
     public function __construct(Operand $var, array $attributes = [])
     {
@@ -31,8 +31,4 @@ class Next extends Terminal
         return ['var'];
     }
 
-    public function getSubBlocks()
-    {
-        return [];
-    }
 }

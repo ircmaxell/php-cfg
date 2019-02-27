@@ -15,6 +15,7 @@ use PHPCfg\Operand\BoundVariable;
 use PHPCfg\Operand\Literal;
 use PHPCfg\Operand\Temporary;
 use PHPCfg\Operand\Variable;
+use PHPCfg\Operand\NullOperand;
 
 abstract class Printer
 {
@@ -50,7 +51,7 @@ abstract class Printer
 
     protected function renderOperand(Operand $var)
     {
-        $type = isset($var->type) ? "<{$var->type}>" : '';
+        $type = isset($var->type) ? $var->type->toString() : '';
         if ($var instanceof Literal) {
             return "LITERAL{$type}(".var_export($var->value, true).')';
         }
@@ -85,6 +86,9 @@ abstract class Printer
 
             return "Var{$type}#".$this->getVarId($var);
         }
+        if ($var instanceof NullOperand) {
+            return "NULL";
+        }
         if (is_array($var)) {
             $result = 'array'.$type;
             foreach ($var as $k => $v) {
@@ -108,14 +112,10 @@ abstract class Printer
             $result .= '<'.$this->renderAssertion($op->assertion).'>';
         }
         if ($op instanceof Op\Stmt\Property) {
-            if (empty($op->declaredType)) {
-                $result .= '<mixed>';
-            } else {
-                $result .= '<'.$op->declaredType.'>';
-            }
+            $result .= "\n    declaredType: " . $this->indent($this->renderType($op->declaredType));
         }
-        if ($op instanceof Op\Expr\Param && $op->type) {
-            $result .= '<'.$op->type.'>';
+        if ($op instanceof Op\Expr\Param) {
+            $result .= "\n    declaredType: " . $this->indent($this->renderType($op->declaredType));
         }
 
         foreach ($op->getVariableNames() as $varName) {
@@ -242,5 +242,27 @@ abstract class Printer
             'varIds' => $varIds,
             'blockIds' => $blockIds,
         ];
+    }
+
+    protected function renderType(?Op\Type $type): string {
+        if ($type instanceof Op\Type\Mixed) {
+            return 'mixed';
+        }
+        if ($type instanceof Op\Type\Void_) {
+            return 'void';
+        }
+        if ($type instanceof Op\Type\Nullable) {
+            return '?' . $this->renderType($type->subtype);
+        }
+        if ($type instanceof Op\Type\Reference) {
+            return $this->renderOperand($type->declaration);
+        }
+        if ($type instanceof Op\Type\Literal) {
+            return $type->name;
+        }
+        if (is_null($type)) {
+            return '';
+        }
+        throw new \LogicException("Unknown type rendering: " . get_class($type));
     }
 }

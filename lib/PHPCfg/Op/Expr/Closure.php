@@ -17,24 +17,23 @@ use PHPCfg\Op\Expr;
 
 class Closure extends Expr implements CallableOp
 {
-    public $func;
+    public Func $func;
 
-    public $useVars;
+    public array $useVars;
 
     public function __construct(Func $func, array $useVars, array $attributes = [])
     {
         parent::__construct($attributes);
         $this->func = $func;
-        $this->useVars = $this->addReadRef($useVars);
+        $this->useVars = $this->addReadRefs(...$useVars);
     }
 
-    public function getFunc()
-    {
-        return $this->func;
-    }
-
-    public function getVariableNames()
+    public function getVariableNames(): array
     {
         return ['useVars', 'result'];
+    }
+
+    public function getFunc(): Func {
+        return $this->func;
     }
 }

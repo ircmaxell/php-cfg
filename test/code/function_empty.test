@@ -5,9 +5,10 @@ Block#1
     Stmt_Function<foo>
     Terminal_Return
 
-Function foo():
+Function foo(): mixed
 Block#1
     Expr_Param
+        declaredType: mixed
         name: LITERAL('a')
         result: Var#1<$a>
     Terminal_Return

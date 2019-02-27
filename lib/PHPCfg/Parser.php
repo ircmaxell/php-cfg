@@ -87,8 +87,8 @@ class Parser
 
         $this->script = $script = new Script();
         $script->functions = [];
-        $script->main = new Func('{main}', 0, null, null);
-        $this->parseFunc($script->main, [], $ast, null);
+        $script->main = new Func('{main}', 0, new Op\Type\Void_, null);
+        $this->parseFunc($script->main, [], $ast);
 
         // Reset script specific state
         $this->script = null;
@@ -111,7 +111,7 @@ class Parser
         return $end;
     }
 
-    protected function parseFunc(Func $func, array $params, array $stmts, $implicitReturnValue)
+    protected function parseFunc(Func $func, array $params, array $stmts)
     {
         // Switch to new function context
         $prevCtx = $this->ctx;
@@ -127,11 +127,7 @@ class Parser
         $end = $this->parseNodes($stmts, $start);
 
         if (!$end->dead) {
-            if ($implicitReturnValue === null) {
-                $end->children[] = new Return_;
-            } else {
-                $end->children[] = new Return_(new Literal($implicitReturnValue));
-            }
+            $end->children[] = new Return_;
         }
 
         if ($this->ctx->unresolvedGotos) {
@@ -174,16 +170,29 @@ class Parser
         throw new \RuntimeException('Unknown Node Encountered : '.$type);
     }
 
-    protected function parseTypeNode(Node $node)
-    {
-        if ($node instanceof Node\NullableType) {
-            return $this->parseTypeNode($node->type).'|null';
+    protected function parseTypeNode(?Node $node): Op\Type {
+        if (is_null($node)) {
+            return new Op\Type\Mixed;
         }
         if ($node instanceof Node\Name) {
-            return $node->toString();
+            return new Op\Type\Reference(
+                $this->readVariable($this->parseExprNode($node)),
+                $this->mapAttributes($node)
+            );
         }
-
-        throw new \RuntimeException('Unknown Type Node Encountered'.$node->getType());
+        if ($node instanceof Node\NullableType) {
+            return new Op\Type\Nullable(
+                $this->parseTypeNode($node->type),
+                $this->mapAttributes($node)
+            );
+        }
+        if ($node instanceof Node\Identifier) {
+            return new Op\Type\Literal(
+                $node->name,
+                $this->mapAttributes($node)
+            );
+        }
+        throw new \LogicException("Unknown type node: " . $node->getType());
     }
 
     protected function parseStmt_Expression(Stmt\Expression $node)
@@ -235,7 +244,7 @@ class Parser
         $this->script->functions[] = $func = new Func(
             $node->name->toString(),
             $node->flags | ($node->byRef ? Func::FLAG_RETURNS_REF : 0),
-            $this->parseExprNode($node->returnType),
+            $this->parseTypeNode($node->returnType),
             $this->currentClass
         );
 
@@ -374,8 +383,8 @@ class Parser
         $this->script->functions[] = $func = new Func(
             $node->namespacedName->toString(),
             $node->byRef ? Func::FLAG_RETURNS_REF : 0,
-            $this->parseExprNode($node->returnType),
-            null
+            $this->parseTypeNode($node->returnType),
+            null,
         );
         $this->parseFunc($func, $node->params, $node->stmts, null);
         $this->block->children[] = $function = new Op\Stmt\Function_($func, $this->mapAttributes($node));
@@ -511,11 +520,6 @@ class Parser
     {
         $visibility = $node->flags & Node\Stmt\Class_::VISIBILITY_MODIFIER_MASK;
         $static = $node->flags & Node\Stmt\Class_::MODIFIER_STATIC;
-        if ($node->type) {
-            $type = $this->parseTypeNode($node->type);
-        } else {
-            $type = '';
-        }
 
         foreach ($node->props as $prop) {
             if ($prop->default) {
@@ -530,8 +534,8 @@ class Parser
             $this->block->children[] = new Op\Stmt\Property(
                 $this->parseExprNode($prop->name),
                 $visibility,
-                $static,
-                $type,
+                (bool) $static,
+                $this->parseTypeNode($node->type),
                 $defaultVar,
                 $defaultBlock,
                 $this->mapAttributes($node)
@@ -867,7 +871,7 @@ class Parser
                 if ($item->key) {
                     $keys[] = $this->readVariable($this->parseExprNode($item->key));
                 } else {
-                    $keys[] = null;
+                    $keys[] = new Operand\NullOperand;
                 }
                 $values[] = $this->readVariable($this->parseExprNode($item->value));
                 $byRef[] = $item->byRef;
@@ -883,7 +887,7 @@ class Parser
         if (null !== $expr->dim) {
             $d = $this->readVariable($this->parseExprNode($expr->dim));
         } else {
-            $d = null;
+            $d = new Operand\NullOperand;
         }
 
         return new Op\Expr\ArrayDimFetch($v, $d, $this->mapAttributes($expr));
@@ -945,7 +949,7 @@ class Parser
         $this->script->functions[] = $func = new Func(
             '{anonymous}#'.++$this->anonId,
             $flags,
-            $this->parseExprNode($expr->returnType),
+            $this->parseTypeNode($expr->returnType),
             null
         );
         $this->parseFunc($func, $expr->params, $expr->stmts, null);
@@ -1450,7 +1454,7 @@ class Parser
             }
             $result[] = $p = new Op\Expr\Param(
                 $this->parseExprNode($param->var->name),
-                $this->parseExprNode($param->type),
+                $this->parseTypeNode($param->type),
                 $param->byRef,
                 $param->variadic,
                 $defaultVar,

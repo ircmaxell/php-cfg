@@ -13,21 +13,22 @@ namespace PHPCfg\Op\Stmt;
 
 use PhpCfg\Block;
 use PHPCfg\Op\Stmt;
+use PhpCfg\Operand;
 
 abstract class ClassLike extends Stmt
 {
-    public $name;
+    public Operand $name;
 
-    public $stmts;
+    public Block $stmts;
 
-    public function __construct($name, Block $stmts, array $attributes = [])
+    public function __construct(Operand $name, Block $stmts, array $attributes = [])
     {
         parent::__construct($attributes);
         $this->name = $this->addReadRef($name);
         $this->stmts = $stmts;
     }
 
-    public function getSubBlocks()
+    public function getSubBlocks(): array
     {
         return ['stmts'];
     }

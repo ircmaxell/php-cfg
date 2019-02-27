@@ -16,20 +16,28 @@ use PhpCfg\Operand;
 
 class Yield_ extends Expr
 {
-    public $value;
+    public ?Operand $value;
 
-    public $key;
+    public ?Operand $key;
 
     protected $writeVariables = ['result'];
 
     public function __construct(Operand $value = null, Operand $key = null, array $attributes = [])
     {
         parent::__construct($attributes);
-        $this->value = $this->addReadRef($value);
-        $this->key = $this->addReadRef($key);
+        if (is_null($value)) {
+            $this->value = null;
+        } else {
+            $this->value = $this->addReadRef($value);
+        }
+        if (is_null($key)) {
+            $this->key = null;
+        } else {
+            $this->key = $this->addReadRef($key);
+        }
     }
 
-    public function getVariableNames()
+    public function getVariableNames(): array
     {
         return ['value', 'key', 'result'];
     }

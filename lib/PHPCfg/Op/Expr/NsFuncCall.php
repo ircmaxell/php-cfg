@@ -20,21 +20,21 @@ use PhpCfg\Operand;
  */
 class NsFuncCall extends Expr
 {
-    public $nsName;
+    public Operand $nsName;
 
-    public $name;
+    public Operand $name;
 
-    public $args;
+    public array $args;
 
     public function __construct(Operand $name, Operand $nsName, array $args, array $attributes = [])
     {
         parent::__construct($attributes);
         $this->nsName = $this->addReadRef($nsName);
         $this->name = $this->addReadRef($name);
-        $this->args = $this->addReadRef($args);
+        $this->args = $this->addReadRefs(...$args);
     }
 
-    public function getVariableNames()
+    public function getVariableNames(): array
     {
         return ['nsName', 'name', 'args', 'result'];
     }

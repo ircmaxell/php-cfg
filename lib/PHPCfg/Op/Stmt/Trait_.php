@@ -12,17 +12,18 @@ declare(strict_types=1);
 namespace PHPCfg\Op\Stmt;
 
 use PhpCfg\Block;
+use PhpCfg\Operand;
 
 class Trait_ extends ClassLike
 {
-    public function __construct($name, Block $stmts, array $attributes = [])
+    public function __construct(Operand $name, Block $stmts, array $attributes = [])
     {
         parent::__construct($name, $stmts, $attributes);
         $this->name = $this->addReadRef($name);
         $this->stmts = $stmts;
     }
 
-    public function getVariableNames()
+    public function getVariableNames(): array
     {
         return ['name'];
     }

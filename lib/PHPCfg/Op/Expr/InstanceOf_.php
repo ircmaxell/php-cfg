@@ -16,9 +16,9 @@ use PhpCfg\Operand;
 
 class InstanceOf_ extends Expr
 {
-    public $expr;
+    public Operand $expr;
 
-    public $class;
+    public Operand $class;
 
     public function __construct(Operand $expr, Operand $class, array $attributes = [])
     {
@@ -27,7 +27,7 @@ class InstanceOf_ extends Expr
         $this->class = $this->addReadRef($class);
     }
 
-    public function getVariableNames()
+    public function getVariableNames(): array
     {
         return ['expr', 'class', 'result'];
     }

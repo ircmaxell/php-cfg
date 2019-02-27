@@ -12,50 +12,55 @@ declare(strict_types=1);
 namespace PHPCfg\Op\Expr;
 
 use PHPCfg\Block;
+
+use PHPCfg\Op;
 use PHPCfg\Op\Expr;
 use PhpCfg\Operand;
 
 class Param extends Expr
 {
-    public $name;
+    public Operand $name;
 
-    public $byRef;
+    public bool $byRef;
 
-    public $variadic;
+    public bool $variadic;
 
-    public $defaultVar;
+    public ?Operand $defaultVar = null;
 
-    public $defaultBlock;
+    public ?Block $defaultBlock = null;
 
-    public $type;
+    public Op\Type $declaredType;
 
     // A helper
     public $function;
 
-    public function __construct(Operand $name, $type, $byRef, $variadic, Operand $defaultVar = null, Block $defaultBlock = null, array $attributes = [])
-    {
+    public function __construct(
+        Operand $name, 
+        Op\Type $type, 
+        bool $byRef, 
+        bool $variadic, 
+        ?Operand $defaultVar = null, 
+        ?Block $defaultBlock = null, 
+        array $attributes = []
+    ) {
         parent::__construct($attributes);
         $this->result->original = $name;
         $this->name = $this->addReadRef($name);
-        if ($type instanceof Operand\Literal) {
-            $this->type = $type->value;
-        } elseif (! empty($type)) {
-            throw new \LogicException('Only literal param types are supported');
-        } else {
-            $this->type = null;
+        $this->declaredType = $type;
+        $this->byRef = $byRef;
+        $this->variadic = $variadic;
+        if (!is_null($defaultVar)) {
+            $this->defaultVar = $this->addReadRef($defaultVar);
         }
-        $this->byRef = (bool) $byRef;
-        $this->variadic = (bool) $variadic;
-        $this->defaultVar = $this->addReadRef($defaultVar);
         $this->defaultBlock = $defaultBlock;
     }
 
-    public function getVariableNames()
+    public function getVariableNames(): array
     {
         return ['name', 'defaultVar', 'result'];
     }
 
-    public function getSubBlocks()
+    public function getSubBlocks(): array
     {
         return ['defaultBlock'];
     }

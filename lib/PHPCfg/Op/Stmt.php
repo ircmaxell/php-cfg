@@ -15,15 +15,5 @@ use PHPCfg\Op;
 
 abstract class Stmt extends Op
 {
-    public $result;
 
-    public function __construct(array $attributes = [])
-    {
-        parent::__construct($attributes);
-    }
-
-    public function getVariableNames()
-    {
-        return [];
-    }
 }
