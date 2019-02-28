@@ -29,6 +29,7 @@ class Block
 
     /**
      * Operands that die after the end of this block
+     *
      * @var array
      */
     public $deadOperands = [];

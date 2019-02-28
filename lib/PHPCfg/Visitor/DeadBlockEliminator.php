@@ -11,12 +11,9 @@ declare(strict_types=1);
 
 namespace PHPCfg\Visitor;
 
-use PHPCfg\Block;
-use PHPCfg\Func;
-use PHPCfg\Op;
-use PHPCfg\Script;
-use PHPCfg\Visitor;
 use PHPCfg\AbstractVisitor;
+use PHPCfg\Block;
+use PHPCfg\Visitor;
 
 class DeadBlockEliminator extends AbstractVisitor
 {
@@ -31,12 +28,11 @@ class DeadBlockEliminator extends AbstractVisitor
         foreach ($toRemove as $key) {
             unset($block->parents[$key]);
         }
-        if (!empty($toRemove)) {
+        if (! empty($toRemove)) {
             $block->parents = array_values($block->parents);
         }
         if ($block->dead) {
             return Visitor::REMOVE_BLOCK;
         }
-        return null;
     }
 }

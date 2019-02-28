@@ -28,13 +28,13 @@ $traverser->addVisitor($declarations);
 $traverser->addVisitor($calls);
 $traverser->addVisitor(new PHPCfg\Visitor\Simplifier());
 $traverser->addVisitor($variables);
-$traverser->addVisitor(new PHPCfg\Visitor\DeadBlockEliminator);
+$traverser->addVisitor(new PHPCfg\Visitor\DeadBlockEliminator());
 
 $script = $parser->parse($code, __FILE__);
 $traverser->traverse($script);
 
-$phiResolver = new PHPCfg\Traverser;
-$phiResolver->addVisitor(new PHPCfg\Visitor\PhiResolver);
+$phiResolver = new PHPCfg\Traverser();
+$phiResolver->addVisitor(new PHPCfg\Visitor\PhiResolver());
 $phiResolver->traverse($script);
 
 if ($graphviz) {
@@ -45,11 +45,10 @@ if ($graphviz) {
     echo $dumper->printScript($script);
 }
 
-(new PHPCfg\LivenessDetector)->detect($script);
+(new PHPCfg\LivenessDetector())->detect($script);
 
 $dumper = new PHPCfg\Printer\Text();
 echo $dumper->printScript($script);
-
 
 function getCode($argc, $argv)
 {

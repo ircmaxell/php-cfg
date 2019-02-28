@@ -13,20 +13,22 @@ namespace PHPCfg;
 
 class LivenessDetector
 {
-    public function detect(Script $script) {
+    public function detect(Script $script)
+    {
         $this->detectFunc($script->main);
         foreach ($script->functions as $func) {
             $this->detectFunc($func);
         }
     }
 
-    protected function detectFunc(Func $func) {
+    protected function detectFunc(Func $func)
+    {
         $startBlock = $func->cfg;
-        $seen = new \SplObjectStorage;
+        $seen = new \SplObjectStorage();
         $queue = [$startBlock];
         $endBlocks = [];
-        $variables = new \SplObjectStorage;
-        while (!empty($queue)) {
+        $variables = new \SplObjectStorage();
+        while (! empty($queue)) {
             $block = array_pop($queue);
             if ($seen->contains($block)) {
                 continue;
@@ -37,9 +39,9 @@ class LivenessDetector
 
             if ($lastOp instanceof Op\Terminal\Return_) {
                 $endBlocks[] = $block;
-            } 
+            }
             foreach ($lastOp->getSubBlocks() as $name) {
-                $tmp = $lastOp->$name;
+                $tmp = $lastOp->{$name};
                 if (is_array($tmp)) {
                     foreach ($tmp as $obj) {
                         $queue[] = $obj;
@@ -47,7 +49,7 @@ class LivenessDetector
                 } elseif ($tmp instanceof Block) {
                     $queue[] = $tmp;
                 } else {
-                    throw new \LogicException("Found non-block in subblocks");
+                    throw new \LogicException('Found non-block in subblocks');
                 }
             }
         }
@@ -58,16 +60,17 @@ class LivenessDetector
         }
     }
 
-    protected function collectVariables(Block $block, \SplObjectStorage $variables) {
+    protected function collectVariables(Block $block, \SplObjectStorage $variables)
+    {
         foreach ($block->children as $op) {
             foreach ($op->getVariableNames() as $var) {
-                $tmp = $op->$var;
+                $tmp = $op->{$var};
                 if (is_array($tmp)) {
                     foreach ($tmp as $operand) {
                         if ($operand instanceof Operand\Literal) {
                             continue;
                         }
-                        if (!empty($operand->usages)) {
+                        if (! empty($operand->usages)) {
                             $variables->attach($operand);
                         }
                     }
@@ -75,7 +78,7 @@ class LivenessDetector
                     if ($tmp instanceof Operand\Literal) {
                         continue;
                     }
-                    if (!empty($tmp->usages)) {
+                    if (! empty($tmp->usages)) {
                         $variables->attach($tmp);
                     }
                 }
@@ -83,21 +86,24 @@ class LivenessDetector
         }
     }
 
-    protected function hoist(Block $startBlock, \SplObjectStorage $variables) {
+    protected function hoist(Block $startBlock, \SplObjectStorage $variables)
+    {
         foreach ($variables as $var) {
             $startBlock->hoistedOperands[] = $var;
         }
     }
 
-    protected function computeDeath(Block $endBlock, \SplObjectStorage $variables) {
+    protected function computeDeath(Block $endBlock, \SplObjectStorage $variables)
+    {
         foreach ($variables as $var) {
             $deathBlock = $this->computeDeathForVar($endBlock, $var);
             $deathBlock->deadOperands[] = $var;
         }
     }
 
-    protected function computeDeathForVar(Block $endBlock, Operand $var): Block {
-restart:
+    protected function computeDeathForVar(Block $endBlock, Operand $var): Block
+    {
+        restart:
         if ($this->isVarUsedInBlock($endBlock, $var)) {
             return $endBlock;
         }
@@ -115,15 +121,16 @@ restart:
         }
     }
 
-    protected function isVarUsedInBlock(Block $block, Operand $var): bool {
-        // we're not doing register allocation here, so we can simply find where the 
+    protected function isVarUsedInBlock(Block $block, Operand $var): bool
+    {
+        // we're not doing register allocation here, so we can simply find where the
         // variable "dies" (has no further usages)
         foreach ($var->usages as $op) {
             if (false !== array_search($op, $block->children, true)) {
                 return true;
             }
         }
+
         return false;
     }
-
 }

@@ -26,13 +26,13 @@ class LivenessDetectortest extends TestCase
         $parser = new Parser((new ParserFactory())->create(ParserFactory::PREFER_PHP7), $astTraverser);
         $traverser = new Traverser();
         $traverser->addVisitor(new Visitor\Simplifier());
-        $traverser->addVisitor(new Visitor\DeadBlockEliminator);
+        $traverser->addVisitor(new Visitor\DeadBlockEliminator());
         $printer = new Printer\Text();
 
         $resolver = new Traverser();
         $resolver->addVisitor(new Visitor\PhiResolver());
 
-        $livenessDetector = new LivenessDetector;
+        $livenessDetector = new LivenessDetector();
 
         try {
             $script = $parser->parse($code, 'foo.php');
