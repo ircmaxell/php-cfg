@@ -43,6 +43,9 @@ class Text extends Printer
                     $output .= $this->indent("\nParent: Block#".$rendered['blockIds'][$prev]);
                 }
             }
+            foreach ($block->deadOperands as $op) {
+                $output .= $this->indent("\nDead: Var#" . $rendered['varIds'][$op]);
+            }
             foreach ($ops as $op) {
                 $output .= $this->indent("\n".$op['label']);
                 foreach ($op['childBlocks'] as $child) {

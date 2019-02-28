@@ -1,0 +1,26 @@
+<?php
+
+$a = "test";
+echo $a;
+
+goto next;
+
+next:
+echo 1;
+-----
+Block#1
+    Dead: Var#1
+    Expr_Assign
+        var: Var#1<$a>
+        expr: LITERAL('test')
+        result: Var#2
+    Terminal_Echo
+        expr: Var#1<$a>
+    Stmt_Jump
+        target: Block#2
+
+Block#2
+    Parent: Block#1
+    Terminal_Echo
+        expr: LITERAL(1)
+    Terminal_Return

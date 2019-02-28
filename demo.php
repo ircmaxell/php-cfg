@@ -28,9 +28,14 @@ $traverser->addVisitor($declarations);
 $traverser->addVisitor($calls);
 $traverser->addVisitor(new PHPCfg\Visitor\Simplifier());
 $traverser->addVisitor($variables);
+$traverser->addVisitor(new PHPCfg\Visitor\DeadBlockEliminator);
 
 $script = $parser->parse($code, __FILE__);
 $traverser->traverse($script);
+
+$phiResolver = new PHPCfg\Traverser;
+$phiResolver->addVisitor(new PHPCfg\Visitor\PhiResolver);
+$phiResolver->traverse($script);
 
 if ($graphviz) {
     $dumper = new PHPCfg\Printer\GraphViz();
@@ -39,6 +44,12 @@ if ($graphviz) {
     $dumper = new PHPCfg\Printer\Text();
     echo $dumper->printScript($script);
 }
+
+(new PHPCfg\LivenessDetector)->detect($script);
+
+$dumper = new PHPCfg\Printer\Text();
+echo $dumper->printScript($script);
+
 
 function getCode($argc, $argv)
 {
@@ -52,9 +63,14 @@ function getCode($argc, $argv)
 
     return [__FILE__, <<<'EOF'
 <?php
-function foo(array $a) {
-    $a[] = 1;
-}
+
+$a = "test";
+echo $a;
+
+goto next;
+
+next:
+echo 1;
 EOF
     ];
 }

@@ -24,6 +24,15 @@ class Block
 
     public $dead = false;
 
+    /** @var Operand[] */
+    public $hoistedOperands = [];
+
+    /**
+     * Operands that die after the end of this block
+     * @var array
+     */
+    public $deadOperands = [];
+
     public function __construct(self $parent = null)
     {
         if ($parent) {
