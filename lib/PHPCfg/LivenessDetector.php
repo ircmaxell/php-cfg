@@ -103,6 +103,13 @@ class LivenessDetector
 
     protected function computeDeathForVar(Block $endBlock, Operand $var): Block
     {
+        /*
+         * This is the worst-case situation, but it *should* work assuming death
+         * is free...
+         *
+         * Thought this should be optimized at some point
+         */
+        return $endBlock;
         restart:
         if ($this->isVarUsedInBlock($endBlock, $var)) {
             return $endBlock;

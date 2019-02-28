@@ -9,7 +9,6 @@ next:
 echo 1;
 -----
 Block#1
-    Dead: Var#1
     Expr_Assign
         var: Var#1<$a>
         expr: LITERAL('test')
@@ -21,6 +20,7 @@ Block#1
 
 Block#2
     Parent: Block#1
+    Dead: Var#1
     Terminal_Echo
         expr: LITERAL(1)
     Terminal_Return
