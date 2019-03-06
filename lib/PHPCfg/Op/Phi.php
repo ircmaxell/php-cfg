@@ -30,6 +30,9 @@ class Phi extends Op
 
     public function addOperand(Operand $op)
     {
+        if ($op instanceof Operand\Literal) {
+            throw new \LogicException("Phi nodes cannot have literal operands");
+        }
         if ($op === $this->result) {
             return;
         }

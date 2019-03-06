@@ -1,0 +1,41 @@
+<?php
+
+$x = a() && b();
+-----
+Block#1
+    Expr_FuncCall
+        name: LITERAL('a')
+        result: Var#1
+    Stmt_JumpIf
+        cond: Var#1
+        if: Block#2
+        else: Block#3
+
+Block#2
+    Parent: Block#1
+    Expr_FuncCall
+        name: LITERAL('b')
+        result: Var#2
+    Expr_Cast_Bool
+        expr: Var#2
+        result: Var#3<Var#4>
+    Stmt_Jump
+        target: Block#4
+
+Block#3
+    Parent: Block#1
+    Expr_Assign
+        var: Var#3<Var#4>
+        expr: LITERAL(false)
+        result: Var#5
+    Stmt_Jump
+        target: Block#4
+
+Block#4
+    Parent: Block#2
+    Parent: Block#3
+    Expr_Assign
+        var: Var#6<$x>
+        expr: Var#3<Var#4>
+        result: Var#7
+    Terminal_Return

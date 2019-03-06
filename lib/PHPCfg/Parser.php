@@ -1474,15 +1474,16 @@ class Parser
     {
         $result = new Temporary();
         $longBlock = new Block();
+        $shortBlock = new Block();
         $endBlock = new Block();
 
         $left = $this->readVariable($this->parseExprNode($expr->left));
-        $if = $isOr ? $endBlock : $longBlock;
-        $else = $isOr ? $longBlock : $endBlock;
+        $if = $isOr ? $shortBlock : $longBlock;
+        $else = $isOr ? $longBlock : $shortBlock;
 
         $this->block->children[] = new JumpIf($left, $if, $else);
         $longBlock->addParent($this->block);
-        $endBlock->addParent($this->block);
+        $shortBlock->addParent($this->block);
 
         $this->block = $longBlock;
         $right = $this->readVariable($this->parseExprNode($expr->right));
@@ -1491,9 +1492,15 @@ class Parser
         $this->block->children[] = new Jump($endBlock);
         $endBlock->addParent($this->block);
 
+        $this->block = $shortBlock;
+        $tmpResult = new Temporary;
+        $this->block->children[] = new Op\Expr\Assign($tmpResult, new Literal($isOr));
+        $this->block->children[] = new Jump($endBlock);
+        $endBlock->addParent($this->block);
+
         $this->block = $endBlock;
         $phi = new Op\Phi($result, ['block' => $this->block]);
-        $phi->addOperand(new Literal($isOr));
+        $phi->addOperand($tmpResult);
         $phi->addOperand($boolCast->result);
         $this->block->phi[] = $phi;
 

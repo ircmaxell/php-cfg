@@ -20,14 +20,23 @@ Block#2
         expr: Var#2
         result: Var#3
     Stmt_Jump
-        target: Block#3
+        target: Block#4
 
 Block#3
     Parent: Block#1
-    Parent: Block#2
-    Var#4 = Phi(LITERAL(false), Var#3)
     Expr_Assign
-        var: Var#5<$x>
-        expr: Var#4
-        result: Var#6
+        var: Var#4
+        expr: LITERAL(false)
+        result: Var#5
+    Stmt_Jump
+        target: Block#4
+
+Block#4
+    Parent: Block#2
+    Parent: Block#3
+    Var#6 = Phi(Var#4, Var#3)
+    Expr_Assign
+        var: Var#7<$x>
+        expr: Var#6
+        result: Var#8
     Terminal_Return

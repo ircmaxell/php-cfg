@@ -13,21 +13,30 @@ Block#1
 
 Block#2
     Parent: Block#1
-    Parent: Block#3
-    Var#2 = Phi(LITERAL(true), Var#3)
     Expr_Assign
-        var: Var#4<$x>
-        expr: Var#2
-        result: Var#5
-    Terminal_Return
+        var: Var#2
+        expr: LITERAL(true)
+        result: Var#3
+    Stmt_Jump
+        target: Block#4
 
 Block#3
     Parent: Block#1
     Expr_FuncCall
         name: LITERAL('b')
-        result: Var#6
+        result: Var#4
     Expr_Cast_Bool
-        expr: Var#6
-        result: Var#3
+        expr: Var#4
+        result: Var#5
     Stmt_Jump
-        target: Block#2
+        target: Block#4
+
+Block#4
+    Parent: Block#3
+    Parent: Block#2
+    Var#6 = Phi(Var#2, Var#5)
+    Expr_Assign
+        var: Var#7<$x>
+        expr: Var#6
+        result: Var#8
+    Terminal_Return
