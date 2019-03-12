@@ -69,6 +69,8 @@ class LivenessDetector
                     foreach ($tmp as $operand) {
                         if ($operand instanceof Operand\Literal) {
                             continue;
+                        } elseif ($operand instanceof Operand\NullOperand) {
+                            continue;
                         }
                         if (! empty($operand->usages)) {
                             $variables->attach($operand);
@@ -76,6 +78,8 @@ class LivenessDetector
                     }
                 } elseif ($tmp instanceof Operand) {
                     if ($tmp instanceof Operand\Literal) {
+                        continue;
+                    } elseif ($tmp instanceof Operand\NullOperand) {
                         continue;
                     }
                     if (! empty($tmp->usages)) {
