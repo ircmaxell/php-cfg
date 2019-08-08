@@ -9,27 +9,25 @@ declare(strict_types=1);
  * @license MIT See LICENSE at the root of the project for more info
  */
 
-namespace PHPCfg\Op\Expr;
+namespace PHPCfg\Op\Terminal;
 
-use PHPCfg\Op\Expr;
+use PHPCfg\Op\Terminal;
 use PhpCfg\Operand;
 
-class Exit_ extends Expr
+class Exit_ extends Terminal
 {
-    public ?Operand $expr;
+    public ?Operand $expr = null;
 
     public function __construct(Operand $expr = null, array $attributes = [])
     {
         parent::__construct($attributes);
-        if ($expr) {
+        if (!is_null($expr)) {
             $this->expr = $this->addReadRef($expr);
-        } else {
-            $this->expr = null;
         }
     }
 
     public function getVariableNames(): array
     {
-        return ['expr', 'result'];
+        return ['expr'];
     }
 }

@@ -838,6 +838,7 @@ class Parser
 
             return $op->result;
         }
+
         $method = 'parse'.$expr->getType();
         if (method_exists($this, $method)) {
             $op = $this->{$method}($expr);
@@ -1028,7 +1029,12 @@ class Parser
             $e = $this->readVariable($this->parseExprNode($expr->expr));
         }
 
-        return new Op\Expr\Exit_($e, $this->mapAttributes($expr));
+        $this->block->children[] = new Op\Terminal\Exit_($e, $this->mapAttributes($expr));
+        // Dump everything after the exit
+        $this->block = new Block();
+        $this->block->dead = true;
+
+        return new Literal(1);
     }
 
     protected function parseExpr_FuncCall(Expr\FuncCall $expr)

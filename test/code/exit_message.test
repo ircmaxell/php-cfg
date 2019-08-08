@@ -1,0 +1,16 @@
+<?php
+$a = 1;
+exit('Quitting with message: ' . $a);
+echo $a;
+-----
+Block#1
+    Expr_Assign
+        var: Var#1<$a>
+        expr: LITERAL(1)
+        result: Var#2
+    Expr_BinaryOp_Concat
+        left: LITERAL('Quitting with message: ')
+        right: Var#1<$a>
+        result: Var#3
+    Terminal_Exit
+        expr: Var#3
