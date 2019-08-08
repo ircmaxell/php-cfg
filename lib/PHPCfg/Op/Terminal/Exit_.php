@@ -18,7 +18,6 @@ class Exit_ extends Terminal
 {
     public ?Operand $expr = null;
 
-
     public function __construct(Operand $expr = null, array $attributes = [])
     {
         parent::__construct($attributes);

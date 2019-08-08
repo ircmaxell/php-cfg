@@ -1034,7 +1034,7 @@ class Parser
         $this->block = new Block();
         $this->block->dead = true;
 
-        return new Op\Terminal\Exit_($e, $this->mapAttributes($expr));
+        return new Literal(1);
     }
 
     protected function parseExpr_FuncCall(Expr\FuncCall $expr)
