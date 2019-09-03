@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/ircmaxell/php-cfg.svg?branch=master)](https://travis-ci.org/ircmaxell/php-cfg)
+[![Latest Stable Version](https://poser.pugx.org/ircmaxell/php-cfg/v/stable)](https://packagist.org/packages/ircmaxell/php-cfg)
 
 # PHP-CFG
 
