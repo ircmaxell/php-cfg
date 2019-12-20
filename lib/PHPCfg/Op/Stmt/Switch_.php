@@ -17,7 +17,7 @@ use PhpCfg\Operand;
 
 class Switch_ extends Stmt
 {
-    public Operand $target;
+    public Operand $cond;
 
     public array $cases;
 
