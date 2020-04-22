@@ -32,13 +32,9 @@ $traverser->addVisitor($variables);
 $script = $parser->parse($code, __FILE__);
 $traverser->traverse($script);
 
-if ($graphviz) {
-    $dumper = new PHPCfg\Printer\GraphViz();
-    echo $dumper->printScript($script);
-} else {
-    $dumper = new PHPCfg\Printer\Text();
-    echo $dumper->printScript($script);
-}
+$dumper = new PHPCfg\Printer\Json();
+//$dumper = new PHPCfg\Printer\Text();
+$data = $dumper->printScript($script);
 
 function getCode($argc, $argv)
 {

@@ -1,0 +1,16 @@
+{
+    "0": {
+        "0": "Block#1",
+        "label": "Terminal_Return"
+    },
+    "1": "\nFunction foo():",
+    "2": " mixed",
+    "3": {
+        "0": "Block#1",
+        "label": "Terminal_Return"
+    },
+    "label": {
+        "0": "Block#1",
+        "label": "Terminal_Return"
+    }
+}
