@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace PHPCfg\Printer;
 
+use Nette\Utils\FileSystem;
 use PHPCfg\Func;
 use PHPCfg\Printer;
 use PHPCfg\Script;
@@ -46,7 +47,12 @@ class Json extends Printer
 
         // array data
         $jsonData = \Nette\Utils\Json::encode($output, \Nette\Utils\Json::PRETTY);
+
+        // 1. print
         echo $jsonData;
+
+        // 2. save to a file
+        FileSystem::write('result.json', $jsonData);
     }
 
     public function printFunc(Func $func): array
