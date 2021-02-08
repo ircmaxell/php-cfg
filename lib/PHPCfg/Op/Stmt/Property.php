@@ -34,7 +34,7 @@ class Property extends Stmt
     {
         parent::__construct($attributes);
         $this->name = $this->addReadRef($name);
-        $this->visiblity = $visiblity;
+        $this->visibility = $visiblity;
         $this->static = $static;
         $this->declaredType = $declaredType;
         if (!is_null($defaultVar)) {
