@@ -22,7 +22,7 @@ class NameResolverTest extends TestCase
     /** @var Parser */
     private $astParser;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $this->astParser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
     }

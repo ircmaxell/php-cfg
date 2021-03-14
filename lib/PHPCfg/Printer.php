@@ -245,7 +245,7 @@ abstract class Printer
     }
 
     protected function renderType(?Op\Type $type): string {
-        if ($type instanceof Op\Type\Mixed) {
+        if ($type instanceof Op\Type\MixedType) {
             return 'mixed';
         }
         if ($type instanceof Op\Type\Void_) {
