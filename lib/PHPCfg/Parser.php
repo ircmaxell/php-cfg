@@ -415,7 +415,12 @@ class Parser
         $this->block = new Block();
         $this->block->dead = true;
     }
-
+    
+    protected function parseStmt_GroupUse(Stmt\GroupUse $node)
+    {
+        // ignore use statements, since names are already resolved
+    }
+    
     protected function parseStmt_HaltCompiler(Stmt\HaltCompiler $node)
     {
         $this->block->children[] = new Op\Terminal\Echo_(
