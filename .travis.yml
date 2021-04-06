@@ -2,6 +2,7 @@ language: php
 
 php:
   - 7.4snapshot
+  - 8.0snapshot
   - nightly
 
 install:

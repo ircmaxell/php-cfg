@@ -172,7 +172,7 @@ class Parser
 
     protected function parseTypeNode(?Node $node): Op\Type {
         if (is_null($node)) {
-            return new Op\Type\Mixed;
+            return new Op\Type\Mixed_;
         }
         if ($node instanceof Node\Name) {
             return new Op\Type\Reference(
