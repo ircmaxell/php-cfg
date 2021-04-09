@@ -1,0 +1,28 @@
+<?php
+$var = new class {
+  function doSomething() {
+    echo "Hello World";
+  }
+};
+-----
+Block#1
+    Stmt_Class
+        name: LITERAL('{anonymousClass}#1')
+        stmts: Block#2
+    Expr_New
+        class: LITERAL('{anonymousClass}#1')
+        result: Var#1
+    Expr_Assign
+        var: Var#2<$var>
+        expr: Var#1
+        result: Var#3
+    Terminal_Return
+
+Block#2
+    Stmt_ClassMethod<doSomething>
+
+Function {anonymousClass}#1::doSomething(): mixed
+Block#1
+    Terminal_Echo
+        expr: LITERAL('Hello World')
+    Terminal_Return 

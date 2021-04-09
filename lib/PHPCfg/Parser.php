@@ -1159,8 +1159,15 @@ class Parser
 
     protected function parseExpr_New(Expr\New_ $expr)
     {
+        if ($expr->class instanceof Node\Stmt\Class_) {
+          $this->parseStmt_Class($expr->class);
+          $classExpr = $expr->class->name;
+        } else {
+          $classExpr = $expr->class;
+        }
+        
         return new Op\Expr\New_(
-            $this->readVariable($this->parseExprNode($expr->class)),
+            $this->readVariable($this->parseExprNode($classExpr)),
             $this->parseExprList($expr->args, self::MODE_READ),
             $this->mapAttributes($expr)
         );
