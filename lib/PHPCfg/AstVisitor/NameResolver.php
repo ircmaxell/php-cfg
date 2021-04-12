@@ -46,12 +46,12 @@ class NameResolver extends NameResolverParent
     protected $anonymousClasses = 0;
 
     public function enterNode(Node $node)
-    {        
+    {
         parent::enterNode($node);
-
-        if (property_exists($node, "name") && is_null($node->name)) {
+        
+        if ($node instanceof Node\Stmt\Class_ && is_null($node->name)) {
             $anonymousName = "{anonymousClass}#".++$this->anonymousClasses;
-            $node->name = new \PhpParser\Node\Name($anonymousName);
+            $node->name = new \PhpParser\Node\Identifier($anonymousName);
             $node->namespacedName = new \PhpParser\Node\Name($anonymousName);
         }
         
