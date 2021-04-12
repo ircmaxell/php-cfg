@@ -42,10 +42,19 @@ class NameResolver extends NameResolverParent
         'resource',
         'callable',
     ];
+    
+    protected $anonymousClasses = 0;
 
     public function enterNode(Node $node)
     {
         parent::enterNode($node);
+        
+        if ($node instanceof Node\Stmt\Class_ && is_null($node->name)) {
+            $anonymousName = "{anonymousClass}#".++$this->anonymousClasses;
+            $node->name = new \PhpParser\Node\Identifier($anonymousName);
+            $node->namespacedName = new \PhpParser\Node\Name($anonymousName);
+        }
+        
         $comment = $node->getDocComment();
         if ($comment) {
             $regex = '(@(param|return|var|type)\\h+(\\S+))';
