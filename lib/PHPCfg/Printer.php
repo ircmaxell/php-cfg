@@ -254,6 +254,18 @@ abstract class Printer
         if ($type instanceof Op\Type\Nullable) {
             return '?' . $this->renderType($type->subtype);
         }
+        if ($type instanceof Op\Type\Union) {
+            $i = 1;
+            $strTypes = "";
+            foreach($type->subtypes as $subtype) {
+              $strTypes .= $this->renderType($subtype);
+              if($i < count($type->subtypes)) {
+                $strTypes .= "|";
+              }
+              $i ++;
+            }
+            return $strTypes;
+        }
         if ($type instanceof Op\Type\Reference) {
             return $this->renderOperand($type->declaration);
         }
