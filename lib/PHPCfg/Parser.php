@@ -186,6 +186,17 @@ class Parser
                 $this->mapAttributes($node)
             );
         }
+        if ($node instanceof Node\UnionType) {
+            $parsedTypes = [];
+            foreach($node->types as $type) {
+              $parsedTypes[] = $this->parseTypeNode($type);
+            }
+            
+            return new Op\Type\Union(
+                $parsedTypes,
+                $this->mapAttributes($node)
+            );
+        }
         if ($node instanceof Node\Identifier) {
             return new Op\Type\Literal(
                 $node->name,
