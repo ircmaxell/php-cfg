@@ -25,8 +25,8 @@ class Function_ extends Stmt implements CallableOp
         $this->func = $func;
     }
 
-    public function getFunc(): Func {
+    public function getFunc(): Func
+    {
         return $this->func;
     }
-
 }

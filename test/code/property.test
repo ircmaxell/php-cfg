@@ -2,6 +2,11 @@
 class A {
     public $prop = 1;
     private $prop2 = 1+1;
+    private readonly $prop3;
+    private readonly $prop4;
+    private readonly static $prop5;
+    static $prop6;
+    protected $prop7;
 }
 -----
 Block#1
@@ -12,15 +17,37 @@ Block#1
 
 Block#2
     Stmt_Property
+        flags: public
         declaredType: mixed
         name: LITERAL('prop')
         defaultVar: LITERAL(1)
         defaultBlock: Block#3
     Stmt_Property
+        flags: private
         declaredType: mixed
         name: LITERAL('prop2')
         defaultVar: Var#1
         defaultBlock: Block#4
+    Stmt_Property
+        flags: readonly|private
+        declaredType: mixed
+        name: LITERAL('prop3')
+    Stmt_Property
+        flags: readonly|private
+        declaredType: mixed
+        name: LITERAL('prop4')
+    Stmt_Property
+        flags: readonly|static|private
+        declaredType: mixed
+        name: LITERAL('prop5')
+    Stmt_Property
+        flags: static|public
+        declaredType: mixed
+        name: LITERAL('prop6')
+    Stmt_Property
+        flags: protected
+        declaredType: mixed
+        name: LITERAL('prop7')
 
 Block#3
 

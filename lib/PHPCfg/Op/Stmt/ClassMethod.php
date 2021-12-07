@@ -11,6 +11,55 @@ declare(strict_types=1);
 
 namespace PHPCfg\Op\Stmt;
 
+use PHPCfg\Func;
+use PhpParser\Node;
+
 class ClassMethod extends Function_
 {
+    public int $visibility;
+
+    public bool $static;
+
+    public bool $final;
+
+    public bool $abstract;
+
+    public function __construct(Func $func, int $visiblity, bool $static, bool $final, bool $abstract, array $attributes = [])
+    {
+        parent::__construct($func, $attributes);
+        $this->visibility = $visiblity;
+        $this->static = $static;
+        $this->final = $final;
+        $this->abstract = $abstract;
+    }
+    
+    public function isPublic() : bool
+    {
+        return (bool) ($this->visibility & Node\Stmt\Class_::MODIFIER_PUBLIC);
+    }
+
+    public function isProtected() : bool
+    {
+        return (bool) ($this->visibility & Node\Stmt\Class_::MODIFIER_PROTECTED);
+    }
+
+    public function isPrivate() : bool
+    {
+        return (bool) ($this->visibility & Node\Stmt\Class_::MODIFIER_PRIVATE);
+    }
+
+    public function isAbstract() : bool
+    {
+        return $this->abstract;
+    }
+
+    public function isFinal() : bool
+    {
+        return $this->final;
+    }
+
+    public function isStatic() : bool
+    {
+        return $this->static;
+    }
 }

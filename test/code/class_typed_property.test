@@ -20,5 +20,6 @@ Block#1
 
 Block#2
     Stmt_Property
+        flags: public
         declaredType: ?LITERAL('NS\\NameOfClass')
         name: LITERAL('self')

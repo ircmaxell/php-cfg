@@ -20,6 +20,7 @@ Block#1
 
 Block#2
     Stmt_ClassMethod<doSomething>
+        flags: public
 
 Function {anonymousClass}#1::doSomething(): mixed
 Block#1
