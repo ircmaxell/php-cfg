@@ -170,7 +170,8 @@ class Parser
         throw new \RuntimeException('Unknown Node Encountered : '.$type);
     }
 
-    protected function parseTypeNode(?Node $node): Op\Type {
+    protected function parseTypeNode(?Node $node): Op\Type
+    {
         if (is_null($node)) {
             return new Op\Type\Mixed_;
         }
@@ -188,8 +189,8 @@ class Parser
         }
         if ($node instanceof Node\UnionType) {
             $parsedTypes = [];
-            foreach($node->types as $type) {
-              $parsedTypes[] = $this->parseTypeNode($type);
+            foreach ($node->types as $type) {
+                $parsedTypes[] = $this->parseTypeNode($type);
             }
             
             return new Op\Type\Union(
@@ -240,7 +241,8 @@ class Parser
 
             $this->block->children[] = new Op\Terminal\Const_(
                 $this->parseExprNode($const->name),
-                $value, $valueBlock,
+                $value,
+                $valueBlock,
                 $this->mapAttributes($node)
             );
         }
@@ -266,7 +268,19 @@ class Parser
             $func->cfg = null;
         }
 
-        $this->block->children[] = $class_method = new Op\Stmt\ClassMethod($func, $this->mapAttributes($node));
+        $visibility = $node->flags & Node\Stmt\Class_::VISIBILITY_MODIFIER_MASK;
+        $static = $node->flags & Node\Stmt\Class_::MODIFIER_STATIC;
+        $final = $node->flags & Node\Stmt\Class_::MODIFIER_FINAL;
+        $abstract = $node->flags & Node\Stmt\Class_::MODIFIER_ABSTRACT;
+
+        $this->block->children[] = $class_method = new Op\Stmt\ClassMethod(
+            $func,
+            $visibility,
+            (bool) $static,
+            (bool) $final,
+            (bool) $abstract,
+            $this->mapAttributes($node)
+        );
         $func->callableOp = $class_method;
     }
 
@@ -280,7 +294,8 @@ class Parser
 
             $this->block->children[] = new Op\Terminal\Const_(
                 $this->parseExprNode($const->namespacedName),
-                $value, $valueBlock,
+                $value,
+                $valueBlock,
                 $this->mapAttributes($node)
             );
         }
@@ -536,6 +551,7 @@ class Parser
     {
         $visibility = $node->flags & Node\Stmt\Class_::VISIBILITY_MODIFIER_MASK;
         $static = $node->flags & Node\Stmt\Class_::MODIFIER_STATIC;
+        $readonly = $node->flags & Node\Stmt\Class_::MODIFIER_READONLY;
 
         foreach ($node->props as $prop) {
             if ($prop->default) {
@@ -551,6 +567,7 @@ class Parser
                 $this->parseExprNode($prop->name),
                 $visibility,
                 (bool) $static,
+                (bool) $readonly,
                 $this->parseTypeNode($node->type),
                 $defaultVar,
                 $defaultBlock,
@@ -615,7 +632,9 @@ class Parser
             if ($case->cond) {
                 $caseExpr = $this->parseExprNode($case->cond);
                 $this->block->children[] = $cmp = new Op\Expr\BinaryOp\Equal(
-                    $this->readVariable($cond), $this->readVariable($caseExpr), $this->mapAttributes($case)
+                    $this->readVariable($cond),
+                    $this->readVariable($caseExpr),
+                    $this->mapAttributes($case)
                 );
 
                 $elseBlock = new Block();
@@ -934,7 +953,9 @@ class Parser
     protected function parseExpr_BitwiseNot(Expr\BitwiseNot $expr)
     {
         return new Op\Expr\BitwiseNot(
-            $this->readVariable($this->parseExprNode($expr->expr)), $this->mapAttributes($expr));
+            $this->readVariable($this->parseExprNode($expr->expr)),
+            $this->mapAttributes($expr)
+        );
     }
 
     protected function parseExpr_BooleanNot(Expr\BooleanNot $expr)
@@ -1152,7 +1173,8 @@ class Parser
 
             $assign = new Op\Expr\Assign(
                 $this->writeVariable($this->parseExprNode($var)),
-                $fetch->result, $attributes
+                $fetch->result,
+                $attributes
             );
             $this->block->children[] = $assign;
         }
@@ -1171,10 +1193,10 @@ class Parser
     protected function parseExpr_New(Expr\New_ $expr)
     {
         if ($expr->class instanceof Node\Stmt\Class_) {
-          $this->parseStmt_Class($expr->class);
-          $classExpr = $expr->class->name;
+            $this->parseStmt_Class($expr->class);
+            $classExpr = $expr->class->name;
         } else {
-          $classExpr = $expr->class;
+            $classExpr = $expr->class;
         }
         
         return new Op\Expr\New_(
@@ -1277,7 +1299,9 @@ class Parser
         $ifVar = new Temporary();
         if ($expr->if) {
             $this->block->children[] = new Op\Expr\Assign(
-                $ifVar, $this->readVariable($this->parseExprNode($expr->if)), $attrs
+                $ifVar,
+                $this->readVariable($this->parseExprNode($expr->if)),
+                $attrs
             );
         } else {
             $this->block->children[] = new Op\Expr\Assign($ifVar, $cond, $attrs);
@@ -1288,7 +1312,9 @@ class Parser
         $this->block = $elseBlock;
         $elseVar = new Temporary();
         $this->block->children[] = new Op\Expr\Assign(
-            $elseVar, $this->readVariable($this->parseExprNode($expr->else)), $attrs
+            $elseVar,
+            $this->readVariable($this->parseExprNode($expr->else)),
+            $attrs
         );
         $this->block->children[] = new Jump($endBlock, $attrs);
         $endBlock->addParent($this->block);
@@ -1421,7 +1447,11 @@ class Parser
             $block = $this->parseNodes($case->stmts, $caseBlock);
         }
         $this->block->children[] = new Op\Stmt\Switch_(
-            $cond, $cases, $targets, $defaultBlock, $this->mapAttributes($node)
+            $cond,
+            $cases,
+            $targets,
+            $defaultBlock,
+            $this->mapAttributes($node)
         );
         if ($block && ! $block->dead) {
             // wire end of block to endblock

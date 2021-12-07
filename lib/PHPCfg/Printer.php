@@ -112,7 +112,11 @@ abstract class Printer
             $result .= '<'.$this->renderAssertion($op->assertion).'>';
         }
         if ($op instanceof Op\Stmt\Property) {
+            $result .= "\n    flags: " . $this->indent($this->renderFlags($op));
             $result .= "\n    declaredType: " . $this->indent($this->renderType($op->declaredType));
+        }
+        if ($op instanceof Op\Stmt\ClassMethod) {
+            $result .= "\n    flags: " . $this->indent($this->renderFlags($op));
         }
         if ($op instanceof Op\Expr\Param) {
             $result .= "\n    declaredType: " . $this->indent($this->renderType($op->declaredType));
@@ -244,7 +248,8 @@ abstract class Printer
         ];
     }
 
-    protected function renderType(?Op\Type $type): string {
+    protected function renderType(?Op\Type $type): string
+    {
         if ($type instanceof Op\Type\Mixed_) {
             return 'mixed';
         }
@@ -257,12 +262,12 @@ abstract class Printer
         if ($type instanceof Op\Type\Union) {
             $i = 1;
             $strTypes = "";
-            foreach($type->subtypes as $subtype) {
-              $strTypes .= $this->renderType($subtype);
-              if($i < count($type->subtypes)) {
-                $strTypes .= "|";
-              }
-              $i ++;
+            foreach ($type->subtypes as $subtype) {
+                $strTypes .= $this->renderType($subtype);
+                if ($i < count($type->subtypes)) {
+                    $strTypes .= "|";
+                }
+                $i ++;
             }
             return $strTypes;
         }
@@ -276,5 +281,37 @@ abstract class Printer
             return '';
         }
         throw new \LogicException("Unknown type rendering: " . get_class($type));
+    }
+
+    protected function renderFlags(Op\Stmt $stmt): string
+    {
+        $result = '';
+        
+        if ($stmt instanceof Op\Stmt\Property) {
+            if ($stmt->isReadOnly()) {
+                $result .= "readonly|";
+            }
+        } elseif ($stmt instanceof Op\Stmt\ClassMethod) {
+            if ($stmt->isFinal()) {
+                $result .= "final|";
+            }
+            if ($stmt->isAbstract()) {
+                $result .= "abstract|";
+            }
+        }
+
+        if ($stmt->isStatic()) {
+            $result .= "static|";
+        }
+        
+        if ($stmt->isProtected()) {
+            $result .= "protected";
+        } elseif ($stmt->isPrivate()) {
+            $result .= "private";
+        } else {
+            $result .= "public";
+        }
+
+        return $result;
     }
 }

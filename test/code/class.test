@@ -6,6 +6,24 @@ class NameOfClass extends \X implements Iface {
     function doSomething() {
         echo "Hello World";
     }
+
+    private function method1() {
+    }
+
+    protected function method2() {
+    }
+
+    private static function method3() {
+    }
+
+    final private function method4() {
+    }
+
+    abstract private function method5() {
+    }
+
+    abstract static protected function method6() {
+    }
 }
 $obj = new NameOfClass();
 -----
@@ -33,9 +51,46 @@ Block#2
 
 Block#3
     Stmt_ClassMethod<doSomething>
+        flags: public
+    Stmt_ClassMethod<method1>
+        flags: private
+    Stmt_ClassMethod<method2>
+        flags: protected
+    Stmt_ClassMethod<method3>
+        flags: static|private
+    Stmt_ClassMethod<method4>
+        flags: final|private
+    Stmt_ClassMethod<method5>
+        flags: abstract|private
+    Stmt_ClassMethod<method6>
+        flags: abstract|static|protected
 
 Function NS\NameOfClass::doSomething(): mixed
 Block#1
     Terminal_Echo
         expr: LITERAL('Hello World')
+    Terminal_Return
+
+Function NS\NameOfClass::method1(): mixed
+Block#1
+    Terminal_Return
+
+Function NS\NameOfClass::method2(): mixed
+Block#1
+    Terminal_Return
+
+Function NS\NameOfClass::method3(): mixed
+Block#1
+    Terminal_Return
+
+Function NS\NameOfClass::method4(): mixed
+Block#1
+    Terminal_Return
+
+Function NS\NameOfClass::method5(): mixed
+Block#1
+    Terminal_Return
+
+Function NS\NameOfClass::method6(): mixed
+Block#1
     Terminal_Return
