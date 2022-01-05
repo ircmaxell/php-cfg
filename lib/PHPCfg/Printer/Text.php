@@ -17,6 +17,11 @@ use PHPCfg\Script;
 
 class Text extends Printer
 {
+    public function __construct(bool $printAttributes = false)
+    {
+        parent::__construct($printAttributes);
+    }
+
     public function printScript(Script $script)
     {
         $output = '';
