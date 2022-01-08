@@ -28,8 +28,12 @@ abstract class Printer
     /** @var \SplObjectStorage */
     private $blocks;
 
-    public function __construct()
+    /** @var bool */
+    private $renderAttributes;
+
+    public function __construct(bool $renderAttributes = false)
     {
+        $this->renderAttributes = $renderAttributes;
         $this->reset();
     }
 
@@ -104,6 +108,7 @@ abstract class Printer
     protected function renderOp(Op $op)
     {
         $result = $op->getType();
+
         if ($op instanceof Op\CallableOp) {
             $func = $op->getFunc();
             $result .= '<'.$func->name.'>';
@@ -111,6 +116,9 @@ abstract class Printer
         if ($op instanceof Op\Expr\Assertion) {
             $result .= '<'.$this->renderAssertion($op->assertion).'>';
         }
+
+        $result .= $this->renderAttributes($op->getAttributes());
+
         if ($op instanceof Op\Stmt\Property) {
             $result .= "\n    flags: " . $this->indent($this->renderFlags($op));
             $result .= "\n    declaredType: " . $this->indent($this->renderType($op->declaredType));
@@ -310,6 +318,20 @@ abstract class Printer
             $result .= "private";
         } else {
             $result .= "public";
+        }
+
+        return $result;
+    }
+
+    public function renderAttributes(array $attributes): string
+    {
+        $result = '';
+        if ($this->renderAttributes) {
+            foreach ($attributes as $key => $value) {
+                if (is_string($value) || is_numeric($value)) {
+                    $result .= "\n    attribute['".$key."']: ".$value;
+                }
+            }
         }
 
         return $result;

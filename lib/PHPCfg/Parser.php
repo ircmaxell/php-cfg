@@ -1570,7 +1570,6 @@ class Parser
         return array_merge(
             [
                 'filename' => $this->fileName,
-                'doccomment' => $expr->getDocComment(),
             ],
             $expr->getAttributes()
         );
