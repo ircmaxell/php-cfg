@@ -23,6 +23,6 @@ jobs:
           php-version: "${{ matrix.php-version }}"
           tools: composer:v2
       - name: "Install dependencies"
-        run: "composer install --no-interaction --prefer-source --ignore-platform-reqs"
+        run: "composer install --no-interaction --ignore-platform-reqs"
       - name: "PHPUnit"
         run: "php vendor/bin/phpunit"
