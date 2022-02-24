@@ -10,7 +10,7 @@ Block#1
         result: Var#3
     Terminal_Return
 
-Function {anonymous}#1(): mixed
+Function '{anonymous}#1': mixed
 Block#1
     Expr_Param
         declaredType: mixed

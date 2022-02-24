@@ -7,10 +7,10 @@ $obj = new NameOfClass();
 -----
 Block#1
     Stmt_Class
-        name: LITERAL('NS\NameOfClass')
+        name: LITERAL('NS\\NameOfClass')
         stmts: Block#2
     Expr_New
-        class: LITERAL('NS\NameOfClass')
+        class: LITERAL('NS\\NameOfClass')
         result: Var#1
     Expr_Assign
         var: Var#2<$obj>
@@ -21,5 +21,5 @@ Block#1
 Block#2
     Stmt_Property
         flags: public
-        declaredType: ?LITERAL('NS\NameOfClass')
+        declaredType: ?LITERAL('NS\\NameOfClass')
         name: LITERAL('self')

@@ -57,7 +57,7 @@ abstract class Printer
     {
         $type = isset($var->type) ? '<inferred:' . $var->type->toString() . '>' : '';
         if ($var instanceof Literal) {
-            return "LITERAL{$type}(".stripslashes(var_export($var->value, true)).')';
+            return "LITERAL{$type}(".var_export($var->value, true).')';
         }
         if ($var instanceof Variable) {
             assert($var->name instanceof Literal);

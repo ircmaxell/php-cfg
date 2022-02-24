@@ -31,7 +31,7 @@ Block#1
     Stmt_Function<foo>
     Terminal_Return
 
-Function foo(): mixed
+Function 'foo': mixed
 Block#1
     Expr_Param
         declaredType: mixed
@@ -74,7 +74,7 @@ Block#1
         attribute['endLine']: 4
     Terminal_Return
 
-Function foo(): mixed
+Function 'foo': mixed
 Block#1
     Expr_Param
         attribute['filename']: foo.php
@@ -125,7 +125,7 @@ Block#1
         attribute['endFilePos']: 40
     Terminal_Return
 
-Function foo(): mixed
+Function 'foo': mixed
 Block#1
     Expr_Param
         attribute['filename']: foo.php

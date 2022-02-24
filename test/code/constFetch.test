@@ -9,7 +9,7 @@ namespace Foo;
 -----
 Block#1
     Expr_ConstFetch
-        nsName: LITERAL('Foo\BAR')
+        nsName: LITERAL('Foo\\BAR')
         name: LITERAL('BAR')
         result: Var#1
     Expr_FuncCall

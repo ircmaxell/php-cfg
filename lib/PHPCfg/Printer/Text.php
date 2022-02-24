@@ -22,8 +22,8 @@ class Text extends Printer
         $output = '';
         $output .= $this->printFunc($script->main);
         foreach ($script->functions as $func) {
-            $name = $func->getScopedName();
-            $output .= "\nFunction ${name}():";
+            $name = var_export($func->getScopedName(), true);
+            $output .= "\nFunction ${name}:";
             $output .= ' ' . $this->renderType($func->returnType);
             $output .= $this->printFunc($func);
         }
