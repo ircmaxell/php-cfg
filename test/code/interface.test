@@ -14,4 +14,4 @@ Block#2
     Stmt_ClassMethod<method>
         flags: public
 
-Function Test::method(): mixed
+Function 'Test::method': mixed

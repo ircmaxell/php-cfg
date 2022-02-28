@@ -7,7 +7,7 @@ Block#1
     Stmt_Function<foo>
     Terminal_Return
 
-Function foo(): string
+Function 'foo': string
 Block#1
     Expr_Param
         declaredType: string
