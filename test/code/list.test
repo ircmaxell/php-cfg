@@ -52,6 +52,7 @@ Block#2
         var: Var#3<$a>
         result: Var#15
     Stmt_JumpIf
+        from_loop: true
         cond: Var#15
         if: Block#3
         else: Block#4

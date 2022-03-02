@@ -123,6 +123,9 @@ abstract class Printer
             $result .= "\n    flags: " . $this->indent($this->renderFlags($op));
             $result .= "\n    declaredType: " . $this->indent($this->renderType($op->declaredType));
         }
+        if ($op instanceof Op\Stmt\JumpIf) {
+            $result .= "\n    from_loop: " . var_export($op->fromLoop, true);
+        }
         if ($op instanceof Op\Stmt\ClassMethod) {
             $result .= "\n    flags: " . $this->indent($this->renderFlags($op));
         }

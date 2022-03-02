@@ -316,7 +316,7 @@ class Parser
         $this->block = $loopBody;
         $this->block = $this->parseNodes($node->stmts, $loopBody);
         $cond = $this->readVariable($this->parseExprNode($node->cond));
-        $this->block->children[] = new JumpIf($cond, $loopBody, $loopEnd, $this->mapAttributes($node));
+        $this->block->children[] = new JumpIf($cond, $loopBody, $loopEnd, true, $this->mapAttributes($node));
         $this->processAssertions($cond, $loopBody, $loopEnd);
         $loopBody->addParent($this->block);
         $loopEnd->addParent($this->block);
@@ -348,7 +348,7 @@ class Parser
         } else {
             $cond = new Literal(true);
         }
-        $this->block->children[] = new JumpIf($cond, $loopBody, $loopEnd, $this->mapAttributes($node));
+        $this->block->children[] = new JumpIf($cond, $loopBody, $loopEnd, true, $this->mapAttributes($node));
         $this->processAssertions($cond, $loopBody, $loopEnd);
         $loopBody->addParent($this->block);
         $loopEnd->addParent($this->block);
@@ -374,7 +374,7 @@ class Parser
         $loopInit->addParent($this->block);
 
         $loopInit->children[] = $validOp = new Op\Iterator\Valid($iterable, $attrs);
-        $loopInit->children[] = new JumpIf($validOp->result, $loopBody, $loopEnd, $attrs);
+        $loopInit->children[] = new JumpIf($validOp->result, $loopBody, $loopEnd, true, $attrs);
         $this->processAssertions($validOp->result, $loopBody, $loopEnd);
         $loopBody->addParent($loopInit);
         $loopEnd->addParent($loopInit);
@@ -472,7 +472,7 @@ class Parser
         $ifBlock = new Block($this->block);
         $elseBlock = new Block($this->block);
 
-        $this->block->children[] = new JumpIf($cond, $ifBlock, $elseBlock, $attrs);
+        $this->block->children[] = new JumpIf($cond, $ifBlock, $elseBlock, false, $attrs);
         $this->processAssertions($cond, $ifBlock, $elseBlock);
 
         $this->block = $this->parseNodes($node->stmts, $ifBlock);
@@ -638,7 +638,7 @@ class Parser
                 );
 
                 $elseBlock = new Block();
-                $this->block->children[] = new JumpIf($cmp->result, $ifBlock, $elseBlock);
+                $this->block->children[] = new JumpIf($cmp->result, $ifBlock, $elseBlock, false);
                 $ifBlock->addParent($this->block);
                 $elseBlock->addParent($this->block);
                 $this->block = $elseBlock;
@@ -715,7 +715,7 @@ class Parser
         $this->block = $loopInit;
         $cond = $this->readVariable($this->parseExprNode($node->cond));
 
-        $this->block->children[] = new JumpIf($cond, $loopBody, $loopEnd, $this->mapAttributes($node));
+        $this->block->children[] = new JumpIf($cond, $loopBody, $loopEnd, true, $this->mapAttributes($node));
         $this->processAssertions($cond, $loopBody, $loopEnd);
         $loopBody->addParent($this->block);
         $loopEnd->addParent($this->block);
@@ -1290,7 +1290,7 @@ class Parser
         $ifBlock = $this->block->create();
         $elseBlock = $this->block->create();
         $endBlock = $this->block->create();
-        $this->block->children[] = new JumpIf($cond, $ifBlock, $elseBlock, $attrs);
+        $this->block->children[] = new JumpIf($cond, $ifBlock, $elseBlock, false, $attrs);
         $this->processAssertions($cond, $ifBlock, $elseBlock);
         $ifBlock->addParent($this->block);
         $elseBlock->addParent($this->block);
@@ -1537,7 +1537,7 @@ class Parser
         $if = $isOr ? $endBlock : $longBlock;
         $else = $isOr ? $longBlock : $endBlock;
 
-        $this->block->children[] = new JumpIf($left, $if, $else);
+        $this->block->children[] = new JumpIf($left, $if, $else, false);
         $longBlock->addParent($this->block);
         $endBlock->addParent($this->block);
 

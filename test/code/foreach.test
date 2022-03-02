@@ -23,6 +23,7 @@ Block#2
         var: Var#2<$a>
         result: Var#4
     Stmt_JumpIf
+        from_loop: true
         cond: Var#4
         if: Block#3
         else: Block#4

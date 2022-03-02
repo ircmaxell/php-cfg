@@ -14,6 +14,7 @@ namespace Bar {
 -----
 Block#1
     Stmt_JumpIf
+        from_loop: false
         cond: LITERAL(true)
         if: Block#2
         else: Block#3
@@ -29,6 +30,7 @@ Block#3
     Parent: Block#2
     Parent: Block#1
     Stmt_JumpIf
+        from_loop: false
         cond: LITERAL(false)
         if: Block#4
         else: Block#5

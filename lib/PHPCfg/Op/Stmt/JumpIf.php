@@ -23,12 +23,15 @@ class JumpIf extends Stmt
 
     public Block $else;
 
-    public function __construct(Operand $cond, Block $if, Block $else, array $attributes = [])
+    public bool $fromLoop;
+
+    public function __construct(Operand $cond, Block $if, Block $else, bool $fromLoop, array $attributes = [])
     {
         parent::__construct($attributes);
         $this->if = $if;
         $this->else = $else;
         $this->cond = $this->addReadRef($cond);
+        $this->fromLoop = $fromLoop;
     }
 
     public function getVariableNames(): array

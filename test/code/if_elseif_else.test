@@ -11,6 +11,7 @@ echo "d";
 -----
 Block#1
     Stmt_JumpIf
+        from_loop: false
         cond: Var#1<$a>
         if: Block#2
         else: Block#3
@@ -25,6 +26,7 @@ Block#2
 Block#3
     Parent: Block#1
     Stmt_JumpIf
+        from_loop: false
         cond: Var#2<$b>
         if: Block#5
         else: Block#6

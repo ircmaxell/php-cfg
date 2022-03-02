@@ -7,6 +7,7 @@ Block#1
         name: LITERAL('a')
         result: Var#1
     Stmt_JumpIf
+        from_loop: false
         cond: Var#1
         if: Block#2
         else: Block#3

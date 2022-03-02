@@ -4,6 +4,7 @@ $a = $b ? $c : $d;
 -----
 Block#1
     Stmt_JumpIf
+        from_loop: false
         cond: Var#1<$b>
         if: Block#2
         else: Block#3

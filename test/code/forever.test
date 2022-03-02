@@ -12,6 +12,7 @@ Block#2
     Parent: Block#1
     Parent: Block#3
     Stmt_JumpIf
+        from_loop: true
         cond: LITERAL(true)
         if: Block#3
         else: Block#4

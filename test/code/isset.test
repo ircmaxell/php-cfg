@@ -11,6 +11,7 @@ Block#1
         vars[2]: Var#3<$c>
         result: Var#4
     Stmt_JumpIf
+        from_loop: false
         cond: Var#4
         if: Block#2
         else: Block#3

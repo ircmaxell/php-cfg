@@ -36,6 +36,7 @@ Block#2
         var: Var#3
         result: Var#6
     Stmt_JumpIf
+        from_loop: true
         cond: Var#6
         if: Block#3
         else: Block#4
@@ -54,6 +55,7 @@ Block#3
         right: LITERAL(0)
         result: Var#10
     Stmt_JumpIf
+        from_loop: false
         cond: Var#10
         if: Block#5
         else: Block#2
