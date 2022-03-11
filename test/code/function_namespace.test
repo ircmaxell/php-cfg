@@ -1,13 +1,14 @@
 <?php
+namespace NS;
 function foo($a) {
     return $a;
 }
 -----
 Block#1
-    Stmt_Function<'foo'>
+    Stmt_Function<'NS\\foo'>
     Terminal_Return
 
-Function 'foo': mixed
+Function 'NS\\foo': mixed
 Block#1
     Expr_Param
         declaredType: mixed

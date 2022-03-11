@@ -111,7 +111,7 @@ abstract class Printer
 
         if ($op instanceof Op\CallableOp) {
             $func = $op->getFunc();
-            $result .= '<'.$func->name.'>';
+            $result .= '<'.var_export($func->name, true).'>';
         }
         if ($op instanceof Op\Expr\Assertion) {
             $result .= '<'.$this->renderAssertion($op->assertion).'>';

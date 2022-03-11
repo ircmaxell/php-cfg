@@ -10,7 +10,7 @@ Block#1
     Terminal_Return
 
 Block#2
-    Stmt_ClassMethod<doSomething>
+    Stmt_ClassMethod<'doSomething'>
         flags: public
 
 Function 'NameOfClass::doSomething': mixed

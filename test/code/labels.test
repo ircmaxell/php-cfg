@@ -12,7 +12,7 @@ label:
 echo "C";
 -----
 Block#1
-    Stmt_Function<test>
+    Stmt_Function<'test'>
     Terminal_Echo
         expr: LITERAL('A')
     Stmt_Jump

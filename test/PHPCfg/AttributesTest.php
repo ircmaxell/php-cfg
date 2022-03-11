@@ -28,7 +28,7 @@ EOF;
 
         $expected = <<< EOF
 Block#1
-    Stmt_Function<foo>
+    Stmt_Function<'foo'>
     Terminal_Return
 
 Function 'foo': mixed
@@ -68,7 +68,7 @@ EOF;
 
         $expected = <<< EOF
 Block#1
-    Stmt_Function<foo>
+    Stmt_Function<'foo'>
         attribute['filename']: foo.php
         attribute['startLine']: 2
         attribute['endLine']: 4
@@ -117,7 +117,7 @@ EOF;
 
         $expected = <<< EOF
 Block#1
-    Stmt_Function<foo>
+    Stmt_Function<'foo'>
         attribute['filename']: foo.php
         attribute['startLine']: 2
         attribute['startFilePos']: 6

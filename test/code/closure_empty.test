@@ -2,7 +2,7 @@
 $fn = function($a) {};
 -----
 Block#1
-    Expr_Closure<{anonymous}#1>
+    Expr_Closure<'{anonymous}#1'>
         result: Var#1
     Expr_Assign
         var: Var#2<$fn>
