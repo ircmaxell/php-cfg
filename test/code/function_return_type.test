@@ -4,7 +4,7 @@ function foo(string $a): string {
 }
 -----
 Block#1
-    Stmt_Function<foo>
+    Stmt_Function<'foo'>
     Terminal_Return
 
 Function 'foo': string

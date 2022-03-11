@@ -50,19 +50,19 @@ Block#1
 Block#2
 
 Block#3
-    Stmt_ClassMethod<doSomething>
+    Stmt_ClassMethod<'doSomething'>
         flags: public
-    Stmt_ClassMethod<method1>
+    Stmt_ClassMethod<'method1'>
         flags: private
-    Stmt_ClassMethod<method2>
+    Stmt_ClassMethod<'method2'>
         flags: protected
-    Stmt_ClassMethod<method3>
+    Stmt_ClassMethod<'method3'>
         flags: static|private
-    Stmt_ClassMethod<method4>
+    Stmt_ClassMethod<'method4'>
         flags: final|private
-    Stmt_ClassMethod<method5>
+    Stmt_ClassMethod<'method5'>
         flags: abstract|private
-    Stmt_ClassMethod<method6>
+    Stmt_ClassMethod<'method6'>
         flags: abstract|static|protected
 
 Function 'NS\\NameOfClass::doSomething': mixed

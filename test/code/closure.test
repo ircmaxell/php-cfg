@@ -17,7 +17,7 @@ Block#1
         var: Var#3<$c>
         expr: LITERAL(2)
         result: Var#4
-    Expr_Closure<{anonymous}#1>
+    Expr_Closure<'{anonymous}#1'>
         useVars[0]: local<$b>
         useVars[1]: local<&$c>
         result: Var#5
