@@ -13,6 +13,7 @@ namespace PHPCfg;
 
 use PHPCfg\Op\Stmt\Jump;
 use PHPCfg\Op\Stmt\JumpIf;
+use PHPCfg\Op\Stmt\TraitUse;
 use PHPCfg\Op\Terminal\Return_;
 use PHPCfg\Operand\Literal;
 use PHPCfg\Operand\Temporary;
@@ -684,7 +685,33 @@ class Parser
 
     protected function parseStmt_TraitUse(Stmt\TraitUse $node)
     {
-        // TODO
+        $traits = [];
+        $adaptations = [];
+        foreach($node->traits as $trait_) {
+            $traits[] = new Literal($trait_->toCodeString()); 
+        }
+        foreach($node->adaptations as $adaptation) {
+            if($adaptation instanceof Stmt\TraitUseAdaptation\Alias) {
+                $adaptations[] = new Alias(
+                    new Literal($adaptation->trait != null ? $adaptation->trait->toCodeString() : null),
+                    new Literal($adaptation->method->name),
+                    new Literal($adaptation->newName != null ? $adaptation->newName->name : null),
+                    $adaptation->newModifier
+                );
+            }
+            else if($adaptation instanceof Stmt\TraitUseAdaptation\Precedence) {
+                $insteadofs = [];
+                foreach($adaptation->insteadof as $insteadof) {
+                    $insteadofs[] = new Literal($insteadof->toCodeString());
+                }
+                $adaptations[] = new Precedence(
+                    new Literal($adaptation->trait != null ? $adaptation->trait->toCodeString() : null),
+                    new Literal($adaptation->method->name),
+                    $insteadofs
+                );
+            }
+        }
+        $this->block->children[] = new TraitUse($traits,$adaptations);
     }
 
     protected function parseStmt_TryCatch(Stmt\TryCatch $node)
