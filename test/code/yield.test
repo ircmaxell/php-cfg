@@ -1,0 +1,107 @@
+<?php
+function gen_one_to_three() {
+    for ($i = 1; $i <= 3; $i++) {
+        // Note that $i is preserved between yields.
+        yield $i;
+    }
+}
+-----
+$generator = gen_one_to_three();
+foreach ($generator as $value) {
+    echo "$value\n";
+}
+
+Block#1
+    Stmt_Function<'gen_one_to_three'>
+    Expr_FuncCall
+        name: LITERAL('gen_one_to_three')
+        result: Var#1
+    Expr_Assign
+        var: Var#2<$generator>
+        expr: Var#1
+        result: Var#3
+    Iterator_Reset
+        var: Var#2<$generator>
+    Stmt_Jump
+        target: Block#2
+
+Block#2
+    Parent: Block#1
+    Parent: Block#3
+    Iterator_Valid
+        var: Var#2<$generator>
+        result: Var#4
+    Stmt_JumpIf
+        cond: Var#4
+        if: Block#3
+        else: Block#4
+
+Block#3
+    Parent: Block#2
+    Iterator_Value
+        var: Var#2<$generator>
+        result: Var#5
+    Expr_Assign
+        var: Var#6<$value>
+        expr: Var#5
+        result: Var#7
+    Expr_ConcatList
+        list[0]: Var#6<$value>
+        list[1]: LITERAL('
+        ')
+        result: Var#8
+    Terminal_Echo
+        expr: Var#8
+    Stmt_Jump
+        target: Block#2
+
+Block#4
+    Parent: Block#2
+    Terminal_Return
+
+Function 'gen_one_to_three': mixed
+Block#1
+    Expr_Assign
+        var: Var#1<$i>
+        expr: LITERAL(1)
+        result: Var#2
+    Stmt_Jump
+        target: Block#2
+
+Block#2
+    Parent: Block#1
+    Parent: Block#5
+    Var#3<$i> = Phi(Var#1<$i>, Var#4<$i>)
+    Expr_BinaryOp_SmallerOrEqual
+        left: Var#3<$i>
+        right: LITERAL(3)
+        result: Var#5
+    Stmt_JumpIf
+        cond: Var#5
+        if: Block#3
+        else: Block#4
+
+Block#3
+    Parent: Block#2
+    Expr_Yield
+        key: Var#3<$i>
+        result: Var#6
+    Stmt_Jump
+        target: Block#5
+
+Block#4
+    Parent: Block#2
+    Terminal_Return
+
+Block#5
+    Parent: Block#3
+    Expr_BinaryOp_Plus
+        left: Var#3<$i>
+        right: LITERAL(1)
+        result: Var#7
+    Expr_Assign
+        var: Var#4<$i>
+        expr: Var#7
+        result: Var#8
+    Stmt_Jump
+        target: Block#2

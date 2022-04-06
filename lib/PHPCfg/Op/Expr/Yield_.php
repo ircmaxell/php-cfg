@@ -20,7 +20,7 @@ class Yield_ extends Expr
 
     public ?Operand $key;
 
-    protected $writeVariables = ['result'];
+    protected array $writeVariables = ['result'];
 
     public function __construct(Operand $value = null, Operand $key = null, array $attributes = [])
     {
