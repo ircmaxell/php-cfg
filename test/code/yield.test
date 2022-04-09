@@ -5,12 +5,11 @@ function gen_one_to_three() {
         yield $i;
     }
 }
------
 $generator = gen_one_to_three();
 foreach ($generator as $value) {
     echo "$value\n";
 }
-
+-----
 Block#1
     Stmt_Function<'gen_one_to_three'>
     Expr_FuncCall
