@@ -130,7 +130,7 @@ abstract class Printer
             $result .= "\n    declaredType: " . $this->indent($this->renderType($op->declaredType));
         }
         if ($op instanceof Op\Expr\Include_) {
-            $result .= "\n    type: " . $op->type;
+            $result .= "\n    type: " . $this->indent($this->renderIncludeType($op->type));
         }
 
         foreach ($op->getVariableNames() as $varName) {
@@ -292,6 +292,22 @@ abstract class Printer
             return '';
         }
         throw new \LogicException("Unknown type rendering: " . get_class($type));
+    }
+
+    protected function renderIncludeType(int $type): string
+    {
+        switch($type) {
+            case 1:
+                return "include";
+            case 2:
+                return "include_once";
+            case 3:
+                return "require";
+            case 4:
+                return "require_once";
+            default:
+                throw new \LogicException("Unknown include type rendering: " .$type);
+        }
     }
 
     protected function renderFlags(Op\Stmt $stmt): string
