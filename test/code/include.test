@@ -1,0 +1,26 @@
+<?php
+include($foo);
+include_once($foo);
+require($foo);
+require_once($foo);
+-----
+Block#1
+    Expr_Include
+        type: include
+        expr: Var#1<$foo>
+        result: Var#2
+    Expr_Include
+        type: include_once
+        expr: Var#1<$foo>
+        result: Var#3
+    Expr_Include
+        type: require
+        expr: Var#1<$foo>
+        result: Var#4
+    Expr_Include
+        type: require_once
+        expr: Var#1<$foo>
+        result: Var#5
+    Terminal_Return
+
+
