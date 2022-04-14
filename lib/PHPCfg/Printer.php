@@ -129,6 +129,9 @@ abstract class Printer
         if ($op instanceof Op\Expr\Param) {
             $result .= "\n    declaredType: " . $this->indent($this->renderType($op->declaredType));
         }
+        if ($op instanceof Op\Expr\Include_) {
+            $result .= "\n    type: " . $op->type;
+        }
 
         foreach ($op->getVariableNames() as $varName) {
             $vars = $op->{$varName};
