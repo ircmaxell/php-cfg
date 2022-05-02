@@ -128,7 +128,7 @@ abstract class Printer
                 $result .= "\n    use[$index]: " . $this->indent($this->renderOperand($trait_));
             }
             foreach($op->adaptations as $index => $adaptation) {
-                if($adaptation instanceof Op\TraitUse\Alias) {
+                if($adaptation instanceof Op\TraitUseAdaptation\Alias) {
                     $result .= "\n    adaptation[$index]: Alias";
                     if($adaptation->trait != null) {
                         $result .= "\n        trait:".$this->indent($this->renderOperand($adaptation->trait));
@@ -150,7 +150,7 @@ abstract class Printer
                         }
                     }
                 }
-                else if($adaptation instanceof Op\TraitUse\Precedence) {
+                else if($adaptation instanceof Op\TraitUseAdaptation\Precedence) {
                     $result .= "\n    adaptation[$index]: Insteadof";
                     if($adaptation->trait != null) {
                         $result .= "\n        trait:".$this->indent($this->renderOperand($adaptation->trait));

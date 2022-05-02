@@ -9,7 +9,7 @@ declare(strict_types=1);
  * @license MIT See LICENSE at the root of the project for more info
  */
 
-namespace PHPCfg\Op\TraitUse;
+namespace PHPCfg\Op\TraitUseAdaptation;
 
 use PHPCfg\Operand;
 use PHPCfg\Op\TraitUseAdaptation;
