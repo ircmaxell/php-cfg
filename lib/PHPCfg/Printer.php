@@ -123,6 +123,45 @@ abstract class Printer
             $result .= "\n    flags: " . $this->indent($this->renderFlags($op));
             $result .= "\n    declaredType: " . $this->indent($this->renderType($op->declaredType));
         }
+        if($op instanceof Op\Stmt\TraitUse) {
+            foreach($op->traits as $index => $trait_) {
+                $result .= "\n    use[$index]: " . $this->indent($this->renderOperand($trait_));
+            }
+            foreach($op->adaptations as $index => $adaptation) {
+                if($adaptation instanceof Op\TraitUseAdaptation\Alias) {
+                    $result .= "\n    adaptation[$index]: Alias";
+                    if($adaptation->trait != null) {
+                        $result .= "\n        trait:".$this->indent($this->renderOperand($adaptation->trait));
+                    }
+                    $result .= "\n        method:".$this->indent($this->renderOperand($adaptation->method));
+                    if($adaptation->newName != null) {
+                        $result .= "\n        newName:".$this->indent($this->renderOperand($adaptation->newName));
+                    }
+                    if($adaptation->newModifier != null) {
+                        $result .= "\n        newModifier:";
+                        if($adaptation->isPublic()) {
+                            $result .= "public";
+                        }
+                        if($adaptation->isPrivate()) {
+                            $result .= "private";
+                        }
+                        if($adaptation->isProtected()) {
+                            $result .= "protected";
+                        }
+                    }
+                }
+                else if($adaptation instanceof Op\TraitUseAdaptation\Precedence) {
+                    $result .= "\n    adaptation[$index]: Insteadof";
+                    if($adaptation->trait != null) {
+                        $result .= "\n        trait:".$this->indent($this->renderOperand($adaptation->trait));
+                    }
+                    $result .= "\n        method:".$this->indent($this->renderOperand($adaptation->method));
+                    foreach($adaptation->insteadof as $index2 => $insteadof) {
+                        $result .= "\n        insteadof[$index2]: " . $this->indent($this->renderOperand($insteadof));
+                    } 
+                }
+            }
+        }
         if ($op instanceof Op\Stmt\ClassMethod) {
             $result .= "\n    flags: " . $this->indent($this->renderFlags($op));
         }

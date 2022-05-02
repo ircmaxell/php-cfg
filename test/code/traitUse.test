@@ -1,0 +1,115 @@
+<?php
+trait A {
+    public function smallTalk() {
+        echo 'a';
+    }
+    public function bigTalk() {
+        echo 'A';
+    }
+}
+
+trait B {
+    public function smallTalk() {
+        echo 'b';
+    }
+    public function bigTalk() {
+        echo 'B';
+    }
+}
+
+class Talker {
+    use A, B {
+        B::smallTalk insteadof A;
+        A::bigTalk insteadof B;
+    }
+}
+
+class Aliased_Talker {
+    use A, B {
+        B::smallTalk insteadof A;
+        A::bigTalk insteadof B;
+        B::bigTalk as private talk;
+    }
+}
+-----
+Block#1
+    Stmt_Trait
+        name: LITERAL('A')
+        stmts: Block#2
+    Stmt_Trait
+        name: LITERAL('B')
+        stmts: Block#3
+    Stmt_Class
+        name: LITERAL('Talker')
+        stmts: Block#4
+    Stmt_Class
+        name: LITERAL('Aliased_Talker')
+        stmts: Block#5
+    Terminal_Return
+
+Block#2
+    Stmt_ClassMethod<'smallTalk'>
+        flags: public
+    Stmt_ClassMethod<'bigTalk'>
+        flags: public
+
+Block#3
+    Stmt_ClassMethod<'smallTalk'>
+        flags: public
+    Stmt_ClassMethod<'bigTalk'>
+        flags: public
+
+Block#4
+    Stmt_TraitUse
+        use[0]: LITERAL('\\A')
+        use[1]: LITERAL('\\B')
+        adaptation[0]: Insteadof
+            trait:LITERAL('\\B')
+            method:LITERAL('smallTalk')
+            insteadof[0]: LITERAL('\\A')
+        adaptation[1]: Insteadof
+            trait:LITERAL('\\A')
+            method:LITERAL('bigTalk')
+            insteadof[0]: LITERAL('\\B')
+
+Block#5
+    Stmt_TraitUse
+        use[0]: LITERAL('\\A')
+        use[1]: LITERAL('\\B')
+        adaptation[0]: Insteadof
+            trait:LITERAL('\\B')
+            method:LITERAL('smallTalk')
+            insteadof[0]: LITERAL('\\A')
+        adaptation[1]: Insteadof
+            trait:LITERAL('\\A')
+            method:LITERAL('bigTalk')
+            insteadof[0]: LITERAL('\\B')
+        adaptation[2]: Alias
+            trait:LITERAL('\\B')
+            method:LITERAL('bigTalk')
+            newName:LITERAL('talk')
+            newModifier:private
+
+Function 'A::smallTalk': mixed
+Block#1
+    Terminal_Echo
+        expr: LITERAL('a')
+    Terminal_Return
+
+Function 'A::bigTalk': mixed
+Block#1
+    Terminal_Echo
+        expr: LITERAL('A')
+    Terminal_Return
+
+Function 'B::smallTalk': mixed
+Block#1
+    Terminal_Echo
+        expr: LITERAL('b')
+    Terminal_Return
+
+Function 'B::bigTalk': mixed
+Block#1
+    Terminal_Echo
+        expr: LITERAL('B')
+    Terminal_Return

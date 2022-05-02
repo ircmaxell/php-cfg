@@ -13,7 +13,10 @@ namespace PHPCfg;
 
 use PHPCfg\Op\Stmt\Jump;
 use PHPCfg\Op\Stmt\JumpIf;
+use PHPCfg\Op\Stmt\TraitUse;
 use PHPCfg\Op\Terminal\Return_;
+use PHPCfg\Op\TraitUseAdaptation\Alias;
+use PHPCfg\Op\TraitUseAdaptation\Precedence;
 use PHPCfg\Operand\Literal;
 use PHPCfg\Operand\Temporary;
 use PHPCfg\Operand\Variable;
@@ -684,7 +687,35 @@ class Parser
 
     protected function parseStmt_TraitUse(Stmt\TraitUse $node)
     {
-        // TODO
+        $traits = [];
+        $adaptations = [];
+        foreach($node->traits as $trait_) {
+            $traits[] = new Literal($trait_->toCodeString()); 
+        }
+        foreach($node->adaptations as $adaptation) {
+            if($adaptation instanceof Stmt\TraitUseAdaptation\Alias) {
+                $adaptations[] = new Alias(
+                    $adaptation->trait != null ? new Literal($adaptation->trait->toCodeString()) : null,
+                    new Literal($adaptation->method->name),
+                    $adaptation->newName != null ? new Literal($adaptation->newName->name) : null,
+                    $adaptation->newModifier,
+                    $this->mapAttributes($adaptation)
+                );
+            }
+            else if($adaptation instanceof Stmt\TraitUseAdaptation\Precedence) {
+                $insteadofs = [];
+                foreach($adaptation->insteadof as $insteadof) {
+                    $insteadofs[] = new Literal($insteadof->toCodeString());
+                }
+                $adaptations[] = new Precedence(
+                    $adaptation->trait != null ? new Literal($adaptation->trait->toCodeString()) : null,
+                    new Literal($adaptation->method->name),
+                    $insteadofs,
+                    $this->mapAttributes($adaptation)
+                );
+            }
+        }
+        $this->block->children[] = new TraitUse($traits,$adaptations,$this->mapAttributes($node));
     }
 
     protected function parseStmt_TryCatch(Stmt\TryCatch $node)
