@@ -9,9 +9,11 @@ declare(strict_types=1);
  * @license MIT See LICENSE at the root of the project for more info
  */
 
-namespace PHPCfg;
+namespace PHPCfg\Op\TraitUse;
 
 use PhpParser\Node;
+use PHPCfg\Operand;
+use PHPCfg\Op\TraitUseAdaptation;
 
 class Alias extends TraitUseAdaptation 
 {
@@ -19,9 +21,9 @@ class Alias extends TraitUseAdaptation
 
     public ?int $newModifier;
 
-    public function __construct(?Operand $trait,Operand $method,?Operand $newName,?int $newModifier)
+    public function __construct(?Operand $trait,Operand $method,?Operand $newName,?int $newModifier,array $attributes = [])
     {
-        parent::__construct($trait,$method);    
+        parent::__construct($trait,$method,$attributes);    
         $this->newName = $newName;
         $this->newModifier = $newModifier;
     }

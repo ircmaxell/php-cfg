@@ -9,15 +9,18 @@ declare(strict_types=1);
  * @license MIT See LICENSE at the root of the project for more info
  */
 
-namespace PHPCfg;
+namespace PHPCfg\Op\TraitUse;
+
+use PHPCfg\Operand;
+use PHPCfg\Op\TraitUseAdaptation;
 
 class Precedence extends TraitUseAdaptation
 {
     public array $insteadof;
 
-    public function __construct(Operand $trait,Operand $method,array $insteadof)
+    public function __construct(?Operand $trait,Operand $method,array $insteadof,array $attributes = [])
     {
-        parent::__construct($trait,$method);   
+        parent::__construct($trait,$method,$attributes);   
         $this->insteadof = $insteadof;
     }
 }

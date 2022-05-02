@@ -1,0 +1,51 @@
+<?php
+trait HelloWorld {
+    public function sayHello() {
+        echo 'Hello World!';
+    }
+}
+
+class MyClass1 {
+    use HelloWorld { sayHello as protected; }
+}
+
+class MyClass2 {
+    use HelloWorld { sayHello as private myPrivateHello; }
+}
+-----
+Block#1
+    Stmt_Trait
+        name: LITERAL('HelloWorld')
+        stmts: Block#2
+    Stmt_Class
+        name: LITERAL('MyClass1')
+        stmts: Block#3
+    Stmt_Class
+        name: LITERAL('MyClass2')
+        stmts: Block#4
+    Terminal_Return
+
+Block#2
+    Stmt_ClassMethod<'sayHello'>
+        flags: public
+
+Block#3
+    Stmt_TraitUse
+        use[0]: LITERAL('\\HelloWorld')
+        adaptation[0]: Alias
+            method:LITERAL('sayHello')
+            newModifier:protected
+
+Block#4
+    Stmt_TraitUse
+        use[0]: LITERAL('\\HelloWorld')
+        adaptation[0]: Alias
+            method:LITERAL('sayHello')
+            newName:LITERAL('myPrivateHello')
+            newModifier:private
+
+Function 'HelloWorld::sayHello': mixed
+Block#1
+    Terminal_Echo
+        expr: LITERAL('Hello World!')
+    Terminal_Return

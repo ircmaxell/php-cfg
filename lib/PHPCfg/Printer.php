@@ -128,11 +128,13 @@ abstract class Printer
                 $result .= "\n    use[$index]: " . $this->indent($this->renderOperand($trait_));
             }
             foreach($op->adaptations as $index => $adaptation) {
-                if($adaptation instanceof Alias) {
+                if($adaptation instanceof Op\TraitUse\Alias) {
                     $result .= "\n    adaptation[$index]: Alias";
-                    $result .= "\n        trait:".$this->indent($this->renderOperand($adaptation->trait));
+                    if($adaptation->trait != null) {
+                        $result .= "\n        trait:".$this->indent($this->renderOperand($adaptation->trait));
+                    }
                     $result .= "\n        method:".$this->indent($this->renderOperand($adaptation->method));
-                    if($adaptation->newName->value != null) {
+                    if($adaptation->newName != null) {
                         $result .= "\n        newName:".$this->indent($this->renderOperand($adaptation->newName));
                     }
                     if($adaptation->newModifier != null) {
@@ -148,9 +150,11 @@ abstract class Printer
                         }
                     }
                 }
-                else if($adaptation instanceof Precedence) {
+                else if($adaptation instanceof Op\TraitUse\Precedence) {
                     $result .= "\n    adaptation[$index]: Insteadof";
-                    $result .= "\n        trait:".$this->indent($this->renderOperand($adaptation->trait));
+                    if($adaptation->trait != null) {
+                        $result .= "\n        trait:".$this->indent($this->renderOperand($adaptation->trait));
+                    }
                     $result .= "\n        method:".$this->indent($this->renderOperand($adaptation->method));
                     foreach($adaptation->insteadof as $index2 => $insteadof) {
                         $result .= "\n        insteadof[$index2]: " . $this->indent($this->renderOperand($insteadof));

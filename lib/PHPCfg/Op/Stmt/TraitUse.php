@@ -27,8 +27,9 @@ class TraitUse extends Stmt
      */
     public array $adaptations;
 
-    public function __construct(array $traits,array $adaptations)
+    public function __construct(array $traits,array $adaptations, array $attributes = [])
     {
+        parent::__construct($attributes);
         $this->traits = $traits;
         $this->adaptations = $adaptations;
     }

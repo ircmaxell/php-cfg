@@ -15,6 +15,8 @@ use PHPCfg\Op\Stmt\Jump;
 use PHPCfg\Op\Stmt\JumpIf;
 use PHPCfg\Op\Stmt\TraitUse;
 use PHPCfg\Op\Terminal\Return_;
+use PHPCfg\Op\TraitUse\Alias;
+use PHPCfg\Op\TraitUse\Precedence;
 use PHPCfg\Operand\Literal;
 use PHPCfg\Operand\Temporary;
 use PHPCfg\Operand\Variable;
@@ -693,10 +695,11 @@ class Parser
         foreach($node->adaptations as $adaptation) {
             if($adaptation instanceof Stmt\TraitUseAdaptation\Alias) {
                 $adaptations[] = new Alias(
-                    new Literal($adaptation->trait != null ? $adaptation->trait->toCodeString() : null),
+                    $adaptation->trait != null ? new Literal($adaptation->trait->toCodeString()) : null,
                     new Literal($adaptation->method->name),
-                    new Literal($adaptation->newName != null ? $adaptation->newName->name : null),
-                    $adaptation->newModifier
+                    $adaptation->newName != null ? new Literal($adaptation->newName->name) : null,
+                    $adaptation->newModifier,
+                    $this->mapAttributes($adaptation)
                 );
             }
             else if($adaptation instanceof Stmt\TraitUseAdaptation\Precedence) {
@@ -705,13 +708,14 @@ class Parser
                     $insteadofs[] = new Literal($insteadof->toCodeString());
                 }
                 $adaptations[] = new Precedence(
-                    new Literal($adaptation->trait != null ? $adaptation->trait->toCodeString() : null),
+                    $adaptation->trait != null ? new Literal($adaptation->trait->toCodeString()) : null,
                     new Literal($adaptation->method->name),
-                    $insteadofs
+                    $insteadofs,
+                    $this->mapAttributes($adaptation)
                 );
             }
         }
-        $this->block->children[] = new TraitUse($traits,$adaptations);
+        $this->block->children[] = new TraitUse($traits,$adaptations,$this->mapAttributes($node));
     }
 
     protected function parseStmt_TryCatch(Stmt\TryCatch $node)

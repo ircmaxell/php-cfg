@@ -10,16 +10,20 @@ declare(strict_types=1);
  * @license MIT See LICENSE at the root of the project for more info
  */
 
-namespace PHPCfg;
+namespace PHPCfg\Op;
 
-class TraitUseAdaptation
+use PHPCfg\Op;
+use PHPCfg\Operand;
+
+abstract class TraitUseAdaptation extends Op
 {
     public ?Operand $trait;
 
     public Operand $method;
 
-    public function __construct(?Operand $trait,Operand $method)
+    public function __construct(?Operand $trait,Operand $method,array $attributes = [])
     {
+        parent::__construct($attributes);
         $this->trait = $trait;
         $this->method = $method; 
     }
