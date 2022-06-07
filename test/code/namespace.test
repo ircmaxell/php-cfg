@@ -1,0 +1,27 @@
+<?php
+namespace foo;
+
+class Cat {
+    static function says() {echo 'meoow';}  
+} 
+-----
+Block#1
+    Stmt_Namespace
+        name: LITERAL('foo')
+        stmts: Block#2
+
+Block#2
+    Stmt_Class
+        name: LITERAL('foo\\Cat')
+        stmts: Block#3
+    Terminal_Return
+
+Block#3
+    Stmt_ClassMethod<'says'>
+        flags: static|public
+
+Function 'foo\\Cat::says': mixed
+Block#1
+    Terminal_Echo
+        expr: LITERAL('meoow')
+    Terminal_Return

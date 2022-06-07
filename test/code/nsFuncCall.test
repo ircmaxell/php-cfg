@@ -2,8 +2,13 @@
 
 namespace Foo;
 call();
------
+----- 
 Block#1
+    Stmt_Namespace
+        name: LITERAL('Foo')
+        stmts: Block#2
+
+Block#2
     Expr_NsFuncCall
         nsName: LITERAL('Foo\\call')
         name: LITERAL('call')

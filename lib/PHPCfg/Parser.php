@@ -539,7 +539,16 @@ class Parser
     protected function parseStmt_Namespace(Stmt\Namespace_ $node)
     {
         $this->currentNamespace = $node->name;
-        $this->block = $this->parseNodes($node->stmts, $this->block);
+
+        $namespacedBlock = new Block();
+
+        $this->block->children[] = new Op\Stmt\Namespace_(
+            $this->parseExprNode($node->name),
+            $namespacedBlock,
+            $this->mapAttributes($node)
+        );
+
+        $this->block = $this->parseNodes($node->stmts, $namespacedBlock);
     }
 
     protected function parseStmt_Nop(Stmt\Nop $node)
