@@ -23,7 +23,7 @@ class Text extends Printer
         $output .= $this->printFunc($script->main);
         foreach ($script->functions as $func) {
             $name = var_export($func->getScopedName(), true);
-            $output .= "\nFunction ${name}:";
+            $output .= "\nFunction {$name}:";
             $output .= ' ' . $this->renderType($func->returnType);
             $output .= $this->printFunc($func);
         }
@@ -61,7 +61,7 @@ class Text extends Printer
         $output = '';
         foreach ($rendered['varIds'] as $var) {
             $id = $rendered['varIds'][$var];
-            $output .= "\nVar#${id}";
+            $output .= "\nVar#{$id}";
             $output .= $this->indent("\n".'WriteOps:');
             foreach ($var->ops as $writeOp) {
                 if ($rendered['ops']->contains($writeOp)) {

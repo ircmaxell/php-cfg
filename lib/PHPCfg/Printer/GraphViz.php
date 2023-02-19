@@ -105,7 +105,7 @@ class GraphViz extends Printer
     {
         $name = $func->getScopedName();
         $header = $this->createNode(
-            $prefix.'header', "Function ${name}():"
+            $prefix.'header', "Function {$name}():"
         );
         $graph->setNode($header);
 

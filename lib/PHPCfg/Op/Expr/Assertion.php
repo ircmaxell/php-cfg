@@ -17,6 +17,8 @@ use PHPCfg\Operand;
 
 class Assertion extends Expr
 {
+    public Operand $expr;
+
     public Operand $read;
 
     public Assert $assertion;
