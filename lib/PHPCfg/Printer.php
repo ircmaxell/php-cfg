@@ -85,7 +85,7 @@ abstract class Printer
         if ($var instanceof Temporary) {
             $id = $this->getVarId($var);
             if ($var->original) {
-                return "Var{$type}#${id}".'<'.$this->renderOperand($var->original).'>';
+                return "Var{$type}#{$id}".'<'.$this->renderOperand($var->original).'>';
             }
 
             return "Var{$type}#".$this->getVarId($var);
@@ -96,7 +96,7 @@ abstract class Printer
         if (is_array($var)) {
             $result = 'array'.$type;
             foreach ($var as $k => $v) {
-                $result .= "\n    ${k}: ".$this->indent($this->renderOperand($v));
+                $result .= "\n    {$k}: ".$this->indent($this->renderOperand($v));
             }
 
             return $result;
@@ -137,11 +137,11 @@ abstract class Printer
                     if (! $var) {
                         continue;
                     }
-                    $result .= "\n    {$varName}[${key}]: ";
+                    $result .= "\n    {$varName}[{$key}]: ";
                     $result .= $this->indent($this->renderOperand($var));
                 }
             } elseif ($vars) {
-                $result .= "\n    ${varName}: ";
+                $result .= "\n    {$varName}: ";
                 $result .= $this->indent($this->renderOperand($vars));
             }
         }

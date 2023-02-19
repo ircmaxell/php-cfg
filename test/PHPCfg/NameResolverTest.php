@@ -32,12 +32,12 @@ class NameResolverTest extends TestCase
     {
         $doccomment = <<< EOF
 /**
- * @param ${type} \$a
+ * @param {$type} \$a
  */
 EOF;
         $code = <<< EOF
 <?php
-${doccomment}
+{$doccomment}
 function foo(\$a) {}
 EOF;
         $ast = $this->astParser->parse($code);
@@ -76,7 +76,7 @@ namespace Foo {
 namespace {
 	use Foo\\Bar;
 	
-	${original}
+	{$original}
 	function baz(Bar \$bar) {}
 }
 EOF;
@@ -107,7 +107,7 @@ namespace Foo {
 namespace {
 	use Foo\\Bar as Quux;
 	
-	${original}
+	{$original}
 	function baz(Quux \$bar) {}
 }
 EOF;

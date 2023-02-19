@@ -1403,7 +1403,7 @@ class Parser
     protected function throwUndefinedLabelError()
     {
         foreach ($this->ctx->unresolvedGotos as $name => $_) {
-            throw new \RuntimeException("'goto' to undefined label '${name}'");
+            throw new \RuntimeException("'goto' to undefined label '{$name}'");
         }
     }
 
