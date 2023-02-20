@@ -19,8 +19,6 @@ class Assertion extends Expr
 {
     public Operand $expr;
 
-    public Operand $read;
-
     public Assert $assertion;
 
     public function __construct(Operand $read, Operand $write, Assert $assertion, array $attributes = [])
