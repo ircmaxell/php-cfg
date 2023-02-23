@@ -6,8 +6,13 @@ namespace Foo;
 \var_dump(true);
 \var_dump(false);
 \var_dump(null);
------
+----- 
 Block#1
+    Stmt_Namespace
+        name: LITERAL('Foo')
+        stmts: Block#2
+
+Block#2
     Expr_ConstFetch
         nsName: LITERAL('Foo\\BAR')
         name: LITERAL('BAR')

@@ -6,9 +6,14 @@ class NameOfClass {
 $obj = new NameOfClass();
 -----
 Block#1
+    Stmt_Namespace
+        name: LITERAL('NS')
+        stmts: Block#2
+
+Block#2
     Stmt_Class
         name: LITERAL('NS\\NameOfClass')
-        stmts: Block#2
+        stmts: Block#3
     Expr_New
         class: LITERAL('NS\\NameOfClass')
         result: Var#1
@@ -18,7 +23,7 @@ Block#1
         result: Var#3
     Terminal_Return
 
-Block#2
+Block#3
     Stmt_Property
         flags: public
         declaredType: ?LITERAL('NS\\NameOfClass')

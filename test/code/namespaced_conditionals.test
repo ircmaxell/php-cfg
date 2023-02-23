@@ -13,34 +13,44 @@ namespace Bar {
 }
 -----
 Block#1
-    Stmt_JumpIf
-        cond: LITERAL(true)
-        if: Block#2
-        else: Block#3
+    Stmt_Namespace
+        name: LITERAL('Foo')
+        stmts: Block#2
 
 Block#2
-    Parent: Block#1
-    Terminal_Echo
-        expr: LITERAL('foo')
-    Stmt_Jump
-        target: Block#3
+    Stmt_JumpIf
+        cond: LITERAL(true)
+        if: Block#3
+        else: Block#4
 
 Block#3
     Parent: Block#2
-    Parent: Block#1
-    Stmt_JumpIf
-        cond: LITERAL(false)
-        if: Block#4
-        else: Block#5
+    Terminal_Echo
+        expr: LITERAL('foo')
+    Stmt_Jump
+        target: Block#4
 
 Block#4
     Parent: Block#3
+    Parent: Block#2
+    Stmt_Namespace
+        name: LITERAL('Bar')
+        stmts: Block#5
+
+Block#5
+    Stmt_JumpIf
+        cond: LITERAL(false)
+        if: Block#6
+        else: Block#7
+
+Block#6
+    Parent: Block#5
     Terminal_Echo
         expr: LITERAL('bar')
     Stmt_Jump
-        target: Block#5
+        target: Block#7
 
-Block#5
-    Parent: Block#4
-    Parent: Block#3
+Block#7
+    Parent: Block#6
+    Parent: Block#5
     Terminal_Return
