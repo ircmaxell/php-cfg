@@ -26,6 +26,8 @@ class Property extends Stmt
     public bool $static;
 
     public bool $readonly;
+    
+    public array $attrGroups;
 
     public ?Operand $defaultVar = null;
 
@@ -33,13 +35,14 @@ class Property extends Stmt
 
     public Op\Type $declaredType ;
 
-    public function __construct(Operand $name, int $visiblity, bool $static, bool $readonly, Op\Type $declaredType = null, Operand $defaultVar = null, Block $defaultBlock = null, array $attributes = [])
+    public function __construct(Operand $name, int $visiblity, bool $static, bool $readonly, array $attrGroups, Op\Type $declaredType = null, Operand $defaultVar = null, Block $defaultBlock = null, array $attributes = [])
     {
         parent::__construct($attributes);
         $this->name = $this->addReadRef($name);
         $this->visibility = $visiblity;
         $this->static = $static;
         $this->readonly = $readonly;
+        $this->attrGroups = $attrGroups;
         $this->declaredType = $declaredType;
         if (!is_null($defaultVar)) {
             $this->defaultVar = $this->addReadRef($defaultVar);
@@ -74,7 +77,7 @@ class Property extends Stmt
 
     public function getVariableNames(): array
     {
-        return ['name', 'defaultVar'];
+        return ['name', 'attrGroups', 'defaultVar'];
     }
 
     public function getSubBlocks(): array

@@ -64,6 +64,11 @@ EOF;
 function foo(\$a) {
     return \$a;
 }
+
+#[Attr]
+function foowithattribute(\$a) {
+    return \$a;
+}
 EOF;
 
         $expected = <<< EOF
@@ -72,8 +77,25 @@ Block#1
         attribute['filename']: foo.php
         attribute['startLine']: 2
         attribute['endLine']: 4
+    Expr_Attribute
+        attribute['filename']: foo.php
+        attribute['startLine']: 6
+        attribute['endLine']: 6
+        name: LITERAL('Attr')
+        result: Var#1
+    Expr_AttributeGroup
+        attribute['filename']: foo.php
+        attribute['startLine']: 6
+        attribute['endLine']: 6
+        attrs[0]: Var#1
+        result: Var#2
+    Stmt_Function<'foowithattribute'>
+        attribute['filename']: foo.php
+        attribute['startLine']: 6
+        attribute['endLine']: 9
+        attrGroups[0]: Var#2
     Terminal_Return
-
+    
 Function 'foo': mixed
 Block#1
     Expr_Param
@@ -87,6 +109,21 @@ Block#1
         attribute['filename']: foo.php
         attribute['startLine']: 3
         attribute['endLine']: 3
+        expr: Var#1<\$a>
+    
+Function 'foowithattribute': mixed
+Block#1
+    Expr_Param
+        attribute['filename']: foo.php
+        attribute['startLine']: 7
+        attribute['endLine']: 7
+        declaredType: mixed
+        name: LITERAL('a')
+        result: Var#1<\$a>
+    Terminal_Return
+        attribute['filename']: foo.php
+        attribute['startLine']: 8
+        attribute['endLine']: 8
         expr: Var#1<\$a>
 EOF;
 
@@ -120,9 +157,9 @@ Block#1
     Stmt_Function<'foo'>
         attribute['filename']: foo.php
         attribute['startLine']: 2
-        attribute['startFilePos']: 6
+        attribute['startFilePos']: 7
         attribute['endLine']: 4
-        attribute['endFilePos']: 40
+        attribute['endFilePos']: 43
     Terminal_Return
 
 Function 'foo': mixed
@@ -130,18 +167,18 @@ Block#1
     Expr_Param
         attribute['filename']: foo.php
         attribute['startLine']: 2
-        attribute['startFilePos']: 19
+        attribute['startFilePos']: 20
         attribute['endLine']: 2
-        attribute['endFilePos']: 20
+        attribute['endFilePos']: 21
         declaredType: mixed
         name: LITERAL('a')
         result: Var#1<\$a>
     Terminal_Return
         attribute['filename']: foo.php
         attribute['startLine']: 3
-        attribute['startFilePos']: 29
+        attribute['startFilePos']: 31
         attribute['endLine']: 3
-        attribute['endFilePos']: 38
+        attribute['endFilePos']: 40
         expr: Var#1<\$a>
 EOF;
 

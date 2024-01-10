@@ -266,11 +266,6 @@ abstract class Printer
         while ($this->blockQueue->count() > 0) {
             $block = $this->blockQueue->dequeue();
             $ops = [];
-            if ($block === $func->cfg) {
-                foreach ($func->params as $param) {
-                    $renderedOps[$param] = $ops[] = $this->renderOp($param);
-                }
-            }
             foreach ($block->phi as $phi) {
                 $result = $this->indent($this->renderOperand($phi->result).' = Phi(');
                 $result .= implode(', ', array_map([$this, 'renderOperand'], $phi->vars));

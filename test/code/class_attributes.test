@@ -1,0 +1,169 @@
+<?php
+
+#[NameOfAttribute]
+class NameOfClass1 {
+    #[ExampleAttributeMethod('foo', 'bar')]
+    private function method1(#[FooParamAttrib('Foo1')] $foo) {
+    }
+}
+
+#[ExampleAttribute('foo', 'bar')]
+class NameOfClass2 {
+}
+
+#[Attr]
+#[FooAttr]
+class NameOfClass3 {
+}
+
+#[Attr, FooAttr]
+class NameOfClass4 {
+}
+
+#[Attribute(Attribute::TARGET_CLASS | Attribute::TARGET_METHOD)]
+class NameOfClass5 {
+}
+
+#[ConstAttr]
+#[FooAttribute(null)]
+class NameOfClass6 {
+}
+-----
+Block#1
+    Expr_Attribute
+        name: LITERAL('NameOfAttribute')
+        result: Var#1
+    Expr_AttributeGroup
+        attrs[0]: Var#1
+        result: Var#2
+    Stmt_Class
+        name: LITERAL('NameOfClass1')
+        attrGroups[0]: Var#2
+        stmts: Block#2
+    Expr_Attribute
+        name: LITERAL('ExampleAttribute')
+        args[0]: LITERAL('foo')
+        args[1]: LITERAL('bar')
+        result: Var#3
+    Expr_AttributeGroup
+        attrs[0]: Var#3
+        result: Var#4
+    Stmt_Class
+        name: LITERAL('NameOfClass2')
+        attrGroups[0]: Var#4
+        stmts: Block#3
+    Expr_Attribute
+        name: LITERAL('Attr')
+        result: Var#5
+    Expr_AttributeGroup
+        attrs[0]: Var#5
+        result: Var#6
+    Expr_Attribute
+        name: LITERAL('FooAttr')
+        result: Var#7
+    Expr_AttributeGroup
+        attrs[0]: Var#7
+        result: Var#8
+    Stmt_Class
+        name: LITERAL('NameOfClass3')
+        attrGroups[0]: Var#6
+        attrGroups[1]: Var#8
+        stmts: Block#4
+    Expr_Attribute
+        name: LITERAL('Attr')
+        result: Var#9
+    Expr_Attribute
+        name: LITERAL('FooAttr')
+        result: Var#10
+    Expr_AttributeGroup
+        attrs[0]: Var#9
+        attrs[1]: Var#10
+        result: Var#11
+    Stmt_Class
+        name: LITERAL('NameOfClass4')
+        attrGroups[0]: Var#11
+        stmts: Block#5
+    Expr_ClassConstFetch
+        class: LITERAL('Attribute')
+        name: LITERAL('TARGET_CLASS')
+        result: Var#12
+    Expr_ClassConstFetch
+        class: LITERAL('Attribute')
+        name: LITERAL('TARGET_METHOD')
+        result: Var#13
+    Expr_BinaryOp_BitwiseOr
+        left: Var#12
+        right: Var#13
+        result: Var#14
+    Expr_Attribute
+        name: LITERAL('Attribute')
+        args[0]: Var#14
+        result: Var#15
+    Expr_AttributeGroup
+        attrs[0]: Var#15
+        result: Var#16
+    Stmt_Class
+        name: LITERAL('NameOfClass5')
+        attrGroups[0]: Var#16
+        stmts: Block#6
+    Expr_Attribute
+        name: LITERAL('ConstAttr')
+        result: Var#17
+    Expr_AttributeGroup
+        attrs[0]: Var#17
+        result: Var#18
+    Expr_ConstFetch
+        name: LITERAL('null')
+        result: Var#19
+    Expr_Attribute
+        name: LITERAL('FooAttribute')
+        args[0]: Var#19
+        result: Var#20
+    Expr_AttributeGroup
+        attrs[0]: Var#20
+        result: Var#21
+    Stmt_Class
+        name: LITERAL('NameOfClass6')
+        attrGroups[0]: Var#18
+        attrGroups[1]: Var#21
+        stmts: Block#7
+    Terminal_Return
+
+Block#2
+    Expr_Attribute
+        name: LITERAL('ExampleAttributeMethod')
+        args[0]: LITERAL('foo')
+        args[1]: LITERAL('bar')
+        result: Var#22
+    Expr_AttributeGroup
+        attrs[0]: Var#22
+        result: Var#23
+    Stmt_ClassMethod<'method1'>
+        flags: private
+        attrGroups[0]: Var#23
+
+Block#3
+
+Block#4
+
+Block#5
+
+Block#6
+
+Block#7
+
+Function 'NameOfClass1::method1': mixed
+Block#1
+    Expr_Attribute
+        name: LITERAL('FooParamAttrib')
+        args[0]: LITERAL('Foo1')
+        result: Var#1
+    Expr_AttributeGroup
+        attrs[0]: Var#1
+        result: Var#2
+    Expr_Param
+        declaredType: mixed
+        name: LITERAL('foo')
+        attrGroups[0]: Var#2
+        result: Var#3<$foo>
+    Terminal_Return
