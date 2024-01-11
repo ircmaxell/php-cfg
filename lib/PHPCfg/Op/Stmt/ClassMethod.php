@@ -24,9 +24,9 @@ class ClassMethod extends Function_
 
     public bool $abstract;
 
-    public function __construct(Func $func, int $visiblity, bool $static, bool $final, bool $abstract, array $attributes = [])
+    public function __construct(Func $func, int $visiblity, bool $static, bool $final, bool $abstract, array $attrGroups, array $attributes = [])
     {
-        parent::__construct($func, $attributes);
+        parent::__construct($func, $attrGroups, $attributes);
         $this->visibility = $visiblity;
         $this->static = $static;
         $this->final = $final;

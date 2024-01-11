@@ -24,6 +24,8 @@ class Param extends Expr
     public bool $byRef;
 
     public bool $variadic;
+    
+    public array $attrGroups;
 
     public ?Operand $defaultVar = null;
 
@@ -39,6 +41,7 @@ class Param extends Expr
         Op\Type $type, 
         bool $byRef, 
         bool $variadic, 
+        array $attrGroups,
         ?Operand $defaultVar = null, 
         ?Block $defaultBlock = null, 
         array $attributes = []
@@ -49,6 +52,7 @@ class Param extends Expr
         $this->declaredType = $type;
         $this->byRef = $byRef;
         $this->variadic = $variadic;
+        $this->attrGroups = $attrGroups;
         if (!is_null($defaultVar)) {
             $this->defaultVar = $this->addReadRef($defaultVar);
         }
@@ -57,7 +61,7 @@ class Param extends Expr
 
     public function getVariableNames(): array
     {
-        return ['name', 'defaultVar', 'result'];
+        return ['name', 'attrGroups', 'defaultVar', 'result'];
     }
 
     public function getSubBlocks(): array

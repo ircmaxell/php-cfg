@@ -22,16 +22,19 @@ class Class_ extends ClassLike
 
     public array $implements;
 
-    public function __construct(Operand $name, int $flags, ?Operand $extends, array $implements, Block $stmts, array $attributes = [])
+    public array $attrGroups;
+
+    public function __construct(Operand $name, int $flags, ?Operand $extends, array $implements, Block $stmts, array $attrGroups, array $attributes = [])
     {
         parent::__construct($name, $stmts, $attributes);
         $this->flags = $flags;
         $this->extends = $extends;
         $this->implements = $implements;
+        $this->attrGroups = $attrGroups;
     }
 
     public function getVariableNames(): array
     {
-        return ['name', 'extends', 'implements'];
+        return ['name', 'attrGroups', 'extends', 'implements'];
     }
 }
