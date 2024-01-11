@@ -157,9 +157,9 @@ Block#1
     Stmt_Function<'foo'>
         attribute['filename']: foo.php
         attribute['startLine']: 2
-        attribute['startFilePos']: 7
+        attribute['startFilePos']: 6
         attribute['endLine']: 4
-        attribute['endFilePos']: 43
+        attribute['endFilePos']: 40
     Terminal_Return
 
 Function 'foo': mixed
@@ -167,18 +167,18 @@ Block#1
     Expr_Param
         attribute['filename']: foo.php
         attribute['startLine']: 2
-        attribute['startFilePos']: 20
+        attribute['startFilePos']: 19
         attribute['endLine']: 2
-        attribute['endFilePos']: 21
+        attribute['endFilePos']: 20
         declaredType: mixed
         name: LITERAL('a')
         result: Var#1<\$a>
     Terminal_Return
         attribute['filename']: foo.php
         attribute['startLine']: 3
-        attribute['startFilePos']: 31
+        attribute['startFilePos']: 29
         attribute['endLine']: 3
-        attribute['endFilePos']: 40
+        attribute['endFilePos']: 38
         expr: Var#1<\$a>
 EOF;
 
