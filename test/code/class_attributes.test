@@ -31,15 +31,34 @@ class NameOfClass6 {
 -----
 Block#1
     Stmt_Class
+        attrGroup[0]:
+            attr[0]:
+                name: LITERAL('NameOfAttribute')
         name: LITERAL('NameOfClass1')
         stmts: Block#2
     Stmt_Class
+        attrGroup[0]:
+            attr[0]:
+                name: LITERAL('ExampleAttribute')
+                args[0]: LITERAL('foo')
+                args[1]: LITERAL('bar')
         name: LITERAL('NameOfClass2')
         stmts: Block#3
     Stmt_Class
+        attrGroup[0]:
+            attr[0]:
+                name: LITERAL('Attr')
+        attrGroup[1]:
+            attr[0]:
+                name: LITERAL('FooAttr')
         name: LITERAL('NameOfClass3')
         stmts: Block#4
     Stmt_Class
+        attrGroup[0]:
+            attr[0]:
+                name: LITERAL('Attr')
+            attr[1]:
+                name: LITERAL('FooAttr')
         name: LITERAL('NameOfClass4')
         stmts: Block#5
     Expr_ClassConstFetch
@@ -55,12 +74,23 @@ Block#1
         right: Var#2
         result: Var#3
     Stmt_Class
+        attrGroup[0]:
+            attr[0]:
+                name: LITERAL('Attribute')
+                args[0]: Var#3
         name: LITERAL('NameOfClass5')
         stmts: Block#6
     Expr_ConstFetch
         name: LITERAL('null')
         result: Var#4
     Stmt_Class
+        attrGroup[0]:
+            attr[0]:
+                name: LITERAL('ConstAttr')
+        attrGroup[1]:
+            attr[0]:
+                name: LITERAL('FooAttribute')
+                args[0]: Var#4
         name: LITERAL('NameOfClass6')
         stmts: Block#7
     Terminal_Return

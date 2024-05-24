@@ -19,6 +19,10 @@ Block#1
         expr: Var#1
         result: Var#3
     Stmt_Class
+        attrGroup[0]:
+            attr[0]:
+                name: LITERAL('Attr')
+                args[0]: LITERAL('foo')
         name: LITERAL('{anonymousClass}#2')
         stmts: Block#3
     Expr_New
