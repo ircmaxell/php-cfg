@@ -77,23 +77,19 @@ Block#1
         attribute['filename']: foo.php
         attribute['startLine']: 2
         attribute['endLine']: 4
-    Expr_Attribute
-        attribute['filename']: foo.php
-        attribute['startLine']: 6
-        attribute['endLine']: 6
-        name: LITERAL('Attr')
-        result: Var#1
-    Expr_AttributeGroup
-        attribute['filename']: foo.php
-        attribute['startLine']: 6
-        attribute['endLine']: 6
-        attrs[0]: Var#1
-        result: Var#2
     Stmt_Function<'foowithattribute'>
         attribute['filename']: foo.php
         attribute['startLine']: 6
         attribute['endLine']: 9
-        attrGroups[0]: Var#2
+        attrGroup[0]:
+            attribute['filename']: foo.php
+            attribute['startLine']: 6
+            attribute['endLine']: 6
+            attr[0]:
+                attribute['filename']: foo.php
+                attribute['startLine']: 6
+                attribute['endLine']: 6
+                name: LITERAL('Attr')
     Terminal_Return
     
 Function 'foo': mixed

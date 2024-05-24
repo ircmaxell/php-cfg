@@ -169,6 +169,7 @@ class Parser
 
             return;
         }
+
         $type = $node->getType();
         if (method_exists($this, 'parse'.$type)) {
             $this->{'parse'.$type}($node);
@@ -232,7 +233,7 @@ class Parser
             $this->parseExprNode($node->extends),
             $this->parseExprList($node->implements),
             $this->parseNodes($node->stmts, new Block()),
-            $this->parseExprList($node->attrGroups),
+            $this->parseAttributeGroups($node->attrGroups),
             $this->mapAttributes($node)
         );
         $this->currentClass = $old;
@@ -289,7 +290,7 @@ class Parser
             (bool) $static,
             (bool) $final,
             (bool) $abstract,
-            $this->parseExprList($node->attrGroups),
+            $this->parseAttributeGroups($node->attrGroups),
             $this->mapAttributes($node)
         );
         $func->callableOp = $class_method;
@@ -424,7 +425,7 @@ class Parser
             null,
         );
         $this->parseFunc($func, $node->params, $node->stmts, null);
-        $this->block->children[] = $function = new Op\Stmt\Function_($func, $this->parseExprList($node->attrGroups), $this->mapAttributes($node));
+        $this->block->children[] = $function = new Op\Stmt\Function_($func, $this->parseAttributeGroups($node->attrGroups), $this->mapAttributes($node));
         $func->callableOp = $function;
     }
 
@@ -574,12 +575,13 @@ class Parser
                 $defaultVar = null;
                 $defaultBlock = null;
             }
+
             $this->block->children[] = new Op\Stmt\Property(
                 $this->parseExprNode($prop->name),
                 $visibility,
                 (bool) $static,
                 (bool) $readonly,
-                $this->parseExprList($node->attrGroups),
+                $this->parseAttributeGroups($node->attrGroups),
                 $this->parseTypeNode($node->type),
                 $defaultVar,
                 $defaultBlock,
@@ -941,14 +943,19 @@ class Parser
     {
         $args = array_map([$this, 'parseArg'], $attr->args);
 
-        return new Op\Expr\Attribute($this->readVariable($this->parseExprNode($attr->name)), $args, $this->mapAttributes($attr));
+        return new Op\Attributes\Attribute($this->readVariable($this->parseExprNode($attr->name)), $args, $this->mapAttributes($attr));
     }
 
     protected function parseAttributeGroup(Node\AttributeGroup $attrGroup)
     {
-        $attrs = $this->parseExprList($attrGroup->attrs);
+        $attrs = array_map([$this, 'parseAttribute'], $attrGroup->attrs);
         
-        return new Op\Expr\AttributeGroup($attrs, $this->mapAttributes($attrGroup));
+        return new Op\Attributes\AttributeGroup($attrs, $this->mapAttributes($attrGroup));
+    }
+
+    protected function parseAttributeGroups(array $attrGroups)
+    {
+        return array_map([$this, 'parseAttributeGroup'], $attrGroups);
     }
 
     protected function parseExpr_Array(Expr\Array_ $expr)
@@ -1570,7 +1577,7 @@ class Parser
                 $this->parseTypeNode($param->type),
                 $param->byRef,
                 $param->variadic,
-                $this->parseExprList($param->attrGroups),
+                $this->parseAttributeGroups($param->attrGroups),
                 $defaultVar,
                 $defaultBlock,
                 $this->mapAttributes($param)

@@ -18,24 +18,16 @@ Block#1
         var: Var#2<$var>
         expr: Var#1
         result: Var#3
-    Expr_Attribute
-        name: LITERAL('Attr')
-        args[0]: LITERAL('foo')
-        result: Var#4
-    Expr_AttributeGroup
-        attrs[0]: Var#4
-        result: Var#5
     Stmt_Class
         name: LITERAL('{anonymousClass}#2')
-        attrGroups[0]: Var#5
         stmts: Block#3
     Expr_New
         class: LITERAL('{anonymousClass}#2')
-        result: Var#6
+        result: Var#4
     Expr_Assign
-        var: Var#7<$instance>
-        expr: Var#6
-        result: Var#8
+        var: Var#5<$instance>
+        expr: Var#4
+        result: Var#6
     Terminal_Return
 
 Block#2

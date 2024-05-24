@@ -55,28 +55,20 @@ Block#2
         flags: protected
         declaredType: mixed
         name: LITERAL('prop7')
-    Expr_Attribute
-        name: LITERAL('ConstAttr')
-        result: Var#2
-    Expr_AttributeGroup
-        attrs[0]: Var#2
-        result: Var#3
     Expr_ConstFetch
         name: LITERAL('null')
-        result: Var#4
-    Expr_Attribute
-        name: LITERAL('FooAttribute')
-        args[0]: Var#4
-        result: Var#5
-    Expr_AttributeGroup
-        attrs[0]: Var#5
-        result: Var#6
+        result: Var#2
     Stmt_Property
+        attrGroup[0]:
+            attr[0]:
+                name: LITERAL('ConstAttr')
+        attrGroup[1]:
+            attr[0]:
+                name: LITERAL('FooAttribute')
+                args[0]: Var#2
         flags: private
         declaredType: string
         name: LITERAL('foo5')
-        attrGroups[0]: Var#3
-        attrGroups[1]: Var#6
     Terminal_Const
         name: LITERAL('FOO')
         value: LITERAL('foo')

@@ -9,11 +9,11 @@ declare(strict_types=1);
  * @license MIT See LICENSE at the root of the project for more info
  */
 
-namespace PHPCfg\Op\Expr;
+namespace PHPCfg\Op\Attributes;
 
-use PHPCfg\Op\Expr;
+use PHPCfg\Op;
 
-class AttributeGroup extends Expr
+class AttributeGroup extends Op
 {
     public array $attrs;
 
@@ -21,10 +21,5 @@ class AttributeGroup extends Expr
     {
         parent::__construct($attributes);
         $this->attrs = $attrs;
-    }
-
-    public function getVariableNames(): array
-    {
-        return ['attrs', 'result'];
     }
 }

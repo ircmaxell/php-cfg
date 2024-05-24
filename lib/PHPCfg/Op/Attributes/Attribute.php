@@ -9,12 +9,12 @@ declare(strict_types=1);
  * @license MIT See LICENSE at the root of the project for more info
  */
 
-namespace PHPCfg\Op\Expr;
+namespace PHPCfg\Op\Attributes;
 
-use PHPCfg\Op\Expr;
+use PHPCfg\Op;
 use PhpCfg\Operand;
 
-class Attribute extends Expr
+class Attribute extends Op
 {
     public Operand $name;
 
@@ -25,10 +25,5 @@ class Attribute extends Expr
         parent::__construct($attributes);
         $this->name = $this->addReadRef($name);
         $this->args = $args;
-    }
-
-    public function getVariableNames(): array
-    {
-        return ['name', 'args', 'result'];
     }
 }

@@ -32,9 +32,4 @@ class Function_ extends Stmt implements CallableOp
     {
         return $this->func;
     }
-
-    public function getVariableNames(): array
-    {
-        return ['attrGroups'];
-    }
 }

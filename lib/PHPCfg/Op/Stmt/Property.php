@@ -77,7 +77,7 @@ class Property extends Stmt
 
     public function getVariableNames(): array
     {
-        return ['name', 'attrGroups', 'defaultVar'];
+        return ['name', 'defaultVar'];
     }
 
     public function getSubBlocks(): array

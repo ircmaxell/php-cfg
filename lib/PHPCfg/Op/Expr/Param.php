@@ -61,7 +61,7 @@ class Param extends Expr
 
     public function getVariableNames(): array
     {
-        return ['name', 'attrGroups', 'defaultVar', 'result'];
+        return ['name', 'defaultVar', 'result'];
     }
 
     public function getSubBlocks(): array

@@ -35,6 +35,6 @@ class Class_ extends ClassLike
 
     public function getVariableNames(): array
     {
-        return ['name', 'attrGroups', 'extends', 'implements'];
+        return ['name', 'extends', 'implements'];
     }
 }
