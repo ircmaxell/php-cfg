@@ -19,10 +19,13 @@ class Function_ extends Stmt implements CallableOp
 {
     public Func $func;
 
-    public function __construct(Func $func, array $attributes = [])
+    public array $attrGroups;
+
+    public function __construct(Func $func, array $attrGroups, array $attributes = [])
     {
         parent::__construct($attributes);
         $this->func = $func;
+        $this->attrGroups = $attrGroups;
     }
 
     public function getFunc(): Func

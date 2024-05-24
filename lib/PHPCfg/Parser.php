@@ -122,10 +122,16 @@ class Parser
 
         $start = $func->cfg;
 
+        $tmp = $this->block;
+        $this->block = $start;
+
         $func->params = $this->parseParameterList($func, $params);
         foreach ($func->params as $param) {
             $this->writeVariableName($param->name->value, $param->result, $start);
+            $start->children[] = $param;
         }
+        
+        $this->block = $tmp;
 
         $end = $this->parseNodes($stmts, $start);
 
@@ -163,6 +169,7 @@ class Parser
 
             return;
         }
+
         $type = $node->getType();
         if (method_exists($this, 'parse'.$type)) {
             $this->{'parse'.$type}($node);
@@ -226,6 +233,7 @@ class Parser
             $this->parseExprNode($node->extends),
             $this->parseExprList($node->implements),
             $this->parseNodes($node->stmts, new Block()),
+            $this->parseAttributeGroups($node->attrGroups),
             $this->mapAttributes($node)
         );
         $this->currentClass = $old;
@@ -282,6 +290,7 @@ class Parser
             (bool) $static,
             (bool) $final,
             (bool) $abstract,
+            $this->parseAttributeGroups($node->attrGroups),
             $this->mapAttributes($node)
         );
         $func->callableOp = $class_method;
@@ -416,7 +425,7 @@ class Parser
             null,
         );
         $this->parseFunc($func, $node->params, $node->stmts, null);
-        $this->block->children[] = $function = new Op\Stmt\Function_($func, $this->mapAttributes($node));
+        $this->block->children[] = $function = new Op\Stmt\Function_($func, $this->parseAttributeGroups($node->attrGroups), $this->mapAttributes($node));
         $func->callableOp = $function;
     }
 
@@ -566,11 +575,13 @@ class Parser
                 $defaultVar = null;
                 $defaultBlock = null;
             }
+
             $this->block->children[] = new Op\Stmt\Property(
                 $this->parseExprNode($prop->name),
                 $visibility,
                 (bool) $static,
                 (bool) $readonly,
+                $this->parseAttributeGroups($node->attrGroups),
                 $this->parseTypeNode($node->type),
                 $defaultVar,
                 $defaultBlock,
@@ -926,6 +937,25 @@ class Parser
     protected function parseArg(Node\Arg $expr)
     {
         return $this->readVariable($this->parseExprNode($expr->value));
+    }
+
+    protected function parseAttribute(Node\Attribute $attr)
+    {
+        $args = array_map([$this, 'parseArg'], $attr->args);
+
+        return new Op\Attributes\Attribute($this->readVariable($this->parseExprNode($attr->name)), $args, $this->mapAttributes($attr));
+    }
+
+    protected function parseAttributeGroup(Node\AttributeGroup $attrGroup)
+    {
+        $attrs = array_map([$this, 'parseAttribute'], $attrGroup->attrs);
+        
+        return new Op\Attributes\AttributeGroup($attrs, $this->mapAttributes($attrGroup));
+    }
+
+    protected function parseAttributeGroups(array $attrGroups)
+    {
+        return array_map([$this, 'parseAttributeGroup'], $attrGroups);
     }
 
     protected function parseExpr_Array(Expr\Array_ $expr)
@@ -1547,6 +1577,7 @@ class Parser
                 $this->parseTypeNode($param->type),
                 $param->byRef,
                 $param->variadic,
+                $this->parseAttributeGroups($param->attrGroups),
                 $defaultVar,
                 $defaultBlock,
                 $this->mapAttributes($param)

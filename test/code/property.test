@@ -7,6 +7,13 @@ class A {
     private readonly static $prop5;
     static $prop6;
     protected $prop7;
+    
+    #[ConstAttr]
+    #[FooAttribute(null)]
+    private string $foo5;
+
+    #[NameOfAttribute]
+    private const FOO = 'foo';
 }
 -----
 Block#1
@@ -48,6 +55,24 @@ Block#2
         flags: protected
         declaredType: mixed
         name: LITERAL('prop7')
+    Expr_ConstFetch
+        name: LITERAL('null')
+        result: Var#2
+    Stmt_Property
+        attrGroup[0]:
+            attr[0]:
+                name: LITERAL('ConstAttr')
+        attrGroup[1]:
+            attr[0]:
+                name: LITERAL('FooAttribute')
+                args[0]: Var#2
+        flags: private
+        declaredType: string
+        name: LITERAL('foo5')
+    Terminal_Const
+        name: LITERAL('FOO')
+        value: LITERAL('foo')
+        valueBlock: Block#5
 
 Block#3
 
@@ -56,3 +81,5 @@ Block#4
         left: LITERAL(1)
         right: LITERAL(1)
         result: Var#1
+
+Block#5

@@ -119,7 +119,12 @@ abstract class Printer
 
         $result .= $this->renderAttributes($op->getAttributes());
 
+        if ($op instanceof Op\Stmt\Function_ || $op instanceof Op\Stmt\Class_) {
+            $result .= $this->renderAttrGroups($op->attrGroups);
+        }
+
         if ($op instanceof Op\Stmt\Property) {
+            $result .= $this->renderAttrGroups($op->attrGroups);
             $result .= "\n    flags: " . $this->indent($this->renderFlags($op));
             $result .= "\n    declaredType: " . $this->indent($this->renderType($op->declaredType));
         }
@@ -163,9 +168,11 @@ abstract class Printer
             }
         }
         if ($op instanceof Op\Stmt\ClassMethod) {
+            $result .= $this->renderAttrGroups($op->attrGroups);
             $result .= "\n    flags: " . $this->indent($this->renderFlags($op));
         }
         if ($op instanceof Op\Expr\Param) {
+            $result .= $this->renderAttrGroups($op->attrGroups);
             $result .= "\n    declaredType: " . $this->indent($this->renderType($op->declaredType));
         }
         if ($op instanceof Op\Expr\Include_) {
@@ -266,11 +273,6 @@ abstract class Printer
         while ($this->blockQueue->count() > 0) {
             $block = $this->blockQueue->dequeue();
             $ops = [];
-            if ($block === $func->cfg) {
-                foreach ($func->params as $param) {
-                    $renderedOps[$param] = $ops[] = $this->renderOp($param);
-                }
-            }
             foreach ($block->phi as $phi) {
                 $result = $this->indent($this->renderOperand($phi->result).' = Phi(');
                 $result .= implode(', ', array_map([$this, 'renderOperand'], $phi->vars));
@@ -388,6 +390,26 @@ abstract class Printer
             foreach ($attributes as $key => $value) {
                 if (is_string($value) || is_numeric($value)) {
                     $result .= "\n    attribute['".$key."']: ".$value;
+                }
+            }
+        }
+
+        return $result;
+    }
+
+    public function renderAttrGroups(array $attrGroups): string
+    {
+        $result = '';
+        
+        foreach($attrGroups as $indexGroup => $attrGroup) {
+            $result .= "\n    attrGroup[$indexGroup]: ";
+            $result .= $this->indent($this->renderAttributes($attrGroup->getAttributes()));
+            foreach($attrGroup->attrs as $indexAttr => $attr) {
+                $result .= "\n        attr[$indexAttr]: ";
+                $result .= $this->indent($this->renderAttributes($attr->getAttributes()), 2);
+                $result .= "\n            name: ".$this->renderOperand($attr->name);
+                foreach($attr->args as $indexArg => $arg) {
+                    $result .= "\n            args[$indexArg]: ".$this->renderOperand($arg);
                 }
             }
         }

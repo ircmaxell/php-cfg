@@ -64,6 +64,11 @@ EOF;
 function foo(\$a) {
     return \$a;
 }
+
+#[Attr]
+function foowithattribute(\$a) {
+    return \$a;
+}
 EOF;
 
         $expected = <<< EOF
@@ -72,8 +77,21 @@ Block#1
         attribute['filename']: foo.php
         attribute['startLine']: 2
         attribute['endLine']: 4
+    Stmt_Function<'foowithattribute'>
+        attribute['filename']: foo.php
+        attribute['startLine']: 6
+        attribute['endLine']: 9
+        attrGroup[0]:
+            attribute['filename']: foo.php
+            attribute['startLine']: 6
+            attribute['endLine']: 6
+            attr[0]:
+                attribute['filename']: foo.php
+                attribute['startLine']: 6
+                attribute['endLine']: 6
+                name: LITERAL('Attr')
     Terminal_Return
-
+    
 Function 'foo': mixed
 Block#1
     Expr_Param
@@ -87,6 +105,21 @@ Block#1
         attribute['filename']: foo.php
         attribute['startLine']: 3
         attribute['endLine']: 3
+        expr: Var#1<\$a>
+    
+Function 'foowithattribute': mixed
+Block#1
+    Expr_Param
+        attribute['filename']: foo.php
+        attribute['startLine']: 7
+        attribute['endLine']: 7
+        declaredType: mixed
+        name: LITERAL('a')
+        result: Var#1<\$a>
+    Terminal_Return
+        attribute['filename']: foo.php
+        attribute['startLine']: 8
+        attribute['endLine']: 8
         expr: Var#1<\$a>
 EOF;
 
