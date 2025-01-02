@@ -20,7 +20,7 @@ class ClassConstFetch extends Expr
 
     public Operand $name;
 
-    public function __construct(Operand $class, Operand $name = null, array $attributes = [])
+    public function __construct(Operand $class, ?Operand $name = null, array $attributes = [])
     {
         parent::__construct($attributes);
         $this->class = $this->addReadRef($class);

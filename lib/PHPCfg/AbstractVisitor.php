@@ -34,15 +34,15 @@ abstract class AbstractVisitor implements Visitor
     {
     }
 
-    public function enterBlock(Block $block, Block $prior = null)
+    public function enterBlock(Block $block, ?Block $prior = null)
     {
     }
 
-    public function leaveBlock(Block $block, Block $prior = null)
+    public function leaveBlock(Block $block, ?Block $prior = null)
     {
     }
 
-    public function skipBlock(Block $block, Block $prior = null)
+    public function skipBlock(Block $block, ?Block $prior = null)
     {
     }
 

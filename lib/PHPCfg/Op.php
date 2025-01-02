@@ -37,7 +37,7 @@ abstract class Op
         return $this->getAttribute('filename', 'unknown');
     }
 
-    public function &getAttribute(string $key, $default = null)
+    public function &getAttribute(string $key, mixed $default = null)
     {
         if (! $this->hasAttribute($key)) {
             return $default;

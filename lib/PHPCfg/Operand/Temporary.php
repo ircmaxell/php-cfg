@@ -22,7 +22,7 @@ class Temporary extends Operand
      *
      * @param Operand|null $original The previous variable this was constructed from
      */
-    public function __construct(Operand $original = null)
+    public function __construct(?Operand $original = null)
     {
         $this->original = $original;
     }
