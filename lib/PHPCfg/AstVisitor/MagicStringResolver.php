@@ -41,7 +41,7 @@ class MagicStringResolver extends NodeVisitorAbstract
         if ($node instanceof Node\Stmt\Function_) {
             $this->functionStack[] = $node->namespacedName->toString();
         } elseif ($node instanceof Node\Stmt\ClassMethod) {
-            $this->methodStack[] = end($this->classStack).'::'.$node->name;
+            $this->methodStack[] = end($this->classStack) . '::' . $node->name;
         } elseif ($node instanceof Node\Name) {
             switch (strtolower($node->toString())) {
                 case 'self':
@@ -91,7 +91,7 @@ class MagicStringResolver extends NodeVisitorAbstract
             assert(end($this->functionStack) === $node->namespacedName->toString());
             array_pop($this->functionStack);
         } elseif ($node instanceof Node\Stmt\ClassMethod) {
-            assert(end($this->methodStack) === end($this->classStack).'::'.$node->name);
+            assert(end($this->methodStack) === end($this->classStack) . '::' . $node->name);
             array_pop($this->methodStack);
         }
     }
@@ -117,12 +117,12 @@ class MagicStringResolver extends NodeVisitorAbstract
                         $type = $match[2];
                         $type = preg_replace('((?<=^|\|)((?i:self)|\$this)(?=\[|$|\|))', end($this->classStack), $type);
 
-                        return '@'.$match[1].' '.$type;
+                        return '@' . $match[1] . ' ' . $type;
                     },
-                    $comment->getText()
+                    $comment->getText(),
                 ),
                 $comment->getLine(),
-                $comment->getFilePos()
+                $comment->getFilePos(),
             );
 
             $node->setDocComment($comment);

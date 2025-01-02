@@ -18,9 +18,9 @@ class Precedence extends TraitUseAdaptation
 {
     public array $insteadof;
 
-    public function __construct(?Operand $trait,Operand $method,array $insteadof,array $attributes = [])
+    public function __construct(?Operand $trait, Operand $method, array $insteadof, array $attributes = [])
     {
-        parent::__construct($trait,$method,$attributes);   
+        parent::__construct($trait, $method, $attributes);
         $this->insteadof = $insteadof;
     }
 }

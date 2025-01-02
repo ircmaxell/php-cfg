@@ -84,7 +84,7 @@ class Traverser
                         // Revisit the ith block again
                         --$j;
                     } elseif (null !== $result) {
-                        throw new \RuntimeException('Unknown return from visitor: '.gettype($result));
+                        throw new \RuntimeException('Unknown return from visitor: ' . gettype($result));
                     }
                 }
                 if (is_array($op->{$subblock})) {
@@ -103,7 +103,7 @@ class Traverser
                 // Revisit the ith node again
                 --$i;
             } elseif (null !== $result && $result !== $op) {
-                throw new \RuntimeException('Unknown return from visitor: '.gettype($result));
+                throw new \RuntimeException('Unknown return from visitor: ' . gettype($result));
             }
         }
         $block->children = $children;

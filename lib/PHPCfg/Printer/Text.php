@@ -37,16 +37,16 @@ class Text extends Printer
         $output = '';
         foreach ($rendered['blocks'] as $block) {
             $ops = $rendered['blocks'][$block];
-            $output .= "\nBlock#".$rendered['blockIds'][$block];
+            $output .= "\nBlock#" . $rendered['blockIds'][$block];
             foreach ($block->parents as $prev) {
                 if ($rendered['blockIds']->contains($prev)) {
-                    $output .= $this->indent("\nParent: Block#".$rendered['blockIds'][$prev]);
+                    $output .= $this->indent("\nParent: Block#" . $rendered['blockIds'][$prev]);
                 }
             }
             foreach ($ops as $op) {
-                $output .= $this->indent("\n".$op['label']);
+                $output .= $this->indent("\n" . $op['label']);
                 foreach ($op['childBlocks'] as $child) {
-                    $output .= $this->indent("\n".$child['name'].': Block#'.$rendered['blockIds'][$child['block']], 2);
+                    $output .= $this->indent("\n" . $child['name'] . ': Block#' . $rendered['blockIds'][$child['block']], 2);
                 }
             }
             $output .= "\n";
@@ -62,16 +62,16 @@ class Text extends Printer
         foreach ($rendered['varIds'] as $var) {
             $id = $rendered['varIds'][$var];
             $output .= "\nVar#{$id}";
-            $output .= $this->indent("\n".'WriteOps:');
+            $output .= $this->indent("\n" . 'WriteOps:');
             foreach ($var->ops as $writeOp) {
                 if ($rendered['ops']->contains($writeOp)) {
-                    $output .= $this->indent("\n".$rendered['ops'][$writeOp]['label'], 2);
+                    $output .= $this->indent("\n" . $rendered['ops'][$writeOp]['label'], 2);
                 }
             }
-            $output .= $this->indent("\n".'ReadOps:');
+            $output .= $this->indent("\n" . 'ReadOps:');
             foreach ($var->usages as $usage) {
                 if ($rendered['ops']->contains($usage)) {
-                    $output .= $this->indent("\n".$rendered['ops'][$usage]['label'], 2);
+                    $output .= $this->indent("\n" . $rendered['ops'][$usage]['label'], 2);
                 }
             }
             $output .= "\n";

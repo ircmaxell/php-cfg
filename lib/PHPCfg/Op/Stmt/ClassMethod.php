@@ -32,33 +32,33 @@ class ClassMethod extends Function_
         $this->final = $final;
         $this->abstract = $abstract;
     }
-    
-    public function isPublic() : bool
+
+    public function isPublic(): bool
     {
         return (bool) ($this->visibility & Node\Stmt\Class_::MODIFIER_PUBLIC);
     }
 
-    public function isProtected() : bool
+    public function isProtected(): bool
     {
         return (bool) ($this->visibility & Node\Stmt\Class_::MODIFIER_PROTECTED);
     }
 
-    public function isPrivate() : bool
+    public function isPrivate(): bool
     {
         return (bool) ($this->visibility & Node\Stmt\Class_::MODIFIER_PRIVATE);
     }
 
-    public function isAbstract() : bool
+    public function isAbstract(): bool
     {
         return $this->abstract;
     }
 
-    public function isFinal() : bool
+    public function isFinal(): bool
     {
         return $this->final;
     }
 
-    public function isStatic() : bool
+    public function isStatic(): bool
     {
         return $this->static;
     }

@@ -74,7 +74,7 @@ class LoopResolver extends NodeVisitorAbstract
         if ($node->num instanceof LNumber) {
             $num = $node->num->value - 1;
             if ($num >= count($stack)) {
-                throw new \LogicException('Too high of a count for '.$node->getType());
+                throw new \LogicException('Too high of a count for ' . $node->getType());
             }
             $loc = array_slice($stack, -1 * $num, 1);
 
@@ -86,6 +86,6 @@ class LoopResolver extends NodeVisitorAbstract
 
     protected function makeLabel()
     {
-        return 'compiled_label_'.mt_rand(0, mt_getrandmax()).'_'.self::$labelCounter++;
+        return 'compiled_label_' . mt_rand(0, mt_getrandmax()) . '_' . self::$labelCounter++;
     }
 }

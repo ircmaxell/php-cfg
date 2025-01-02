@@ -15,30 +15,30 @@ use PhpParser\Node;
 use PHPCfg\Operand;
 use PHPCfg\Op\TraitUseAdaptation;
 
-class Alias extends TraitUseAdaptation 
+class Alias extends TraitUseAdaptation
 {
     public ?Operand $newName;
 
     public ?int $newModifier;
 
-    public function __construct(?Operand $trait,Operand $method,?Operand $newName,?int $newModifier,array $attributes = [])
+    public function __construct(?Operand $trait, Operand $method, ?Operand $newName, ?int $newModifier, array $attributes = [])
     {
-        parent::__construct($trait,$method,$attributes);    
+        parent::__construct($trait, $method, $attributes);
         $this->newName = $newName;
         $this->newModifier = $newModifier;
     }
 
-    public function isPublic() : bool
+    public function isPublic(): bool
     {
         return (bool) ($this->newModifier & Node\Stmt\Class_::MODIFIER_PUBLIC);
     }
 
-    public function isProtected() : bool
+    public function isProtected(): bool
     {
         return (bool) ($this->newModifier & Node\Stmt\Class_::MODIFIER_PROTECTED);
     }
 
-    public function isPrivate() : bool
+    public function isPrivate(): bool
     {
         return (bool) ($this->newModifier & Node\Stmt\Class_::MODIFIER_PRIVATE);
     }

@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 use PhpParser\ParserFactory;
 
-require __DIR__.'/vendor/autoload.php';
+require __DIR__ . '/vendor/autoload.php';
 
 $graphviz = false;
 list($fileName, $code) = getCode($argc, $argv);

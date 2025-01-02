@@ -13,11 +13,11 @@ namespace PHPCfg;
 
 class Assertion
 {
-    const MODE_NONE = 0;
+    public const MODE_NONE = 0;
 
-    const MODE_UNION = 1;
+    public const MODE_UNION = 1;
 
-    const MODE_INTERSECTION = 2;
+    public const MODE_INTERSECTION = 2;
 
     public $mode = self::MODE_NONE;
 

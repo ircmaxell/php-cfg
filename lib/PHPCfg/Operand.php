@@ -70,7 +70,7 @@ abstract class Operand
                 // Merge them
                 $this->assertions[$key]['assertion'] = new Assertion(
                     [$orig['assertion'], $assert],
-                    $mode
+                    $mode,
                 );
 
                 return;
@@ -88,7 +88,7 @@ abstract class Operand
                 // merge
                 $this->assertions[$key]['assertion'] = new Assertion(
                     [$orig['assertion'], $assert],
-                    $mode
+                    $mode,
                 );
 
                 return;

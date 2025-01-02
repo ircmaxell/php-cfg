@@ -29,7 +29,7 @@ class ArrayDimFetch extends Expr
         } else {
             $this->dim = null;
         }
-       
+
     }
 
     public function getVariableNames(): array

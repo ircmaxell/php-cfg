@@ -18,7 +18,8 @@ class Union extends Type
 {
     public array $subtypes;
 
-    public function __construct(array $subtypes, array $attributes = []) {
+    public function __construct(array $subtypes, array $attributes = [])
+    {
         $this->subtypes = $subtypes;
     }
 
@@ -26,4 +27,4 @@ class Union extends Type
     {
         return ['subtypes'];
     }
-} 
+}

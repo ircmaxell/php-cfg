@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace PHPCfg\Op\Expr;
 
 use PHPCfg\Block;
-
 use PHPCfg\Op;
 use PHPCfg\Op\Expr;
 use PhpCfg\Operand;
@@ -24,7 +23,7 @@ class Param extends Expr
     public bool $byRef;
 
     public bool $variadic;
-    
+
     public array $attrGroups;
 
     public ?Operand $defaultVar = null;
@@ -37,14 +36,14 @@ class Param extends Expr
     public $function;
 
     public function __construct(
-        Operand $name, 
-        Op\Type $type, 
-        bool $byRef, 
-        bool $variadic, 
+        Operand $name,
+        Op\Type $type,
+        bool $byRef,
+        bool $variadic,
         array $attrGroups,
-        ?Operand $defaultVar = null, 
-        ?Block $defaultBlock = null, 
-        array $attributes = []
+        ?Operand $defaultVar = null,
+        ?Block $defaultBlock = null,
+        array $attributes = [],
     ) {
         parent::__construct($attributes);
         $this->result->original = $name;

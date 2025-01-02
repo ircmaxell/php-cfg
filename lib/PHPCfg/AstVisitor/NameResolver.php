@@ -42,19 +42,19 @@ class NameResolver extends NameResolverParent
         'resource',
         'callable',
     ];
-    
+
     protected $anonymousClasses = 0;
 
     public function enterNode(Node $node)
     {
         parent::enterNode($node);
-        
+
         if ($node instanceof Node\Stmt\Class_ && is_null($node->name)) {
-            $anonymousName = "{anonymousClass}#".++$this->anonymousClasses;
+            $anonymousName = "{anonymousClass}#" . ++$this->anonymousClasses;
             $node->name = new \PhpParser\Node\Identifier($anonymousName);
             $node->namespacedName = new \PhpParser\Node\Name($anonymousName);
         }
-        
+
         $comment = $node->getDocComment();
         if ($comment) {
             $regex = '(@(param|return|var|type)\\h+(\\S+))';
@@ -67,10 +67,10 @@ class NameResolver extends NameResolverParent
 
                         return "@{$match[1]} {$type}";
                     },
-                    $comment->getText()
+                    $comment->getText(),
                 ),
                 $comment->getStartLine(),
-                $comment->getStartFilePos()
+                $comment->getStartFilePos(),
             );
 
             $node->setDocComment($comment);
@@ -86,10 +86,10 @@ class NameResolver extends NameResolverParent
             return implode('&', array_map([$this, 'parseTypeDecl'], explode('&', $type)));
         }
         if (substr($type, 0, 1) === '?') {
-            return '?'.$this->parseTypeDecl(substr($type, 1));
+            return '?' . $this->parseTypeDecl(substr($type, 1));
         }
         if (substr($type, -2) === '[]') {
-            return $this->parseTypeDecl(substr($type, 0, -2)).'[]';
+            return $this->parseTypeDecl(substr($type, 0, -2)) . '[]';
         }
         if (substr($type, 0, 1) === '$') {
             // Variables aren't types

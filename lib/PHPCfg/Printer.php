@@ -57,7 +57,7 @@ abstract class Printer
     {
         $type = isset($var->type) ? '<inferred:' . $var->type->toString() . '>' : '';
         if ($var instanceof Literal) {
-            return "LITERAL{$type}(".var_export($var->value, true).')';
+            return "LITERAL{$type}(" . var_export($var->value, true) . ')';
         }
         if ($var instanceof Variable) {
             assert($var->name instanceof Literal);
@@ -80,23 +80,23 @@ abstract class Printer
                 }
             }
 
-            return $prefix.$var->name->value.$type;
+            return $prefix . $var->name->value . $type;
         }
         if ($var instanceof Temporary) {
             $id = $this->getVarId($var);
             if ($var->original) {
-                return "Var{$type}#{$id}".'<'.$this->renderOperand($var->original).'>';
+                return "Var{$type}#{$id}" . '<' . $this->renderOperand($var->original) . '>';
             }
 
-            return "Var{$type}#".$this->getVarId($var);
+            return "Var{$type}#" . $this->getVarId($var);
         }
         if ($var instanceof NullOperand) {
             return "NULL";
         }
         if (is_array($var)) {
-            $result = 'array'.$type;
+            $result = 'array' . $type;
             foreach ($var as $k => $v) {
-                $result .= "\n    {$k}: ".$this->indent($this->renderOperand($v));
+                $result .= "\n    {$k}: " . $this->indent($this->renderOperand($v));
             }
 
             return $result;
@@ -111,10 +111,10 @@ abstract class Printer
 
         if ($op instanceof Op\CallableOp) {
             $func = $op->getFunc();
-            $result .= '<'.var_export($func->name, true).'>';
+            $result .= '<' . var_export($func->name, true) . '>';
         }
         if ($op instanceof Op\Expr\Assertion) {
-            $result .= '<'.$this->renderAssertion($op->assertion).'>';
+            $result .= '<' . $this->renderAssertion($op->assertion) . '>';
         }
 
         $result .= $this->renderAttributes($op->getAttributes());
@@ -128,42 +128,41 @@ abstract class Printer
             $result .= "\n    flags: " . $this->indent($this->renderFlags($op));
             $result .= "\n    declaredType: " . $this->indent($this->renderType($op->declaredType));
         }
-        if($op instanceof Op\Stmt\TraitUse) {
-            foreach($op->traits as $index => $trait_) {
+        if ($op instanceof Op\Stmt\TraitUse) {
+            foreach ($op->traits as $index => $trait_) {
                 $result .= "\n    use[$index]: " . $this->indent($this->renderOperand($trait_));
             }
-            foreach($op->adaptations as $index => $adaptation) {
-                if($adaptation instanceof Op\TraitUseAdaptation\Alias) {
+            foreach ($op->adaptations as $index => $adaptation) {
+                if ($adaptation instanceof Op\TraitUseAdaptation\Alias) {
                     $result .= "\n    adaptation[$index]: Alias";
-                    if($adaptation->trait != null) {
-                        $result .= "\n        trait:".$this->indent($this->renderOperand($adaptation->trait));
+                    if ($adaptation->trait != null) {
+                        $result .= "\n        trait:" . $this->indent($this->renderOperand($adaptation->trait));
                     }
-                    $result .= "\n        method:".$this->indent($this->renderOperand($adaptation->method));
-                    if($adaptation->newName != null) {
-                        $result .= "\n        newName:".$this->indent($this->renderOperand($adaptation->newName));
+                    $result .= "\n        method:" . $this->indent($this->renderOperand($adaptation->method));
+                    if ($adaptation->newName != null) {
+                        $result .= "\n        newName:" . $this->indent($this->renderOperand($adaptation->newName));
                     }
-                    if($adaptation->newModifier != null) {
+                    if ($adaptation->newModifier != null) {
                         $result .= "\n        newModifier:";
-                        if($adaptation->isPublic()) {
+                        if ($adaptation->isPublic()) {
                             $result .= "public";
                         }
-                        if($adaptation->isPrivate()) {
+                        if ($adaptation->isPrivate()) {
                             $result .= "private";
                         }
-                        if($adaptation->isProtected()) {
+                        if ($adaptation->isProtected()) {
                             $result .= "protected";
                         }
                     }
-                }
-                else if($adaptation instanceof Op\TraitUseAdaptation\Precedence) {
+                } elseif ($adaptation instanceof Op\TraitUseAdaptation\Precedence) {
                     $result .= "\n    adaptation[$index]: Insteadof";
-                    if($adaptation->trait != null) {
-                        $result .= "\n        trait:".$this->indent($this->renderOperand($adaptation->trait));
+                    if ($adaptation->trait != null) {
+                        $result .= "\n        trait:" . $this->indent($this->renderOperand($adaptation->trait));
                     }
-                    $result .= "\n        method:".$this->indent($this->renderOperand($adaptation->method));
-                    foreach($adaptation->insteadof as $index2 => $insteadof) {
+                    $result .= "\n        method:" . $this->indent($this->renderOperand($adaptation->method));
+                    foreach ($adaptation->insteadof as $index2 => $insteadof) {
                         $result .= "\n        insteadof[$index2]: " . $this->indent($this->renderOperand($insteadof));
-                    } 
+                    }
                 }
             }
         }
@@ -205,7 +204,7 @@ abstract class Printer
                     $this->enqueueBlock($subBlock);
                     $childBlocks[] = [
                         'block' => $subBlock,
-                        'name' => $blockName.'['.$key.']',
+                        'name' => $blockName . '[' . $key . ']',
                     ];
                 }
             } elseif ($sub) {
@@ -225,7 +224,7 @@ abstract class Printer
     {
         $kind = $assert->getKind();
         if ($assert->value instanceof Operand) {
-            return $kind.'('.$this->renderOperand($assert->value).')';
+            return $kind . '(' . $this->renderOperand($assert->value) . ')';
         }
         $combinator = $assert->mode === Assertion::MODE_UNION ? '|' : '&';
         $results = [];
@@ -233,7 +232,7 @@ abstract class Printer
             $results[] = $this->renderAssertion($child);
         }
 
-        return $kind.'('.implode($combinator, $results).')';
+        return $kind . '(' . implode($combinator, $results) . ')';
     }
 
     protected function indent($str, $levels = 1)
@@ -274,7 +273,7 @@ abstract class Printer
             $block = $this->blockQueue->dequeue();
             $ops = [];
             foreach ($block->phi as $phi) {
-                $result = $this->indent($this->renderOperand($phi->result).' = Phi(');
+                $result = $this->indent($this->renderOperand($phi->result) . ' = Phi(');
                 $result .= implode(', ', array_map([$this, 'renderOperand'], $phi->vars));
                 $result .= ')';
                 $renderedOps[$phi] = $ops[] = [
@@ -319,7 +318,7 @@ abstract class Printer
                 if ($i < count($type->subtypes)) {
                     $strTypes .= "|";
                 }
-                $i ++;
+                $i++;
             }
             return $strTypes;
         }
@@ -337,7 +336,7 @@ abstract class Printer
 
     protected function renderIncludeType(int $type): string
     {
-        switch($type) {
+        switch ($type) {
             case 1:
                 return "include";
             case 2:
@@ -347,14 +346,14 @@ abstract class Printer
             case 4:
                 return "require_once";
             default:
-                throw new \LogicException("Unknown include type rendering: " .$type);
+                throw new \LogicException("Unknown include type rendering: " . $type);
         }
     }
 
     protected function renderFlags(Op\Stmt $stmt): string
     {
         $result = '';
-        
+
         if ($stmt instanceof Op\Stmt\Property) {
             if ($stmt->isReadOnly()) {
                 $result .= "readonly|";
@@ -371,7 +370,7 @@ abstract class Printer
         if ($stmt->isStatic()) {
             $result .= "static|";
         }
-        
+
         if ($stmt->isProtected()) {
             $result .= "protected";
         } elseif ($stmt->isPrivate()) {
@@ -389,7 +388,7 @@ abstract class Printer
         if ($this->renderAttributes) {
             foreach ($attributes as $key => $value) {
                 if (is_string($value) || is_numeric($value)) {
-                    $result .= "\n    attribute['".$key."']: ".$value;
+                    $result .= "\n    attribute['" . $key . "']: " . $value;
                 }
             }
         }
@@ -400,16 +399,16 @@ abstract class Printer
     public function renderAttrGroups(array $attrGroups): string
     {
         $result = '';
-        
-        foreach($attrGroups as $indexGroup => $attrGroup) {
+
+        foreach ($attrGroups as $indexGroup => $attrGroup) {
             $result .= "\n    attrGroup[$indexGroup]: ";
             $result .= $this->indent($this->renderAttributes($attrGroup->getAttributes()));
-            foreach($attrGroup->attrs as $indexAttr => $attr) {
+            foreach ($attrGroup->attrs as $indexAttr => $attr) {
                 $result .= "\n        attr[$indexAttr]: ";
                 $result .= $this->indent($this->renderAttributes($attr->getAttributes()), 2);
-                $result .= "\n            name: ".$this->renderOperand($attr->name);
-                foreach($attr->args as $indexArg => $arg) {
-                    $result .= "\n            args[$indexArg]: ".$this->renderOperand($arg);
+                $result .= "\n            name: " . $this->renderOperand($attr->name);
+                foreach ($attr->args as $indexArg => $arg) {
+                    $result .= "\n            args[$indexArg]: " . $this->renderOperand($arg);
                 }
             }
         }

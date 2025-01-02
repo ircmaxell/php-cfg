@@ -33,7 +33,8 @@ class Closure extends Expr implements CallableOp
         return ['useVars', 'result'];
     }
 
-    public function getFunc(): Func {
+    public function getFunc(): Func
+    {
         return $this->func;
     }
 }

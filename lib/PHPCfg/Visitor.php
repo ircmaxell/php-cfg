@@ -13,9 +13,9 @@ namespace PHPCfg;
 
 interface Visitor
 {
-    const REMOVE_OP = -1;
+    public const REMOVE_OP = -1;
 
-    const REMOVE_BLOCK = -2;
+    public const REMOVE_BLOCK = -2;
 
     public function enterScript(Script $script);
 

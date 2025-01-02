@@ -17,7 +17,6 @@ use PHPCfg\Operand;
 
 class Const_ extends Terminal
 {
-
     public Operand $name;
 
     public Operand $value;

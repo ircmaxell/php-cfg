@@ -26,7 +26,7 @@ class Property extends Stmt
     public bool $static;
 
     public bool $readonly;
-    
+
     public array $attrGroups;
 
     public ?Operand $defaultVar = null;
@@ -50,27 +50,27 @@ class Property extends Stmt
         $this->defaultBlock = $defaultBlock;
     }
 
-    public function isPublic() : bool
+    public function isPublic(): bool
     {
         return (bool) ($this->visibility & Node\Stmt\Class_::MODIFIER_PUBLIC);
     }
 
-    public function isProtected() : bool
+    public function isProtected(): bool
     {
         return (bool) ($this->visibility & Node\Stmt\Class_::MODIFIER_PROTECTED);
     }
 
-    public function isPrivate() : bool
+    public function isPrivate(): bool
     {
         return (bool) ($this->visibility & Node\Stmt\Class_::MODIFIER_PRIVATE);
     }
 
-    public function isStatic() : bool
+    public function isStatic(): bool
     {
         return $this->static;
     }
 
-    public function isReadonly() : bool
+    public function isReadonly(): bool
     {
         return $this->readonly;
     }

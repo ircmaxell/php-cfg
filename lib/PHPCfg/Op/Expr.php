@@ -17,7 +17,6 @@ use PHPCfg\Operand\Temporary;
 
 abstract class Expr extends Op
 {
-
     public Operand $result;
 
     protected array $writeVariables = ['result'];

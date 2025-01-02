@@ -15,7 +15,7 @@ use PHPCfg\Op\Stmt;
 use PhpCfg\Operand;
 use PHPCfg\TraitUseAdaptation;
 
-class TraitUse extends Stmt 
+class TraitUse extends Stmt
 {
     /**
      * @var Operand[]
@@ -27,7 +27,7 @@ class TraitUse extends Stmt
      */
     public array $adaptations;
 
-    public function __construct(array $traits,array $adaptations, array $attributes = [])
+    public function __construct(array $traits, array $adaptations, array $attributes = [])
     {
         parent::__construct($attributes);
         $this->traits = $traits;

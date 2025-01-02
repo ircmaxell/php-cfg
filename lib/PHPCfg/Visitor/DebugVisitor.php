@@ -34,38 +34,38 @@ class DebugVisitor implements Visitor
 
     public function enterBlock(Block $block, ?Block $prior = null)
     {
-        echo 'Enter Block #'.$this->getBlockId($block)."\n";
+        echo 'Enter Block #' . $this->getBlockId($block) . "\n";
     }
 
     public function enterOp(Op $op, Block $block)
     {
-        echo 'Enter Op '.$op->getType()."\n";
+        echo 'Enter Op ' . $op->getType() . "\n";
     }
 
     public function leaveOp(Op $op, Block $block)
     {
-        echo 'Leave Op '.$op->getType()."\n";
+        echo 'Leave Op ' . $op->getType() . "\n";
     }
 
     public function leaveBlock(Block $block, ?Block $prior = null)
     {
-        echo 'Leave Block #'.$this->getBlockId($block)."\n";
+        echo 'Leave Block #' . $this->getBlockId($block) . "\n";
     }
 
     public function skipBlock(Block $block, ?Block $prior = null)
     {
-        echo 'Skip Block #'.$this->getBlockId($block)."\n";
+        echo 'Skip Block #' . $this->getBlockId($block) . "\n";
     }
 
     public function enterFunc(Func $func)
     {
         $this->blocks = new \SplObjectStorage();
-        echo 'Enter Func '.$func->getScopedName()."\n";
+        echo 'Enter Func ' . $func->getScopedName() . "\n";
     }
 
     public function leaveFunc(Func $func)
     {
-        echo 'Leave Func '.$func->getScopedName()."\n";
+        echo 'Leave Func ' . $func->getScopedName() . "\n";
         $this->blocks = null;
     }
 

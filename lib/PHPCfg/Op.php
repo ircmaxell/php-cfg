@@ -61,11 +61,13 @@ abstract class Op
         return $this->attributes;
     }
 
-    public function getVariableNames(): array {
+    public function getVariableNames(): array
+    {
         return [];
     }
 
-    public function getSubBlocks(): array {
+    public function getSubBlocks(): array
+    {
         return [];
     }
 
@@ -84,7 +86,8 @@ abstract class Op
         return $result;
     }
 
-    protected function addReadRef(Operand $op): Operand {
+    protected function addReadRef(Operand $op): Operand
+    {
         return $op->addUsage($this);
     }
 

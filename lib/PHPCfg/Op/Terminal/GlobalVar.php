@@ -28,5 +28,5 @@ class GlobalVar extends Terminal
     {
         return ['var'];
     }
-    
+
 }

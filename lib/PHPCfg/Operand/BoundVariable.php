@@ -13,13 +13,13 @@ namespace PHPCfg\Operand;
 
 class BoundVariable extends Variable
 {
-    const SCOPE_GLOBAL = 1;
+    public const SCOPE_GLOBAL = 1;
 
-    const SCOPE_LOCAL = 2;
+    public const SCOPE_LOCAL = 2;
 
-    const SCOPE_OBJECT = 3;
+    public const SCOPE_OBJECT = 3;
 
-    const SCOPE_FUNCTION = 4;
+    public const SCOPE_FUNCTION = 4;
 
     public $byRef;
 

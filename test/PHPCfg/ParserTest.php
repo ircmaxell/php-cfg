@@ -37,15 +37,17 @@ class ParserTest extends TestCase
 
         $this->assertEquals(
             $this->canonicalize($expectedDump),
-            $this->canonicalize($result)
+            $this->canonicalize($result),
         );
     }
 
     public function provideTestParseAndDump()
     {
-        $dir = __DIR__.'/../code';
+        $dir = __DIR__ . '/../code';
         $iter = new \RecursiveIteratorIterator(
-            new \RecursiveDirectoryIterator($dir), \RecursiveIteratorIterator::LEAVES_ONLY);
+            new \RecursiveDirectoryIterator($dir),
+            \RecursiveIteratorIterator::LEAVES_ONLY,
+        );
 
         foreach ($iter as $file) {
             if (! $file->isFile()) {

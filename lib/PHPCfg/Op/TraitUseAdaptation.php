@@ -21,10 +21,10 @@ abstract class TraitUseAdaptation extends Op
 
     public Operand $method;
 
-    public function __construct(?Operand $trait,Operand $method,array $attributes = [])
+    public function __construct(?Operand $trait, Operand $method, array $attributes = [])
     {
         parent::__construct($attributes);
         $this->trait = $trait;
-        $this->method = $method; 
+        $this->method = $method;
     }
 }

@@ -40,9 +40,9 @@ class GraphViz extends Printer
     {
         $i = 0;
         $graph = $this->createGraph();
-        $this->printFuncWithHeader($script->main, $graph, 'func_'.++$i.'_');
+        $this->printFuncWithHeader($script->main, $graph, 'func_' . ++$i . '_');
         foreach ($script->functions as $func) {
-            $this->printFuncWithHeader($func, $graph, 'func_'.++$i.'_');
+            $this->printFuncWithHeader($func, $graph, 'func_' . ++$i . '_');
         }
 
         return $graph;
@@ -60,7 +60,7 @@ class GraphViz extends Printer
     {
         $graph = Graph::create('vars');
         foreach ($this->options['graph'] as $name => $value) {
-            $setter = 'set'.$name;
+            $setter = 'set' . $name;
             $graph->{$setter}($value);
         }
         $rendered = $this->render($func->cfg);
@@ -71,7 +71,7 @@ class GraphViz extends Printer
             }
             $id = $rendered['varIds'][$var];
             $output = $this->renderOperand($var);
-            $nodes[$var] = $this->createNode('var_'.$id, $output);
+            $nodes[$var] = $this->createNode('var_' . $id, $output);
             $graph->setNode($nodes[$var]);
         }
         foreach ($rendered['varIds'] as $var) {
@@ -88,9 +88,9 @@ class GraphViz extends Printer
                         }
                         $edge = $this->createEdge($nodes[$v], $nodes[$var]);
                         if ($b) {
-                            $edge->setlabel('Block<'.$rendered['blockIds'][$b].'>'.$write->getType().':'.$varName);
+                            $edge->setlabel('Block<' . $rendered['blockIds'][$b] . '>' . $write->getType() . ':' . $varName);
                         } else {
-                            $edge->setlabel($write->getType().':'.$varName);
+                            $edge->setlabel($write->getType() . ':' . $varName);
                         }
                         $graph->link($edge);
                     }
@@ -105,7 +105,8 @@ class GraphViz extends Printer
     {
         $name = $func->getScopedName();
         $header = $this->createNode(
-            $prefix.'header', "Function {$name}():"
+            $prefix . 'header',
+            "Function {$name}():",
         );
         $graph->setNode($header);
 
@@ -123,9 +124,9 @@ class GraphViz extends Printer
             $ops = $rendered['blocks'][$block];
             $output = '';
             foreach ($ops as $op) {
-                $output .= $this->indent("\n".$op['label']);
+                $output .= $this->indent("\n" . $op['label']);
             }
-            $nodes[$block] = $this->createNode($prefix.'block_'.$blockId, $output);
+            $nodes[$block] = $this->createNode($prefix . 'block_' . $blockId, $output);
             $graph->setNode($nodes[$block]);
         }
 
@@ -158,7 +159,7 @@ class GraphViz extends Printer
     {
         $graph = Graph::create('cfg');
         foreach ($this->options['graph'] as $name => $value) {
-            $setter = 'set'.$name;
+            $setter = 'set' . $name;
             $graph->{$setter}($value);
         }
 
@@ -169,7 +170,7 @@ class GraphViz extends Printer
     {
         $node = new Node($id, $content);
         foreach ($this->options['node'] as $name => $value) {
-            $node->{'set'.$name}($value);
+            $node->{'set' . $name}($value);
         }
 
         return $node;
@@ -179,7 +180,7 @@ class GraphViz extends Printer
     {
         $edge = new Edge($from, $to);
         foreach ($this->options['edge'] as $name => $value) {
-            $edge->{'set'.$name}($value);
+            $edge->{'set' . $name}($value);
         }
 
         return $edge;
