@@ -22,7 +22,7 @@ class ParserTest extends TestCase
     {
         $astTraverser = new PhpParser\NodeTraverser();
         $astTraverser->addVisitor(new PhpParser\NodeVisitor\NameResolver());
-        $parser = new Parser((new ParserFactory())->create(ParserFactory::PREFER_PHP7), $astTraverser);
+        $parser = new Parser((new ParserFactory())->createForNewestSupportedVersion(), $astTraverser);
         $traverser = new Traverser();
         $traverser->addVisitor(new Visitor\Simplifier());
         $printer = new Printer\Text();

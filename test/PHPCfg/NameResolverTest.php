@@ -24,7 +24,7 @@ class NameResolverTest extends TestCase
 
     protected function setUp(): void
     {
-        $this->astParser = (new ParserFactory())->create(ParserFactory::PREFER_PHP7);
+        $this->astParser = (new ParserFactory())->createForNewestSupportedVersion();
     }
 
     /** @dataProvider getIgnoresInvalidParamTypeInDocCommentCases */

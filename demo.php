@@ -16,7 +16,7 @@ require __DIR__.'/vendor/autoload.php';
 $graphviz = false;
 list($fileName, $code) = getCode($argc, $argv);
 
-$parser = new PHPCfg\Parser((new ParserFactory())->create(ParserFactory::PREFER_PHP7));
+$parser = new PHPCfg\Parser((new ParserFactory())->createForNewestSupportedVersion());
 
 $declarations = new PHPCfg\Visitor\DeclarationFinder();
 $calls = new PHPCfg\Visitor\CallFinder();

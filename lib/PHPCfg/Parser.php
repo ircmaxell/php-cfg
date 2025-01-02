@@ -825,6 +825,9 @@ class Parser
         if ($expr instanceof Node\Scalar) {
             return $this->parseScalarNode($expr);
         }
+        if ($expr instanceof Node\InterpolatedStringPart) {
+            return new Literal($expr->value);
+        }
         if ($expr instanceof Node\Expr\AssignOp) {
             $var = $this->parseExprNode($expr->var);
             $read = $this->readVariable($var);
@@ -1524,15 +1527,14 @@ class Parser
     private function parseScalarNode(Node\Scalar $scalar)
     {
         switch ($scalar->getType()) {
-            case 'Scalar_Encapsed':
+            case 'Scalar_InterpolatedString':
                 $op = new Op\Expr\ConcatList($this->parseExprList($scalar->parts, self::MODE_READ), $this->mapAttributes($scalar));
                 $this->block->children[] = $op;
 
                 return $op->result;
-            case 'Scalar_DNumber':
-            case 'Scalar_LNumber':
+            case 'Scalar_Float':
+            case 'Scalar_Int':
             case 'Scalar_String':
-            case 'Scalar_EncapsedStringPart':
                 return new Literal($scalar->value);
             case 'Scalar_MagicConst_Class':
                 // TODO

@@ -16,7 +16,7 @@ The constructed SSA form is minimal and pure (or is supposed to be).
 To bootstrap the parser, you need to give it a `PhpParser` instance:
 ```php
 $parser = new PHPCfg\Parser(
-    (new PhpParser\ParserFactory)->create(PhpParser\ParserFactory::PREFER_PHP7)
+    (new PhpParser\ParserFactory)->createForNewestSupportedVersion()
 );
 ```
 Then, just call parse on a block of code, giving it a filename:

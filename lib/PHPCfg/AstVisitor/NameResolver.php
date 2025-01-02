@@ -69,8 +69,8 @@ class NameResolver extends NameResolverParent
                     },
                     $comment->getText()
                 ),
-                $comment->getLine(),
-                $comment->getFilePos()
+                $comment->getStartLine(),
+                $comment->getStartFilePos()
             );
 
             $node->setDocComment($comment);
