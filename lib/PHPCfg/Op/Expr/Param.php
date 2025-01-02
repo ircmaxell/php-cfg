@@ -43,7 +43,7 @@ class Param extends Expr
         array $attrGroups,
         ?Operand $defaultVar = null,
         ?Block $defaultBlock = null,
-        array $attributes = [],
+        array $attributes = []
     ) {
         parent::__construct($attributes);
         $this->result->original = $name;
