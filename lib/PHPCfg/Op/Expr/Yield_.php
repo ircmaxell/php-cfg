@@ -22,7 +22,7 @@ class Yield_ extends Expr
 
     protected array $writeVariables = ['result'];
 
-    public function __construct(Operand $value = null, Operand $key = null, array $attributes = [])
+    public function __construct(?Operand $value = null, ?Operand $key = null, array $attributes = [])
     {
         parent::__construct($attributes);
         if (is_null($value)) {

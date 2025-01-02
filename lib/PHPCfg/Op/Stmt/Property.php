@@ -35,7 +35,7 @@ class Property extends Stmt
 
     public Op\Type $declaredType ;
 
-    public function __construct(Operand $name, int $visiblity, bool $static, bool $readonly, array $attrGroups, Op\Type $declaredType = null, Operand $defaultVar = null, Block $defaultBlock = null, array $attributes = [])
+    public function __construct(Operand $name, int $visiblity, bool $static, bool $readonly, array $attrGroups, ?Op\Type $declaredType = null, ?Operand $defaultVar = null, ?Block $defaultBlock = null, array $attributes = [])
     {
         parent::__construct($attributes);
         $this->name = $this->addReadRef($name);

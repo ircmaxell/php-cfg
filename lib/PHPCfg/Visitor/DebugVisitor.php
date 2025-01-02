@@ -32,7 +32,7 @@ class DebugVisitor implements Visitor
         echo "Leave Script\n";
     }
 
-    public function enterBlock(Block $block, Block $prior = null)
+    public function enterBlock(Block $block, ?Block $prior = null)
     {
         echo 'Enter Block #'.$this->getBlockId($block)."\n";
     }
@@ -47,12 +47,12 @@ class DebugVisitor implements Visitor
         echo 'Leave Op '.$op->getType()."\n";
     }
 
-    public function leaveBlock(Block $block, Block $prior = null)
+    public function leaveBlock(Block $block, ?Block $prior = null)
     {
         echo 'Leave Block #'.$this->getBlockId($block)."\n";
     }
 
-    public function skipBlock(Block $block, Block $prior = null)
+    public function skipBlock(Block $block, ?Block $prior = null)
     {
         echo 'Skip Block #'.$this->getBlockId($block)."\n";
     }

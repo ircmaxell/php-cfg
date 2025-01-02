@@ -52,7 +52,7 @@ class Traverser
         $this->seen = null;
     }
 
-    private function traverseBlock(Block $block, Block $prior = null)
+    private function traverseBlock(Block $block, ?Block $prior = null)
     {
         if ($this->seen->contains($block)) {
             $this->event('skipBlock', [$block, $prior]);

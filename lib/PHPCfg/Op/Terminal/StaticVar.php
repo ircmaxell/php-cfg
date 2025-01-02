@@ -23,7 +23,7 @@ class StaticVar extends Terminal
 
     public ?Operand $defaultVar;
 
-    public function __construct(Operand $var, Block $defaultBlock = null, Operand $defaultVar = null, array $attributes = [])
+    public function __construct(Operand $var, ?Block $defaultBlock = null, ?Operand $defaultVar = null, array $attributes = [])
     {
         parent::__construct($attributes);
         $this->var = $this->addWriteRef($var);

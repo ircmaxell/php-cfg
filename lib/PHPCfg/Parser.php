@@ -47,17 +47,16 @@ class Parser
     /** @var FuncContext */
     protected $ctx;
 
-    /** @var Literal|null */
-    protected $currentClass = null;
+    protected ?Literal $currentClass = null;
 
-    protected $currentNamespace = null;
+    protected ?Node\Name $currentNamespace = null;
 
     /** @var Script */
     protected $script;
 
     protected $anonId = 0;
 
-    public function __construct(AstParser $astParser, AstTraverser $astTraverser = null)
+    public function __construct(AstParser $astParser, ?AstTraverser $astTraverser = null)
     {
         $this->astParser = $astParser;
         if (! $astTraverser) {

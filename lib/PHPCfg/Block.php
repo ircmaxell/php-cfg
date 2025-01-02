@@ -24,7 +24,7 @@ class Block
 
     public $dead = false;
 
-    public function __construct(self $parent = null)
+    public function __construct(?self $parent = null)
     {
         if ($parent) {
             $this->parents[] = $parent;

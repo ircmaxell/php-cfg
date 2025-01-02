@@ -29,7 +29,7 @@ class VariableFinder extends AbstractVisitor
         return $this->variables;
     }
 
-    public function enterBlock(Block $block, Block $prior = null)
+    public function enterBlock(Block $block, ?Block $prior = null)
     {
         foreach ($block->phi as $phi) {
             $this->enterOp($phi, $block);
