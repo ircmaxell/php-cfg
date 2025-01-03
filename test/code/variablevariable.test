@@ -1,0 +1,98 @@
+<?php
+
+${$foo} = "bar";
+${$foo1."plus".$foo2} = "bar";
+$$foo = "bar"; 
+$$$$$$$a = "b";
+
+echo $foo->{$baz[1]} . "\n";
+echo $foo->{$start . $end} . "\n";
+echo $foo->{$arr[1]} . "\n";
+echo $foo->{$arr}[1] . "\n";
+-----
+Block#1
+    Expr_Assign
+        var: Var#1<$foo>
+        expr: LITERAL('bar')
+        result: Var#2
+    Expr_BinaryOp_Concat
+        left: Var#3<$foo1>
+        right: LITERAL('plus')
+        result: Var#4
+    Expr_BinaryOp_Concat
+        left: Var#4
+        right: Var#5<$foo2>
+        result: Var#6
+    Expr_Assign
+        var: Var#6
+        expr: LITERAL('bar')
+        result: Var#7
+    Expr_Assign
+        var: Var#8<$foo>
+        expr: LITERAL('bar')
+        result: Var#9
+    Expr_Assign
+        var: Var#10<Var#11<Var#12<Var#13<Var#14<Var#15<$a>>>>>>
+        expr: LITERAL('b')
+        result: Var#16
+    Expr_ArrayDimFetch
+        var: Var#17<$baz>
+        dim: LITERAL(1)
+        result: Var#18
+    Expr_PropertyFetch
+        var: Var#19<$foo>
+        name: Var#18
+        result: Var#20
+    Expr_BinaryOp_Concat
+        left: Var#20
+        right: LITERAL('
+        ')
+        result: Var#21
+    Terminal_Echo
+        expr: Var#21
+    Expr_BinaryOp_Concat
+        left: Var#22<$start>
+        right: Var#23<$end>
+        result: Var#24
+    Expr_PropertyFetch
+        var: Var#19<$foo>
+        name: Var#24
+        result: Var#25
+    Expr_BinaryOp_Concat
+        left: Var#25
+        right: LITERAL('
+        ')
+        result: Var#26
+    Terminal_Echo
+        expr: Var#26
+    Expr_ArrayDimFetch
+        var: Var#27<$arr>
+        dim: LITERAL(1)
+        result: Var#28
+    Expr_PropertyFetch
+        var: Var#19<$foo>
+        name: Var#28
+        result: Var#29
+    Expr_BinaryOp_Concat
+        left: Var#29
+        right: LITERAL('
+        ')
+        result: Var#30
+    Terminal_Echo
+        expr: Var#30
+    Expr_PropertyFetch
+        var: Var#19<$foo>
+        name: Var#27<$arr>
+        result: Var#31
+    Expr_ArrayDimFetch
+        var: Var#31
+        dim: LITERAL(1)
+        result: Var#32
+    Expr_BinaryOp_Concat
+        left: Var#32
+        right: LITERAL('
+        ')
+        result: Var#33
+    Terminal_Echo
+        expr: Var#33
+    Terminal_Return
