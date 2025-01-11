@@ -1,0 +1,17 @@
+<?php
+
+$x ??= a();
+-----
+Block#1
+    Expr_FuncCall
+        name: LITERAL('a')
+        result: Var#1
+    Expr_BinaryOp_Coalesce
+        left: Var#2<$x>
+        right: Var#1
+        result: Var#3
+    Expr_Assign
+        var: Var#4<$x>
+        expr: Var#3
+        result: Var#5
+    Terminal_Return
