@@ -836,6 +836,7 @@ class Parser
                 'Expr_AssignOp_BitwiseAnd' => Op\Expr\BinaryOp\BitwiseAnd::class,
                 'Expr_AssignOp_BitwiseOr' => Op\Expr\BinaryOp\BitwiseOr::class,
                 'Expr_AssignOp_BitwiseXor' => Op\Expr\BinaryOp\BitwiseXor::class,
+                'Expr_AssignOp_Coalesce' => Op\Expr\BinaryOp\Coalesce::class,
                 'Expr_AssignOp_Concat' => Op\Expr\BinaryOp\Concat::class,
                 'Expr_AssignOp_Div' => Op\Expr\BinaryOp\Div::class,
                 'Expr_AssignOp_Minus' => Op\Expr\BinaryOp\Minus::class,
