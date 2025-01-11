@@ -1,0 +1,48 @@
+<?php
+
+$b = 1;
+$fn = fn($a) => $b++ * $a;
+$fn(3);
+var_dump($b);
+-----
+Block#1
+    Expr_Assign
+        var: Var#1<$b>
+        expr: LITERAL(1)
+        result: Var#2
+    Expr_ArrowFunction<'{anonymous}#1'>
+        result: Var#3
+    Expr_Assign
+        var: Var#4<$fn>
+        expr: Var#3
+        result: Var#5
+    Expr_FuncCall
+        name: Var#4<$fn>
+        args[0]: LITERAL(3)
+        result: Var#6
+    Expr_FuncCall
+        name: LITERAL('var_dump')
+        args[0]: Var#1<$b>
+        result: Var#7
+    Terminal_Return
+
+Function '{anonymous}#1': mixed
+Block#1
+    Expr_Param
+        declaredType: mixed
+        name: LITERAL('a')
+        result: Var#1<$a>
+    Expr_BinaryOp_Plus
+        left: Var#2<$b>
+        right: LITERAL(1)
+        result: Var#3
+    Expr_Assign
+        var: Var#4<$b>
+        expr: Var#3
+        result: Var#5
+    Expr_BinaryOp_Mul
+        left: Var#4<$b>
+        right: Var#1<$a>
+        result: Var#6
+    Terminal_Return
+        expr: Var#6
