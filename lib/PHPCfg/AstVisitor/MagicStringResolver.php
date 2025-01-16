@@ -121,8 +121,8 @@ class MagicStringResolver extends NodeVisitorAbstract
                     },
                     $comment->getText(),
                 ),
-                $comment->getLine(),
-                $comment->getFilePos(),
+                $comment->getStartLine(),
+                $comment->getStartFilePos(),
             );
 
             $node->setDocComment($comment);
