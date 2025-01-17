@@ -1,0 +1,29 @@
+<?php
+
+$x || throw new Exception("foo");
+throw new \InvalidArgumentException("foo");
+-----
+Block#1
+    Stmt_JumpIf
+        cond: Var#1<$x>
+        if: Block#2
+        else: Block#3
+
+Block#2
+    Parent: Block#1
+    Var#2 = Phi(LITERAL(true), Var#3)
+    Expr_New
+        class: LITERAL('InvalidArgumentException')
+        args[0]: LITERAL('foo')
+        result: Var#4
+    Terminal_Throw
+        expr: Var#4
+
+Block#3
+    Parent: Block#1
+    Expr_New
+        class: LITERAL('Exception')
+        args[0]: LITERAL('foo')
+        result: Var#5
+    Terminal_Throw
+        expr: Var#5
