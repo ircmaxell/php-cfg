@@ -1,0 +1,11 @@
+<?php
+
+throw new \InvalidArgumentException("foo");
+-----
+Block#1
+    Expr_New
+        class: LITERAL('InvalidArgumentException')
+        args[0]: LITERAL('foo')
+        result: Var#1
+    Terminal_Throw
+        expr: Var#1

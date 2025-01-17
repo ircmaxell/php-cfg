@@ -672,16 +672,6 @@ class Parser
         $this->block = $endBlock;
     }
 
-    protected function parseStmt_Throw(Stmt\Throw_ $node)
-    {
-        $this->block->children[] = new Op\Terminal\Throw_(
-            $this->readVariable($this->parseExprNode($node->expr)),
-            $this->mapAttributes($node),
-        );
-        $this->block = new Block(); // dead code
-        $this->block->dead = true;
-    }
-
     protected function parseStmt_Trait(Stmt\Trait_ $node)
     {
         $name = $this->parseExprNode($node->namespacedName);
@@ -1143,6 +1133,20 @@ class Parser
     protected function parseExpr_Eval(Expr\Eval_ $expr)
     {
         return new Op\Expr\Eval_($this->readVariable($this->parseExprNode($expr->expr)), $this->mapAttributes($expr));
+    }
+
+    protected function parseExpr_Throw(Expr\Throw_ $expr)
+    {
+        $this->block->children[] = new Op\Terminal\Throw_(
+            $this->readVariable($this->parseExprNode($expr->expr)), 
+            $this->mapAttributes($expr)
+        );
+        
+        // Dump everything after the throw
+        $this->block = new Block();
+        $this->block->dead = true;
+
+        return new Literal(1);
     }
 
     protected function parseExpr_Exit(Expr\Exit_ $expr)
