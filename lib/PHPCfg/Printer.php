@@ -60,17 +60,8 @@ abstract class Printer
             return "LITERAL{$type}(" . var_export($var->value, true) . ')';
         }
         if ($var instanceof Variable) {
-            assert($var->name instanceof Literal || $var->name instanceof Temporary || $var->name instanceof Variable);
+            assert($var->name instanceof Literal);
             $prefix = "{$type}$";
-
-            if ($var->name instanceof Temporary) {
-                return "Var{$type}#" . $this->getVarId($var->name);
-            }
-
-            if ($var->name instanceof Variable) {
-                $id = $this->getVarId($var);
-                return "Var{$type}#{$id}" . '<' . $this->renderOperand($var->name) . '>';
-            }
 
             if ($var instanceof BoundVariable) {
                 if ($var->byRef) {
