@@ -791,16 +791,26 @@ class Parser
             return new Literal($expr->name);
         }
         if ($expr instanceof Node\Expr\Variable) {
-            if ($expr->name === 'this') {
-                return new Operand\BoundVariable(
-                    $this->parseExprNode($expr->name),
-                    false,
-                    Operand\BoundVariable::SCOPE_OBJECT,
-                    $this->currentClass,
-                );
-            }
+            if (is_scalar($expr->name)) {
+                if ($expr->name === 'this') {
+                    return new Operand\BoundVariable(
+                        $this->parseExprNode($expr->name),
+                        false,
+                        Operand\BoundVariable::SCOPE_OBJECT,
+                        $this->currentClass,
+                    );
+                }
 
-            return new Variable($this->parseExprNode($expr->name));
+                return new Variable($this->parseExprNode($expr->name));
+            }
+            
+            // variable variable
+            $this->block->children[] = $op = new Op\Expr\VarVar(
+                $this->readVariable($this->parseExprNode($expr->name)), 
+                $this->mapAttributes($expr)
+            );
+
+            return $op->result;
         }
         if ($expr instanceof Node\Name) {
             $isReserved = in_array(strtolower($expr->getLast()), ['int', 'string', 'array', 'callable', 'float', 'bool'], true);

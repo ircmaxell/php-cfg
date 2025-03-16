@@ -62,6 +62,7 @@ abstract class Printer
         if ($var instanceof Variable) {
             assert($var->name instanceof Literal);
             $prefix = "{$type}$";
+
             if ($var instanceof BoundVariable) {
                 if ($var->byRef) {
                     $prefix = '&$';
