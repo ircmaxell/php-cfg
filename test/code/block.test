@@ -1,0 +1,29 @@
+<?php
+
+echo "a";
+{
+    $aaaa = 1;
+} 
+
+{ 
+    
+}
+-----
+Block#1
+    Terminal_Echo
+        expr: LITERAL('a')
+    Stmt_Block
+        stmts: Block#2
+    Stmt_Block
+        stmts: Block#3
+    Terminal_Return
+
+Block#2
+    Parent: Block#1
+    Expr_Assign
+        var: Var#1<$aaaa>
+        expr: LITERAL(1)
+        result: Var#2
+
+Block#3
+    Parent: Block#1

@@ -216,6 +216,11 @@ class Parser
         throw new \LogicException("Unknown type node: " . $node->getType());
     }
 
+    protected function parseStmt_Block(Stmt\Block $node)
+    {
+        $this->block->children[] = new Op\Stmt\Block($this->parseNodes($node->stmts, new Block($this->block)));
+    }
+
     protected function parseStmt_Expression(Stmt\Expression $node)
     {
         return $this->parseExprNode($node->expr);
@@ -803,10 +808,10 @@ class Parser
 
                 return new Variable($this->parseExprNode($expr->name));
             }
-            
+
             // variable variable
             $this->block->children[] = $op = new Op\Expr\VarVar(
-                $this->readVariable($this->parseExprNode($expr->name)), 
+                $this->readVariable($this->parseExprNode($expr->name)),
                 $this->mapAttributes($expr)
             );
 
@@ -1148,10 +1153,10 @@ class Parser
     protected function parseExpr_Throw(Expr\Throw_ $expr)
     {
         $this->block->children[] = new Op\Terminal\Throw_(
-            $this->readVariable($this->parseExprNode($expr->expr)), 
+            $this->readVariable($this->parseExprNode($expr->expr)),
             $this->mapAttributes($expr)
         );
-        
+
         // Dump everything after the throw
         $this->block = new Block();
         $this->block->dead = true;
@@ -1510,9 +1515,11 @@ class Parser
     private function switchCanUseJumptable(Stmt\Switch_ $node)
     {
         foreach ($node->cases as $case) {
-            if (null !== $case->cond
-                    && ! $case->cond instanceof Node\Scalar\LNumber
-                    && ! $case->cond instanceof Node\Scalar\String_) {
+            if (
+                null !== $case->cond
+                && ! $case->cond instanceof Node\Scalar\LNumber
+                && ! $case->cond instanceof Node\Scalar\String_
+            ) {
                 return false;
             }
         }
