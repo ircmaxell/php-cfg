@@ -218,7 +218,7 @@ class Parser
 
     protected function parseStmt_Block(Stmt\Block $node)
     {
-        $this->block->children[] = new Op\Stmt\Block($this->parseNodes($node->stmts, new Block($this->block)));
+        $this->parseNodes($node->stmts, $this->block);
     }
 
     protected function parseStmt_Expression(Stmt\Expression $node)
