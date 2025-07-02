@@ -11,9 +11,11 @@ declare(strict_types=1);
 
 namespace PHPCfg;
 
+use PHPCfg\Op\Stmt\Catch_;
 use PHPCfg\Op\Stmt\Jump;
 use PHPCfg\Op\Stmt\JumpIf;
 use PHPCfg\Op\Stmt\TraitUse;
+use PHPCfg\Op\Stmt\Try_;
 use PHPCfg\Op\Terminal\Return_;
 use PHPCfg\Op\TraitUseAdaptation\Alias;
 use PHPCfg\Op\TraitUseAdaptation\Precedence;
@@ -722,9 +724,35 @@ class Parser
         $this->block->children[] = new TraitUse($traits, $adaptations, $this->mapAttributes($node));
     }
 
+    protected function parseStmt_Catch(Stmt\Catch_ $node)
+    {
+        $body = new Block($this->block);
+        $this->parseNodes($node->stmts, $body);
+
+        $var = $this->writeVariable($this->parseExprNode($node->var));
+
+        $parsedTypes = [];
+        foreach ($node->types as $type) {
+            $parsedTypes[] = $this->parseTypeNode($type);
+        }
+
+        $this->block->children[] = new Catch_($var, $parsedTypes, $body, $this->mapAttributes($node));
+    }
+
     protected function parseStmt_TryCatch(Stmt\TryCatch $node)
     {
-        // TODO: implement this!!!
+        $body = new Block($this->block);
+        $this->parseNodes($node->stmts, $body);
+
+        $catch = new Block($this->block);
+        $this->parseNodes($node->catches, $catch);
+
+        $finally = new Block($this->block);
+        if ($node->finally != null) {
+            $this->parseNodes($node->finally->stmts, $finally);
+        }
+
+        $this->block->children[] = new Try_($body, $catch, $finally, $this->mapAttributes($node));
     }
 
     protected function parseStmt_Unset(Stmt\Unset_ $node)

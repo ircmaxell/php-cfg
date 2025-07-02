@@ -167,6 +167,13 @@ abstract class Printer
                 }
             }
         }
+
+        if ($op instanceof Op\Stmt\Catch_) {
+            foreach ($op->types as $index => $type) {
+                $result .= "\n    type[$index]: " . $this->indent($this->renderType($type));
+            }
+        }
+
         if ($op instanceof Op\Stmt\ClassMethod) {
             $result .= $this->renderAttrGroups($op->attrGroups);
             $result .= "\n    flags: " . $this->indent($this->renderFlags($op));

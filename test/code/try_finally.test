@@ -1,0 +1,42 @@
+<?php
+
+try {
+    throw new Exception('foo');
+} catch (Exception $e) {
+    return $e;
+} finally {
+    return 'finally';
+}
+-----
+Block#1
+    Stmt_Try
+        body: Block#2
+        catch: Block#3
+        finally: Block#4
+    Terminal_Return
+
+Block#2
+    Parent: Block#1
+    Expr_New
+        class: LITERAL('Exception')
+        args[0]: LITERAL('foo')
+        result: Var#1
+    Terminal_Throw
+        expr: Var#1
+
+Block#3
+    Parent: Block#1
+    Stmt_Catch
+        type[0]: LITERAL('Exception')
+        var: Var#2<$e>
+        body: Block#5
+
+Block#4
+    Parent: Block#1
+    Terminal_Return
+        expr: LITERAL('finally')
+
+Block#5
+    Parent: Block#3
+    Terminal_Return
+        expr: Var#2<$e>

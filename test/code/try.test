@@ -1,0 +1,44 @@
+<?php
+
+try {
+    throw new MyException();
+} catch (MyException | MyOtherException $e) {
+    var_dump(get_class($e));
+}
+-----
+Block#1
+    Stmt_Try
+        body: Block#2
+        catch: Block#3
+        finally: Block#4
+    Terminal_Return
+
+Block#2
+    Parent: Block#1
+    Expr_New
+        class: LITERAL('MyException')
+        result: Var#1
+    Terminal_Throw
+        expr: Var#1
+
+Block#3
+    Parent: Block#1
+    Stmt_Catch
+        type[0]: LITERAL('MyException')
+        type[1]: LITERAL('MyOtherException')
+        var: Var#2<$e>
+        body: Block#5
+
+Block#4
+    Parent: Block#1
+
+Block#5
+    Parent: Block#3
+    Expr_FuncCall
+        name: LITERAL('get_class')
+        args[0]: Var#2<$e>
+        result: Var#3
+    Expr_FuncCall
+        name: LITERAL('var_dump')
+        args[0]: Var#3
+        result: Var#4
