@@ -12,26 +12,23 @@ declare(strict_types=1);
 namespace PHPCfg\Op\Stmt;
 
 use PHPCfg\Op\Stmt;
-use PhpCfg\Block;
+use PHPCfg\Block;
+use PHPCfg\CatchTarget;
 
 class Try_ extends Stmt
 {
     public Block $body;
+    public CatchTarget $catchTarget;
 
-    public Block $finally;
-
-    public Block $catch;
-
-    public function __construct(Block $body,  Block $catch, Block $finally, array $attributes = [])
+    public function __construct(Block $body, CatchTarget $catchTarget, array $attributes = [])
     {
         parent::__construct($attributes);
         $this->body = $body;
-        $this->catch = $catch;
-        $this->finally = $finally;
+        $this->catchTarget = $catchTarget;
     }
 
     public function getSubBlocks(): array
     {
-        return ['body', 'catch', 'finally'];
+        return ['body'];
     }
 }

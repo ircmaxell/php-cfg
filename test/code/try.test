@@ -8,32 +8,16 @@ try {
 -----
 Block#1
     Stmt_Try
-        body: Block#2
-        catch: Block#3
-        finally: Block#4
-    Terminal_Return
+        catch<LITERAL('MyException')>(Var#1<$e>): Block#2
+        catch<LITERAL('MyOtherException')>(Var#1<$e>): Block#2
+        finally: Block#3
+        body: Block#4
+        next: Block#5
 
 Block#2
     Parent: Block#1
-    Expr_New
-        class: LITERAL('MyException')
-        result: Var#1
-    Terminal_Throw
-        expr: Var#1
-
-Block#3
-    Parent: Block#1
-    Stmt_Catch
-        type[0]: LITERAL('MyException')
-        type[1]: LITERAL('MyOtherException')
-        var: Var#2<$e>
-        body: Block#5
-
-Block#4
-    Parent: Block#1
-
-Block#5
-    Parent: Block#3
+        finallyTarget: Block#3
+    Var#2<$e> = Phi(Var#1<$e>)
     Expr_FuncCall
         name: LITERAL('get_class')
         args[0]: Var#2<$e>
@@ -42,3 +26,25 @@ Block#5
         name: LITERAL('var_dump')
         args[0]: Var#3
         result: Var#4
+    Stmt_Jump
+        target: Block#3
+
+Block#3
+    Parent: Block#1
+    Stmt_Jump
+        target: Block#5
+
+Block#4
+    Parent: Block#1
+        catchTarget<LITERAL('MyException')>(Var#1<$e>): Block#2
+        catchTarget<LITERAL('MyOtherException')>(Var#1<$e>): Block#2
+        finallyTarget: Block#3
+    Expr_New
+        class: LITERAL('MyException')
+        result: Var#5
+    Terminal_Throw
+        expr: Var#5
+
+Block#5
+    Parent: Block#1
+    Terminal_Return

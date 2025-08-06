@@ -327,7 +327,7 @@ class Parser
     protected function parseStmt_Do(Stmt\Do_ $node)
     {
         $loopBody = new Block($this->block);
-        $loopEnd = new Block();
+        $loopEnd = new Block(null, $this->block->catchTarget);
         $this->block->children[] = new Jump($loopBody, $this->mapAttributes($node));
         $loopBody->addParent($this->block);
 
@@ -384,9 +384,9 @@ class Parser
         $iterable = $this->readVariable($this->parseExprNode($node->expr));
         $this->block->children[] = new Op\Iterator\Reset($iterable, $attrs);
 
-        $loopInit = new Block();
-        $loopBody = new Block();
-        $loopEnd = new Block();
+        $loopInit = new Block($this->block);
+        $loopBody = new Block(null, $this->block->catchTarget);
+        $loopEnd = new Block(null, $this->block->catchTarget);
 
         $this->block->children[] = new Jump($loopInit, $attrs);
         $loopInit->addParent($this->block);
@@ -456,7 +456,7 @@ class Parser
         } else {
             $this->ctx->unresolvedGotos[$node->name->toString()][] = [$this->block, $attributes];
         }
-        $this->block = new Block();
+        $this->block = new Block(null, $this->block->catchTarget);
         $this->block->dead = true;
     }
 
@@ -475,7 +475,7 @@ class Parser
 
     protected function parseStmt_If(Stmt\If_ $node)
     {
-        $endBlock = new Block();
+        $endBlock = new Block(null, $this->block->catchTarget);
         $this->parseIf($node, $endBlock);
         $this->block = $endBlock;
     }
@@ -537,7 +537,7 @@ class Parser
             throw new \RuntimeException("Label '{$node->name->toString()}' already defined");
         }
 
-        $labelBlock = new Block();
+        $labelBlock = new Block($this->block);
         $this->block->children[] = new Jump($labelBlock, $this->mapAttributes($node));
         $labelBlock->addParent($this->block);
         if (isset($this->ctx->unresolvedGotos[$node->name->toString()])) {
@@ -604,7 +604,7 @@ class Parser
         }
         $this->block->children[] = new Op\Terminal\Return_($expr, $this->mapAttributes($node));
         // Dump everything after the return
-        $this->block = new Block();
+        $this->block = new Block($this->block);
         $this->block->dead = true;
     }
 
@@ -615,7 +615,7 @@ class Parser
             $defaultVar = null;
             if ($var->default) {
                 $tmp = $this->block;
-                $this->block = $defaultBlock = new Block();
+                $this->block = $defaultBlock = new Block($this->block);
                 $defaultVar = $this->parseExprNode($var->default);
                 $this->block = $tmp;
             }
@@ -638,12 +638,12 @@ class Parser
 
         // Desugar switch into compare-and-jump sequence
         $cond = $this->parseExprNode($node->cond);
-        $endBlock = new Block();
+        $endBlock = new Block(null, $this->block->catchTarget);
         $defaultBlock = $endBlock;
         /** @var Block|null $prevBlock */
         $prevBlock = null;
         foreach ($node->cases as $case) {
-            $ifBlock = new Block();
+            $ifBlock = new Block(null, $this->block->catchTarget);
             if ($prevBlock && ! $prevBlock->dead) {
                 $prevBlock->children[] = new Jump($ifBlock);
                 $ifBlock->addParent($prevBlock);
@@ -657,7 +657,7 @@ class Parser
                     $this->mapAttributes($case),
                 );
 
-                $elseBlock = new Block();
+                $elseBlock = new Block(null, $this->block->catchTarget);
                 $this->block->children[] = new JumpIf($cmp->result, $ifBlock, $elseBlock);
                 $ifBlock->addParent($this->block);
                 $elseBlock->addParent($this->block);
@@ -724,35 +724,38 @@ class Parser
         $this->block->children[] = new TraitUse($traits, $adaptations, $this->mapAttributes($node));
     }
 
-    protected function parseStmt_Catch(Stmt\Catch_ $node)
-    {
-        $body = new Block($this->block);
-        $this->parseNodes($node->stmts, $body);
-
-        $var = $this->writeVariable($this->parseExprNode($node->var));
-
-        $parsedTypes = [];
-        foreach ($node->types as $type) {
-            $parsedTypes[] = $this->parseTypeNode($type);
-        }
-
-        $this->block->children[] = new Catch_($var, $parsedTypes, $body, $this->mapAttributes($node));
-    }
-
     protected function parseStmt_TryCatch(Stmt\TryCatch $node)
     {
-        $body = new Block($this->block);
-        $this->parseNodes($node->stmts, $body);
-
-        $catch = new Block($this->block);
-        $this->parseNodes($node->catches, $catch);
-
+        
         $finally = new Block($this->block);
-        if ($node->finally != null) {
-            $this->parseNodes($node->finally->stmts, $finally);
+        $catchTarget = new CatchTarget($finally);
+        $finallyTarget = new CatchTarget($finally);
+        $body = new Block($this->block, $catchTarget);
+        $next = new Block($this->block);        
+
+        $next2 = $this->parseNodes($node->stmts, $body);
+        $next2->children[] = new Jump($finally);
+
+        foreach ($node->catches as $catch) {
+            $var = $this->writeVariable($this->parseExprNode($catch->var));
+            $catchBody = new Block($this->block, $finallyTarget);
+            $catchBody2 = $this->parseNodes($catch->stmts, $catchBody);
+            $catchBody2->children[] = new Jump($finally);
+
+            foreach ($catch->types as $type) {
+                $catchTarget->addCatch($this->parseTypeNode($type), $var, $catchBody);
+            }
         }
 
-        $this->block->children[] = new Try_($body, $catch, $finally, $this->mapAttributes($node));
+        if ($node->finally != null) {
+            $nf = $this->parseNodes($node->finally->stmts, $finally);
+            $nf->children[] = new Jump($next);
+        } else {
+            $finally->children[] = new Jump($next);
+        }
+
+        $this->block->children[] = new Try_($body, $catchTarget, $this->mapAttributes($node));
+        $this->block = $next;
     }
 
     protected function parseStmt_Unset(Stmt\Unset_ $node)
@@ -770,9 +773,9 @@ class Parser
 
     protected function parseStmt_While(Stmt\While_ $node)
     {
-        $loopInit = new Block();
-        $loopBody = new Block();
-        $loopEnd = new Block();
+        $loopInit = new Block(null, $this->block->catchContext);
+        $loopBody = new Block(null, $this->block->catchContext);
+        $loopEnd = new Block(null, $this->block->catchContext);
         $this->block->children[] = new Jump($loopInit, $this->mapAttributes($node));
         $loopInit->addParent($this->block);
         $this->block = $loopInit;
@@ -1165,9 +1168,8 @@ class Parser
         $block->addParent($this->block);
         $this->block = $block;
         $result = $this->parseExprNode($expr->expr);
-        $end = new Block();
+        $end = new Block($this->block);
         $this->block->children[] = new Jump($end, $attrs);
-        $end->addParent($this->block);
         $this->block = $end;
 
         return $result;
@@ -1178,6 +1180,18 @@ class Parser
         return new Op\Expr\Eval_($this->readVariable($this->parseExprNode($expr->expr)), $this->mapAttributes($expr));
     }
 
+    protected function parseStmt_Throw(Stmt\Throw_ $stmt)
+    {
+        $this->block->children[] = new Op\Terminal\Throw_(
+            $this->readVariable($this->parseExprNode($stmt->expr)),
+            $this->mapAttributes($stmt)
+        );
+
+        // Dump everything after the throw
+        $this->block = new Block(null, $this->block->catchTarget);
+        $this->block->dead = true;
+    }
+
     protected function parseExpr_Throw(Expr\Throw_ $expr)
     {
         $this->block->children[] = new Op\Terminal\Throw_(
@@ -1186,7 +1200,7 @@ class Parser
         );
 
         // Dump everything after the throw
-        $this->block = new Block();
+        $this->block = new Block(null, $this->block->catchTarget);
         $this->block->dead = true;
 
         return new Literal(1);
@@ -1201,7 +1215,7 @@ class Parser
 
         $this->block->children[] = new Op\Terminal\Exit_($e, $this->mapAttributes($expr));
         // Dump everything after the exit
-        $this->block = new Block();
+        $this->block = new Block(null, $this->block->catchTarget);
         $this->block->dead = true;
 
         return new Literal(1);
@@ -1560,7 +1574,7 @@ class Parser
         $cond = $this->readVariable($this->parseExprNode($node->cond));
         $cases = [];
         $targets = [];
-        $endBlock = new Block();
+        $endBlock = new Block(null, $this->block->catchTarget);
         $defaultBlock = $endBlock;
         /** @var null|Block $block */
         $block = null;
@@ -1600,13 +1614,17 @@ class Parser
     {
         switch ($scalar->getType()) {
             case 'Scalar_InterpolatedString':
+            case 'Scalar_Encapsed':
                 $op = new Op\Expr\ConcatList($this->parseExprList($scalar->parts, self::MODE_READ), $this->mapAttributes($scalar));
                 $this->block->children[] = $op;
 
                 return $op->result;
             case 'Scalar_Float':
             case 'Scalar_Int':
+            case 'Scalar_LNumber':
             case 'Scalar_String':
+            case 'Scalar_InterpolatedStringPart':
+            case 'Scalar_EncapsedStringPart':
                 return new Literal($scalar->value);
             case 'Scalar_MagicConst_Class':
                 // TODO
@@ -1625,6 +1643,7 @@ class Parser
                 // TODO
                 return new Literal('__FUNCTION__');
             default:
+                var_dump($scalar);
                 throw new \RuntimeException('Unknown how to deal with scalar type ' . $scalar->getType());
         }
     }
@@ -1665,8 +1684,8 @@ class Parser
     private function parseShortCircuiting(AstBinaryOp $expr, $isOr)
     {
         $result = new Temporary();
-        $longBlock = new Block();
-        $endBlock = new Block();
+        $longBlock = new Block(null, $this->block->catchTarget);
+        $endBlock = new Block(null, $this->block->catchTarget);
 
         $left = $this->readVariable($this->parseExprNode($expr->left));
         $if = $isOr ? $endBlock : $longBlock;

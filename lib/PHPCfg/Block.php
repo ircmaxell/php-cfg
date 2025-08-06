@@ -19,15 +19,21 @@ class Block
     /** @var Block[] */
     public $parents = [];
 
+    public ?CatchTarget $catchTarget;
+
     /** @var Op\Phi[] */
     public $phi = [];
 
     public $dead = false;
 
-    public function __construct(?self $parent = null)
+    public function __construct(?self $parent = null, ?CatchTarget $catchTarget = null)
     {
         if ($parent) {
             $this->parents[] = $parent;
+        }
+        $this->catchTarget = $catchTarget;
+        if ($parent && !$catchTarget) {
+            $this->catchTarget = $parent->catchTarget;
         }
     }
 

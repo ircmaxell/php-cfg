@@ -12,6 +12,7 @@ Block#1
     Terminal_Return
 
 Block#2
+    Parent: Block#1
     Expr_ConstFetch
         name: LITERAL('FALSE')
         result: Var#2

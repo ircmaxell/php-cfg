@@ -114,6 +114,16 @@ abstract class Printer
             $func = $op->getFunc();
             $result .= '<' . var_export($func->name, true) . '>';
         }
+
+        if ($op instanceof Op\Stmt\Try_) {
+            foreach ($op->catchTarget->catches as $catch) {
+                $this->enqueueBlock($catch['block']);
+                $result .= "\n    catch<" . $this->renderType($catch['type']) . ">(" . $this->renderOperand($catch['var']) . "): Block#" . $this->blocks[$catch['block']];
+            }
+            $this->enqueueBlock($op->catchTarget->finally);
+            $result .= "\n    finally: Block#" . $this->blocks[$op->catchTarget->finally];
+        }
+
         if ($op instanceof Op\Expr\Assertion) {
             $result .= '<' . $this->renderAssertion($op->assertion) . '>';
         }
@@ -165,12 +175,6 @@ abstract class Printer
                         $result .= "\n        insteadof[$index2]: " . $this->indent($this->renderOperand($insteadof));
                     }
                 }
-            }
-        }
-
-        if ($op instanceof Op\Stmt\Catch_) {
-            foreach ($op->types as $index => $type) {
-                $result .= "\n    type[$index]: " . $this->indent($this->renderType($type));
             }
         }
 

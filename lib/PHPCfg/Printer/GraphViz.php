@@ -131,6 +131,16 @@ class GraphViz extends Printer
         }
 
         foreach ($rendered['blocks'] as $block) {
+            if ($block->catchTarget) {
+                foreach ($block->catchTarget->catches as $catch) {
+                    $edge = $this->createEdge($nodes[$block], $nodes[$catch['block']]);
+                    $edge->setLabel("catch<" . $this->renderType($catch['type']) . ">(" . $this->renderOperand($catch['var']) . ")");
+                    $graph->link($edge);
+                }
+                $edge = $this->createEdge($nodes[$block], $nodes[$block->catchTarget->finally]);
+                $edge->setLabel("finally");
+                $graph->link($edge);
+            }
             foreach ($rendered['blocks'][$block] as $op) {
                 foreach ($op['childBlocks'] as $child) {
                     $edge = $this->createEdge($nodes[$block], $nodes[$child['block']]);
