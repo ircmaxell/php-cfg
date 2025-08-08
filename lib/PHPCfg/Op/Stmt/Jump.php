@@ -26,6 +26,6 @@ class Jump extends Stmt
 
     public function getSubBlocks(): array
     {
-        return ['target'];
+        return ['target' => $this->target];
     }
 }

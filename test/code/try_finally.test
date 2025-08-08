@@ -10,34 +10,30 @@ try {
 -----
 Block#1
     Stmt_Try
-        catch<LITERAL('Exception')>(Var#1<$e>): Block#2
-        finally: Block#3
-        body: Block#4
-        next: Block#5
+        catchTypes[0]: LITERAL('Exception')
+        catchVars[0]: Var#1<$e>
+        body: Block#2
+        catch[0]: Block#3
+        finally: Block#4
 
 Block#2
     Parent: Block#1
-        finallyTarget: Block#3
-    Var#2<$e> = Phi(Var#1<$e>)
-    Terminal_Return
-        expr: Var#2<$e>
-
-Block#3
-    Parent: Block#1
-    Terminal_Return
-        expr: LITERAL('finally')
-
-Block#4
-    Parent: Block#1
-        catchTarget<LITERAL('Exception')>(Var#1<$e>): Block#2
-        finallyTarget: Block#3
+        catchTarget<LITERAL('Exception')>(Var#1<$e>): Block#3
+        finallyTarget: Block#4
     Expr_New
         class: LITERAL('Exception')
         args[0]: LITERAL('foo')
-        result: Var#3
+        result: Var#2
     Terminal_Throw
-        expr: Var#3
+        expr: Var#2
 
-Block#5
+Block#3
+    Parent: Block#1
+        finallyTarget: Block#4
+    Terminal_Return
+        expr: Var#1<$e>
+
+Block#4
     Parent: Block#1
     Terminal_Return
+        expr: LITERAL('finally')

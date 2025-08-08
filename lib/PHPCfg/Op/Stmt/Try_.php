@@ -13,22 +13,40 @@ namespace PHPCfg\Op\Stmt;
 
 use PHPCfg\Op\Stmt;
 use PHPCfg\Block;
-use PHPCfg\CatchTarget;
 
 class Try_ extends Stmt
 {
     public Block $body;
-    public CatchTarget $catchTarget;
 
-    public function __construct(Block $body, CatchTarget $catchTarget, array $attributes = [])
+    public array $catch;
+    public array $catchTypes;
+    public array $catchVars;
+    public Block $finally;
+
+    public function __construct(Block $body, array $catches, Block $finally, array $attributes = [])
     {
         parent::__construct($attributes);
         $this->body = $body;
-        $this->catchTarget = $catchTarget;
+
+        $this->catch = [];
+        $this->catchTypes = [];
+        $this->catchVars = [];
+        foreach ($catches as $catch) {
+            $this->catch[] = $catch['block'];
+            $this->catchTypes[] = $catch['type'];
+            $this->catchVars[] = $catch['var'];
+        }
+        
+        $this->finally = $finally;
+    }
+
+    public function getVariableNames(): array
+    {
+        return ['catchVars'];
     }
 
     public function getSubBlocks(): array
     {
-        return ['body'];
+        return ['body' => $this->body, 'catch' => $this->catch, 'finally' => $this->finally];
     }
 }

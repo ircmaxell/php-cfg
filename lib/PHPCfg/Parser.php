@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace PHPCfg;
 
-use PHPCfg\Op\Stmt\Catch_;
 use PHPCfg\Op\Stmt\Jump;
 use PHPCfg\Op\Stmt\JumpIf;
 use PHPCfg\Op\Stmt\TraitUse;
@@ -726,12 +725,11 @@ class Parser
 
     protected function parseStmt_TryCatch(Stmt\TryCatch $node)
     {
-        
         $finally = new Block($this->block);
         $catchTarget = new CatchTarget($finally);
         $finallyTarget = new CatchTarget($finally);
         $body = new Block($this->block, $catchTarget);
-        $next = new Block($this->block);        
+        $next = new Block($this->block);
 
         $next2 = $this->parseNodes($node->stmts, $body);
         $next2->children[] = new Jump($finally);
@@ -754,7 +752,7 @@ class Parser
             $finally->children[] = new Jump($next);
         }
 
-        $this->block->children[] = new Try_($body, $catchTarget, $this->mapAttributes($node));
+        $this->block->children[] = new Try_($body, $catchTarget->catches, $finally, $this->mapAttributes($node));
         $this->block = $next;
     }
 
@@ -773,9 +771,9 @@ class Parser
 
     protected function parseStmt_While(Stmt\While_ $node)
     {
-        $loopInit = new Block(null, $this->block->catchContext);
-        $loopBody = new Block(null, $this->block->catchContext);
-        $loopEnd = new Block(null, $this->block->catchContext);
+        $loopInit = new Block(null, $this->block->catchTarget);
+        $loopBody = new Block(null, $this->block->catchTarget);
+        $loopEnd = new Block(null, $this->block->catchTarget);
         $this->block->children[] = new Jump($loopInit, $this->mapAttributes($node));
         $loopInit->addParent($this->block);
         $this->block = $loopInit;
@@ -1178,18 +1176,6 @@ class Parser
     protected function parseExpr_Eval(Expr\Eval_ $expr)
     {
         return new Op\Expr\Eval_($this->readVariable($this->parseExprNode($expr->expr)), $this->mapAttributes($expr));
-    }
-
-    protected function parseStmt_Throw(Stmt\Throw_ $stmt)
-    {
-        $this->block->children[] = new Op\Terminal\Throw_(
-            $this->readVariable($this->parseExprNode($stmt->expr)),
-            $this->mapAttributes($stmt)
-        );
-
-        // Dump everything after the throw
-        $this->block = new Block(null, $this->block->catchTarget);
-        $this->block->dead = true;
     }
 
     protected function parseExpr_Throw(Expr\Throw_ $expr)

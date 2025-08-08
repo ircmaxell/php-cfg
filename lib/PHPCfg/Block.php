@@ -25,7 +25,7 @@ class Block
     public $phi = [];
 
     public $dead = false;
-
+    
     public function __construct(?self $parent = null, ?CatchTarget $catchTarget = null)
     {
         if ($parent) {

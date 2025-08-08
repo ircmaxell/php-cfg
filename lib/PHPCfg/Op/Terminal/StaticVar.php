@@ -40,6 +40,6 @@ class StaticVar extends Terminal
 
     public function getSubBlocks(): array
     {
-        return ['defaultBlock'];
+        return ['defaultBlock' => $this->defaultBlock];
     }
 }
