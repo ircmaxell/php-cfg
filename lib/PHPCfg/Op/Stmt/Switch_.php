@@ -41,6 +41,6 @@ class Switch_ extends Stmt
 
     public function getSubBlocks(): array
     {
-        return ['targets', 'default'];
+        return ['targets' => $this->targets, 'default' => $this->default];
     }
 }

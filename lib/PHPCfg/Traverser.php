@@ -65,8 +65,7 @@ class Traverser
         for ($i = 0; $i < count($children); ++$i) {
             $op = $children[$i];
             $this->event('enterOp', [$op, $block]);
-            foreach ($op->getSubBlocks() as $subblock) {
-                $sub = $op->{$subblock};
+            foreach ($op->getSubBlocks() as $blockName => $sub) {
                 if (! $sub) {
                     continue;
                 }
@@ -87,10 +86,11 @@ class Traverser
                         throw new \RuntimeException('Unknown return from visitor: ' . gettype($result));
                     }
                 }
-                if (is_array($op->{$subblock})) {
-                    $op->{$subblock} = $sub;
+
+                if (is_array($op->{$blockName})) {
+                    $op->{$blockName} = $sub;
                 } else {
-                    $op->{$subblock} = array_shift($sub);
+                    $op->{$blockName} = array_shift($sub);
                 }
             }
             $result = $this->event('leaveOp', [$op, $block]);

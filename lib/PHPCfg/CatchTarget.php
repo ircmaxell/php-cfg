@@ -13,11 +13,10 @@ namespace PHPCfg;
 
 class CatchTarget
 {
-
     public array $catches = [];
-    public ?Block $finally;
+    public Block $finally;
 
-    public function __construct(?Block $finally) {
+    public function __construct(Block $finally) {
         $this->finally = $finally;
     }
 

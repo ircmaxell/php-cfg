@@ -49,9 +49,8 @@ class Simplifier extends AbstractVisitor
             return;
         }
         $this->recursionProtection->attach($op);
-        foreach ($op->getSubBlocks() as $name) {
+        foreach ($op->getSubBlocks() as $name => $targets) {
             /** @var Block $block */
-            $targets = $op->{$name};
             if (! is_array($targets)) {
                 $targets = [$targets];
             }
@@ -128,7 +127,8 @@ class Simplifier extends AbstractVisitor
 
                 $results[$key] = $target->children[0]->target;
             }
-            if (! is_array($op->{$name})) {
+
+            if (!is_array($op->{$name})) {
                 $op->{$name} = $results[0];
             } else {
                 $op->{$name} = $results;
@@ -152,10 +152,9 @@ class Simplifier extends AbstractVisitor
                     }
                 }
                 foreach ($block->children as $child) {
-                    foreach ($child->getSubBlocks() as $name) {
-                        $subBlocks = $child->{$name};
-                        if (! is_array($child->{$name})) {
-                            if ($child->{$name} === null) {
+                    foreach ($child->getSubBlocks() as $subBlocks) {
+                        if (! is_array($subBlocks)) {
+                            if ($subBlocks === null) {
                                 continue;
                             }
                             $subBlocks = [$subBlocks];
@@ -219,10 +218,9 @@ class Simplifier extends AbstractVisitor
                 }
                 foreach ($block->children as $child) {
                     $this->replaceOpVariable($from, $to, $child);
-                    foreach ($child->getSubBlocks() as $name) {
-                        $subBlocks = $child->{$name};
-                        if (! is_array($child->{$name})) {
-                            if ($child->{$name} === null) {
+                    foreach ($child->getSubBlocks() as $subBlocks) {
+                        if (! is_array($subBlocks)) {
+                            if ($subBlocks === null) {
                                 continue;
                             }
                             $subBlocks = [$subBlocks];

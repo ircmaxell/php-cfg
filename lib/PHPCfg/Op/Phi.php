@@ -58,5 +58,4 @@ class Phi extends Op
     {
         return ['vars', 'result'];
     }
-
 }

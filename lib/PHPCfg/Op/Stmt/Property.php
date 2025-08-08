@@ -33,7 +33,7 @@ class Property extends Stmt
 
     public ?Block $defaultBlock = null;
 
-    public Op\Type $declaredType ;
+    public Op\Type $declaredType;
 
     public function __construct(Operand $name, int $visiblity, bool $static, bool $readonly, array $attrGroups, ?Op\Type $declaredType = null, ?Operand $defaultVar = null, ?Block $defaultBlock = null, array $attributes = [])
     {
@@ -82,6 +82,6 @@ class Property extends Stmt
 
     public function getSubBlocks(): array
     {
-        return ['defaultBlock'];
+        return ['defaultBlock' => $this->defaultBlock];
     }
 }

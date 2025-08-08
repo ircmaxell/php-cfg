@@ -47,7 +47,10 @@ class Text extends Printer
                 foreach ($block->catchTarget->catches as $catch) {
                     $output .= $this->indent("\ncatchTarget<" . $this->renderType($catch['type']) . ">(" . $this->renderOperand($catch['var']) . "): Block#" . $rendered['blockIds'][$catch['block']], 2);
                 }
-                $output .= $this->indent("\nfinallyTarget: Block#" . $rendered['blockIds'][$block->catchTarget->finally], 2);
+
+                if ($rendered['blockIds']->contains($block->catchTarget->finally)) {
+                    $output .= $this->indent("\nfinallyTarget: Block#" . $rendered['blockIds'][$block->catchTarget->finally], 2);
+                }
             }
             foreach ($ops as $op) {
                 $output .= $this->indent("\n" . $op['label']);

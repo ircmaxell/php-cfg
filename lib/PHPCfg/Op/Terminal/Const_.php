@@ -38,6 +38,6 @@ class Const_ extends Terminal
 
     public function getSubBlocks(): array
     {
-        return ['valueBlock'];
+        return ['valueBlock' => $this->valueBlock];
     }
 }

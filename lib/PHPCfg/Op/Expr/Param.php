@@ -65,6 +65,6 @@ class Param extends Expr
 
     public function getSubBlocks(): array
     {
-        return ['defaultBlock'];
+        return ['defaultBlock' => $this->defaultBlock];
     }
 }

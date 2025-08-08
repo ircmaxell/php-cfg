@@ -38,6 +38,6 @@ class JumpIf extends Stmt
 
     public function getSubBlocks(): array
     {
-        return ['if', 'else'];
+        return ['if' => $this->if, 'else' => $this->else];
     }
 }
