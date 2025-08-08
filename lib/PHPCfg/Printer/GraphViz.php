@@ -151,6 +151,7 @@ class GraphViz extends Printer
             foreach ($ops as $op) {
                 $output .= $this->indent("\n" . $op['label']);
             }
+            $output .= '\\l';
             $nodes[$block] = $this->createNode($prefix . 'block_' . $blockId, $output);
             $graph->setNode($nodes[$block]);
         }
