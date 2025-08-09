@@ -28,12 +28,13 @@ Block#2
         expr: Var#2
 
 Block#3
-    Parent: Block#1
+    Parent: Block#2
         finallyTarget: Block#4
     Terminal_Return
         expr: Var#1<$e>
 
 Block#4
-    Parent: Block#1
+    Parent: Block#2
+    Parent: Block#3
     Terminal_Return
         expr: LITERAL('finally')

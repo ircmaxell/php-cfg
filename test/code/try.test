@@ -4,7 +4,6 @@ try {
     throw new MyException();
 } catch (MyException | MyOtherException $e) {
     var_dump(get_class($e));
-} finally {
 }
 -----
 Block#1
@@ -29,7 +28,7 @@ Block#2
         expr: Var#2
 
 Block#3
-    Parent: Block#1
+    Parent: Block#2
     Expr_FuncCall
         name: LITERAL('get_class')
         args[0]: Var#1<$e>

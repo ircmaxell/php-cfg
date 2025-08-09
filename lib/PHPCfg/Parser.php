@@ -725,10 +725,11 @@ class Parser
 
     protected function parseStmt_TryCatch(Stmt\TryCatch $node)
     {
-        $finally = new Block($this->block);
+        $finally = new Block();
         $catchTarget = new CatchTarget($finally);
         $finallyTarget = new CatchTarget($finally);
         $body = new Block($this->block, $catchTarget);
+        $finally->addParent($body);
         $next = new Block($this->block);
 
         $next2 = $this->parseNodes($node->stmts, $body);
@@ -736,7 +737,8 @@ class Parser
 
         foreach ($node->catches as $catch) {
             $var = $this->writeVariable($this->parseExprNode($catch->var));
-            $catchBody = new Block($this->block, $finallyTarget);
+            $catchBody = new Block($body, $finallyTarget);
+            $finally->addParent($catchBody);
             $catchBody2 = $this->parseNodes($catch->stmts, $catchBody);
             $catchBody2->children[] = new Jump($finally);
 
