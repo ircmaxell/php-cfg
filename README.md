@@ -23,6 +23,15 @@ Then, just call parse on a block of code, giving it a filename:
 ```php
 $script = $parser->parse(file_get_contents(__FILE__), __FILE__);
 ```
+While not strictly necessary, you likely should also run the Simplifier Visitor via the Traverser to optimize the CFG (remove redundant jumps and blocks, simplify Phi nodes as much as possible, etc). Other visitors exist to help find function and class declarations (`PHPCfg\Visitor\DeclarationFinder`), find function and method calls (`PHPCfg\Visitor\CallFinder`), and find all variables (`PHPCfg\Visitor\VariableFinder`). 
+
+You can also implement your own custom `PHPCfg\Visitor` and add it to the traverser in order to apply analysis or transforms to the CFG to achieve different results. 
+
+```php
+$traverser = new PHPCfg\Traverser();
+$traverser->addVisitor(new PHPCfg\Visitor\Simplifier());
+$traverser->traverse($script);
+```
 To dump the graph, simply use the built-in dumper:
 ```php
 $dumper = new PHPCfg\Printer\Text();
