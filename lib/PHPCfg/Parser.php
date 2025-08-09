@@ -746,7 +746,7 @@ class Parser
 
             $type = new Op\Type\Union(
                 $parsedTypes,
-                $this->mapAttributes($node),
+                $this->mapAttributes($catch),
             );
 
             $catchTarget->addCatch($type, $var, $catchBody);
