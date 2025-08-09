@@ -730,7 +730,8 @@ class Parser
         $finallyTarget = new CatchTarget($finally);
         $body = new Block($this->block, $catchTarget);
         $finally->addParent($body);
-        $next = new Block($this->block);
+        $next = new Block();
+        $next->addParent($body);
 
         $next2 = $this->parseNodes($node->stmts, $body);
         $next2->children[] = new Jump($finally);
