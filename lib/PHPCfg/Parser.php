@@ -735,7 +735,6 @@ class Parser
         foreach ($node->catches as $catch) {
             $var = $this->writeVariable($this->parseExprNode($catch->var));
             $catchBody = new Block($body, $finallyTarget);
-            $catchBody->addParent($body);
             $finally->addParent($catchBody);
             $catchBody2 = $this->parseNodes($catch->stmts, $catchBody);
             $catchBody2->children[] = new Jump($finally);
@@ -753,6 +752,8 @@ class Parser
             $catchTarget->addCatch($type, $var, $catchBody);
         }
 
+        // parsing body stmts is done after the catches because we want 
+        // to add catch block (and finally blocks) as parents of any subblock of the body
         $next2 = $this->parseNodes($node->stmts, $body);
         $next2->children[] = new Jump($finally);
 
