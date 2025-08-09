@@ -730,23 +730,31 @@ class Parser
         $finallyTarget = new CatchTarget($finally);
         $body = new Block($this->block, $catchTarget);
         $finally->addParent($body);
-        $next = new Block();
-        $next->addParent($body);
-
-        $next2 = $this->parseNodes($node->stmts, $body);
-        $next2->children[] = new Jump($finally);
+        $next = new Block($finally);
 
         foreach ($node->catches as $catch) {
             $var = $this->writeVariable($this->parseExprNode($catch->var));
             $catchBody = new Block($body, $finallyTarget);
+            $catchBody->addParent($body);
             $finally->addParent($catchBody);
             $catchBody2 = $this->parseNodes($catch->stmts, $catchBody);
             $catchBody2->children[] = new Jump($finally);
 
+            $parsedTypes = [];
             foreach ($catch->types as $type) {
-                $catchTarget->addCatch($this->parseTypeNode($type), $var, $catchBody);
+                $parsedTypes[] = $this->parseTypeNode($type);
             }
+
+            $type = new Op\Type\Union(
+                $parsedTypes,
+                $this->mapAttributes($node),
+            );
+
+            $catchTarget->addCatch($type, $var, $catchBody);
         }
+
+        $next2 = $this->parseNodes($node->stmts, $body);
+        $next2->children[] = new Jump($finally);
 
         if ($node->finally != null) {
             $nf = $this->parseNodes($node->finally->stmts, $finally);

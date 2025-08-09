@@ -25,15 +25,23 @@ class Block
     public $phi = [];
 
     public $dead = false;
-    
+
     public function __construct(?self $parent = null, ?CatchTarget $catchTarget = null)
     {
         if ($parent) {
             $this->parents[] = $parent;
         }
+
         $this->catchTarget = $catchTarget;
         if ($parent && !$catchTarget) {
             $this->catchTarget = $parent->catchTarget;
+        }
+
+        if ($this->catchTarget != null) {
+            $this->catchTarget->finally->addParent($this);
+            foreach ($this->catchTarget->catches as $catch) {
+                $catch["block"]->addParent($this);
+            }
         }
     }
 
