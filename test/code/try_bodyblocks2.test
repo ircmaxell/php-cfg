@@ -1,0 +1,119 @@
+<?php
+
+try {
+    if(doBar()) {
+        throw new Exception('foo');
+    } else if(doFoo()) {
+        doFi();
+    } else {
+        doFi();
+    }
+} catch (Exception $e) {
+    return $e;
+} finally {
+    echo 'finally';
+}
+
+echo "next";
+-----
+Block#1
+    Stmt_Try
+        catchTypes[0]: LITERAL('Exception')
+        catchVars[0]: Var#1<$e>
+        body: Block#2
+        catch[0]: Block#3
+        finally: Block#4
+
+Block#2
+    Parent: Block#1
+        catchTarget<LITERAL('Exception')>(Var#1<$e>): Block#3
+        finallyTarget: Block#4
+    Expr_FuncCall
+        name: LITERAL('doBar')
+        result: Var#2
+    Stmt_JumpIf
+        cond: Var#2
+        if: Block#5
+        else: Block#6
+
+Block#3
+    Parent: Block#2
+    Parent: Block#10
+    Parent: Block#5
+    Parent: Block#6
+    Parent: Block#8
+    Parent: Block#9
+        finallyTarget: Block#4
+    Var#3<$e> = Phi(Var#1<$e>, Var#4<$e>, Var#5<$e>)
+    Terminal_Return
+        expr: Var#3<$e>
+
+Block#4
+    Parent: Block#2
+    Parent: Block#3
+    Parent: Block#10
+    Parent: Block#5
+    Parent: Block#6
+    Parent: Block#8
+    Parent: Block#9
+    Terminal_Echo
+        expr: LITERAL('finally')
+    Stmt_Jump
+        target: Block#7
+
+Block#5
+    Parent: Block#2
+        catchTarget<LITERAL('Exception')>(Var#1<$e>): Block#3
+        finallyTarget: Block#4
+    Expr_New
+        class: LITERAL('Exception')
+        args[0]: LITERAL('foo')
+        result: Var#6
+    Terminal_Throw
+        expr: Var#6
+
+Block#6
+    Parent: Block#2
+        catchTarget<LITERAL('Exception')>(Var#1<$e>): Block#3
+        finallyTarget: Block#4
+    Expr_FuncCall
+        name: LITERAL('doFoo')
+        result: Var#7
+    Stmt_JumpIf
+        cond: Var#7
+        if: Block#8
+        else: Block#9
+
+Block#7
+    Parent: Block#4
+    Terminal_Echo
+        expr: LITERAL('next')
+    Terminal_Return
+
+Block#8
+    Parent: Block#6
+        catchTarget<LITERAL('Exception')>(Var#1<$e>): Block#3
+        finallyTarget: Block#4
+    Expr_FuncCall
+        name: LITERAL('doFi')
+        result: Var#8
+    Stmt_Jump
+        target: Block#10
+
+Block#9
+    Parent: Block#6
+        catchTarget<LITERAL('Exception')>(Var#1<$e>): Block#3
+        finallyTarget: Block#4
+    Expr_FuncCall
+        name: LITERAL('doFi')
+        result: Var#9
+    Stmt_Jump
+        target: Block#10
+
+Block#10
+    Parent: Block#8
+    Parent: Block#9
+        catchTarget<LITERAL('Exception')>(Var#1<$e>): Block#3
+        finallyTarget: Block#4
+    Stmt_Jump
+        target: Block#4

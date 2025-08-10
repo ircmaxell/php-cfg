@@ -115,6 +115,31 @@ class GraphViz extends Printer
         $graph->link($edge);
     }
 
+    protected function getEdgeTypeColor(string $type) {
+        static $colors = [
+            "#D54E4E",
+            "#B654A0",
+            "#8765BB",
+            "#4173C4",
+            "#007CBB",
+            "#E79E98",
+            "#FFE4DB",
+            "#73B2DF",
+            "#D0F5FF",
+            "#567B97",
+            "#574240",
+            "#BFA5A3",
+            "#64870F",
+            "#305500",
+            "#798897",
+        ];
+        static $edgeColors = [];
+        if (!isset($edgeColors[$type])) {
+            $edgeColors[$type] = $colors[count($edgeColors)];
+        }
+        return $edgeColors[$type];
+    }
+
     protected function printFuncInto(Func $func, Graph $graph, $prefix)
     {
         $rendered = $this->render($func);
@@ -126,11 +151,27 @@ class GraphViz extends Printer
             foreach ($ops as $op) {
                 $output .= $this->indent("\n" . $op['label']);
             }
+            $output .= '\\l';
             $nodes[$block] = $this->createNode($prefix . 'block_' . $blockId, $output);
             $graph->setNode($nodes[$block]);
         }
 
         foreach ($rendered['blocks'] as $block) {
+            if ($block->catchTarget) {
+                foreach ($block->catchTarget->catches as $catch) {
+                    $edge = $this->createEdge($nodes[$block], $nodes[$catch['block']]);
+                    $typeText = $this->renderType($catch['type']);
+                    $edge->setLabel("catch<$typeText>(" . $this->renderOperand($catch['var']) . ")");
+                    $edge->setColor($this->getEdgeTypeColor($typeText));
+                    $edge->setfontcolor($this->getEdgeTypeColor($typeText));
+                    $edge->setStyle("dotted");
+                    $graph->link($edge);
+                }
+                $edge = $this->createEdge($nodes[$block], $nodes[$block->catchTarget->finally]);
+                $edge->setLabel("finally");
+                $edge->setStyle("dashed");
+                $graph->link($edge);
+            }
             foreach ($rendered['blocks'][$block] as $op) {
                 foreach ($op['childBlocks'] as $child) {
                     $edge = $this->createEdge($nodes[$block], $nodes[$child['block']]);

@@ -114,6 +114,7 @@ abstract class Printer
             $func = $op->getFunc();
             $result .= '<' . var_export($func->name, true) . '>';
         }
+
         if ($op instanceof Op\Expr\Assertion) {
             $result .= '<' . $this->renderAssertion($op->assertion) . '>';
         }
@@ -167,6 +168,7 @@ abstract class Printer
                 }
             }
         }
+
         if ($op instanceof Op\Stmt\ClassMethod) {
             $result .= $this->renderAttrGroups($op->attrGroups);
             $result .= "\n    flags: " . $this->indent($this->renderFlags($op));
@@ -177,6 +179,11 @@ abstract class Printer
         }
         if ($op instanceof Op\Expr\Include_) {
             $result .= "\n    type: " . $this->indent($this->renderIncludeType($op->type));
+        }
+        if ($op instanceof Op\Stmt\Try_) {
+            foreach ($op->catchTypes as $key => $value) {
+                $result .= "\n    catchTypes[{$key}]: " . $this->indent($this->renderType($value));
+            }
         }
 
         foreach ($op->getVariableNames() as $varName) {
@@ -194,9 +201,9 @@ abstract class Printer
                 $result .= $this->indent($this->renderOperand($vars));
             }
         }
+
         $childBlocks = [];
-        foreach ($op->getSubBlocks() as $blockName) {
-            $sub = $op->{$blockName};
+        foreach ($op->getSubBlocks() as $blockName => $sub) {
             if (is_array($sub)) {
                 foreach ($sub as $key => $subBlock) {
                     if (! $subBlock) {
@@ -288,6 +295,7 @@ abstract class Printer
             }
             $renderedBlocks[$block] = $ops;
         }
+        
         $varIds = $this->varIds;
         $blockIds = $this->blocks;
         $this->reset();

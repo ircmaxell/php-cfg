@@ -30,6 +30,6 @@ abstract class ClassLike extends Stmt
 
     public function getSubBlocks(): array
     {
-        return ['stmts'];
+        return ['stmts' => $this->stmts];
     }
 }
