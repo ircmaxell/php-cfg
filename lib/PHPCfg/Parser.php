@@ -754,7 +754,7 @@ class Parser
         }
 
         // parsing body stmts is done after the catches because we want 
-        // to add catch block (and finally blocks) as parents of any subblock of the body
+        // to add catch blocks (and finally blocks) as parents of any subblock of the body
         $next2 = $this->parseNodes($node->stmts, $body);
         $next2->children[] = new Jump($finally);
 

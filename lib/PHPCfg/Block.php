@@ -36,7 +36,7 @@ class Block
             $this->catchTarget = $parent->catchTarget;
         }
 
-        $this->setCatchTargetsParents();
+        $this->setCatchTargetParents();
     }
 
     public function create()
@@ -47,10 +47,10 @@ class Block
     public function setCatchTarget(?CatchTarget $catchTarget)
     {
         $this->catchTarget = $catchTarget;
-        $this->setCatchTargetsParents();
+        $this->setCatchTargetParents();
     }
 
-    public function setCatchTargetsParents()
+    public function setCatchTargetParents()
     {
         if ($this->catchTarget) {
             $this->catchTarget->finally->addParent($this);
