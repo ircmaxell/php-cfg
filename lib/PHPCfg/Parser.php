@@ -730,6 +730,7 @@ class Parser
         $finallyTarget = new CatchTarget($finally);
         $body = new Block($this->block, $catchTarget);
         $finally->addParent($body);
+        $finally->setCatchTarget($this->block->catchTarget);
         $next = new Block($finally);
 
         foreach ($node->catches as $catch) {

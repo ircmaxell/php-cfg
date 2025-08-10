@@ -31,23 +31,33 @@ class Block
         if ($parent) {
             $this->parents[] = $parent;
         }
-
         $this->catchTarget = $catchTarget;
         if ($parent && !$catchTarget) {
             $this->catchTarget = $parent->catchTarget;
         }
 
-        if ($this->catchTarget != null) {
-            $this->catchTarget->finally->addParent($this);
-            foreach ($this->catchTarget->catches as $catch) {
-                $catch["block"]->addParent($this);
-            }
-        }
+        $this->setCatchTargetsParents();
     }
 
     public function create()
     {
         return new static();
+    }
+
+    public function setCatchTarget(?CatchTarget $catchTarget)
+    {
+        $this->catchTarget = $catchTarget;
+        $this->setCatchTargetsParents();
+    }
+
+    public function setCatchTargetsParents()
+    {
+        if ($this->catchTarget) {
+            $this->catchTarget->finally->addParent($this);
+            foreach ($this->catchTarget->catches as $catch) {
+                $catch["block"]->addParent($this);
+            }
+        }
     }
 
     public function addParent(self $parent)

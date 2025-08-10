@@ -52,6 +52,7 @@ class Text extends Printer
                     $output .= $this->indent("\nfinallyTarget: Block#" . $rendered['blockIds'][$block->catchTarget->finally], 2);
                 }
             }
+
             foreach ($ops as $op) {
                 $output .= $this->indent("\n" . $op['label']);
                 foreach ($op['childBlocks'] as $child) {
