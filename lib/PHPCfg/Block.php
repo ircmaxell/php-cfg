@@ -25,7 +25,7 @@ class Block
     public $phi = [];
 
     public $dead = false;
-    
+
     public function __construct(?self $parent = null, ?CatchTarget $catchTarget = null)
     {
         if ($parent) {
@@ -35,11 +35,29 @@ class Block
         if ($parent && !$catchTarget) {
             $this->catchTarget = $parent->catchTarget;
         }
+
+        $this->setCatchTargetParents();
     }
 
     public function create()
     {
         return new static();
+    }
+
+    public function setCatchTarget(?CatchTarget $catchTarget)
+    {
+        $this->catchTarget = $catchTarget;
+        $this->setCatchTargetParents();
+    }
+
+    public function setCatchTargetParents()
+    {
+        if ($this->catchTarget) {
+            $this->catchTarget->finally->addParent($this);
+            foreach ($this->catchTarget->catches as $catch) {
+                $catch["block"]->addParent($this);
+            }
+        }
     }
 
     public function addParent(self $parent)

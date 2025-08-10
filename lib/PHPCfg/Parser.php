@@ -725,25 +725,38 @@ class Parser
 
     protected function parseStmt_TryCatch(Stmt\TryCatch $node)
     {
-        $finally = new Block($this->block);
+        $finally = new Block();
         $catchTarget = new CatchTarget($finally);
         $finallyTarget = new CatchTarget($finally);
         $body = new Block($this->block, $catchTarget);
-        $next = new Block($this->block);
-
-        $next2 = $this->parseNodes($node->stmts, $body);
-        $next2->children[] = new Jump($finally);
+        $finally->addParent($body);
+        $finally->setCatchTarget($this->block->catchTarget);
+        $next = new Block($finally);
 
         foreach ($node->catches as $catch) {
             $var = $this->writeVariable($this->parseExprNode($catch->var));
-            $catchBody = new Block($this->block, $finallyTarget);
+            $catchBody = new Block($body, $finallyTarget);
+            $finally->addParent($catchBody);
             $catchBody2 = $this->parseNodes($catch->stmts, $catchBody);
             $catchBody2->children[] = new Jump($finally);
 
+            $parsedTypes = [];
             foreach ($catch->types as $type) {
-                $catchTarget->addCatch($this->parseTypeNode($type), $var, $catchBody);
+                $parsedTypes[] = $this->parseTypeNode($type);
             }
+
+            $type = new Op\Type\Union(
+                $parsedTypes,
+                $this->mapAttributes($catch),
+            );
+
+            $catchTarget->addCatch($type, $var, $catchBody);
         }
+
+        // parsing body stmts is done after the catches because we want 
+        // to add catch blocks (and finally blocks) as parents of any subblock of the body
+        $next2 = $this->parseNodes($node->stmts, $body);
+        $next2->children[] = new Jump($finally);
 
         if ($node->finally != null) {
             $nf = $this->parseNodes($node->finally->stmts, $finally);

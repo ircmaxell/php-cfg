@@ -4,24 +4,19 @@ try {
     throw new MyException();
 } catch (MyException | MyOtherException $e) {
     var_dump(get_class($e));
-} finally {
 }
 -----
 Block#1
     Stmt_Try
-        catchTypes[0]: LITERAL('MyException')
-        catchTypes[1]: LITERAL('MyOtherException')
+        catchTypes[0]: LITERAL('MyException')|LITERAL('MyOtherException')
         catchVars[0]: Var#1<$e>
-        catchVars[1]: Var#1<$e>
         body: Block#2
         catch[0]: Block#3
-        catch[1]: Block#3
         finally: Block#4
 
 Block#2
     Parent: Block#1
-        catchTarget<LITERAL('MyException')>(Var#1<$e>): Block#3
-        catchTarget<LITERAL('MyOtherException')>(Var#1<$e>): Block#3
+        catchTarget<LITERAL('MyException')|LITERAL('MyOtherException')>(Var#1<$e>): Block#3
     Expr_New
         class: LITERAL('MyException')
         result: Var#2
@@ -29,7 +24,7 @@ Block#2
         expr: Var#2
 
 Block#3
-    Parent: Block#1
+    Parent: Block#2
     Expr_FuncCall
         name: LITERAL('get_class')
         args[0]: Var#1<$e>

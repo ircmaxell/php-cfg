@@ -1,0 +1,84 @@
+<?php
+
+try {
+    try {
+        echo "nested try";
+    } 
+    catch(Exception1 $e1) {
+        echo $e1;
+    }
+    finally {
+        return true;
+    }
+} catch(Exception2 $e2) {
+    echo $e2;
+} finally {
+    return false;
+}
+-----
+Block#1
+    Stmt_Try
+        catchTypes[0]: LITERAL('Exception2')
+        catchVars[0]: Var#1<$e2>
+        body: Block#2
+        catch[0]: Block#3
+        finally: Block#4
+
+Block#2
+    Parent: Block#1
+        catchTarget<LITERAL('Exception2')>(Var#1<$e2>): Block#3
+        finallyTarget: Block#4
+    Stmt_Try
+        catchTypes[0]: LITERAL('Exception1')
+        catchVars[0]: Var#2<$e1>
+        body: Block#5
+        catch[0]: Block#6
+        finally: Block#7
+
+Block#3
+    Parent: Block#2
+    Parent: Block#7
+        finallyTarget: Block#4
+    Var#3<$e2> = Phi(Var#1<$e2>, Var#4<$e2>)
+    Terminal_Echo
+        expr: Var#3<$e2>
+    Stmt_Jump
+        target: Block#4
+
+Block#4
+    Parent: Block#2
+    Parent: Block#3
+    Parent: Block#7
+    Expr_ConstFetch
+        name: LITERAL('false')
+        result: Var#5
+    Terminal_Return
+        expr: Var#5
+
+Block#5
+    Parent: Block#2
+        catchTarget<LITERAL('Exception1')>(Var#2<$e1>): Block#6
+        finallyTarget: Block#7
+    Terminal_Echo
+        expr: LITERAL('nested try')
+    Stmt_Jump
+        target: Block#7
+
+Block#6
+    Parent: Block#5
+        finallyTarget: Block#7
+    Terminal_Echo
+        expr: Var#2<$e1>
+    Stmt_Jump
+        target: Block#7
+
+Block#7
+    Parent: Block#5
+    Parent: Block#6
+        catchTarget<LITERAL('Exception2')>(Var#1<$e2>): Block#3
+        finallyTarget: Block#4
+    Expr_ConstFetch
+        name: LITERAL('true')
+        result: Var#6
+    Terminal_Return
+        expr: Var#6
