@@ -734,7 +734,12 @@ class Parser
         $next = new Block($finally);
 
         foreach ($node->catches as $catch) {
-            $var = $this->writeVariable($this->parseExprNode($catch->var));
+            if ($catch->var) {
+                $var = $this->writeVariable($this->parseExprNode($catch->var));
+            } else {
+                $var = new Operand\NullOperand();
+            }
+
             $catchBody = new Block($body, $finallyTarget);
             $finally->addParent($catchBody);
             $catchBody2 = $this->parseNodes($catch->stmts, $catchBody);
