@@ -284,10 +284,10 @@ class Parser
             $func->cfg = null;
         }
 
-        $visibility = $node->flags & Node\Stmt\Class_::VISIBILITY_MODIFIER_MASK;
-        $static = $node->flags & Node\Stmt\Class_::MODIFIER_STATIC;
-        $final = $node->flags & Node\Stmt\Class_::MODIFIER_FINAL;
-        $abstract = $node->flags & Node\Stmt\Class_::MODIFIER_ABSTRACT;
+        $visibility = $node->flags & \PhpParser\Modifiers::VISIBILITY_MASK;
+        $static = $node->flags & \PhpParser\Modifiers::STATIC;
+        $final = $node->flags & \PhpParser\Modifiers::FINAL;
+        $abstract = $node->flags & \PhpParser\Modifiers::ABSTRACT;
 
         $this->block->children[] = $class_method = new Op\Stmt\ClassMethod(
             $func,
@@ -566,9 +566,9 @@ class Parser
 
     protected function parseStmt_Property(Stmt\Property $node)
     {
-        $visibility = $node->flags & Node\Stmt\Class_::VISIBILITY_MODIFIER_MASK;
-        $static = $node->flags & Node\Stmt\Class_::MODIFIER_STATIC;
-        $readonly = $node->flags & Node\Stmt\Class_::MODIFIER_READONLY;
+        $visibility = $node->flags & \PhpParser\Modifiers::VISIBILITY_MASK;
+        $static = $node->flags & \PhpParser\Modifiers::STATIC;
+        $readonly = $node->flags & \PhpParser\Modifiers::READONLY;
 
         foreach ($node->props as $prop) {
             if ($prop->default) {

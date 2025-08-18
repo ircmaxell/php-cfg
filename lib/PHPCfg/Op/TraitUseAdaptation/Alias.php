@@ -30,16 +30,16 @@ class Alias extends TraitUseAdaptation
 
     public function isPublic(): bool
     {
-        return (bool) ($this->newModifier & Node\Stmt\Class_::MODIFIER_PUBLIC);
+        return (bool) ($this->newModifier & \PhpParser\Modifiers::PUBLIC);
     }
 
     public function isProtected(): bool
     {
-        return (bool) ($this->newModifier & Node\Stmt\Class_::MODIFIER_PROTECTED);
+        return (bool) ($this->newModifier & \PhpParser\Modifiers::PROTECTED);
     }
 
     public function isPrivate(): bool
     {
-        return (bool) ($this->newModifier & Node\Stmt\Class_::MODIFIER_PRIVATE);
+        return (bool) ($this->newModifier & \PhpParser\Modifiers::PRIVATE);
     }
 }

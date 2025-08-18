@@ -35,17 +35,17 @@ class ClassMethod extends Function_
 
     public function isPublic(): bool
     {
-        return (bool) ($this->visibility & Node\Stmt\Class_::MODIFIER_PUBLIC);
+        return (bool) ($this->visibility & \PhpParser\Modifiers::PUBLIC);
     }
 
     public function isProtected(): bool
     {
-        return (bool) ($this->visibility & Node\Stmt\Class_::MODIFIER_PROTECTED);
+        return (bool) ($this->visibility & \PhpParser\Modifiers::PROTECTED);
     }
 
     public function isPrivate(): bool
     {
-        return (bool) ($this->visibility & Node\Stmt\Class_::MODIFIER_PRIVATE);
+        return (bool) ($this->visibility & \PhpParser\Modifiers::PRIVATE);
     }
 
     public function isAbstract(): bool
