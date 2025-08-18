@@ -12,19 +12,19 @@ declare(strict_types=1);
 namespace PHPCfg\Op\Stmt;
 
 use PhpCfg\Block;
-use PhpCfg\Operand;
+use PhpCfg\Op;
 
 class Trait_ extends ClassLike
 {
-    public function __construct(Operand $name, Block $stmts, array $attributes = [])
+    public function __construct(Op\Type\Literal $name, Block $stmts, array $attributes = [])
     {
         parent::__construct($name, $stmts, $attributes);
-        $this->name = $this->addReadRef($name);
+        $this->name = $name;
         $this->stmts = $stmts;
     }
 
-    public function getVariableNames(): array
+    public function getTypeNames(): array
     {
-        return ['name'];
+        return ['name' => $this->name];
     }
 }

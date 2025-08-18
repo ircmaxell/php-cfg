@@ -34,16 +34,16 @@ class Aliased_Talker {
 -----
 Block#1
     Stmt_Trait
-        name: LITERAL('A')
+        name: A
         stmts: Block#2
     Stmt_Trait
-        name: LITERAL('B')
+        name: B
         stmts: Block#3
     Stmt_Class
-        name: LITERAL('Talker')
+        name: Talker
         stmts: Block#4
     Stmt_Class
-        name: LITERAL('Aliased_Talker')
+        name: Aliased_Talker
         stmts: Block#5
     Terminal_Return
 

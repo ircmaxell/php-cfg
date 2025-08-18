@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace PHPCfg\Op\Stmt;
 
 use PhpCfg\Block;
-use PhpCfg\Operand;
 use PHPCfg\Op;
 
 class Class_ extends ClassLike
@@ -25,7 +24,7 @@ class Class_ extends ClassLike
 
     public array $attrGroups;
 
-    public function __construct(Operand $name, int $flags, ?Op\Type $extends, array $implements, Block $stmts, array $attrGroups, array $attributes = [])
+    public function __construct(Op\Type\Literal $name, int $flags, ?Op\Type $extends, array $implements, Block $stmts, array $attrGroups, array $attributes = [])
     {
         parent::__construct($name, $stmts, $attributes);
         $this->flags = $flags;
@@ -34,8 +33,8 @@ class Class_ extends ClassLike
         $this->attrGroups = $attrGroups;
     }
 
-    public function getVariableNames(): array
+    public function getTypeNames(): array
     {
-        return ['name'];
+        return ['name' => $this->name, 'extends' => $this->extends, 'implements' => $this->implements];
     }
 }

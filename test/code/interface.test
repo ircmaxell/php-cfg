@@ -6,7 +6,7 @@ interface Test {
 -----
 Block#1
     Stmt_Interface
-        name: LITERAL('Test')
+        name: Test
         stmts: Block#2
     Terminal_Return
 

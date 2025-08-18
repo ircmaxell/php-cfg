@@ -127,20 +127,9 @@ abstract class Printer
 
         if ($op instanceof Op\Stmt\Class_) {
             $result .= $this->renderAttrGroups($op->attrGroups);
-            if ($op->extends) {
-                $result .= "\n    extends: " . $this->indent($this->renderType($op->extends));
-            }
-            foreach ($op->implements as $key => $implement) {
-                $result .= "\n    implements[$key]: " . $this->indent($this->renderType($implement));
-            }
-        } else if ($op instanceof Op\Stmt\Interface_) {
-            foreach ($op->extends as $key => $extends) {
-                $result .= "\n    extends[$key]: " . $this->indent($this->renderType($extends));
-            }
         } else if ($op instanceof Op\Stmt\Property) {
             $result .= $this->renderAttrGroups($op->attrGroups);
             $result .= "\n    flags: " . $this->indent($this->renderFlags($op));
-            $result .= "\n    declaredType: " . $this->indent($this->renderType($op->declaredType));
         } else if ($op instanceof Op\Stmt\TraitUse) {
             foreach ($op->traits as $index => $trait_) {
                 $result .= "\n    use[$index]: " . $this->indent($this->renderOperand($trait_));
@@ -183,12 +172,22 @@ abstract class Printer
             $result .= "\n    flags: " . $this->indent($this->renderFlags($op));
         } else if ($op instanceof Op\Expr\Param) {
             $result .= $this->renderAttrGroups($op->attrGroups);
-            $result .= "\n    declaredType: " . $this->indent($this->renderType($op->declaredType));
         } else if ($op instanceof Op\Expr\Include_) {
             $result .= "\n    type: " . $this->indent($this->renderIncludeType($op->type));
-        } else if ($op instanceof Op\Stmt\Try_) {
-            foreach ($op->catchTypes as $key => $value) {
-                $result .= "\n    catchTypes[{$key}]: " . $this->indent($this->renderType($value));
+        }
+
+        foreach ($op->getTypeNames() as $typeName => $type) {
+            if (is_array($type)) {
+                foreach ($type as $key => $subType) {
+                    if (! $subType) {
+                        continue;
+                    }
+                    $result .= "\n    {$typeName}[{$key}]: ";
+                    $result .= $this->indent($this->renderType($subType));
+                }
+            } elseif ($type) {
+                $result .= "\n    {$typeName}: ";
+                $result .= $this->indent($this->renderType($type));
             }
         }
 

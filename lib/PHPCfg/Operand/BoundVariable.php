@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace PHPCfg\Operand;
 
+use PhpCfg\Op;
+
 class BoundVariable extends Variable
 {
     public const SCOPE_GLOBAL = 1;
@@ -25,9 +27,9 @@ class BoundVariable extends Variable
 
     public $scope;
 
-    public ?Literal $extra;
+    public ?Op\Type\Literal $extra;
 
-    public function __construct($name, bool $byRef, int $scope = self::SCOPE_GLOBAL, ?Literal $extra = null)
+    public function __construct($name, bool $byRef, int $scope = self::SCOPE_GLOBAL, ?Op\Type\Literal $extra = null)
     {
         parent::__construct($name);
         $this->byRef = $byRef;

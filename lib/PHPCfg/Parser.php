@@ -21,6 +21,7 @@ use PHPCfg\Op\TraitUseAdaptation\Precedence;
 use PHPCfg\Operand\Literal;
 use PHPCfg\Operand\Temporary;
 use PHPCfg\Operand\Variable;
+use PhpParser\Modifiers;
 use PhpParser\Node;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\BinaryOp as AstBinaryOp;
@@ -48,7 +49,7 @@ class Parser
     /** @var FuncContext */
     protected $ctx;
 
-    protected ?Literal $currentClass = null;
+    protected ?Op\Type\Literal $currentClass = null;
 
     protected ?Node\Name $currentNamespace = null;
 
@@ -239,7 +240,7 @@ class Parser
 
     protected function parseStmt_Class(Stmt\Class_ $node)
     {
-        $name = $this->parseExprNode($node->namespacedName);
+        $name = $this->parseTypeNode($node->namespacedName);
         $old = $this->currentClass;
         $this->currentClass = $name;
 
@@ -257,7 +258,7 @@ class Parser
 
     protected function parseStmt_ClassConst(Stmt\ClassConst $node)
     {
-        if (! $this->currentClass instanceof Operand) {
+        if (! $this->currentClass instanceof Op\Type\Literal) {
             throw new \RuntimeException('Unknown current class');
         }
         foreach ($node->consts as $const) {
@@ -277,7 +278,7 @@ class Parser
 
     protected function parseStmt_ClassMethod(Stmt\ClassMethod $node)
     {
-        if (! $this->currentClass instanceof Operand) {
+        if (! $this->currentClass instanceof Op\Type\Literal) {
             throw new \RuntimeException('Unknown current class');
         }
 
@@ -295,10 +296,10 @@ class Parser
             $func->cfg = null;
         }
 
-        $visibility = $node->flags & \PhpParser\Modifiers::VISIBILITY_MASK;
-        $static = $node->flags & \PhpParser\Modifiers::STATIC;
-        $final = $node->flags & \PhpParser\Modifiers::FINAL;
-        $abstract = $node->flags & \PhpParser\Modifiers::ABSTRACT;
+        $visibility = $node->flags & Modifiers::VISIBILITY_MASK;
+        $static = $node->flags & Modifiers::STATIC;
+        $final = $node->flags & Modifiers::FINAL;
+        $abstract = $node->flags & Modifiers::ABSTRACT;
 
         $this->block->children[] = $class_method = new Op\Stmt\ClassMethod(
             $func,
@@ -529,7 +530,7 @@ class Parser
 
     protected function parseStmt_Interface(Stmt\Interface_ $node)
     {
-        $name = $this->parseExprNode($node->namespacedName);
+        $name = $this->parseTypeNode($node->namespacedName);
         $old = $this->currentClass;
         $this->currentClass = $name;
         $this->block->children[] = new Op\Stmt\Interface_(
@@ -577,9 +578,9 @@ class Parser
 
     protected function parseStmt_Property(Stmt\Property $node)
     {
-        $visibility = $node->flags & \PhpParser\Modifiers::VISIBILITY_MASK;
-        $static = $node->flags & \PhpParser\Modifiers::STATIC;
-        $readonly = $node->flags & \PhpParser\Modifiers::READONLY;
+        $visibility = $node->flags & Modifiers::VISIBILITY_MASK;
+        $static = $node->flags & Modifiers::STATIC;
+        $readonly = $node->flags & Modifiers::READONLY;
 
         foreach ($node->props as $prop) {
             if ($prop->default) {
@@ -691,7 +692,7 @@ class Parser
 
     protected function parseStmt_Trait(Stmt\Trait_ $node)
     {
-        $name = $this->parseExprNode($node->namespacedName);
+        $name = $this->parseTypeNode($node->namespacedName);
         $old = $this->currentClass;
         $this->currentClass = $name;
         $this->block->children[] = new Op\Stmt\Trait_(

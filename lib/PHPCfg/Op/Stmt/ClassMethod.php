@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace PHPCfg\Op\Stmt;
 
 use PHPCfg\Func;
+use PhpParser\Modifiers;
 
 class ClassMethod extends Function_
 {
@@ -34,17 +35,17 @@ class ClassMethod extends Function_
 
     public function isPublic(): bool
     {
-        return (bool) ($this->visibility & \PhpParser\Modifiers::PUBLIC);
+        return (bool) ($this->visibility & Modifiers::PUBLIC);
     }
 
     public function isProtected(): bool
     {
-        return (bool) ($this->visibility & \PhpParser\Modifiers::PROTECTED);
+        return (bool) ($this->visibility & Modifiers::PROTECTED);
     }
 
     public function isPrivate(): bool
     {
-        return (bool) ($this->visibility & \PhpParser\Modifiers::PRIVATE);
+        return (bool) ($this->visibility & Modifiers::PRIVATE);
     }
 
     public function isAbstract(): bool
