@@ -15,7 +15,6 @@ use PHPCfg\Block;
 use PHPCfg\Op\Stmt;
 use PHPCfg\Op;
 use PhpCfg\Operand;
-use PhpParser\Node;
 
 class Property extends Stmt
 {

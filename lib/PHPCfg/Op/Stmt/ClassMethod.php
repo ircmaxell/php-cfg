@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace PHPCfg\Op\Stmt;
 
 use PHPCfg\Func;
-use PhpParser\Node;
 
 class ClassMethod extends Function_
 {

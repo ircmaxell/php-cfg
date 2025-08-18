@@ -16,9 +16,9 @@ use PhpCfg\Operand;
 
 class PropertyFetch extends Expr
 {
-    public Operand$var;
+    public Operand $var;
 
-    public Operand$name;
+    public Operand $name;
 
     public function __construct(Operand $var, Operand $name, array $attributes = [])
     {

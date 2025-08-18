@@ -16,9 +16,9 @@ use PhpCfg\Operand;
 
 class StaticCall extends Expr
 {
-    public Operand$class;
+    public Operand $class;
 
-    public Operand$name;
+    public Operand $name;
 
     public array $args;
 

@@ -26,6 +26,6 @@ class Interface_ extends ClassLike
 
     public function getVariableNames(): array
     {
-        return ['name', 'extends'];
+        return ['name'];
     }
 }

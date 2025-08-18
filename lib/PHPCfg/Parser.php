@@ -180,14 +180,24 @@ class Parser
         throw new \RuntimeException('Unknown Node Encountered : ' . $type);
     }
 
+    protected function parseTypeList(array $types): array
+    {
+        $parsedTypes = [];
+        foreach ($types as $type) {
+            $parsedTypes[] = $this->parseTypeNode($type);
+        }
+
+        return $parsedTypes;
+    }
+
     protected function parseTypeNode(?Node $node): Op\Type
     {
         if (is_null($node)) {
             return new Op\Type\Mixed_();
         }
         if ($node instanceof Node\Name) {
-            return new Op\Type\Reference(
-                $this->readVariable($this->parseExprNode($node)),
+            return new Op\Type\Literal(
+                $node->name,
                 $this->mapAttributes($node),
             );
         }
@@ -232,11 +242,12 @@ class Parser
         $name = $this->parseExprNode($node->namespacedName);
         $old = $this->currentClass;
         $this->currentClass = $name;
+
         $this->block->children[] = new Op\Stmt\Class_(
             $name,
             $node->flags,
-            $this->parseExprNode($node->extends),
-            $this->parseExprList($node->implements),
+            $node->extends ? $this->parseTypeNode($node->extends) : null,
+            $this->parseTypeList($node->implements),
             $this->parseNodes($node->stmts, new Block()),
             $this->parseAttributeGroups($node->attrGroups),
             $this->mapAttributes($node),
@@ -523,7 +534,7 @@ class Parser
         $this->currentClass = $name;
         $this->block->children[] = new Op\Stmt\Interface_(
             $name,
-            $this->parseExprList($node->extends),
+            $this->parseTypeList($node->extends),
             $this->parseNodes($node->stmts, new Block()),
             $this->mapAttributes($node),
         );

@@ -10,7 +10,7 @@ try {
 -----
 Block#1
     Stmt_Try
-        catchTypes[0]: LITERAL('Exception')
+        catchTypes[0]: Exception
         catchVars[0]: Var#1<$e>
         body: Block#2
         catch[0]: Block#3
@@ -18,7 +18,7 @@ Block#1
 
 Block#2
     Parent: Block#1
-        catchTarget<LITERAL('Exception')>(Var#1<$e>): Block#3
+        catchTarget<Exception>(Var#1<$e>): Block#3
         finallyTarget: Block#4
     Expr_New
         class: LITERAL('Exception')

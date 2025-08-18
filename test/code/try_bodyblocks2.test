@@ -18,7 +18,7 @@ echo "next";
 -----
 Block#1
     Stmt_Try
-        catchTypes[0]: LITERAL('Exception')
+        catchTypes[0]: Exception
         catchVars[0]: Var#1<$e>
         body: Block#2
         catch[0]: Block#3
@@ -26,7 +26,7 @@ Block#1
 
 Block#2
     Parent: Block#1
-        catchTarget<LITERAL('Exception')>(Var#1<$e>): Block#3
+        catchTarget<Exception>(Var#1<$e>): Block#3
         finallyTarget: Block#4
     Expr_FuncCall
         name: LITERAL('doBar')
@@ -63,7 +63,7 @@ Block#4
 
 Block#5
     Parent: Block#2
-        catchTarget<LITERAL('Exception')>(Var#1<$e>): Block#3
+        catchTarget<Exception>(Var#1<$e>): Block#3
         finallyTarget: Block#4
     Expr_New
         class: LITERAL('Exception')
@@ -74,7 +74,7 @@ Block#5
 
 Block#6
     Parent: Block#2
-        catchTarget<LITERAL('Exception')>(Var#1<$e>): Block#3
+        catchTarget<Exception>(Var#1<$e>): Block#3
         finallyTarget: Block#4
     Expr_FuncCall
         name: LITERAL('doFoo')
@@ -92,7 +92,7 @@ Block#7
 
 Block#8
     Parent: Block#6
-        catchTarget<LITERAL('Exception')>(Var#1<$e>): Block#3
+        catchTarget<Exception>(Var#1<$e>): Block#3
         finallyTarget: Block#4
     Expr_FuncCall
         name: LITERAL('doFi')
@@ -102,7 +102,7 @@ Block#8
 
 Block#9
     Parent: Block#6
-        catchTarget<LITERAL('Exception')>(Var#1<$e>): Block#3
+        catchTarget<Exception>(Var#1<$e>): Block#3
         finallyTarget: Block#4
     Expr_FuncCall
         name: LITERAL('doFi')
@@ -113,7 +113,7 @@ Block#9
 Block#10
     Parent: Block#8
     Parent: Block#9
-        catchTarget<LITERAL('Exception')>(Var#1<$e>): Block#3
+        catchTarget<Exception>(Var#1<$e>): Block#3
         finallyTarget: Block#4
     Stmt_Jump
         target: Block#4
