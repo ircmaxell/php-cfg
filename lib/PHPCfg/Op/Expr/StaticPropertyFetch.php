@@ -16,9 +16,9 @@ use PhpCfg\Operand;
 
 class StaticPropertyFetch extends Expr
 {
-    public Operand$class;
+    public Operand $class;
 
-    public Operand$name;
+    public Operand $name;
 
     public function __construct(Operand $class, Operand $name, array $attributes = [])
     {

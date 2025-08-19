@@ -36,8 +36,13 @@ class Try_ extends Stmt
             $this->catchTypes[] = $catch['type'];
             $this->catchVars[] = $catch['var'];
         }
-        
+
         $this->finally = $finally;
+    }
+
+    public function getTypeNames(): array
+    {
+        return ['catchTypes' => $this->catchTypes];
     }
 
     public function getVariableNames(): array

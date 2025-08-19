@@ -21,6 +21,7 @@ use PHPCfg\Op\TraitUseAdaptation\Precedence;
 use PHPCfg\Operand\Literal;
 use PHPCfg\Operand\Temporary;
 use PHPCfg\Operand\Variable;
+use PhpParser\Modifiers;
 use PhpParser\Node;
 use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\BinaryOp as AstBinaryOp;
@@ -48,7 +49,7 @@ class Parser
     /** @var FuncContext */
     protected $ctx;
 
-    protected ?Literal $currentClass = null;
+    protected ?Op\Type\Literal $currentClass = null;
 
     protected ?Node\Name $currentNamespace = null;
 
@@ -180,14 +181,24 @@ class Parser
         throw new \RuntimeException('Unknown Node Encountered : ' . $type);
     }
 
+    protected function parseTypeList(array $types): array
+    {
+        $parsedTypes = [];
+        foreach ($types as $type) {
+            $parsedTypes[] = $this->parseTypeNode($type);
+        }
+
+        return $parsedTypes;
+    }
+
     protected function parseTypeNode(?Node $node): Op\Type
     {
         if (is_null($node)) {
             return new Op\Type\Mixed_();
         }
         if ($node instanceof Node\Name) {
-            return new Op\Type\Reference(
-                $this->readVariable($this->parseExprNode($node)),
+            return new Op\Type\Literal(
+                $node->name,
                 $this->mapAttributes($node),
             );
         }
@@ -229,14 +240,15 @@ class Parser
 
     protected function parseStmt_Class(Stmt\Class_ $node)
     {
-        $name = $this->parseExprNode($node->namespacedName);
+        $name = $this->parseTypeNode($node->namespacedName);
         $old = $this->currentClass;
         $this->currentClass = $name;
+
         $this->block->children[] = new Op\Stmt\Class_(
             $name,
             $node->flags,
-            $this->parseExprNode($node->extends),
-            $this->parseExprList($node->implements),
+            $node->extends ? $this->parseTypeNode($node->extends) : null,
+            $this->parseTypeList($node->implements),
             $this->parseNodes($node->stmts, new Block()),
             $this->parseAttributeGroups($node->attrGroups),
             $this->mapAttributes($node),
@@ -246,7 +258,7 @@ class Parser
 
     protected function parseStmt_ClassConst(Stmt\ClassConst $node)
     {
-        if (! $this->currentClass instanceof Operand) {
+        if (! $this->currentClass instanceof Op\Type\Literal) {
             throw new \RuntimeException('Unknown current class');
         }
         foreach ($node->consts as $const) {
@@ -266,7 +278,7 @@ class Parser
 
     protected function parseStmt_ClassMethod(Stmt\ClassMethod $node)
     {
-        if (! $this->currentClass instanceof Operand) {
+        if (! $this->currentClass instanceof Op\Type\Literal) {
             throw new \RuntimeException('Unknown current class');
         }
 
@@ -284,10 +296,10 @@ class Parser
             $func->cfg = null;
         }
 
-        $visibility = $node->flags & Node\Stmt\Class_::VISIBILITY_MODIFIER_MASK;
-        $static = $node->flags & Node\Stmt\Class_::MODIFIER_STATIC;
-        $final = $node->flags & Node\Stmt\Class_::MODIFIER_FINAL;
-        $abstract = $node->flags & Node\Stmt\Class_::MODIFIER_ABSTRACT;
+        $visibility = $node->flags & Modifiers::VISIBILITY_MASK;
+        $static = $node->flags & Modifiers::STATIC;
+        $final = $node->flags & Modifiers::FINAL;
+        $abstract = $node->flags & Modifiers::ABSTRACT;
 
         $this->block->children[] = $class_method = new Op\Stmt\ClassMethod(
             $func,
@@ -354,11 +366,12 @@ class Parser
     protected function parseStmt_For(Stmt\For_ $node)
     {
         $this->parseExprList($node->init, self::MODE_READ);
-        $loopInit = $this->block->create();
-        $loopBody = $this->block->create();
-        $loopEnd = $this->block->create();
+
+        $loopInit = new Block($this->block);
+        $loopBody = new Block(null, $this->block->catchTarget);
+        $loopEnd = new Block(null, $this->block->catchTarget);
+
         $this->block->children[] = new Jump($loopInit, $this->mapAttributes($node));
-        $loopInit->addParent($this->block);
         $this->block = $loopInit;
         if (! empty($node->cond)) {
             $cond = $this->readVariable($this->parseExprNode($node->cond));
@@ -388,7 +401,6 @@ class Parser
         $loopEnd = new Block(null, $this->block->catchTarget);
 
         $this->block->children[] = new Jump($loopInit, $attrs);
-        $loopInit->addParent($this->block);
 
         $loopInit->children[] = $validOp = new Op\Iterator\Valid($iterable, $attrs);
         $loopInit->children[] = new JumpIf($validOp->result, $loopBody, $loopEnd, $attrs);
@@ -518,12 +530,12 @@ class Parser
 
     protected function parseStmt_Interface(Stmt\Interface_ $node)
     {
-        $name = $this->parseExprNode($node->namespacedName);
+        $name = $this->parseTypeNode($node->namespacedName);
         $old = $this->currentClass;
         $this->currentClass = $name;
         $this->block->children[] = new Op\Stmt\Interface_(
             $name,
-            $this->parseExprList($node->extends),
+            $this->parseTypeList($node->extends),
             $this->parseNodes($node->stmts, new Block()),
             $this->mapAttributes($node),
         );
@@ -566,9 +578,9 @@ class Parser
 
     protected function parseStmt_Property(Stmt\Property $node)
     {
-        $visibility = $node->flags & Node\Stmt\Class_::VISIBILITY_MODIFIER_MASK;
-        $static = $node->flags & Node\Stmt\Class_::MODIFIER_STATIC;
-        $readonly = $node->flags & Node\Stmt\Class_::MODIFIER_READONLY;
+        $visibility = $node->flags & Modifiers::VISIBILITY_MASK;
+        $static = $node->flags & Modifiers::STATIC;
+        $readonly = $node->flags & Modifiers::READONLY;
 
         foreach ($node->props as $prop) {
             if ($prop->default) {
@@ -680,7 +692,7 @@ class Parser
 
     protected function parseStmt_Trait(Stmt\Trait_ $node)
     {
-        $name = $this->parseExprNode($node->namespacedName);
+        $name = $this->parseTypeNode($node->namespacedName);
         $old = $this->currentClass;
         $this->currentClass = $name;
         $this->block->children[] = new Op\Stmt\Trait_(
@@ -1438,9 +1450,11 @@ class Parser
     {
         $attrs = $this->mapAttributes($expr);
         $cond = $this->readVariable($this->parseExprNode($expr->cond));
-        $ifBlock = $this->block->create();
-        $elseBlock = $this->block->create();
-        $endBlock = $this->block->create();
+
+        $ifBlock = new Block();
+        $elseBlock = new Block();
+        $endBlock = new Block();
+
         $this->block->children[] = new JumpIf($cond, $ifBlock, $elseBlock, $attrs);
         $this->processAssertions($cond, $ifBlock, $elseBlock);
         $ifBlock->addParent($this->block);

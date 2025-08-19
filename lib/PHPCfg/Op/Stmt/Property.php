@@ -15,7 +15,7 @@ use PHPCfg\Block;
 use PHPCfg\Op\Stmt;
 use PHPCfg\Op;
 use PhpCfg\Operand;
-use PhpParser\Node;
+use PhpParser\Modifiers;
 
 class Property extends Stmt
 {
@@ -52,17 +52,17 @@ class Property extends Stmt
 
     public function isPublic(): bool
     {
-        return (bool) ($this->visibility & Node\Stmt\Class_::MODIFIER_PUBLIC);
+        return (bool) ($this->visibility & Modifiers::PUBLIC);
     }
 
     public function isProtected(): bool
     {
-        return (bool) ($this->visibility & Node\Stmt\Class_::MODIFIER_PROTECTED);
+        return (bool) ($this->visibility & Modifiers::PROTECTED);
     }
 
     public function isPrivate(): bool
     {
-        return (bool) ($this->visibility & Node\Stmt\Class_::MODIFIER_PRIVATE);
+        return (bool) ($this->visibility & Modifiers::PRIVATE);
     }
 
     public function isStatic(): bool
@@ -73,6 +73,11 @@ class Property extends Stmt
     public function isReadonly(): bool
     {
         return $this->readonly;
+    }
+
+    public function getTypeNames(): array
+    {
+        return ['declaredType' => $this->declaredType];
     }
 
     public function getVariableNames(): array

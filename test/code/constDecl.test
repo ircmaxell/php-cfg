@@ -15,7 +15,7 @@ Block#1
         value: Var#1
         valueBlock: Block#3
     Stmt_Class
-        name: LITERAL('C')
+        name: C
         stmts: Block#4
     Expr_ConstFetch
         name: LITERAL('A')

@@ -34,7 +34,7 @@ Block#1
         attrGroup[0]:
             attr[0]:
                 name: LITERAL('NameOfAttribute')
-        name: LITERAL('NameOfClass1')
+        name: NameOfClass1
         stmts: Block#2
     Stmt_Class
         attrGroup[0]:
@@ -42,7 +42,7 @@ Block#1
                 name: LITERAL('ExampleAttribute')
                 args[0]: LITERAL('foo')
                 args[1]: LITERAL('bar')
-        name: LITERAL('NameOfClass2')
+        name: NameOfClass2
         stmts: Block#3
     Stmt_Class
         attrGroup[0]:
@@ -51,7 +51,7 @@ Block#1
         attrGroup[1]:
             attr[0]:
                 name: LITERAL('FooAttr')
-        name: LITERAL('NameOfClass3')
+        name: NameOfClass3
         stmts: Block#4
     Stmt_Class
         attrGroup[0]:
@@ -59,7 +59,7 @@ Block#1
                 name: LITERAL('Attr')
             attr[1]:
                 name: LITERAL('FooAttr')
-        name: LITERAL('NameOfClass4')
+        name: NameOfClass4
         stmts: Block#5
     Expr_ClassConstFetch
         class: LITERAL('Attribute')
@@ -78,7 +78,7 @@ Block#1
             attr[0]:
                 name: LITERAL('Attribute')
                 args[0]: Var#3
-        name: LITERAL('NameOfClass5')
+        name: NameOfClass5
         stmts: Block#6
     Expr_ConstFetch
         name: LITERAL('null')
@@ -91,17 +91,12 @@ Block#1
             attr[0]:
                 name: LITERAL('FooAttribute')
                 args[0]: Var#4
-        name: LITERAL('NameOfClass6')
+        name: NameOfClass6
         stmts: Block#7
     Terminal_Return
 
 Block#2
     Stmt_ClassMethod<'method1'>
-        attrGroup[0]:
-            attr[0]:
-                name: LITERAL('ExampleAttributeMethod')
-                args[0]: LITERAL('foo')
-                args[1]: LITERAL('bar')
         attrGroup[0]:
             attr[0]:
                 name: LITERAL('ExampleAttributeMethod')

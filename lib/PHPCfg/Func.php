@@ -42,7 +42,7 @@ class Func extends Op
     /** @var */
     public Op\Type $returnType;
 
-    /** @var Operand\Literal */
+    /** @var Op\Type\Literal */
     public $class;
 
     /** @var Op\Expr\Param[] */
@@ -54,7 +54,7 @@ class Func extends Op
     /** @var CallableOp|null */
     public $callableOp;
 
-    public function __construct(string $name, int $flags, Op\Type $returnType, ?Operand $class, array $attributes = [])
+    public function __construct(string $name, int $flags, Op\Type $returnType, ?Op\Type\Literal $class, array $attributes = [])
     {
         parent::__construct($attributes);
         $this->name = $name;
@@ -68,7 +68,7 @@ class Func extends Op
     public function getScopedName()
     {
         if (null !== $this->class) {
-            return $this->class->value . '::' . $this->name;
+            return $this->class->name . '::' . $this->name;
         }
 
         return $this->name;

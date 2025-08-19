@@ -11,7 +11,7 @@ declare(strict_types=1);
 
 namespace PHPCfg\Op\TraitUseAdaptation;
 
-use PhpParser\Node;
+use PhpParser\Modifiers;
 use PHPCfg\Operand;
 use PHPCfg\Op\TraitUseAdaptation;
 
@@ -30,16 +30,16 @@ class Alias extends TraitUseAdaptation
 
     public function isPublic(): bool
     {
-        return (bool) ($this->newModifier & Node\Stmt\Class_::MODIFIER_PUBLIC);
+        return (bool) ($this->newModifier & Modifiers::PUBLIC);
     }
 
     public function isProtected(): bool
     {
-        return (bool) ($this->newModifier & Node\Stmt\Class_::MODIFIER_PROTECTED);
+        return (bool) ($this->newModifier & Modifiers::PROTECTED);
     }
 
     public function isPrivate(): bool
     {
-        return (bool) ($this->newModifier & Node\Stmt\Class_::MODIFIER_PRIVATE);
+        return (bool) ($this->newModifier & Modifiers::PRIVATE);
     }
 }

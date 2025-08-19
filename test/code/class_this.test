@@ -8,7 +8,7 @@ class NameOfClass {
 -----
 Block#1
     Stmt_Class
-        name: LITERAL('NameOfClass')
+        name: NameOfClass
         stmts: Block#2
     Terminal_Return
 

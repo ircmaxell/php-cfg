@@ -12,20 +12,20 @@ declare(strict_types=1);
 namespace PHPCfg\Op\Stmt;
 
 use PhpCfg\Block;
-use PhpCfg\Operand;
+use PHPCfg\Op;
 
 class Interface_ extends ClassLike
 {
     public array $extends;
 
-    public function __construct(Operand $name, array $extends, Block $stmts, array $attributes = [])
+    public function __construct(Op\Type\Literal $name, array $extends, Block $stmts, array $attributes = [])
     {
         parent::__construct($name, $stmts, $attributes);
         $this->extends = $extends;
     }
 
-    public function getVariableNames(): array
+    public function getTypeNames(): array
     {
-        return ['name', 'extends'];
+        return  array_merge(parent::getTypeNames(), ['extends' => $this->extends]);
     }
 }

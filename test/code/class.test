@@ -29,14 +29,14 @@ $obj = new NameOfClass();
 -----
 Block#1
     Stmt_Interface
-        name: LITERAL('NS\\Iface')
-        extends[0]: LITERAL('A')
-        extends[1]: LITERAL('B')
+        name: NS\Iface
+        extends[0]: A
+        extends[1]: B
         stmts: Block#2
     Stmt_Class
-        name: LITERAL('NS\\NameOfClass')
-        extends: LITERAL('X')
-        implements[0]: LITERAL('NS\\Iface')
+        name: NS\NameOfClass
+        extends: X
+        implements[0]: NS\Iface
         stmts: Block#3
     Expr_New
         class: LITERAL('NS\\NameOfClass')
