@@ -24,7 +24,6 @@ class Nullable extends Type
 
     public function getVariableNames(): array
     {
-        return ['subtype'];
+        return ['subtype' => $this->subtype];
     }
-
 }

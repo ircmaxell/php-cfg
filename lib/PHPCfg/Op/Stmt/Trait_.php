@@ -23,7 +23,7 @@ class Trait_ extends ClassLike
         $this->stmts = $stmts;
     }
 
-    public function getTypeNames(): array
+    public function getVariableNames(): array
     {
         return ['name' => $this->name];
     }

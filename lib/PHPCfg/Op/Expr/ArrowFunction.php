@@ -27,7 +27,7 @@ class ArrowFunction extends Expr implements CallableOp
 
     public function getVariableNames(): array
     {
-        return ['result'];
+        return ['result' => $this->result];
     }
 
     public function getFunc(): Func

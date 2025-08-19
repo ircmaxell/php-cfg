@@ -30,7 +30,7 @@ class Closure extends Expr implements CallableOp
 
     public function getVariableNames(): array
     {
-        return ['useVars', 'result'];
+        return ['useVars' => $this->useVars, 'result' => $this->result];
     }
 
     public function getFunc(): Func

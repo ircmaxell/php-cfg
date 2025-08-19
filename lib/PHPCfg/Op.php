@@ -61,11 +61,6 @@ abstract class Op
         return $this->attributes;
     }
 
-    public function getTypeNames(): array
-    {
-        return [];
-    }
-
     public function getVariableNames(): array
     {
         return [];

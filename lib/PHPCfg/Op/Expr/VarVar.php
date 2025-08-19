@@ -28,6 +28,6 @@ class VarVar extends Expr
 
     public function getVariableNames(): array
     {
-        return ['var', 'result'];
+        return ['var' => $this->var, 'result' => $this->result];
     }
 }

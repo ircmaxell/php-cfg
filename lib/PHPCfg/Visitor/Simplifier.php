@@ -238,13 +238,13 @@ class Simplifier extends AbstractVisitor
 
     private function replaceOpVariable(Operand $from, Operand $to, Op $op)
     {
-        foreach ($op->getVariableNames() as $name) {
-            if (null === $op->{$name}) {
+        foreach ($op->getVariableNames() as $name => $var) {
+            if (null === $var) {
                 continue;
             }
-            if (is_array($op->{$name})) {
+            if (is_array($var)) {
                 // SIGH, PHP won't let me do this directly (parses as $op->($name[$key]))
-                $result = $op->{$name};
+                $result = $var;
                 $new = [];
                 foreach ($result as $key => $value) {
                     if ($value === $from) {

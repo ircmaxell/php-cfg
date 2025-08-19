@@ -24,7 +24,7 @@ Block#2
         catchTarget<MyException|MyOtherException>(Var#1<$e>): Block#3
         catchTarget<MyException2>(NULL): Block#4
     Expr_New
-        class: LITERAL('MyException')
+        class: MyException
         result: Var#2
     Terminal_Throw
         expr: Var#2

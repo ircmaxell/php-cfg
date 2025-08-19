@@ -28,7 +28,7 @@ abstract class ClassLike extends Stmt
         $this->stmts = $stmts;
     }
 
-    public function getTypeNames(): array
+    public function getVariableNames(): array
     {
         return  ['name' => $this->name];
     }

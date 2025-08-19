@@ -32,6 +32,6 @@ class MethodCall extends Expr
 
     public function getVariableNames(): array
     {
-        return ['var', 'name', 'args', 'result'];
+        return ['var' => $this->var, 'name' => $this->name, 'args' => $this->args, 'result' => $this->result];
     }
 }

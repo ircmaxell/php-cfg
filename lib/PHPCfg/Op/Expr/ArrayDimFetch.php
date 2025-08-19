@@ -29,11 +29,10 @@ class ArrayDimFetch extends Expr
         } else {
             $this->dim = null;
         }
-
     }
 
     public function getVariableNames(): array
     {
-        return ['var', 'dim', 'result'];
+        return ['var' => $this->var, 'dim' => $this->dim, 'result' => $this->result];
     }
 }

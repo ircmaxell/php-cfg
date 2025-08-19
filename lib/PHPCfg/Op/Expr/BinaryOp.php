@@ -29,6 +29,6 @@ abstract class BinaryOp extends Expr
 
     public function getVariableNames(): array
     {
-        return ['left', 'right', 'result'];
+        return ['left' => $this->left, 'right' => $this->right, 'result' => $this->result];
     }
 }

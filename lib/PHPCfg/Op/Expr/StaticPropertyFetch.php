@@ -29,6 +29,6 @@ class StaticPropertyFetch extends Expr
 
     public function getVariableNames(): array
     {
-        return ['class', 'name', 'result'];
+        return ['class' => $this->class, 'name' => $this->name, 'result' => $this->result];
     }
 }

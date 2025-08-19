@@ -13,7 +13,7 @@ Block#2
     Parent: Block#1
     Var#2 = Phi(LITERAL(true), Var#3)
     Expr_New
-        class: LITERAL('InvalidArgumentException')
+        class: InvalidArgumentException
         args[0]: LITERAL('foo')
         result: Var#4
     Terminal_Throw
@@ -22,7 +22,7 @@ Block#2
 Block#3
     Parent: Block#1
     Expr_New
-        class: LITERAL('Exception')
+        class: Exception
         args[0]: LITERAL('foo')
         result: Var#5
     Terminal_Throw

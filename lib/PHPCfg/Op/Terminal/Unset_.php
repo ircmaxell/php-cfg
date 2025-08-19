@@ -25,6 +25,6 @@ class Unset_ extends Terminal
 
     public function getVariableNames(): array
     {
-        return ['exprs'];
+        return ['exprs' => $this->exprs];
     }
 }

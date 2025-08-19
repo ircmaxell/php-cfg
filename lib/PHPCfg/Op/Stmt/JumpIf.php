@@ -33,7 +33,7 @@ class JumpIf extends Stmt
 
     public function getVariableNames(): array
     {
-        return ['cond'];
+        return ['cond' => $this->cond];
     }
 
     public function getSubBlocks(): array

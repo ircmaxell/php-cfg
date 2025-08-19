@@ -29,6 +29,6 @@ class FuncCall extends Expr
 
     public function getVariableNames(): array
     {
-        return ['name', 'args', 'result'];
+        return ['name' => $this->name, 'args' => $this->args, 'result' => $this->result];
     }
 }

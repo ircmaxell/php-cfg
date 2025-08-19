@@ -36,6 +36,6 @@ class NsFuncCall extends Expr
 
     public function getVariableNames(): array
     {
-        return ['nsName', 'name', 'args', 'result'];
+        return ['nsName' => $this->nsName, 'name' => $this->name, 'args' => $this->args, 'result' => $this->result];
     }
 }

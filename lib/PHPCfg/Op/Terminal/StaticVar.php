@@ -35,7 +35,7 @@ class StaticVar extends Terminal
 
     public function getVariableNames(): array
     {
-        return ['var', 'defaultVar'];
+        return ['var' => $this->var, 'defaultVar' => $this->defaultVar];
     }
 
     public function getSubBlocks(): array
