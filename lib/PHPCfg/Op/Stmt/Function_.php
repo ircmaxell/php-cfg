@@ -14,24 +14,20 @@ namespace PHPCfg\Op\Stmt;
 use PHPCfg\Func;
 use PHPCfg\Op\CallableOp;
 use PHPCfg\Op\AttributableOp;
+use PHPCfg\Op\Attributes\Attributable;
 use PHPCfg\Op\Stmt;
 
 class Function_ extends Stmt implements CallableOp, AttributableOp
 {
-    public Func $func;
+    use Attributable;
 
-    public array $attrGroups;
+    public Func $func;
 
     public function __construct(Func $func, array $attrGroups, array $attributes = [])
     {
         parent::__construct($attributes);
         $this->func = $func;
-        $this->attrGroups = $attrGroups;
-    }
-
-    public function getAttributeGroups(): array
-    {
-        return $this->attrGroups;
+        $this->setAttributeGroups($attrGroups);
     }
 
     public function getFunc(): Func

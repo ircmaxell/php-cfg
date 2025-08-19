@@ -13,19 +13,20 @@ namespace PHPCfg\Op\Expr;
 
 use PHPCfg\Block;
 use PHPCfg\Op;
+use PHPCfg\Op\Attributes\Attributable;
 use PHPCfg\Op\AttributableOp;
 use PHPCfg\Op\Expr;
 use PhpCfg\Operand;
 
 class Param extends Expr implements AttributableOp
 {
+    use Attributable;
+
     public Operand $name;
 
     public bool $byRef;
 
     public bool $variadic;
-
-    public array $attrGroups;
 
     public ?Operand $defaultVar = null;
 
@@ -52,7 +53,7 @@ class Param extends Expr implements AttributableOp
         $this->declaredType = $type;
         $this->byRef = $byRef;
         $this->variadic = $variadic;
-        $this->attrGroups = $attrGroups;
+        $this->setAttributeGroups($attrGroups);
         if (!is_null($defaultVar)) {
             $this->defaultVar = $this->addReadRef($defaultVar);
         }
@@ -72,10 +73,5 @@ class Param extends Expr implements AttributableOp
     public function getSubBlocks(): array
     {
         return ['defaultBlock' => $this->defaultBlock];
-    }
-
-    public function getAttributeGroups(): array
-    {
-        return $this->attrGroups;
     }
 }

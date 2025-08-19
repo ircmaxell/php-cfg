@@ -12,18 +12,19 @@ declare(strict_types=1);
 namespace PHPCfg\Op\Stmt;
 
 use PHPCfg\Block;
+use PHPCfg\Op\Attributes\Attributable;
 use PHPCfg\Op\AttributableOp;
 use PHPCfg\Op;
 
 class Class_ extends ClassLike implements AttributableOp
 {
+    use Attributable;
+
     public int $flags;
 
     public ?Op\Type $extends;
 
     public array $implements;
-
-    public array $attrGroups;
 
     public function __construct(Op\Type\Literal $name, int $flags, ?Op\Type $extends, array $implements, Block $stmts, array $attrGroups, array $attributes = [])
     {
@@ -31,12 +32,7 @@ class Class_ extends ClassLike implements AttributableOp
         $this->flags = $flags;
         $this->extends = $extends;
         $this->implements = $implements;
-        $this->attrGroups = $attrGroups;
-    }
-
-    public function getAttributeGroups(): array
-    {
-        return $this->attrGroups;
+        $this->setAttributeGroups($attrGroups);
     }
 
     public function getTypeNames(): array
