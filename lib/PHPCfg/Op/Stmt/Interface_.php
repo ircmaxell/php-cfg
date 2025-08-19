@@ -26,6 +26,6 @@ class Interface_ extends ClassLike
 
     public function getTypeNames(): array
     {
-        return ['name' => $this->name, 'extends' => $this->extends];
+        return  array_merge(parent::getTypeNames(), ['extends' => $this->extends]);
     }
 }

@@ -366,11 +366,12 @@ class Parser
     protected function parseStmt_For(Stmt\For_ $node)
     {
         $this->parseExprList($node->init, self::MODE_READ);
-        $loopInit = $this->block->create();
-        $loopBody = $this->block->create();
-        $loopEnd = $this->block->create();
+
+        $loopInit = new Block($this->block);
+        $loopBody = new Block(null, $this->block->catchTarget);
+        $loopEnd = new Block(null, $this->block->catchTarget);
+
         $this->block->children[] = new Jump($loopInit, $this->mapAttributes($node));
-        $loopInit->addParent($this->block);
         $this->block = $loopInit;
         if (! empty($node->cond)) {
             $cond = $this->readVariable($this->parseExprNode($node->cond));
@@ -400,7 +401,6 @@ class Parser
         $loopEnd = new Block(null, $this->block->catchTarget);
 
         $this->block->children[] = new Jump($loopInit, $attrs);
-        $loopInit->addParent($this->block);
 
         $loopInit->children[] = $validOp = new Op\Iterator\Valid($iterable, $attrs);
         $loopInit->children[] = new JumpIf($validOp->result, $loopBody, $loopEnd, $attrs);
@@ -1450,9 +1450,11 @@ class Parser
     {
         $attrs = $this->mapAttributes($expr);
         $cond = $this->readVariable($this->parseExprNode($expr->cond));
-        $ifBlock = $this->block->create();
-        $elseBlock = $this->block->create();
-        $endBlock = $this->block->create();
+
+        $ifBlock = new Block();
+        $elseBlock = new Block();
+        $endBlock = new Block();
+
         $this->block->children[] = new JumpIf($cond, $ifBlock, $elseBlock, $attrs);
         $this->processAssertions($cond, $ifBlock, $elseBlock);
         $ifBlock->addParent($this->block);

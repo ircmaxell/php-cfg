@@ -28,6 +28,11 @@ abstract class ClassLike extends Stmt
         $this->stmts = $stmts;
     }
 
+    public function getTypeNames(): array
+    {
+        return  ['name' => $this->name];
+    }
+
     public function getSubBlocks(): array
     {
         return ['stmts' => $this->stmts];

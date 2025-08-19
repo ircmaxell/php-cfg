@@ -102,11 +102,6 @@ Block#2
                 name: LITERAL('ExampleAttributeMethod')
                 args[0]: LITERAL('foo')
                 args[1]: LITERAL('bar')
-        attrGroup[0]:
-            attr[0]:
-                name: LITERAL('ExampleAttributeMethod')
-                args[0]: LITERAL('foo')
-                args[1]: LITERAL('bar')
         flags: private
 
 Block#3

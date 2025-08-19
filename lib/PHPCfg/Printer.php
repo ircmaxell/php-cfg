@@ -121,16 +121,15 @@ abstract class Printer
 
         $result .= $this->renderAttributes($op->getAttributes());
 
-        if ($op instanceof Op\Stmt\Function_) {
+        if ($op instanceof Op\Stmt\Function_ || $op instanceof Op\Stmt\Class_ || $op instanceof Op\Stmt\Property || $op instanceof Op\Stmt\ClassMethod || $op instanceof Op\Expr\Param) {
             $result .= $this->renderAttrGroups($op->attrGroups);
         }
 
-        if ($op instanceof Op\Stmt\Class_) {
-            $result .= $this->renderAttrGroups($op->attrGroups);
-        } else if ($op instanceof Op\Stmt\Property) {
-            $result .= $this->renderAttrGroups($op->attrGroups);
+        if ($op instanceof  Op\Stmt\Property || $op instanceof Op\Stmt\ClassMethod) {
             $result .= "\n    flags: " . $this->indent($this->renderFlags($op));
-        } else if ($op instanceof Op\Stmt\TraitUse) {
+        }
+
+        if ($op instanceof Op\Stmt\TraitUse) {
             foreach ($op->traits as $index => $trait_) {
                 $result .= "\n    use[$index]: " . $this->indent($this->renderOperand($trait_));
             }
@@ -167,11 +166,6 @@ abstract class Printer
                     }
                 }
             }
-        } else if ($op instanceof Op\Stmt\ClassMethod) {
-            $result .= $this->renderAttrGroups($op->attrGroups);
-            $result .= "\n    flags: " . $this->indent($this->renderFlags($op));
-        } else if ($op instanceof Op\Expr\Param) {
-            $result .= $this->renderAttrGroups($op->attrGroups);
         } else if ($op instanceof Op\Expr\Include_) {
             $result .= "\n    type: " . $this->indent($this->renderIncludeType($op->type));
         }

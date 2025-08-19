@@ -39,11 +39,6 @@ class Block
         $this->setCatchTargetParents();
     }
 
-    public function create()
-    {
-        return new static();
-    }
-
     public function setCatchTarget(?CatchTarget $catchTarget)
     {
         $this->catchTarget = $catchTarget;
