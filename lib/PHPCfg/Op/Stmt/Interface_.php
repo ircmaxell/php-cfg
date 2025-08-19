@@ -18,9 +18,9 @@ class Interface_ extends ClassLike
 {
     public array $extends;
 
-    public function __construct(Op\Type\Literal $name, array $extends, Block $stmts, array $attributes = [])
+    public function __construct(Op\Type\Literal $name, array $extends, Block $stmts, array $attrGroups, array $attributes = [])
     {
-        parent::__construct($name, $stmts, $attributes);
+        parent::__construct($name, $stmts, $attrGroups, $attributes);
         $this->extends = $extends;
     }
 

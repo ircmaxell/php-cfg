@@ -27,7 +27,7 @@ class Function_ extends Stmt implements CallableOp, AttributableOp
     {
         parent::__construct($attributes);
         $this->func = $func;
-        $this->setAttributeGroups($attrGroups);
+        $this->setAttributeGroups(...$attrGroups);
     }
 
     public function getFunc(): Func

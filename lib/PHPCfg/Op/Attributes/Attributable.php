@@ -18,7 +18,7 @@ trait Attributable
 {
     private array $attrGroups = [];
 
-    public function setAttributeGroups(array $attrGroups)
+    public function setAttributeGroups(AttributeGroup ... $attrGroups)
     {
         $this->attrGroups = $attrGroups;
     }

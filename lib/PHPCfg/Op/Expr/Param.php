@@ -53,7 +53,7 @@ class Param extends Expr implements AttributableOp
         $this->declaredType = $type;
         $this->byRef = $byRef;
         $this->variadic = $variadic;
-        $this->setAttributeGroups($attrGroups);
+        $this->setAttributeGroups(...$attrGroups);
         if (!is_null($defaultVar)) {
             $this->defaultVar = $this->addReadRef($defaultVar);
         }

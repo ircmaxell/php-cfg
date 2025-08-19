@@ -44,7 +44,7 @@ class Property extends Stmt implements AttributableOp
         $this->visibility = $visiblity;
         $this->static = $static;
         $this->readonly = $readonly;
-        $this->setAttributeGroups($attrGroups);
+        $this->setAttributeGroups(...$attrGroups);
         $this->declaredType = $declaredType;
         if (!is_null($defaultVar)) {
             $this->defaultVar = $this->addReadRef($defaultVar);
