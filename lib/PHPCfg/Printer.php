@@ -121,7 +121,7 @@ abstract class Printer
 
         $result .= $this->renderAttributes($op->getAttributes());
 
-        if ($op instanceof Op\Stmt\Function_ || $op instanceof Op\Stmt\Class_ || $op instanceof Op\Stmt\Property || $op instanceof Op\Expr\Param) {
+        if ($op instanceof Op\AttributableOp) {
             $result .= $this->renderAttrGroups($op->attrGroups);
         }
 

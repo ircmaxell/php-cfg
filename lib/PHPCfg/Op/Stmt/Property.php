@@ -14,10 +14,11 @@ namespace PHPCfg\Op\Stmt;
 use PHPCfg\Block;
 use PHPCfg\Op\Stmt;
 use PHPCfg\Op;
-use PhpCfg\Operand;
+use PHPCfg\Op\AttributableOp;
+use PHPCfg\Operand;
 use PhpParser\Modifiers;
 
-class Property extends Stmt
+class Property extends Stmt implements AttributableOp
 {
     public Operand $name;
 
@@ -88,5 +89,10 @@ class Property extends Stmt
     public function getSubBlocks(): array
     {
         return ['defaultBlock' => $this->defaultBlock];
+    }
+
+    public function getAttributeGroups(): array
+    {
+        return $this->attrGroups;
     }
 }

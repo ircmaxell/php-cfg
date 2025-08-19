@@ -12,9 +12,10 @@ declare(strict_types=1);
 namespace PHPCfg\Op\Stmt;
 
 use PHPCfg\Func;
+use PHPCfg\Op\AttributableOp;
 use PhpParser\Modifiers;
 
-class ClassMethod extends Function_
+class ClassMethod extends Function_ implements AttributableOp
 {
     public int $visibility;
 
@@ -23,6 +24,8 @@ class ClassMethod extends Function_
     public bool $final;
 
     public bool $abstract;
+
+    public array $attrGroups;
 
     public function __construct(Func $func, int $visiblity, bool $static, bool $final, bool $abstract, array $attrGroups, array $attributes = [])
     {
@@ -61,5 +64,10 @@ class ClassMethod extends Function_
     public function isStatic(): bool
     {
         return $this->static;
+    }
+
+    public function getAttributeGroups(): array
+    {
+        return $this->attrGroups;
     }
 }

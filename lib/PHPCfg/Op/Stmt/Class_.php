@@ -11,10 +11,11 @@ declare(strict_types=1);
 
 namespace PHPCfg\Op\Stmt;
 
-use PhpCfg\Block;
+use PHPCfg\Block;
+use PHPCfg\Op\AttributableOp;
 use PHPCfg\Op;
 
-class Class_ extends ClassLike
+class Class_ extends ClassLike implements AttributableOp
 {
     public int $flags;
 
@@ -31,6 +32,11 @@ class Class_ extends ClassLike
         $this->extends = $extends;
         $this->implements = $implements;
         $this->attrGroups = $attrGroups;
+    }
+
+    public function getAttributeGroups(): array
+    {
+        return $this->attrGroups;
     }
 
     public function getTypeNames(): array

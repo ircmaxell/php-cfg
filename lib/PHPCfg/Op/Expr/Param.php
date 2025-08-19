@@ -13,10 +13,11 @@ namespace PHPCfg\Op\Expr;
 
 use PHPCfg\Block;
 use PHPCfg\Op;
+use PHPCfg\Op\AttributableOp;
 use PHPCfg\Op\Expr;
 use PhpCfg\Operand;
 
-class Param extends Expr
+class Param extends Expr implements AttributableOp
 {
     public Operand $name;
 
@@ -71,5 +72,10 @@ class Param extends Expr
     public function getSubBlocks(): array
     {
         return ['defaultBlock' => $this->defaultBlock];
+    }
+
+    public function getAttributeGroups(): array
+    {
+        return $this->attrGroups;
     }
 }
