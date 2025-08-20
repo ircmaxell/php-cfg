@@ -11,8 +11,6 @@ declare(strict_types=1);
 
 namespace PHPCfg\Op\Attributes;
 
-use PHPCfg\Op;
-use PhpCfg\Operand;
 
 trait Attributable
 {
