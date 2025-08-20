@@ -16,9 +16,9 @@ use PhpCfg\Op;
 
 class Trait_ extends ClassLike
 {
-    public function __construct(Op\Type\Literal $name, Block $stmts, array $attributes = [])
+    public function __construct(Op\Type\Literal $name, Block $stmts, array $attrGroups, array $attributes = [])
     {
-        parent::__construct($name, $stmts, $attributes);
+        parent::__construct($name, $stmts, $attrGroups, $attributes);
         $this->name = $name;
         $this->stmts = $stmts;
     }

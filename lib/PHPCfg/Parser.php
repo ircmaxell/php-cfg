@@ -537,6 +537,7 @@ class Parser
             $name,
             $this->parseTypeList($node->extends),
             $this->parseNodes($node->stmts, new Block()),
+            $this->parseAttributeGroups($node->attrGroups),
             $this->mapAttributes($node),
         );
         $this->currentClass = $old;
@@ -698,6 +699,7 @@ class Parser
         $this->block->children[] = new Op\Stmt\Trait_(
             $name,
             $this->parseNodes($node->stmts, new Block()),
+            $this->parseAttributeGroups($node->attrGroups),
             $this->mapAttributes($node),
         );
         $this->currentClass = $old;

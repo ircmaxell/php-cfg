@@ -13,17 +13,22 @@ namespace PHPCfg\Op\Stmt;
 
 use PhpCfg\Block;
 use PHPCfg\Op\Stmt;
+use PHPCfg\Op\AttributableOp;
+use PHPCfg\Op\Attributes\Attributable;
 use PHPCfg\Op;
 
-abstract class ClassLike extends Stmt
+abstract class ClassLike extends Stmt implements AttributableOp
 {
+    use Attributable;
+
     public Op\Type\Literal $name;
 
     public Block $stmts;
 
-    public function __construct(Op\Type\Literal $name, Block $stmts, array $attributes = [])
+    public function __construct(Op\Type\Literal $name, Block $stmts, array $attrGroups, array $attributes = [])
     {
         parent::__construct($attributes);
+        $this->setAttributeGroups(...$attrGroups);
         $this->name = $name;
         $this->stmts = $stmts;
     }

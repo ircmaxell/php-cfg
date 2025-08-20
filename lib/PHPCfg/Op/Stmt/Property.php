@@ -14,11 +14,15 @@ namespace PHPCfg\Op\Stmt;
 use PHPCfg\Block;
 use PHPCfg\Op\Stmt;
 use PHPCfg\Op;
-use PhpCfg\Operand;
+use PHPCfg\Op\Attributes\Attributable;
+use PHPCfg\Op\AttributableOp;
+use PHPCfg\Operand;
 use PhpParser\Modifiers;
 
-class Property extends Stmt
+class Property extends Stmt implements AttributableOp
 {
+    use Attributable;
+
     public Operand $name;
 
     public int $visibility;
@@ -26,8 +30,6 @@ class Property extends Stmt
     public bool $static;
 
     public bool $readonly;
-
-    public array $attrGroups;
 
     public ?Operand $defaultVar = null;
 
@@ -42,7 +44,7 @@ class Property extends Stmt
         $this->visibility = $visiblity;
         $this->static = $static;
         $this->readonly = $readonly;
-        $this->attrGroups = $attrGroups;
+        $this->setAttributeGroups(...$attrGroups);
         $this->declaredType = $declaredType;
         if (!is_null($defaultVar)) {
             $this->defaultVar = $this->addReadRef($defaultVar);

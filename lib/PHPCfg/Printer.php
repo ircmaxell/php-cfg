@@ -121,8 +121,8 @@ abstract class Printer
 
         $result .= $this->renderAttributes($op->getAttributes());
 
-        if ($op instanceof Op\Stmt\Function_ || $op instanceof Op\Stmt\Class_ || $op instanceof Op\Stmt\Property || $op instanceof Op\Expr\Param) {
-            $result .= $this->renderAttrGroups($op->attrGroups);
+        if ($op instanceof Op\AttributableOp) {
+            $result .= $this->renderAttrGroups($op);
         }
 
         if ($op instanceof  Op\Stmt\Property || $op instanceof Op\Stmt\ClassMethod) {
@@ -401,11 +401,11 @@ abstract class Printer
         return $result;
     }
 
-    public function renderAttrGroups(array $attrGroups): string
+    public function renderAttrGroups(Op\AttributableOp $op): string
     {
         $result = '';
 
-        foreach ($attrGroups as $indexGroup => $attrGroup) {
+        foreach ($op->getAttributeGroups() as $indexGroup => $attrGroup) {
             $result .= "\n    attrGroup[$indexGroup]: ";
             $result .= $this->indent($this->renderAttributes($attrGroup->getAttributes()));
             foreach ($attrGroup->attrs as $indexAttr => $attr) {
