@@ -31,14 +31,14 @@ Block#2
 
 Block#3
     Stmt_TraitUse
-        use[0]: LITERAL('\HelloWorld')
+        use[0]: LITERAL('\\HelloWorld')
         adaptation[0]: Alias
             method:LITERAL('sayHello')
             newModifier:protected
 
 Block#4
     Stmt_TraitUse
-        use[0]: LITERAL('\HelloWorld')
+        use[0]: LITERAL('\\HelloWorld')
         adaptation[0]: Alias
             method:LITERAL('sayHello')
             newName:LITERAL('myPrivateHello')
