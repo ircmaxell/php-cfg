@@ -37,3 +37,12 @@ To dump the graph, simply use the built-in dumper:
 $dumper = new PHPCfg\Printer\Text();
 echo $dumper->printScript($script);
 ```
+
+Or you can use php-cfg by building the docker
+```bash
+# Building an image
+docker build -t php-cfg .
+
+# Build the container using the image and go directly to bash to use the
+docker run -it php-cfg
+```
