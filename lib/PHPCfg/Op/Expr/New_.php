@@ -13,22 +13,17 @@ namespace PHPCfg\Op\Expr;
 
 use PHPCfg\Op\Expr;
 use PhpCfg\Operand;
-use PhpCfg\Op;
 
 class New_ extends Expr
 {
-    public Operand | Op\Type $class;
+    public Operand $class;
 
     public array $args;
 
-    public function __construct(Operand | Op\Type $class, array $args, array $attributes = [])
+    public function __construct(Operand $class, array $args, array $attributes = [])
     {
         parent::__construct($attributes);
-        if ($class instanceof Op\Type) {
-            $this->class = $class;
-        } else {
-            $this->class = $this->addReadRef($class);
-        }
+        $this->class = $this->addReadRef($class);
         $this->args = $this->addReadRefs(...$args);
     }
 

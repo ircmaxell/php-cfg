@@ -33,8 +33,8 @@ class Class_ extends ClassLike
         $this->attrGroups = $attrGroups;
     }
 
-    public function getVariableNames(): array
+    public function getTypeNames(): array
     {
-        return array_merge(parent::getVariableNames(), ['extends' => $this->extends, 'implements' => $this->implements]);
+        return array_merge(parent::getTypeNames(), ['extends' => $this->extends, 'implements' => $this->implements]);
     }
 }

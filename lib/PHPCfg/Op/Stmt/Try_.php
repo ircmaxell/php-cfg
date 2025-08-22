@@ -42,7 +42,12 @@ class Try_ extends Stmt
 
     public function getVariableNames(): array
     {
-        return ['catchTypes' => $this->catchTypes, 'catchVars' => $this->catchVars];
+        return ['catchVars' => $this->catchVars];
+    }
+
+    public function getTypeNames(): array
+    {
+        return ['catchTypes' => $this->catchTypes];
     }
 
     public function getSubBlocks(): array

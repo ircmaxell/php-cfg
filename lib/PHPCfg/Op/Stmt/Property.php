@@ -75,9 +75,14 @@ class Property extends Stmt
         return $this->readonly;
     }
 
+    public function getTypeNames(): array
+    {
+        return ['declaredType' => $this->declaredType];
+    }
+
     public function getVariableNames(): array
     {
-        return ['declaredType' => $this->declaredType, 'name' => $this->name, 'defaultVar' => $this->defaultVar];
+        return ['name' => $this->name, 'defaultVar' => $this->defaultVar];
     }
 
     public function getSubBlocks(): array

@@ -21,7 +21,7 @@ Block#2
         catchTarget<Exception>(Var#1<$e>): Block#3
         finallyTarget: Block#4
     Expr_New
-        class: Exception
+        class: LITERAL('Exception')
         args[0]: LITERAL('foo')
         result: Var#2
     Terminal_Throw

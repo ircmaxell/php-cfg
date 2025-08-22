@@ -58,9 +58,14 @@ class Param extends Expr
         $this->defaultBlock = $defaultBlock;
     }
 
+    public function getTypeNames(): array
+    {
+        return ['declaredType' => $this->declaredType];
+    }
+
     public function getVariableNames(): array
     {
-        return ['declaredType' => $this->declaredType, 'name' => $this->name, 'defaultVar' => $this->defaultVar, 'result' => $this->result];
+        return ['name' => $this->name, 'defaultVar' => $this->defaultVar, 'result' => $this->result];
     }
 
     public function getSubBlocks(): array

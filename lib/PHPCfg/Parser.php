@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace PHPCfg;
 
-use PHPCfg\Op\Type;
 use PHPCfg\Op\Stmt\Jump;
 use PHPCfg\Op\Stmt\JumpIf;
 use PHPCfg\Op\Stmt\TraitUse;
@@ -1289,12 +1288,7 @@ class Parser
 
     protected function parseExpr_Instanceof(Expr\Instanceof_ $expr)
     {
-        if ($expr->expr instanceof Node\Name) {
-            $var = $this->parseTypeNode($expr->expr);
-        } else {
-            $var = $this->readVariable($this->parseExprNode($expr->expr));
-        }
-
+        $var = $this->readVariable($this->parseExprNode($expr->expr));
         $class = $this->readVariable($this->parseExprNode($expr->class));
         $op = new Op\Expr\InstanceOf_(
             $var,
@@ -1368,14 +1362,8 @@ class Parser
             $classExpr = $expr->class;
         }
 
-        if ($classExpr instanceof Node\Name) {
-            $class = $this->parseTypeNode($classExpr);
-        } else {
-            $class = $this->readVariable($this->parseExprNode($classExpr));
-        }
-
         return new Op\Expr\New_(
-            $class,
+            $this->readVariable($this->parseExprNode($classExpr)),
             $this->parseExprList($expr->args, self::MODE_READ),
             $this->mapAttributes($expr),
         );

@@ -57,7 +57,11 @@ abstract class Printer
     {
         $type = isset($var->type) ? '<inferred:' . $var->type->toString() . '>' : '';
         if ($var instanceof Literal) {
-            return "LITERAL{$type}(" . var_export($var->value, true) . ')';
+            if (is_string($var->value)) {
+                return "LITERAL{$type}('" . str_replace("'", "\'", $var->value) . "')";
+            } else {
+                return "LITERAL{$type}(" . var_export($var->value, true) . ')';
+            }
         }
         if ($var instanceof Variable) {
             assert($var->name instanceof Literal);
@@ -168,6 +172,21 @@ abstract class Printer
             }
         } else if ($op instanceof Op\Expr\Include_) {
             $result .= "\n    type: " . $this->indent($this->renderIncludeType($op->type));
+        }
+
+        foreach ($op->getTypeNames() as $typeName => $type) {
+            if (is_array($type)) {
+                foreach ($type as $key => $subType) {
+                    if (! $subType) {
+                        continue;
+                    }
+                    $result .= "\n    {$typeName}[{$key}]: ";
+                    $result .= $this->indent($this->renderType($subType));
+                }
+            } elseif ($type) {
+                $result .= "\n    {$typeName}: ";
+                $result .= $this->indent($this->renderType($type));
+            }
         }
 
         foreach ($op->getVariableNames() as $varName => $vars) {

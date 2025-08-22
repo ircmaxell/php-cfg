@@ -10,7 +10,7 @@ Block#1
         name: NS\NameOfClass
         stmts: Block#2
     Expr_New
-        class: NS\NameOfClass
+        class: LITERAL('NS\NameOfClass')
         result: Var#1
     Expr_Assign
         var: Var#2<$obj>

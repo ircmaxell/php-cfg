@@ -39,7 +39,7 @@ Block#1
         implements[0]: NS\Iface
         stmts: Block#3
     Expr_New
-        class: NS\NameOfClass
+        class: LITERAL('NS\NameOfClass')
         result: Var#1
     Expr_Assign
         var: Var#2<$obj>
