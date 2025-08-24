@@ -40,16 +40,16 @@ class Try_ extends Stmt
         $this->finally = $finally;
     }
 
-    public function getVariableNames(): array
-    {
-        return ['catchVars' => $this->catchVars];
-    }
-
     public function getTypeNames(): array
     {
         return ['catchTypes' => $this->catchTypes];
     }
 
+    public function getVariableNames(): array
+    {
+        return ['catchVars' => $this->catchVars];
+    }
+    
     public function getSubBlocks(): array
     {
         return ['body' => $this->body, 'catch' => $this->catch, 'finally' => $this->finally];

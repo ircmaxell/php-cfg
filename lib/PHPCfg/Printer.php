@@ -192,19 +192,11 @@ abstract class Printer
                         continue;
                     }
                     $result .= "\n    {$varName}[{$key}]: ";
-                    if ($var instanceof Op\Type) {
-                        $result .= $this->indent($this->renderType($var));
-                    } else {
-                        $result .= $this->indent($this->renderOperand($var));
-                    }
+                    $result .= $this->indent($this->renderOperand($var));
                 }
             } elseif ($vars) {
                 $result .= "\n    {$varName}: ";
-                if ($vars instanceof Op\Type) {
-                    $result .= $this->indent($this->renderType($vars));
-                } else {
-                    $result .= $this->indent($this->renderOperand($vars));
-                }
+                $result .= $this->indent($this->renderOperand($vars));
             }
         }
 
