@@ -26,6 +26,6 @@ class Eval_ extends Expr
 
     public function getVariableNames(): array
     {
-        return ['expr', 'result'];
+        return ['expr' => $this->expr, 'result' => $this->result];
     }
 }

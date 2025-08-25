@@ -39,6 +39,6 @@ class Yield_ extends Expr
 
     public function getVariableNames(): array
     {
-        return ['value', 'key', 'result'];
+        return ['value' => $this->value, 'key' => $this->key, 'result' => $this->result];
     }
 }

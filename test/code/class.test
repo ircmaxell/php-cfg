@@ -65,32 +65,32 @@ Block#3
     Stmt_ClassMethod<'method6'>
         flags: abstract|static|protected
 
-Function 'NS\\NameOfClass::doSomething': mixed
+Function 'NS\NameOfClass::doSomething': mixed
 Block#1
     Terminal_Echo
         expr: LITERAL('Hello World')
     Terminal_Return
 
-Function 'NS\\NameOfClass::method1': mixed
+Function 'NS\NameOfClass::method1': mixed
 Block#1
     Terminal_Return
 
-Function 'NS\\NameOfClass::method2': mixed
+Function 'NS\NameOfClass::method2': mixed
 Block#1
     Terminal_Return
 
-Function 'NS\\NameOfClass::method3': mixed
+Function 'NS\NameOfClass::method3': mixed
 Block#1
     Terminal_Return
 
-Function 'NS\\NameOfClass::method4': mixed
+Function 'NS\NameOfClass::method4': mixed
 Block#1
     Terminal_Return
 
-Function 'NS\\NameOfClass::method5': mixed
+Function 'NS\NameOfClass::method5': mixed
 Block#1
     Terminal_Return
 
-Function 'NS\\NameOfClass::method6': mixed
+Function 'NS\NameOfClass::method6': mixed
 Block#1
     Terminal_Return

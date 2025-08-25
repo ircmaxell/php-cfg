@@ -36,7 +36,7 @@ class Switch_ extends Stmt
 
     public function getVariableNames(): array
     {
-        return ['cond', 'cases'];
+        return ['cond' => $this->cond, 'cases' => $this->cases];
     }
 
     public function getSubBlocks(): array

@@ -25,6 +25,6 @@ class ConcatList extends Expr
 
     public function getVariableNames(): array
     {
-        return ['list', 'result'];
+        return ['list' => $this->list, 'result' => $this->result];
     }
 }

@@ -22,8 +22,8 @@ class Union extends Type
         $this->subtypes = $subtypes;
     }
 
-    public function getVariableNames(): array
+    public function getTypeNames(): array
     {
-        return ['subtypes'];
+        return ['subtypes' => $this->subtypes];
     }
 }

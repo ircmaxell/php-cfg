@@ -28,6 +28,6 @@ class Return_ extends Terminal
 
     public function getVariableNames(): array
     {
-        return ['expr'];
+        return ['expr' => $this->expr];
     }
 }

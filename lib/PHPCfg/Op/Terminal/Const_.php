@@ -33,7 +33,7 @@ class Const_ extends Terminal
 
     public function getVariableNames(): array
     {
-        return ['name', 'value'];
+        return ['name' => $this->name, 'value' => $this->value];
     }
 
     public function getSubBlocks(): array

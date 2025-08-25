@@ -26,6 +26,6 @@ class Reset extends Terminal
 
     public function getVariableNames(): array
     {
-        return ['var'];
+        return ['var' => $this->var];
     }
 }

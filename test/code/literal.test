@@ -1,0 +1,25 @@
+<?php
+
+$a = "aaaa";
+$b = "aaaa')eeee";
+$c = "aaaa')";
+$d = "aaaa'')";
+-----
+Block#1
+    Expr_Assign
+        var: Var#1<$a>
+        expr: LITERAL('aaaa')
+        result: Var#2
+    Expr_Assign
+        var: Var#3<$b>
+        expr: LITERAL('aaaa\')eeee')
+        result: Var#4
+    Expr_Assign
+        var: Var#5<$c>
+        expr: LITERAL('aaaa\')')
+        result: Var#6
+    Expr_Assign
+        var: Var#7<$d>
+        expr: LITERAL('aaaa\'\')')
+        result: Var#8
+    Terminal_Return

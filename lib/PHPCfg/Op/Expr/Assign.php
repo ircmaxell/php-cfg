@@ -31,6 +31,6 @@ class Assign extends Expr
 
     public function getVariableNames(): array
     {
-        return ['var', 'expr', 'result'];
+        return ['var' => $this->var, 'expr' => $this->expr, 'result' => $this->result];
     }
 }

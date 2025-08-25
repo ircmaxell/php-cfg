@@ -112,7 +112,7 @@ abstract class Printer
 
         if ($op instanceof Op\CallableOp) {
             $func = $op->getFunc();
-            $result .= '<' . var_export($func->name, true) . '>';
+            $result .= "<'" . $func->name . "'>";
         }
 
         if ($op instanceof Op\Expr\Assertion) {
@@ -185,8 +185,7 @@ abstract class Printer
             }
         }
 
-        foreach ($op->getVariableNames() as $varName) {
-            $vars = $op->{$varName};
+        foreach ($op->getVariableNames() as $varName => $vars) {
             if (is_array($vars)) {
                 foreach ($vars as $key => $var) {
                     if (! $var) {

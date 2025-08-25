@@ -29,6 +29,6 @@ class PropertyFetch extends Expr
 
     public function getVariableNames(): array
     {
-        return ['var', 'name', 'result'];
+        return ['var' => $this->var, 'name' => $this->name, 'result' => $this->result];
     }
 }

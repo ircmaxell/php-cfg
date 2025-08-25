@@ -29,6 +29,6 @@ class InstanceOf_ extends Expr
 
     public function getVariableNames(): array
     {
-        return ['expr', 'class', 'result'];
+        return ['expr' => $this->expr, 'class' => $this->class,'result' => $this->result];
     }
 }

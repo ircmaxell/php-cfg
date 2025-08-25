@@ -25,6 +25,6 @@ class Isset_ extends Expr
 
     public function getVariableNames(): array
     {
-        return ['vars', 'result'];
+        return ['vars' => $this->vars, 'result' => $this->result];
     }
 }

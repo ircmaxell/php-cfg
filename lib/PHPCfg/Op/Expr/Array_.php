@@ -31,6 +31,6 @@ class Array_ extends Expr
 
     public function getVariableNames(): array
     {
-        return ['keys', 'values', 'result'];
+        return ['keys' => $this->keys, 'values' => $this->values, 'result' => $this->result];
     }
 }

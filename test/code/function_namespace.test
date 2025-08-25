@@ -5,10 +5,10 @@ function foo($a) {
 }
 -----
 Block#1
-    Stmt_Function<'NS\\foo'>
+    Stmt_Function<'NS\foo'>
     Terminal_Return
 
-Function 'NS\\foo': mixed
+Function 'NS\foo': mixed
 Block#1
     Expr_Param
         declaredType: mixed

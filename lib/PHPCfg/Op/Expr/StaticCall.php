@@ -32,6 +32,6 @@ class StaticCall extends Expr
 
     public function getVariableNames(): array
     {
-        return ['class', 'name', 'args', 'result'];
+        return ['class' => $this->class, 'name' => $this->name, 'args' => $this->args, 'result' => $this->result];
     }
 }

@@ -29,6 +29,6 @@ class New_ extends Expr
 
     public function getVariableNames(): array
     {
-        return ['class', 'args', 'result'];
+        return ['class' => $this->class, 'args' => $this->args, 'result' => $this->result];
     }
 }

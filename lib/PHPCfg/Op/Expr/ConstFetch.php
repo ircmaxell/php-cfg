@@ -31,6 +31,6 @@ class ConstFetch extends Expr
 
     public function getVariableNames(): array
     {
-        return ['nsName', 'name', 'result'];
+        return ['nsName' => $this->nsName, 'name' => $this->name, 'result' => $this->result];
     }
 }

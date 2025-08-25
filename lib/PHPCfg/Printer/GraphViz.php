@@ -77,8 +77,7 @@ class GraphViz extends Printer
         foreach ($rendered['varIds'] as $var) {
             foreach ($var->ops as $write) {
                 $b = $write->getAttribute('block');
-                foreach ($write->getVariableNames() as $varName) {
-                    $vs = $write->{$varName};
+                foreach ($write->getVariableNames() as $varName => $vs) {
                     if (! is_array($vs)) {
                         $vs = [$vs];
                     }

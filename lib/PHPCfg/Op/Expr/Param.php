@@ -67,7 +67,7 @@ class Param extends Expr implements AttributableOp
 
     public function getVariableNames(): array
     {
-        return ['name', 'defaultVar', 'result'];
+        return ['name' => $this->name, 'defaultVar' => $this->defaultVar, 'result' => $this->result];
     }
 
     public function getSubBlocks(): array

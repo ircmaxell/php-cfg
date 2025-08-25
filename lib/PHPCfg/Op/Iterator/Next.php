@@ -26,9 +26,8 @@ class Next extends Terminal
         $this->var = $this->addReadRef($var);
     }
 
-    public function getVariableNames()
+    public function getVariableNames(): array
     {
-        return ['var'];
+        return ['var' => $this->var];
     }
-
 }

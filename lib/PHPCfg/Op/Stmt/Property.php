@@ -84,7 +84,7 @@ class Property extends Stmt implements AttributableOp
 
     public function getVariableNames(): array
     {
-        return ['name', 'defaultVar'];
+        return ['name' => $this->name, 'defaultVar' => $this->defaultVar];
     }
 
     public function getSubBlocks(): array

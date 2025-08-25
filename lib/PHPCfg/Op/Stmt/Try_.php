@@ -47,9 +47,9 @@ class Try_ extends Stmt
 
     public function getVariableNames(): array
     {
-        return ['catchVars'];
+        return ['catchVars' => $this->catchVars];
     }
-
+    
     public function getSubBlocks(): array
     {
         return ['body' => $this->body, 'catch' => $this->catch, 'finally' => $this->finally];
