@@ -10,7 +10,6 @@ jobs:
     strategy:
       matrix:
         php-version:
-          - "8.0"
           - "8.1"
           - "8.2"
           - "8.3"
@@ -25,6 +24,6 @@ jobs:
           php-version: "${{ matrix.php-version }}"
           tools: composer:v2
       - name: "Install dependencies"
-        run: "composer install --no-interaction --ignore-platform-reqs"
+        run: "composer install --no-interaction"
       - name: "PHPUnit"
         run: "php vendor/bin/phpunit"

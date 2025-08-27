@@ -9,7 +9,7 @@
         }
     ],
     "require": {
-        "php": ">=8.0",
+        "php": ">=8.1",
         "nikic/php-parser": "^5.0",
         "phpdocumentor/graphviz": "^1.0.4"
     },
