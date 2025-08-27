@@ -11,12 +11,14 @@ declare(strict_types=1);
 
 namespace PHPCfg;
 
+use RuntimeException;
+use SplObjectStorage;
+
 class Traverser
 {
-    /** @var \SplObjectStorage */
-    private $seen;
+    private ?SplObjectStorage $seen = null;
 
-    private $visitors = [];
+    private array $visitors = [];
 
     public function addVisitor(Visitor $visitor)
     {
@@ -33,15 +35,16 @@ class Traverser
         $this->event('leaveScript', [$script]);
     }
 
-    public function traverseFunc(Func $func)
+    private function traverseFunc(Func $func)
     {
-        $this->seen = new \SplObjectStorage();
+        $oldSeen = $this->seen;
+        $this->seen = new SplObjectStorage();
         $this->event('enterFunc', [$func]);
         $block = $func->cfg;
         if (null !== $block) {
             $result = $this->traverseBlock($block, null);
             if ($result === Visitor::REMOVE_BLOCK) {
-                throw new \RuntimeException('Cannot remove function start block');
+                throw new RuntimeException('Cannot remove function start block');
             }
             if (null !== $result) {
                 $block = $result;
@@ -49,7 +52,7 @@ class Traverser
             $func->cfg = $block;
         }
         $this->event('leaveFunc', [$func]);
-        $this->seen = null;
+        $this->seen = $oldSeen;
     }
 
     private function traverseBlock(Block $block, ?Block $prior = null)
@@ -83,7 +86,7 @@ class Traverser
                         // Revisit the ith block again
                         --$j;
                     } elseif (null !== $result) {
-                        throw new \RuntimeException('Unknown return from visitor: ' . gettype($result));
+                        throw new RuntimeException('Unknown return from visitor: ' . gettype($result));
                     }
                 }
 
@@ -103,7 +106,7 @@ class Traverser
                 // Revisit the ith node again
                 --$i;
             } elseif (null !== $result && $result !== $op) {
-                throw new \RuntimeException('Unknown return from visitor: ' . gettype($result));
+                throw new RuntimeException('Unknown return from visitor: ' . gettype($result));
             }
         }
         $block->children = $children;
@@ -111,13 +114,14 @@ class Traverser
         return $this->event('leaveBlock', [$block, $prior]);
     }
 
-    private function event($name, array $args)
+    private function event(string $name, array $args): mixed
     {
         foreach ($this->visitors as $visitor) {
-            $return = call_user_func_array([$visitor, $name], $args);
+            $return = $visitor->$name(...$args);
             if (null !== $return) {
                 return $return;
             }
         }
+        return null;
     }
 }

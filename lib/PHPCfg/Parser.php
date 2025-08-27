@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace PHPCfg;
 
+use LogicException;
 use PHPCfg\Op\Stmt\Jump;
 use PHPCfg\Op\Stmt\JumpIf;
 use PHPCfg\Op\Stmt\TraitUse;
@@ -28,6 +29,7 @@ use PhpParser\Node\Expr\BinaryOp as AstBinaryOp;
 use PhpParser\Node\Stmt;
 use PhpParser\NodeTraverser as AstTraverser;
 use PhpParser\Parser as AstParser;
+use RuntimeException;
 
 class Parser
 {
@@ -165,7 +167,7 @@ class Parser
 
     protected function parseNode(Node $node)
     {
-        if ($node instanceof Node\Expr) {
+        if ($node instanceof Expr) {
             $this->parseExprNode($node);
 
             return;
@@ -178,7 +180,7 @@ class Parser
             return;
         }
 
-        throw new \RuntimeException('Unknown Node Encountered : ' . $type);
+        throw new RuntimeException('Unknown Node Encountered : ' . $type);
     }
 
     protected function parseTypeList(array $types): array
@@ -225,7 +227,7 @@ class Parser
                 $this->mapAttributes($node),
             );
         }
-        throw new \LogicException("Unknown type node: " . $node->getType());
+        throw new LogicException("Unknown type node: " . $node->getType());
     }
 
     protected function parseStmt_Block(Stmt\Block $node)
@@ -259,7 +261,7 @@ class Parser
     protected function parseStmt_ClassConst(Stmt\ClassConst $node)
     {
         if (! $this->currentClass instanceof Op\Type\Literal) {
-            throw new \RuntimeException('Unknown current class');
+            throw new RuntimeException('Unknown current class');
         }
         foreach ($node->consts as $const) {
             $tmp = $this->block;
@@ -279,7 +281,7 @@ class Parser
     protected function parseStmt_ClassMethod(Stmt\ClassMethod $node)
     {
         if (! $this->currentClass instanceof Op\Type\Literal) {
-            throw new \RuntimeException('Unknown current class');
+            throw new RuntimeException('Unknown current class');
         }
 
         $this->script->functions[] = $func = new Func(
@@ -479,7 +481,7 @@ class Parser
     protected function parseStmt_HaltCompiler(Stmt\HaltCompiler $node)
     {
         $this->block->children[] = new Op\Terminal\Echo_(
-            $this->readVariable(new Operand\Literal($node->remaining)),
+            $this->readVariable(new Literal($node->remaining)),
             $this->mapAttributes($node),
         );
     }
@@ -511,7 +513,7 @@ class Parser
 
         $this->block = $elseBlock;
 
-        if ($node instanceof Node\Stmt\If_) {
+        if ($node instanceof Stmt\If_) {
             foreach ($node->elseifs as $elseIf) {
                 $this->parseIf($elseIf, $endBlock);
             }
@@ -546,7 +548,7 @@ class Parser
     protected function parseStmt_Label(Stmt\Label $node)
     {
         if (isset($this->ctx->labels[$node->name->toString()])) {
-            throw new \RuntimeException("Label '{$node->name->toString()}' already defined");
+            throw new RuntimeException("Label '{$node->name->toString()}' already defined");
         }
 
         $labelBlock = new Block($this->block);
@@ -558,7 +560,7 @@ class Parser
              * @var array $attributes
              */
             foreach ($this->ctx->unresolvedGotos[$node->name->toString()] as [$block, $attributes]) {
-                $block->children[] = new Op\Stmt\Jump($labelBlock, $attributes);
+                $block->children[] = new Jump($labelBlock, $attributes);
                 $labelBlock->addParent($block);
             }
             unset($this->ctx->unresolvedGotos[$node->name->toString()]);
@@ -614,7 +616,7 @@ class Parser
         if ($node->expr) {
             $expr = $this->readVariable($this->parseExprNode($node->expr));
         }
-        $this->block->children[] = new Op\Terminal\Return_($expr, $this->mapAttributes($node));
+        $this->block->children[] = new Return_($expr, $this->mapAttributes($node));
         // Dump everything after the return
         $this->block = new Block($this->block);
         $this->block->dead = true;
@@ -856,7 +858,7 @@ class Parser
         if ($expr instanceof Node\Identifier) {
             return new Literal($expr->name);
         }
-        if ($expr instanceof Node\Expr\Variable) {
+        if ($expr instanceof Expr\Variable) {
             if (is_scalar($expr->name)) {
                 if ($expr->name === 'this') {
                     return new Operand\BoundVariable(
@@ -893,7 +895,7 @@ class Parser
         if ($expr instanceof Node\InterpolatedStringPart) {
             return new Literal($expr->value);
         }
-        if ($expr instanceof Node\Expr\AssignOp) {
+        if ($expr instanceof Expr\AssignOp) {
             $var = $this->parseExprNode($expr->var);
             $read = $this->readVariable($var);
             $write = $this->writeVariable($var);
@@ -914,7 +916,7 @@ class Parser
                 'Expr_AssignOp_ShiftRight' => Op\Expr\BinaryOp\ShiftRight::class,
             ][$expr->getType()];
             if (empty($class)) {
-                throw new \RuntimeException('AssignOp Not Found: ' . $expr->getType());
+                throw new RuntimeException('AssignOp Not Found: ' . $expr->getType());
             }
             $attrs = $this->mapAttributes($expr);
             $this->block->children[] = $op = new $class($read, $e, $attrs);
@@ -922,7 +924,7 @@ class Parser
 
             return $op->result;
         }
-        if ($expr instanceof Node\Expr\BinaryOp) {
+        if ($expr instanceof AstBinaryOp) {
             if ($expr instanceof AstBinaryOp\LogicalAnd || $expr instanceof AstBinaryOp\BooleanAnd) {
                 return $this->parseShortCircuiting($expr, false);
             }
@@ -958,13 +960,13 @@ class Parser
                 'Expr_BinaryOp_Spaceship' => Op\Expr\BinaryOp\Spaceship::class,
             ][$expr->getType()];
             if (empty($class)) {
-                throw new \RuntimeException('BinaryOp Not Found: ' . $expr->getType());
+                throw new RuntimeException('BinaryOp Not Found: ' . $expr->getType());
             }
             $this->block->children[] = $op = new $class($left, $right, $this->mapAttributes($expr));
 
             return $op->result;
         }
-        if ($expr instanceof Node\Expr\Cast) {
+        if ($expr instanceof Expr\Cast) {
             $e = $this->readVariable($this->parseExprNode($expr->expr));
             $class = [
                 'Expr_Cast_Array' => Op\Expr\Cast\Array_::class,
@@ -977,7 +979,7 @@ class Parser
 
             ][$expr->getType()];
             if (empty($class)) {
-                throw new \RuntimeException('Cast Not Found: ' . $expr->getType());
+                throw new RuntimeException('Cast Not Found: ' . $expr->getType());
             }
             $this->block->children[] = $op = new $class($e, $this->mapAttributes($expr));
 
@@ -996,10 +998,10 @@ class Parser
                 return $op;
             }
         } else {
-            throw new \RuntimeException('Unknown Expr Type ' . $expr->getType());
+            throw new RuntimeException('Unknown Expr Type ' . $expr->getType());
         }
 
-        throw new \RuntimeException('Invalid state, should never happen');
+        throw new RuntimeException('Invalid state, should never happen');
     }
 
     protected function parseArg(Node\Arg $expr)
@@ -1254,7 +1256,7 @@ class Parser
             $op = new Op\Expr\FuncCall($name, $args, $this->mapAttributes($expr));
         }
 
-        if ($name instanceof Operand\Literal) {
+        if ($name instanceof Literal) {
             static $assertionFunctions = [
                 'is_array' => 'array',
                 'is_bool' => 'bool',
@@ -1275,7 +1277,7 @@ class Parser
             if (isset($assertionFunctions[$lname])) {
                 $op->result->addAssertion(
                     $args[0],
-                    new Assertion\TypeAssertion(new Operand\Literal($assertionFunctions[$lname])),
+                    new Assertion\TypeAssertion(new Literal($assertionFunctions[$lname])),
                 );
             }
         }
@@ -1322,7 +1324,7 @@ class Parser
             }
 
             if ($item->key === null) {
-                $key = new Operand\Literal($i);
+                $key = new Literal($i);
             } else {
                 $key = $this->readVariable($this->parseExprNode($item->key));
             }
@@ -1357,7 +1359,7 @@ class Parser
 
     protected function parseExpr_New(Expr\New_ $expr)
     {
-        if ($expr->class instanceof Node\Stmt\Class_) {
+        if ($expr->class instanceof Stmt\Class_) {
             $this->parseStmt_Class($expr->class);
             $classExpr = $expr->class->name;
         } else {
@@ -1376,7 +1378,7 @@ class Parser
         $var = $this->parseExprNode($expr->var);
         $read = $this->readVariable($var);
         $write = $this->writeVariable($var);
-        $this->block->children[] = $op = new Op\Expr\BinaryOp\Minus($read, new Operand\Literal(1), $this->mapAttributes($expr));
+        $this->block->children[] = $op = new Op\Expr\BinaryOp\Minus($read, new Literal(1), $this->mapAttributes($expr));
         $this->block->children[] = new Op\Expr\Assign($write, $op->result, $this->mapAttributes($expr));
 
         return $read;
@@ -1387,7 +1389,7 @@ class Parser
         $var = $this->parseExprNode($expr->var);
         $read = $this->readVariable($var);
         $write = $this->writeVariable($var);
-        $this->block->children[] = $op = new Op\Expr\BinaryOp\Plus($read, new Operand\Literal(1), $this->mapAttributes($expr));
+        $this->block->children[] = $op = new Op\Expr\BinaryOp\Plus($read, new Literal(1), $this->mapAttributes($expr));
         $this->block->children[] = new Op\Expr\Assign($write, $op->result, $this->mapAttributes($expr));
 
         return $read;
@@ -1398,7 +1400,7 @@ class Parser
         $var = $this->parseExprNode($expr->var);
         $read = $this->readVariable($var);
         $write = $this->writeVariable($var);
-        $this->block->children[] = $op = new Op\Expr\BinaryOp\Minus($read, new Operand\Literal(1), $this->mapAttributes($expr));
+        $this->block->children[] = $op = new Op\Expr\BinaryOp\Minus($read, new Literal(1), $this->mapAttributes($expr));
         $this->block->children[] = new Op\Expr\Assign($write, $op->result, $this->mapAttributes($expr));
 
         return $op->result;
@@ -1409,7 +1411,7 @@ class Parser
         $var = $this->parseExprNode($expr->var);
         $read = $this->readVariable($var);
         $write = $this->writeVariable($var);
-        $this->block->children[] = $op = new Op\Expr\BinaryOp\Plus($read, new Operand\Literal(1), $this->mapAttributes($expr));
+        $this->block->children[] = $op = new Op\Expr\BinaryOp\Plus($read, new Literal(1), $this->mapAttributes($expr));
         $this->block->children[] = new Op\Expr\Assign($write, $op->result, $this->mapAttributes($expr));
 
         return $op->result;
@@ -1528,7 +1530,7 @@ class Parser
         );
 
         return new Op\Expr\FuncCall(
-            new Operand\Literal('shell_exec'),
+            new Literal('shell_exec'),
             [$arg->result],
             $this->mapAttributes($expr),
         );
@@ -1570,7 +1572,7 @@ class Parser
     protected function throwUndefinedLabelError()
     {
         foreach ($this->ctx->unresolvedGotos as $name => $_) {
-            throw new \RuntimeException("'goto' to undefined label '{$name}'");
+            throw new RuntimeException("'goto' to undefined label '{$name}'");
         }
     }
 
@@ -1664,7 +1666,7 @@ class Parser
                 return new Literal('__FUNCTION__');
             default:
                 var_dump($scalar);
-                throw new \RuntimeException('Unknown how to deal with scalar type ' . $scalar->getType());
+                throw new RuntimeException('Unknown how to deal with scalar type ' . $scalar->getType());
         }
     }
 
@@ -1694,7 +1696,7 @@ class Parser
                 $defaultBlock,
                 $this->mapAttributes($param),
             );
-            $p->result->original = new Operand\Variable(new Operand\Literal($p->name->value));
+            $p->result->original = new Variable(new Literal($p->name->value));
             $p->function = $func;
         }
 
@@ -1755,14 +1757,14 @@ class Parser
             // bound variables are immune to SSA
             return $var;
         }
-        if ($var instanceof Operand\Variable) {
+        if ($var instanceof Variable) {
             if ($var->name instanceof Literal) {
                 return $this->readVariableName($this->getVariableName($var), $this->block);
             }
             $this->readVariable($var->name);    // variable variable read - all we can do is register the nested read
             return $var;
         }
-        if ($var instanceof Operand\Temporary && $var->original instanceof Operand) {
+        if ($var instanceof Temporary && $var->original instanceof Operand) {
             return $this->readVariable($var->original);
         }
 
@@ -1771,13 +1773,13 @@ class Parser
 
     private function writeVariable(Operand $var)
     {
-        while ($var instanceof Operand\Temporary && $var->original) {
+        while ($var instanceof Temporary && $var->original) {
             $var = $var->original;
         }
-        if ($var instanceof Operand\Variable) {
+        if ($var instanceof Variable) {
             if ($var->name instanceof Literal) {
                 $name = $this->getVariableName($var);
-                $var = new Operand\Temporary($var);
+                $var = new Temporary($var);
                 $this->writeVariableName($name, $var, $this->block);
             } else {
                 $this->readVariable($var->name);    // variable variable write - do not resolve the write for now, but we can register the read
@@ -1808,7 +1810,7 @@ class Parser
                 // Special case, just return the read var
                 return $this->readVariableName($name, $block->parents[0]);
             }
-            $var = new Operand\Temporary(new Variable(new Literal($name)));
+            $var = new Temporary(new Variable(new Literal($name)));
             $phi = new Op\Phi($var, ['block' => $block]);
             $block->phi[] = $phi;
             // Prevent unbound recursion
@@ -1823,7 +1825,7 @@ class Parser
 
             return $var;
         }
-        $var = new Operand\Temporary(new Variable(new Literal($name)));
+        $var = new Temporary(new Variable(new Literal($name)));
         $phi = new Op\Phi($var, ['block' => $block]);
         $this->ctx->addToIncompletePhis($block, $name, $phi);
         $this->writeVariableName($name, $var, $block);
@@ -1831,7 +1833,7 @@ class Parser
         return $var;
     }
 
-    private function getVariableName(Operand\Variable $var)
+    private function getVariableName(Variable $var)
     {
         assert($var->name instanceof Literal);
 

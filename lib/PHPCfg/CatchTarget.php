@@ -21,7 +21,7 @@ class CatchTarget
         $this->finally = $finally;
     }
 
-    public function addCatch(Op $type, Operand $var, Block $block)
+    public function addCatch(Op $type, Operand $var, Block $block): void
     {
         $this->catches[] = [
             "type" => $type,

@@ -12,9 +12,9 @@ declare(strict_types=1);
 namespace PHPCfg\Op\Stmt;
 
 use PHPCfg\Func;
-use PHPCfg\Op\CallableOp;
 use PHPCfg\Op\AttributableOp;
 use PHPCfg\Op\Attributes\Attributable;
+use PHPCfg\Op\CallableOp;
 use PHPCfg\Op\Stmt;
 
 class Function_ extends Stmt implements CallableOp, AttributableOp

@@ -13,6 +13,7 @@ namespace PHPCfg;
 
 use PhpParser\ParserFactory;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 
 class AttributesTest extends TestCase
 {
@@ -49,7 +50,7 @@ class AttributesTest extends TestCase
             $script = $parser->parse($code, 'foo.php');
             $traverser->traverse($script);
             $result = $printer->printScript($script);
-        } catch (\RuntimeException $e) {
+        } catch (RuntimeException $e) {
             $result = $e->getMessage();
         }
 
@@ -163,7 +164,7 @@ class AttributesTest extends TestCase
             $script = $parser->parse($code, 'foo.php');
             $traverser->traverse($script);
             $result = $printer->printScript($script);
-        } catch (\RuntimeException $e) {
+        } catch (RuntimeException $e) {
             $result = $e->getMessage();
         }
 

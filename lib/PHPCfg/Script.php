@@ -14,8 +14,8 @@ namespace PHPCfg;
 class Script
 {
     /** @var Func[] */
-    public $functions = [];
+    public array $functions = [];
 
     /** @var Func */
-    public $main;
+    public Func $main;
 }

@@ -13,8 +13,8 @@ namespace PHPCfg\Op\Expr;
 
 use PHPCfg\Block;
 use PHPCfg\Op;
-use PHPCfg\Op\Attributes\Attributable;
 use PHPCfg\Op\AttributableOp;
+use PHPCfg\Op\Attributes\Attributable;
 use PHPCfg\Op\Expr;
 use PhpCfg\Operand;
 

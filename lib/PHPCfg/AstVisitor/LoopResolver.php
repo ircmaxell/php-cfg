@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace PHPCfg\AstVisitor;
 
+use LogicException;
 use PhpParser\Node;
 use PhpParser\Node\Scalar\LNumber;
 use PhpParser\Node\Stmt\Goto_;
@@ -74,14 +75,14 @@ class LoopResolver extends NodeVisitorAbstract
         if ($node->num instanceof LNumber) {
             $num = $node->num->value - 1;
             if ($num >= count($stack)) {
-                throw new \LogicException('Too high of a count for ' . $node->getType());
+                throw new LogicException('Too high of a count for ' . $node->getType());
             }
             $loc = array_slice($stack, -1 * $num, 1);
 
             return new Goto_($loc[0], $node->getAttributes());
         }
 
-        throw new \LogicException('Unimplemented Node Value Type');
+        throw new LogicException('Unimplemented Node Value Type');
     }
 
     protected function makeLabel()

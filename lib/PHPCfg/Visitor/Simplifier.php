@@ -16,34 +16,32 @@ use PHPCfg\Block;
 use PHPCfg\Func;
 use PHPCfg\Op;
 use PHPCfg\Operand;
+use SplObjectStorage;
 
 class Simplifier extends AbstractVisitor
 {
-    /** @var \SplObjectStorage */
-    protected $removed;
+    protected ?SplObjectStorage $removed;
 
-    /** @var \SplObjectStorage */
-    protected $recursionProtection;
+    protected ?SplObjectStorage $recursionProtection;
 
-    /** @var \SplObjectStorage */
-    protected $trivialPhiCandidates;
+    protected ?SplObjectStorage $trivialPhiCandidates;
 
-    public function enterFunc(Func $func)
+    public function enterFunc(Func $func): void
     {
-        $this->removed = new \SplObjectStorage();
-        $this->recursionProtection = new \SplObjectStorage();
+        $this->removed = new SplObjectStorage();
+        $this->recursionProtection = new SplObjectStorage();
     }
 
-    public function leaveFunc(Func $func)
+    public function leaveFunc(Func $func): void
     {
         // Remove trivial PHI functions
         if ($func->cfg) {
-            $this->trivialPhiCandidates = new \SplObjectStorage();
+            $this->trivialPhiCandidates = new SplObjectStorage();
             $this->removeTrivialPhi($func->cfg);
         }
     }
 
-    public function enterOp(Op $op, Block $block)
+    public function enterOp(Op $op, Block $block): void
     {
         if ($this->recursionProtection->contains($op)) {
             return;
@@ -137,10 +135,10 @@ class Simplifier extends AbstractVisitor
         $this->recursionProtection->detach($op);
     }
 
-    private function removeTrivialPhi(Block $block)
+    private function removeTrivialPhi(Block $block): void
     {
-        $toReplace = new \SplObjectStorage();
-        $replaced = new \SplObjectStorage();
+        $toReplace = new SplObjectStorage();
+        $replaced = new SplObjectStorage();
         $toReplace->attach($block);
         while ($toReplace->count() > 0) {
             foreach ($toReplace as $block) {
@@ -182,7 +180,7 @@ class Simplifier extends AbstractVisitor
         }
     }
 
-    private function tryRemoveTrivialPhi(Op\Phi $phi, Block $block)
+    private function tryRemoveTrivialPhi(Op\Phi $phi, Block $block): bool
     {
         if (count($phi->vars) > 1) {
             return false;
@@ -199,10 +197,10 @@ class Simplifier extends AbstractVisitor
         return true;
     }
 
-    private function replaceVariables(Operand $from, Operand $to, Block $block)
+    private function replaceVariables(Operand $from, Operand $to, Block $block): void
     {
-        $toReplace = new \SplObjectStorage();
-        $replaced = new \SplObjectStorage();
+        $toReplace = new SplObjectStorage();
+        $replaced = new SplObjectStorage();
         $toReplace->attach($block);
         while ($toReplace->count() > 0) {
             foreach ($toReplace as $block) {
@@ -236,7 +234,7 @@ class Simplifier extends AbstractVisitor
         }
     }
 
-    private function replaceOpVariable(Operand $from, Operand $to, Op $op)
+    private function replaceOpVariable(Operand $from, Operand $to, Op $op): void
     {
         foreach ($op->getVariableNames() as $name => $var) {
             if (null === $var) {

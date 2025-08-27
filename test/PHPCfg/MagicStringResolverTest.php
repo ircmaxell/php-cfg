@@ -11,8 +11,8 @@ declare(strict_types=1);
 
 namespace PHPCfg;
 
-use PHPCfg\AstVisitor\NameResolver;
 use PHPCfg\AstVisitor\MagicStringResolver;
+use PHPCfg\AstVisitor\NameResolver;
 use PhpParser\NodeTraverser;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;

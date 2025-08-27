@@ -15,8 +15,8 @@ use PHPCfg\AstVisitor\NameResolver;
 use PhpParser\NodeTraverser;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;
-use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\TestCase;
 
 class NameResolverTest extends TestCase
 {

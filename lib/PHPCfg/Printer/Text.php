@@ -17,7 +17,7 @@ use PHPCfg\Script;
 
 class Text extends Printer
 {
-    public function printScript(Script $script)
+    public function printScript(Script $script): string
     {
         $output = '';
         $output .= $this->printFunc($script->main);
@@ -30,7 +30,7 @@ class Text extends Printer
         return $output;
     }
 
-    public function printFunc(Func $func)
+    public function printFunc(Func $func): string
     {
         $rendered = $this->render($func);
         $output = '';
@@ -64,7 +64,7 @@ class Text extends Printer
         return $output;
     }
 
-    public function printVars(Func $func)
+    public function printVars(Func $func): string
     {
         $rendered = $this->render($func);
         $output = '';

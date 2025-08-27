@@ -15,7 +15,7 @@ use PHPCfg\Assertion;
 
 class TypeAssertion extends Assertion
 {
-    public function getKind()
+    public function getKind(): string
     {
         return 'type';
     }

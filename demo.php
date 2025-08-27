@@ -13,7 +13,7 @@ use PhpParser\ParserFactory;
 
 require __DIR__ . '/vendor/autoload.php';
 
-$graphviz = false;
+$graphviz = true;
 [$fileName, $code] = getCode($argc, $argv);
 
 $parser = new PHPCfg\Parser((new ParserFactory())->createForNewestSupportedVersion());
@@ -52,9 +52,11 @@ function getCode($argc, $argv)
 
     return [__FILE__, <<<'EOF'
         <?php
-        function foo(array $a) {
-            $a[] = 1;
+
+        if (is_int($a) || is_float($a)) {
+            echo $a;
         }
+        var_dump($a);
         EOF
     ];
 }

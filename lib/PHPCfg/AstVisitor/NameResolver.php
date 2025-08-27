@@ -18,7 +18,7 @@ use PhpParser\NodeVisitor\NameResolver as NameResolverParent;
 
 class NameResolver extends NameResolverParent
 {
-    protected static $builtInTypes = [
+    private const BUILTIN_TYPES = [
         'self',
         'parent',
         'static',
@@ -43,7 +43,7 @@ class NameResolver extends NameResolverParent
         'callable',
     ];
 
-    protected $anonymousClasses = 0;
+    protected int $anonymousClasses = 0;
 
     public function enterNode(Node $node)
     {
@@ -51,8 +51,8 @@ class NameResolver extends NameResolverParent
 
         if ($node instanceof Node\Stmt\Class_ && is_null($node->name)) {
             $anonymousName = "{anonymousClass}#" . ++$this->anonymousClasses;
-            $node->name = new \PhpParser\Node\Identifier($anonymousName);
-            $node->namespacedName = new \PhpParser\Node\Name($anonymousName);
+            $node->name = new Node\Identifier($anonymousName);
+            $node->namespacedName = new Name($anonymousName);
         }
 
         $comment = $node->getDocComment();
@@ -103,7 +103,7 @@ class NameResolver extends NameResolverParent
         if (! preg_match($regex, $type)) {
             return $type;   // malformed Type, return original string
         }
-        if (in_array(strtolower($type), self::$builtInTypes, true)) {
+        if (in_array(strtolower($type), self::BUILTIN_TYPES, true)) {
             return $type;
         }
         // Now, we need to resolve the type

@@ -11,25 +11,24 @@ declare(strict_types=1);
 
 namespace PHPCfg;
 
+use LogicException;
 use PHPCfg\Operand\BoundVariable;
 use PHPCfg\Operand\Literal;
+use PHPCfg\Operand\NullOperand;
 use PHPCfg\Operand\Temporary;
 use PHPCfg\Operand\Variable;
-use PHPCfg\Operand\NullOperand;
+use SplObjectStorage;
+use SplQueue;
 
 abstract class Printer
 {
-    /** @var \SplObjectStorage */
-    private $varIds;
+    private SplObjectStorage $varIds;
 
-    /** @var \SplQueue */
-    private $blockQueue;
+    private SplQueue $blockQueue;
 
-    /** @var \SplObjectStorage */
-    private $blocks;
+    private SplObjectStorage $blocks;
 
-    /** @var bool */
-    private $renderAttributes;
+    private bool $renderAttributes;
 
     public function __construct(bool $renderAttributes = false)
     {
@@ -37,23 +36,23 @@ abstract class Printer
         $this->reset();
     }
 
-    abstract public function printScript(Script $script);
+    abstract public function printScript(Script $script): string;
 
-    abstract public function printFunc(Func $func);
+    abstract public function printFunc(Func $func): string;
 
-    protected function reset()
+    protected function reset(): void
     {
-        $this->varIds = new \SplObjectStorage();
-        $this->blocks = new \SplObjectStorage();
-        $this->blockQueue = new \SplQueue();
+        $this->varIds = new SplObjectStorage();
+        $this->blocks = new SplObjectStorage();
+        $this->blockQueue = new SplQueue();
     }
 
-    protected function getBlockId(Block $block)
+    protected function getBlockId(Block $block): int
     {
         return $this->blocks[$block];
     }
 
-    protected function renderOperand(Operand $var)
+    protected function renderOperand(Operand $var): string
     {
         $type = isset($var->type) ? '<inferred:' . $var->type->toString() . '>' : '';
         if ($var instanceof Literal) {
@@ -77,7 +76,7 @@ abstract class Printer
                     case BoundVariable::SCOPE_FUNCTION:
                         return "static<{$prefix}{$var->name->value}>";
                     default:
-                        throw new \LogicException('Unknown bound variable scope');
+                        throw new LogicException('Unknown bound variable scope');
                 }
             }
 
@@ -106,7 +105,7 @@ abstract class Printer
         return 'UNKNOWN';
     }
 
-    protected function renderOp(Op $op)
+    protected function renderOp(Op $op): array
     {
         $result = $op->getType();
 
@@ -226,7 +225,7 @@ abstract class Printer
         ];
     }
 
-    protected function renderAssertion(Assertion $assert)
+    protected function renderAssertion(Assertion $assert): string
     {
         $kind = $assert->getKind();
         if ($assert->value instanceof Operand) {
@@ -241,7 +240,7 @@ abstract class Printer
         return $kind . '(' . implode($combinator, $results) . ')';
     }
 
-    protected function indent($str, $levels = 1)
+    protected function indent($str, $levels = 1): string
     {
         if ($levels > 1) {
             $str = $this->indent($str, $levels - 1);
@@ -250,7 +249,7 @@ abstract class Printer
         return str_replace("\n", "\n    ", $str);
     }
 
-    protected function enqueueBlock(Block $block)
+    protected function enqueueBlock(Block $block): void
     {
         if (! $this->blocks->contains($block)) {
             $this->blocks[$block] = count($this->blocks) + 1;
@@ -273,8 +272,8 @@ abstract class Printer
             $this->enqueueBlock($func->cfg);
         }
 
-        $renderedOps = new \SplObjectStorage();
-        $renderedBlocks = new \SplObjectStorage();
+        $renderedOps = new SplObjectStorage();
+        $renderedBlocks = new SplObjectStorage();
         while ($this->blockQueue->count() > 0) {
             $block = $this->blockQueue->dequeue();
             $ops = [];
@@ -335,7 +334,7 @@ abstract class Printer
         if (is_null($type)) {
             return '';
         }
-        throw new \LogicException("Unknown type rendering: " . get_class($type));
+        throw new LogicException("Unknown type rendering: " . get_class($type));
     }
 
     protected function renderIncludeType(int $type): string
@@ -350,7 +349,7 @@ abstract class Printer
             case 4:
                 return "require_once";
             default:
-                throw new \LogicException("Unknown include type rendering: " . $type);
+                throw new LogicException("Unknown include type rendering: " . $type);
         }
     }
 

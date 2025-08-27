@@ -11,8 +11,8 @@ declare(strict_types=1);
 
 namespace PHPCfg\Op\Stmt;
 
-use PHPCfg\Op\Stmt;
 use PHPCfg\Block;
+use PHPCfg\Op\Stmt;
 
 class Try_ extends Stmt
 {

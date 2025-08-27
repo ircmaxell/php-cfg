@@ -14,17 +14,17 @@ namespace PHPCfg;
 class Block
 {
     /** @var Op[] */
-    public $children = [];
+    public array $children = [];
 
     /** @var Block[] */
-    public $parents = [];
+    public array $parents = [];
 
     public ?CatchTarget $catchTarget;
 
     /** @var Op\Phi[] */
-    public $phi = [];
+    public array $phi = [];
 
-    public $dead = false;
+    public bool $dead = false;
 
     public function __construct(?self $parent = null, ?CatchTarget $catchTarget = null)
     {
@@ -39,13 +39,13 @@ class Block
         $this->setCatchTargetParents();
     }
 
-    public function setCatchTarget(?CatchTarget $catchTarget)
+    public function setCatchTarget(?CatchTarget $catchTarget): void
     {
         $this->catchTarget = $catchTarget;
         $this->setCatchTargetParents();
     }
 
-    public function setCatchTargetParents()
+    public function setCatchTargetParents(): void
     {
         if ($this->catchTarget) {
             $this->catchTarget->finally->addParent($this);
@@ -55,7 +55,7 @@ class Block
         }
     }
 
-    public function addParent(self $parent)
+    public function addParent(self $parent): void
     {
         if (! in_array($parent, $this->parents, true)) {
             $this->parents[] = $parent;

@@ -11,9 +11,9 @@ declare(strict_types=1);
 
 namespace PHPCfg\Op\TraitUseAdaptation;
 
-use PhpParser\Modifiers;
-use PHPCfg\Operand;
 use PHPCfg\Op\TraitUseAdaptation;
+use PHPCfg\Operand;
+use PhpParser\Modifiers;
 
 class Alias extends TraitUseAdaptation
 {

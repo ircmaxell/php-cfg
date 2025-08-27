@@ -12,6 +12,5 @@ declare(strict_types=1);
 namespace PHPCfg\Op;
 
 use PHPCfg\Op;
-use PHPCfg\Operand;
 
 abstract class Type extends Op {}

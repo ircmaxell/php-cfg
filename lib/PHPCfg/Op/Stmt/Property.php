@@ -12,10 +12,10 @@ declare(strict_types=1);
 namespace PHPCfg\Op\Stmt;
 
 use PHPCfg\Block;
-use PHPCfg\Op\Stmt;
 use PHPCfg\Op;
-use PHPCfg\Op\Attributes\Attributable;
 use PHPCfg\Op\AttributableOp;
+use PHPCfg\Op\Attributes\Attributable;
+use PHPCfg\Op\Stmt;
 use PHPCfg\Operand;
 use PhpParser\Modifiers;
 

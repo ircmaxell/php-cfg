@@ -16,11 +16,11 @@ use PHPCfg\Func;
 use PHPCfg\Op;
 use PHPCfg\Script;
 use PHPCfg\Visitor;
+use SplObjectStorage;
 
 class DebugVisitor implements Visitor
 {
-    /** @var \SplObjectStorage */
-    protected $blocks;
+    protected ?SplObjectStorage $blocks;
 
     public function enterScript(Script $script)
     {
@@ -59,7 +59,7 @@ class DebugVisitor implements Visitor
 
     public function enterFunc(Func $func)
     {
-        $this->blocks = new \SplObjectStorage();
+        $this->blocks = new SplObjectStorage();
         echo 'Enter Func ' . $func->getScopedName() . "\n";
     }
 
