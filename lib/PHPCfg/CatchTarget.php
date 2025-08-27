@@ -16,11 +16,13 @@ class CatchTarget
     public array $catches = [];
     public Block $finally;
 
-    public function __construct(Block $finally) {
+    public function __construct(Block $finally)
+    {
         $this->finally = $finally;
     }
 
-    public function addCatch(Op $type, Operand $var, Block $block) {
+    public function addCatch(Op $type, Operand $var, Block $block)
+    {
         $this->catches[] = [
             "type" => $type,
             "var" => $var,

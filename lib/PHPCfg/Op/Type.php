@@ -14,6 +14,4 @@ namespace PHPCfg\Op;
 use PHPCfg\Op;
 use PHPCfg\Operand;
 
-abstract class Type extends Op
-{
-}
+abstract class Type extends Op {}

@@ -13,6 +13,4 @@ namespace PHPCfg\Op\Expr\BinaryOp;
 
 use PHPCfg\Op\Expr\BinaryOp;
 
-class Smaller extends BinaryOp
-{
-}
+class Smaller extends BinaryOp {}

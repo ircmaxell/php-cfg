@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace PHPCfg\Op;
 
-
 interface AttributableOp
 {
     public function getAttributeGroups(): array;

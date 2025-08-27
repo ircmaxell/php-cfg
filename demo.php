@@ -14,7 +14,7 @@ use PhpParser\ParserFactory;
 require __DIR__ . '/vendor/autoload.php';
 
 $graphviz = false;
-list($fileName, $code) = getCode($argc, $argv);
+[$fileName, $code] = getCode($argc, $argv);
 
 $parser = new PHPCfg\Parser((new ParserFactory())->createForNewestSupportedVersion());
 
@@ -51,10 +51,10 @@ function getCode($argc, $argv)
     }
 
     return [__FILE__, <<<'EOF'
-<?php
-function foo(array $a) {
-    $a[] = 1;
-}
-EOF
+        <?php
+        function foo(array $a) {
+            $a[] = 1;
+        }
+        EOF
     ];
 }

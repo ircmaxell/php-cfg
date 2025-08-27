@@ -13,6 +13,4 @@ namespace PHPCfg\Op\Expr\BinaryOp;
 
 use PHPCfg\Op\Expr\BinaryOp;
 
-class Div extends BinaryOp
-{
-}
+class Div extends BinaryOp {}

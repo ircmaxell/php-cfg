@@ -13,6 +13,4 @@ namespace PHPCfg\Op;
 
 use PHPCfg\Op;
 
-abstract class Stmt extends Op
-{
-}
+abstract class Stmt extends Op {}

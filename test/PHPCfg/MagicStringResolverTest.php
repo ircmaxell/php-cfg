@@ -31,32 +31,32 @@ class MagicStringResolverTest extends TestCase
     public function testIgnoresInvalidParamTypeInDocComment()
     {
         $doccomment = <<<'DOC'
-/**
-         * @param Foo\foo bar
-         */
-DOC;
+            /**
+                     * @param Foo\foo bar
+                     */
+            DOC;
 
         $code = <<<'DOC'
-<?php
+            <?php
 
-namespace Foo {
-    class Test {
-        /**
-         * @param foo bar
-         */
-        public function test($foo) {
-            echo __LINE__;
-        }
-    }
-}
-DOC;
+            namespace Foo {
+                class Test {
+                    /**
+                     * @param foo bar
+                     */
+                    public function test($foo) {
+                        echo __LINE__;
+                    }
+                }
+            }
+            DOC;
 
         $ast = $this->astParser->parse($code);
         $traverser = new NodeTraverser();
         $traverser->addVisitor(new NameResolver());
         $traverser->addVisitor(new MagicStringResolver());
         $traverser->traverse($ast);
-        
+
         $this->assertEquals($doccomment, $ast[0]->stmts[0]->stmts[0]->getDocComment()->getText());
         $this->assertEquals(9, $ast[0]->stmts[0]->stmts[0]->stmts[0]->exprs[0]->value);
     }

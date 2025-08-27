@@ -49,7 +49,7 @@ class Try_ extends Stmt
     {
         return ['catchVars' => $this->catchVars];
     }
-    
+
     public function getSubBlocks(): array
     {
         return ['body' => $this->body, 'catch' => $this->catch, 'finally' => $this->finally];

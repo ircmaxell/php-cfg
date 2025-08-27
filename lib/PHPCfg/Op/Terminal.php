@@ -13,6 +13,4 @@ namespace PHPCfg\Op;
 
 use PHPCfg\Op;
 
-abstract class Terminal extends Op
-{
-}
+abstract class Terminal extends Op {}

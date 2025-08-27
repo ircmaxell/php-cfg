@@ -13,6 +13,4 @@ namespace PHPCfg\Op\Type;
 
 use PHPCfg\Op\Type;
 
-class Mixed_ extends Type
-{
-}
+class Mixed_ extends Type {}

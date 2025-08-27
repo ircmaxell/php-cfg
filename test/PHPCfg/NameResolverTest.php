@@ -16,6 +16,7 @@ use PhpParser\NodeTraverser;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class NameResolverTest extends TestCase
 {
@@ -27,19 +28,19 @@ class NameResolverTest extends TestCase
         $this->astParser = (new ParserFactory())->createForNewestSupportedVersion();
     }
 
-    /** @dataProvider getIgnoresInvalidParamTypeInDocCommentCases */
+    #[DataProvider('provideIgnoresInvalidParamTypeInDocCommentCases')]
     public function testIgnoresInvalidParamTypeInDocComment($type)
     {
         $doccomment = <<< EOF
-/**
- * @param {$type} \$a
- */
-EOF;
+            /**
+             * @param {$type} \$a
+             */
+            EOF;
         $code = <<< EOF
-<?php
-{$doccomment}
-function foo(\$a) {}
-EOF;
+            <?php
+            {$doccomment}
+            function foo(\$a) {}
+            EOF;
         $ast = $this->astParser->parse($code);
         $traverser = new NodeTraverser();
         $traverser->addVisitor(new NameResolver());
@@ -47,7 +48,7 @@ EOF;
         $this->assertEquals($doccomment, $ast[0]->getDocComment()->getText());
     }
 
-    public function getIgnoresInvalidParamTypeInDocCommentCases()
+    public static function provideIgnoresInvalidParamTypeInDocCommentCases()
     {
         return [
             ['123'],
@@ -61,25 +62,25 @@ EOF;
     public function testFullyQualifiesClassInDocComment()
     {
         $formatString = <<< EOF
-/**
- * @param %s \$bar
- */
-EOF;
+            /**
+             * @param %s \$bar
+             */
+            EOF;
         $original = sprintf($formatString, 'Bar');
         $expected = sprintf($formatString, 'Foo\\Bar');
         $code = <<< EOF
-<?php
-namespace Foo {
-	class Bar {}
-}
+            <?php
+            namespace Foo {
+            	class Bar {}
+            }
 
-namespace {
-	use Foo\\Bar;
-	
-	{$original}
-	function baz(Bar \$bar) {}
-}
-EOF;
+            namespace {
+            	use Foo\\Bar;
+            	
+            	{$original}
+            	function baz(Bar \$bar) {}
+            }
+            EOF;
 
         $ast = $this->astParser->parse($code);
         $traverser = new NodeTraverser();
@@ -92,25 +93,25 @@ EOF;
     public function testFullyQualifiesClassAliasInDocComment()
     {
         $formatString = <<< EOF
-/**
- * @param %s \$bar
- */
-EOF;
+            /**
+             * @param %s \$bar
+             */
+            EOF;
         $original = sprintf($formatString, 'Quux');
         $expected = sprintf($formatString, 'Foo\\Bar');
         $code = <<< EOF
-<?php
-namespace Foo {
-	class Bar {}
-}
+            <?php
+            namespace Foo {
+            	class Bar {}
+            }
 
-namespace {
-	use Foo\\Bar as Quux;
-	
-	{$original}
-	function baz(Quux \$bar) {}
-}
-EOF;
+            namespace {
+            	use Foo\\Bar as Quux;
+            	
+            	{$original}
+            	function baz(Quux \$bar) {}
+            }
+            EOF;
 
         $ast = $this->astParser->parse($code);
         $traverser = new NodeTraverser();

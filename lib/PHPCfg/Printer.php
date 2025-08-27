@@ -166,7 +166,7 @@ abstract class Printer
                     }
                 }
             }
-        } else if ($op instanceof Op\Expr\Include_) {
+        } elseif ($op instanceof Op\Expr\Include_) {
             $result .= "\n    type: " . $this->indent($this->renderIncludeType($op->type));
         }
 

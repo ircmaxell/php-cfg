@@ -557,7 +557,7 @@ class Parser
              * @var Block
              * @var array $attributes
              */
-            foreach ($this->ctx->unresolvedGotos[$node->name->toString()] as list($block, $attributes)) {
+            foreach ($this->ctx->unresolvedGotos[$node->name->toString()] as [$block, $attributes]) {
                 $block->children[] = new Op\Stmt\Jump($labelBlock, $attributes);
                 $labelBlock->addParent($block);
             }
@@ -772,7 +772,7 @@ class Parser
             $catchTarget->addCatch($type, $var, $catchBody);
         }
 
-        // parsing body stmts is done after the catches because we want 
+        // parsing body stmts is done after the catches because we want
         // to add catch blocks (and finally blocks) as parents of any subblock of the body
         $next2 = $this->parseNodes($node->stmts, $body);
         $next2->children[] = new Jump($finally);

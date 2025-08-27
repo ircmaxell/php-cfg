@@ -114,7 +114,8 @@ class GraphViz extends Printer
         $graph->link($edge);
     }
 
-    protected function getEdgeTypeColor(string $type) {
+    protected function getEdgeTypeColor(string $type)
+    {
         static $colors = [
             "#D54E4E",
             "#B654A0",

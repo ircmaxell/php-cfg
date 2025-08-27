@@ -11,6 +11,4 @@ declare(strict_types=1);
 
 namespace PHPCfg;
 
-class ErrorSuppressBlock extends Block
-{
-}
+class ErrorSuppressBlock extends Block {}

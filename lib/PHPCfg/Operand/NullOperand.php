@@ -15,7 +15,5 @@ use PHPCfg\Operand;
 
 class NullOperand extends Operand
 {
-    public function __construct()
-    {
-    }
+    public function __construct() {}
 }

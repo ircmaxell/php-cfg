@@ -14,10 +14,11 @@ namespace PHPCfg;
 use PhpParser;
 use PhpParser\ParserFactory;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class ParserTest extends TestCase
 {
-    /** @dataProvider provideTestParseAndDump */
+    #[DataProvider('provideTestParseAndDump')]
     public function testParseAndDump($code, $expectedDump)
     {
         $astTraverser = new PhpParser\NodeTraverser();
@@ -41,7 +42,7 @@ class ParserTest extends TestCase
         );
     }
 
-    public function provideTestParseAndDump()
+    public static function provideTestParseAndDump()
     {
         $dir = __DIR__ . '/../code';
         $iter = new \RecursiveIteratorIterator(

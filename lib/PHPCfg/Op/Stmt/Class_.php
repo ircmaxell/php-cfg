@@ -16,7 +16,6 @@ use PHPCfg\Op;
 
 class Class_ extends ClassLike
 {
-
     public int $flags;
 
     public ?Op\Type $extends;

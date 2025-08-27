@@ -17,7 +17,8 @@ return (new PhpCsFixer\Config())
     ->setIndent('    ')
     ->setLineEnding("\n")
     ->setRules([
-        '@PSR12' => true,
+        '@PER-CS' => true,
+        '@PHP83Migration' => true,
         'header_comment' => [
             'comment_type' => 'PHPDoc',
             'header' => $header,

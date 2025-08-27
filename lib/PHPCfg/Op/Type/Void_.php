@@ -13,6 +13,4 @@ namespace PHPCfg\Op\Type;
 
 use PHPCfg\Op\Type;
 
-class Void_ extends Type
-{
-}
+class Void_ extends Type {}
