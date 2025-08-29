@@ -42,11 +42,9 @@ class Assertion
             if ($mode !== self::MODE_UNION && $mode !== self::MODE_INTERSECTION) {
                 throw new RuntimeException('Invalid mode supplied for Assertion');
             }
-            $this->mode = $mode;
-        } elseif (! $value instanceof Operand) {
-            throw new RuntimeException('Invalid value supplied for Assertion: ');
+            $this->setMode($mode);
         } else {
-            $this->mode = self::MODE_NONE;
+            $this->setMode(self::MODE_NONE);
         }
         $this->value = $value;
     }
@@ -54,5 +52,18 @@ class Assertion
     public function getKind(): string
     {
         return '';
+    }
+
+    protected function setMode(int $mode): void
+    {
+        switch ($mode) {
+            case self::MODE_NONE:
+            case self::MODE_UNION:
+            case self::MODE_INTERSECTION:
+                break;
+            default:
+                throw new RuntimeException("Invalid mode supplied for Assertion");
+        }
+        $this->mode = $mode;
     }
 }

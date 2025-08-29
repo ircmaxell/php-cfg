@@ -14,9 +14,9 @@ namespace PHPCfg\AstVisitor;
 use PhpParser\NodeTraverser;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;
+use PHPUnit\Framework\Attributes\CoversClass;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
-use PHPUnit\Framework\Attributes\CoversClass;
 
 #[CoversClass(NameResolver::class)]
 class NameResolverTest extends TestCase
@@ -27,8 +27,8 @@ class NameResolverTest extends TestCase
     protected function setUp(): void
     {
         $this->astParser = (new ParserFactory())->createForNewestSupportedVersion();
-        $this->traverser = new NodeTraverser;
-        $this->traverser->addVisitor(new NameResolver);
+        $this->traverser = new NodeTraverser();
+        $this->traverser->addVisitor(new NameResolver());
     }
 
     #[DataProvider('provideIgnoresInvalidParamTypeInDocCommentCases')]

@@ -36,7 +36,7 @@ class LoopResolver extends NodeVisitorAbstract
             case 'Stmt_Switch':
                 $lbl = $this->makeLabel();
                 $this->breakStack[] = $lbl;
-                $this->continueStack[] = $lbl;  
+                $this->continueStack[] = $lbl;
                 break;
             case 'Stmt_Do':
             case 'Stmt_While':

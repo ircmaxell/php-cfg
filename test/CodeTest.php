@@ -13,12 +13,14 @@ namespace PHPCfg;
 
 use PhpParser;
 use PhpParser\ParserFactory;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RuntimeException;
 
+#[CoversNothing]
 class CodeTest extends TestCase
 {
     #[DataProvider('provideTestParseAndDump')]

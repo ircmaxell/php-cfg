@@ -29,6 +29,8 @@ use PhpParser\Node\Expr\BinaryOp as AstBinaryOp;
 use PhpParser\Node\Stmt;
 use PhpParser\NodeTraverser as AstTraverser;
 use PhpParser\Parser as AstParser;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
 use RuntimeException;
 
 class Parser
@@ -40,25 +42,25 @@ class Parser
     public const MODE_WRITE = 2;
 
     /** @var Block */
-    protected $block;
+    public ?Block $block = null;
 
     protected $astParser;
 
     protected $astTraverser;
 
-    protected $fileName;
+    public string $fileName;
 
-    /** @var FuncContext */
-    protected $ctx;
+    public ?FuncContext $ctx = null;
 
-    protected ?Op\Type\Literal $currentClass = null;
+    public ?Op\Type\Literal $currentClass = null;
 
-    protected ?Node\Name $currentNamespace = null;
+    public ?Node\Name $currentNamespace = null;
 
-    /** @var Script */
-    protected $script;
+    public ?Script $script;
 
-    protected $anonId = 0;
+    public $anonId = 0;
+
+    protected array $handlers = [];
 
     public function __construct(AstParser $astParser, ?AstTraverser $astTraverser = null)
     {
@@ -70,6 +72,28 @@ class Parser
         $this->astTraverser->addVisitor(new AstVisitor\NameResolver());
         $this->astTraverser->addVisitor(new AstVisitor\LoopResolver());
         $this->astTraverser->addVisitor(new AstVisitor\MagicStringResolver());
+        $this->loadHandlers();
+    }
+
+    protected function loadHandlers(): void
+    {
+        $it = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator(
+                __DIR__ . '/ParserHandler/',
+                RecursiveIteratorIterator::LEAVES_ONLY
+            )
+        );
+        $handlers = [];
+        foreach ($it as $file) {
+            if (!$file->isFile() || $file->getExtension() !== 'php') {
+                continue;
+            }
+            $class = str_replace(__DIR__, '', $file->getPathname());
+            $class = __NAMESPACE__ . str_replace("/", "\\", $class);
+            $class = substr($class, 0, -4);
+            $obj = new $class($this);
+            $this->handlers[$obj->getName()] = $obj;
+        }
     }
 
     /**
@@ -104,7 +128,7 @@ class Parser
         return $script;
     }
 
-    public function parseNodes(array $nodes, Block $block)
+    public function parseNodes(array $nodes, Block $block): Block
     {
         $tmp = $this->block;
         $this->block = $block;
@@ -117,7 +141,7 @@ class Parser
         return $end;
     }
 
-    protected function parseFunc(Func $func, array $params, array $stmts)
+    protected function parseFunc(Func $func, array $params, array $stmts): void
     {
         // Switch to new function context
         $prevCtx = $this->ctx;
@@ -165,7 +189,7 @@ class Parser
         $this->ctx = $prevCtx;
     }
 
-    protected function parseNode(Node $node)
+    protected function parseNode(Node $node): void
     {
         if ($node instanceof Expr) {
             $this->parseExprNode($node);
@@ -174,7 +198,10 @@ class Parser
         }
 
         $type = $node->getType();
-        if (method_exists($this, 'parse' . $type)) {
+        if (isset($this->handlers[$type])) {
+            $this->handlers[$type]->handleStmt($node);
+            return;
+        } elseif (method_exists($this, 'parse' . $type)) {
             $this->{'parse' . $type}($node);
 
             return;
@@ -183,7 +210,7 @@ class Parser
         throw new RuntimeException('Unknown Node Encountered : ' . $type);
     }
 
-    protected function parseTypeList(array $types): array
+    public function parseTypeList(array $types): array
     {
         $parsedTypes = [];
         foreach ($types as $type) {
@@ -193,7 +220,7 @@ class Parser
         return $parsedTypes;
     }
 
-    protected function parseTypeNode(?Node $node): Op\Type
+    public function parseTypeNode(?Node $node): Op\Type
     {
         if (is_null($node)) {
             return new Op\Type\Mixed_();
@@ -230,35 +257,7 @@ class Parser
         throw new LogicException("Unknown type node: " . $node->getType());
     }
 
-    protected function parseStmt_Block(Stmt\Block $node)
-    {
-        $this->parseNodes($node->stmts, $this->block);
-    }
-
-    protected function parseStmt_Expression(Stmt\Expression $node)
-    {
-        return $this->parseExprNode($node->expr);
-    }
-
-    protected function parseStmt_Class(Stmt\Class_ $node)
-    {
-        $name = $this->parseTypeNode($node->namespacedName);
-        $old = $this->currentClass;
-        $this->currentClass = $name;
-
-        $this->block->children[] = new Op\Stmt\Class_(
-            $name,
-            $node->flags,
-            $node->extends ? $this->parseTypeNode($node->extends) : null,
-            $this->parseTypeList($node->implements),
-            $this->parseNodes($node->stmts, new Block()),
-            $this->parseAttributeGroups($node->attrGroups),
-            $this->mapAttributes($node),
-        );
-        $this->currentClass = $old;
-    }
-
-    protected function parseStmt_ClassConst(Stmt\ClassConst $node)
+    protected function parseStmt_ClassConst(Stmt\ClassConst $node): void
     {
         if (! $this->currentClass instanceof Op\Type\Literal) {
             throw new RuntimeException('Unknown current class');
@@ -278,7 +277,7 @@ class Parser
         }
     }
 
-    protected function parseStmt_ClassMethod(Stmt\ClassMethod $node)
+    protected function parseStmt_ClassMethod(Stmt\ClassMethod $node): void
     {
         if (! $this->currentClass instanceof Op\Type\Literal) {
             throw new RuntimeException('Unknown current class');
@@ -315,57 +314,14 @@ class Parser
         $func->callableOp = $class_method;
     }
 
-    protected function parseStmt_Const(Stmt\Const_ $node)
-    {
-        foreach ($node->consts as $const) {
-            $tmp = $this->block;
-            $this->block = $valueBlock = new Block();
-            $value = $this->parseExprNode($const->value);
-            $this->block = $tmp;
-
-            $this->block->children[] = new Op\Terminal\Const_(
-                $this->parseExprNode($const->namespacedName),
-                $value,
-                $valueBlock,
-                $this->mapAttributes($node),
-            );
-        }
-    }
-
-    protected function parseStmt_Declare(Stmt\Declare_ $node)
+    protected function parseStmt_Declare(Stmt\Declare_ $node): void
     {
         // TODO
     }
 
-    protected function parseStmt_Do(Stmt\Do_ $node)
-    {
-        $loopBody = new Block($this->block);
-        $loopEnd = new Block(null, $this->block->catchTarget);
-        $this->block->children[] = new Jump($loopBody, $this->mapAttributes($node));
-        $loopBody->addParent($this->block);
 
-        $this->block = $loopBody;
-        $this->block = $this->parseNodes($node->stmts, $loopBody);
-        $cond = $this->readVariable($this->parseExprNode($node->cond));
-        $this->block->children[] = new JumpIf($cond, $loopBody, $loopEnd, $this->mapAttributes($node));
-        $this->processAssertions($cond, $loopBody, $loopEnd);
-        $loopBody->addParent($this->block);
-        $loopEnd->addParent($this->block);
 
-        $this->block = $loopEnd;
-    }
-
-    protected function parseStmt_Echo(Stmt\Echo_ $node)
-    {
-        foreach ($node->exprs as $expr) {
-            $this->block->children[] = new Op\Terminal\Echo_(
-                $this->readVariable($this->parseExprNode($expr)),
-                $this->mapAttributes($expr),
-            );
-        }
-    }
-
-    protected function parseStmt_For(Stmt\For_ $node)
+    protected function parseStmt_For(Stmt\For_ $node): void
     {
         $this->parseExprList($node->init, self::MODE_READ);
 
@@ -392,50 +348,9 @@ class Parser
         $this->block = $loopEnd;
     }
 
-    protected function parseStmt_Foreach(Stmt\Foreach_ $node)
-    {
-        $attrs = $this->mapAttributes($node);
-        $iterable = $this->readVariable($this->parseExprNode($node->expr));
-        $this->block->children[] = new Op\Iterator\Reset($iterable, $attrs);
 
-        $loopInit = new Block($this->block);
-        $loopBody = new Block(null, $this->block->catchTarget);
-        $loopEnd = new Block(null, $this->block->catchTarget);
 
-        $this->block->children[] = new Jump($loopInit, $attrs);
-
-        $loopInit->children[] = $validOp = new Op\Iterator\Valid($iterable, $attrs);
-        $loopInit->children[] = new JumpIf($validOp->result, $loopBody, $loopEnd, $attrs);
-        $this->processAssertions($validOp->result, $loopBody, $loopEnd);
-        $loopBody->addParent($loopInit);
-        $loopEnd->addParent($loopInit);
-
-        $this->block = $loopBody;
-
-        if ($node->keyVar) {
-            $this->block->children[] = $keyOp = new Op\Iterator\Key($iterable, $attrs);
-            $this->block->children[] = new Op\Expr\Assign($this->writeVariable($this->parseExprNode($node->keyVar)), $keyOp->result, $attrs);
-        }
-
-        $this->block->children[] = $valueOp = new Op\Iterator\Value($iterable, $node->byRef, $attrs);
-
-        if ($node->valueVar instanceof Expr\List_ || $node->valueVar instanceof Expr\Array_) {
-            $this->parseListAssignment($node->valueVar, $valueOp->result);
-        } elseif ($node->byRef) {
-            $this->block->children[] = new Op\Expr\AssignRef($this->writeVariable($this->parseExprNode($node->valueVar)), $valueOp->result, $attrs);
-        } else {
-            $this->block->children[] = new Op\Expr\Assign($this->writeVariable($this->parseExprNode($node->valueVar)), $valueOp->result, $attrs);
-        }
-
-        $this->block = $this->parseNodes($node->stmts, $this->block);
-        $this->block->children[] = new Jump($loopInit, $attrs);
-
-        $loopInit->addParent($this->block);
-
-        $this->block = $loopEnd;
-    }
-
-    protected function parseStmt_Function(Stmt\Function_ $node)
+    protected function parseStmt_Function(Stmt\Function_ $node): void
     {
         $this->script->functions[] = $func = new Func(
             $node->namespacedName->toString(),
@@ -448,7 +363,7 @@ class Parser
         $func->callableOp = $function;
     }
 
-    protected function parseStmt_Global(Stmt\Global_ $node)
+    protected function parseStmt_Global(Stmt\Global_ $node): void
     {
         foreach ($node->vars as $var) {
             // TODO $var is not necessarily a Variable node
@@ -459,7 +374,7 @@ class Parser
         }
     }
 
-    protected function parseStmt_Goto(Stmt\Goto_ $node)
+    protected function parseStmt_Goto(Stmt\Goto_ $node): void
     {
         $attributes = $this->mapAttributes($node);
         if (isset($this->ctx->labels[$node->name->toString()])) {
@@ -473,12 +388,12 @@ class Parser
         $this->block->dead = true;
     }
 
-    protected function parseStmt_GroupUse(Stmt\GroupUse $node)
+    protected function parseStmt_GroupUse(Stmt\GroupUse $node): void
     {
         // ignore use statements, since names are already resolved
     }
 
-    protected function parseStmt_HaltCompiler(Stmt\HaltCompiler $node)
+    protected function parseStmt_HaltCompiler(Stmt\HaltCompiler $node): void
     {
         $this->block->children[] = new Op\Terminal\Echo_(
             $this->readVariable(new Literal($node->remaining)),
@@ -486,51 +401,12 @@ class Parser
         );
     }
 
-    protected function parseStmt_If(Stmt\If_ $node)
-    {
-        $endBlock = new Block(null, $this->block->catchTarget);
-        $this->parseIf($node, $endBlock);
-        $this->block = $endBlock;
-    }
-
-    /**
-     * @param Stmt\If_|Stmt\ElseIf_ $node
-     */
-    protected function parseIf($node, Block $endBlock)
-    {
-        $attrs = $this->mapAttributes($node);
-        $cond = $this->readVariable($this->parseExprNode($node->cond));
-        $ifBlock = new Block($this->block);
-        $elseBlock = new Block($this->block);
-
-        $this->block->children[] = new JumpIf($cond, $ifBlock, $elseBlock, $attrs);
-        $this->processAssertions($cond, $ifBlock, $elseBlock);
-
-        $this->block = $this->parseNodes($node->stmts, $ifBlock);
-
-        $this->block->children[] = new Jump($endBlock, $attrs);
-        $endBlock->addParent($this->block);
-
-        $this->block = $elseBlock;
-
-        if ($node instanceof Stmt\If_) {
-            foreach ($node->elseifs as $elseIf) {
-                $this->parseIf($elseIf, $endBlock);
-            }
-            if ($node->else) {
-                $this->block = $this->parseNodes($node->else->stmts, $this->block);
-            }
-            $this->block->children[] = new Jump($endBlock, $attrs);
-            $endBlock->addParent($this->block);
-        }
-    }
-
-    protected function parseStmt_InlineHTML(Stmt\InlineHTML $node)
+    protected function parseStmt_InlineHTML(Stmt\InlineHTML $node): void
     {
         $this->block->children[] = new Op\Terminal\Echo_($this->parseExprNode($node->value), $this->mapAttributes($node));
     }
 
-    protected function parseStmt_Interface(Stmt\Interface_ $node)
+    protected function parseStmt_Interface(Stmt\Interface_ $node): void
     {
         $name = $this->parseTypeNode($node->namespacedName);
         $old = $this->currentClass;
@@ -545,7 +421,7 @@ class Parser
         $this->currentClass = $old;
     }
 
-    protected function parseStmt_Label(Stmt\Label $node)
+    protected function parseStmt_Label(Stmt\Label $node): void
     {
         if (isset($this->ctx->labels[$node->name->toString()])) {
             throw new RuntimeException("Label '{$node->name->toString()}' already defined");
@@ -568,18 +444,18 @@ class Parser
         $this->block = $this->ctx->labels[$node->name->toString()] = $labelBlock;
     }
 
-    protected function parseStmt_Namespace(Stmt\Namespace_ $node)
+    protected function parseStmt_Namespace(Stmt\Namespace_ $node): void
     {
         $this->currentNamespace = $node->name;
         $this->block = $this->parseNodes($node->stmts, $this->block);
     }
 
-    protected function parseStmt_Nop(Stmt\Nop $node)
+    protected function parseStmt_Nop(Stmt\Nop $node): void
     {
         // Nothing to see here, move along
     }
 
-    protected function parseStmt_Property(Stmt\Property $node)
+    protected function parseStmt_Property(Stmt\Property $node): void
     {
         $visibility = $node->flags & Modifiers::VISIBILITY_MASK;
         $static = $node->flags & Modifiers::STATIC;
@@ -610,7 +486,7 @@ class Parser
         }
     }
 
-    protected function parseStmt_Return(Stmt\Return_ $node)
+    protected function parseStmt_Return(Stmt\Return_ $node): void
     {
         $expr = null;
         if ($node->expr) {
@@ -622,7 +498,7 @@ class Parser
         $this->block->dead = true;
     }
 
-    protected function parseStmt_Static(Stmt\Static_ $node)
+    protected function parseStmt_Static(Stmt\Static_ $node): void
     {
         foreach ($node->vars as $var) {
             $defaultBlock = null;
@@ -642,7 +518,7 @@ class Parser
         }
     }
 
-    protected function parseStmt_Switch(Stmt\Switch_ $node)
+    protected function parseStmt_Switch(Stmt\Switch_ $node): void
     {
         if ($this->switchCanUseJumptable($node)) {
             $this->compileJumptableSwitch($node);
@@ -842,7 +718,7 @@ class Parser
         return $vars;
     }
 
-    protected function parseExprNode($expr)
+    public function parseExprNode($expr)
     {
         if (null === $expr) {
             return;
@@ -987,7 +863,10 @@ class Parser
         }
 
         $method = 'parse' . $expr->getType();
-        if (method_exists($this, $method)) {
+
+        if (isset($this->handlers[$expr->getType()])) {
+            return $this->handlers[$expr->getType()]->handleExpr($expr);
+        } elseif (method_exists($this, $method)) {
             $op = $this->{$method}($expr);
             if ($op instanceof Op) {
                 $this->block->children[] = $op;
@@ -1009,77 +888,27 @@ class Parser
         return $this->readVariable($this->parseExprNode($expr->value));
     }
 
-    protected function parseAttribute(Node\Attribute $attr)
+    public function parseAttribute(Node\Attribute $attr)
     {
         $args = array_map([$this, 'parseArg'], $attr->args);
 
         return new Op\Attributes\Attribute($this->readVariable($this->parseExprNode($attr->name)), $args, $this->mapAttributes($attr));
     }
 
-    protected function parseAttributeGroup(Node\AttributeGroup $attrGroup)
+    public function parseAttributeGroup(Node\AttributeGroup $attrGroup)
     {
         $attrs = array_map([$this, 'parseAttribute'], $attrGroup->attrs);
 
         return new Op\Attributes\AttributeGroup($attrs, $this->mapAttributes($attrGroup));
     }
 
-    protected function parseAttributeGroups(array $attrGroups)
+    public function parseAttributeGroups(array $attrGroups)
     {
         return array_map([$this, 'parseAttributeGroup'], $attrGroups);
     }
 
-    protected function parseExpr_Array(Expr\Array_ $expr)
-    {
-        $keys = [];
-        $values = [];
-        $byRef = [];
-        if ($expr->items) {
-            foreach ($expr->items as $item) {
-                if ($item->key) {
-                    $keys[] = $this->readVariable($this->parseExprNode($item->key));
-                } else {
-                    $keys[] = new Operand\NullOperand();
-                }
-                $values[] = $this->readVariable($this->parseExprNode($item->value));
-                $byRef[] = $item->byRef;
-            }
-        }
 
-        return new Op\Expr\Array_($keys, $values, $byRef, $this->mapAttributes($expr));
-    }
 
-    protected function parseExpr_ArrayDimFetch(Expr\ArrayDimFetch $expr)
-    {
-        $v = $this->readVariable($this->parseExprNode($expr->var));
-        if (null !== $expr->dim) {
-            $d = $this->readVariable($this->parseExprNode($expr->dim));
-        } else {
-            $d = new Operand\NullOperand();
-        }
-
-        return new Op\Expr\ArrayDimFetch($v, $d, $this->mapAttributes($expr));
-    }
-
-    protected function parseExpr_Assign(Expr\Assign $expr)
-    {
-        $e = $this->readVariable($this->parseExprNode($expr->expr));
-        if ($expr->var instanceof Expr\List_ || $expr->var instanceof Expr\Array_) {
-            $this->parseListAssignment($expr->var, $e);
-
-            return $e;
-        }
-        $v = $this->writeVariable($this->parseExprNode($expr->var));
-
-        return new Op\Expr\Assign($v, $e, $this->mapAttributes($expr));
-    }
-
-    protected function parseExpr_AssignRef(Expr\AssignRef $expr)
-    {
-        $e = $this->readVariable($this->parseExprNode($expr->expr));
-        $v = $this->writeVariable($this->parseExprNode($expr->var));
-
-        return new Op\Expr\AssignRef($v, $e, $this->mapAttributes($expr));
-    }
 
     protected function parseExpr_BitwiseNot(Expr\BitwiseNot $expr)
     {
@@ -1158,11 +987,6 @@ class Parser
         $n = $this->readVariable($this->parseExprNode($expr->name));
 
         return new Op\Expr\ClassConstFetch($c, $n, $this->mapAttributes($expr));
-    }
-
-    protected function parseExpr_Clone(Expr\Clone_ $expr)
-    {
-        return new Op\Expr\Clone_($this->readVariable($this->parseExprNode($expr->expr)), $this->mapAttributes($expr));
     }
 
     protected function parseExpr_ConstFetch(Expr\ConstFetch $expr)
@@ -1312,41 +1136,6 @@ class Parser
         );
     }
 
-    /**
-     * @param Expr\List_|Expr\Array_ $expr
-     */
-    protected function parseListAssignment($expr, Operand $rhs)
-    {
-        $attributes = $this->mapAttributes($expr);
-        foreach ($expr->items as $i => $item) {
-            if (null === $item) {
-                continue;
-            }
-
-            if ($item->key === null) {
-                $key = new Literal($i);
-            } else {
-                $key = $this->readVariable($this->parseExprNode($item->key));
-            }
-
-            $var = $item->value;
-            $fetch = new Op\Expr\ArrayDimFetch($rhs, $key, $attributes);
-            $this->block->children[] = $fetch;
-            if ($var instanceof Expr\List_ || $var instanceof Expr\Array_) {
-                $this->parseListAssignment($var, $fetch->result);
-
-                continue;
-            }
-
-            $assign = new Op\Expr\Assign(
-                $this->writeVariable($this->parseExprNode($var)),
-                $fetch->result,
-                $attributes,
-            );
-            $this->block->children[] = $assign;
-        }
-    }
-
     protected function parseExpr_MethodCall(Expr\MethodCall $expr)
     {
         return new Op\Expr\MethodCall(
@@ -1360,7 +1149,7 @@ class Parser
     protected function parseExpr_New(Expr\New_ $expr)
     {
         if ($expr->class instanceof Stmt\Class_) {
-            $this->parseStmt_Class($expr->class);
+            $this->parseNode($expr->class);
             $classExpr = $expr->class->name;
         } else {
             $classExpr = $expr->class;
@@ -1384,7 +1173,7 @@ class Parser
         return $read;
     }
 
-    protected function parseExpr_PostInc(Expr\PostInc $expr)
+    protected function parseExpr_PostInc(Expr\PostInc $expr): Operand
     {
         $var = $this->parseExprNode($expr->var);
         $read = $this->readVariable($var);
@@ -1395,7 +1184,7 @@ class Parser
         return $read;
     }
 
-    protected function parseExpr_PreDec(Expr\PreDec $expr)
+    protected function parseExpr_PreDec(Expr\PreDec $expr): Operand
     {
         $var = $this->parseExprNode($expr->var);
         $read = $this->readVariable($var);
@@ -1406,7 +1195,7 @@ class Parser
         return $op->result;
     }
 
-    protected function parseExpr_PreInc(Expr\PreInc $expr)
+    protected function parseExpr_PreInc(Expr\PreInc $expr): Operand
     {
         $var = $this->parseExprNode($expr->var);
         $read = $this->readVariable($var);
@@ -1417,12 +1206,12 @@ class Parser
         return $op->result;
     }
 
-    protected function parseExpr_Print(Expr\Print_ $expr)
+    protected function parseExpr_Print(Expr\Print_ $expr): Op
     {
         return new Op\Expr\Print_($this->readVariable($this->parseExprNode($expr->expr)), $this->mapAttributes($expr));
     }
 
-    protected function parseExpr_PropertyFetch(Expr\PropertyFetch $expr)
+    protected function parseExpr_PropertyFetch(Expr\PropertyFetch $expr): Op
     {
         return new Op\Expr\PropertyFetch(
             $this->readVariable($this->parseExprNode($expr->var)),
@@ -1431,7 +1220,7 @@ class Parser
         );
     }
 
-    protected function parseExpr_StaticCall(Expr\StaticCall $expr)
+    protected function parseExpr_StaticCall(Expr\StaticCall $expr): Op
     {
         return new Op\Expr\StaticCall(
             $this->readVariable($this->parseExprNode($expr->class)),
@@ -1441,7 +1230,7 @@ class Parser
         );
     }
 
-    protected function parseExpr_StaticPropertyFetch(Expr\StaticPropertyFetch $expr)
+    protected function parseExpr_StaticPropertyFetch(Expr\StaticPropertyFetch $expr): Op
     {
         return new Op\Expr\StaticPropertyFetch(
             $this->readVariable($this->parseExprNode($expr->class)),
@@ -1450,7 +1239,7 @@ class Parser
         );
     }
 
-    protected function parseExpr_Ternary(Expr\Ternary $expr)
+    protected function parseExpr_Ternary(Expr\Ternary $expr): Operand
     {
         $attrs = $this->mapAttributes($expr);
         $cond = $this->readVariable($this->parseExprNode($expr->cond));
@@ -1498,31 +1287,17 @@ class Parser
         return $result;
     }
 
-    protected function parseExpr_UnaryMinus(Expr\UnaryMinus $expr)
+    protected function parseExpr_UnaryMinus(Expr\UnaryMinus $expr): Op
     {
         return new Op\Expr\UnaryMinus($this->readVariable($this->parseExprNode($expr->expr)), $this->mapAttributes($expr));
     }
 
-    protected function parseExpr_UnaryPlus(Expr\UnaryPlus $expr)
+    protected function parseExpr_UnaryPlus(Expr\UnaryPlus $expr): Op
     {
         return new Op\Expr\UnaryPlus($this->readVariable($this->parseExprNode($expr->expr)), $this->mapAttributes($expr));
     }
 
-    protected function parseExpr_Yield(Expr\Yield_ $expr)
-    {
-        $key = null;
-        $value = null;
-        if ($expr->key) {
-            $key = $this->readVariable($this->parseExprNode($expr->key));
-        }
-        if ($expr->value) {
-            $key = $this->readVariable($this->parseExprNode($expr->value));
-        }
-
-        return new Op\Expr\Yield_($value, $key, $this->mapAttributes($expr));
-    }
-
-    protected function parseExpr_ShellExec(Expr\ShellExec $expr)
+    protected function parseExpr_ShellExec(Expr\ShellExec $expr): Op
     {
         $this->block->children[] = $arg = new Op\Expr\ConcatList(
             $this->parseExprList($expr->parts, self::MODE_READ),
@@ -1536,7 +1311,7 @@ class Parser
         );
     }
 
-    protected function processAssertions(Operand $op, Block $if, Block $else)
+    public function processAssertions(Operand $op, Block $if, Block $else): void
     {
         $block = $this->block;
         foreach ($op->assertions as $assert) {
@@ -1556,7 +1331,7 @@ class Parser
         $this->block = $block;
     }
 
-    protected function readAssertion(Assertion $assert)
+    protected function readAssertion(Assertion $assert): Assertion
     {
         if ($assert->value instanceof Operand) {
             return new $assert($this->readVariable($assert->value));
@@ -1569,14 +1344,14 @@ class Parser
         return new $assert($vars, $assert->mode);
     }
 
-    protected function throwUndefinedLabelError()
+    protected function throwUndefinedLabelError(): void
     {
         foreach ($this->ctx->unresolvedGotos as $name => $_) {
             throw new RuntimeException("'goto' to undefined label '{$name}'");
         }
     }
 
-    private function switchCanUseJumptable(Stmt\Switch_ $node)
+    private function switchCanUseJumptable(Stmt\Switch_ $node): bool
     {
         foreach ($node->cases as $case) {
             if (
@@ -1591,7 +1366,7 @@ class Parser
         return true;
     }
 
-    private function compileJumptableSwitch(Stmt\Switch_ $node)
+    private function compileJumptableSwitch(Stmt\Switch_ $node): void
     {
         $cond = $this->readVariable($this->parseExprNode($node->cond));
         $cases = [];
@@ -1632,7 +1407,7 @@ class Parser
         $this->block = $endBlock;
     }
 
-    private function parseScalarNode(Node\Scalar $scalar)
+    private function parseScalarNode(Node\Scalar $scalar): Operand
     {
         switch ($scalar->getType()) {
             case 'Scalar_InterpolatedString':
@@ -1670,7 +1445,7 @@ class Parser
         }
     }
 
-    private function parseParameterList(Func $func, array $params)
+    private function parseParameterList(Func $func, array $params): array
     {
         if (empty($params)) {
             return [];
@@ -1703,7 +1478,7 @@ class Parser
         return $result;
     }
 
-    private function parseShortCircuiting(AstBinaryOp $expr, $isOr)
+    private function parseShortCircuiting(AstBinaryOp $expr, $isOr): Operand
     {
         $result = new Temporary();
         $longBlock = new Block(null, $this->block->catchTarget);
@@ -1741,7 +1516,7 @@ class Parser
         return $result;
     }
 
-    private function mapAttributes(Node $expr)
+    public function mapAttributes(Node $expr): array
     {
         return array_merge(
             [
@@ -1751,7 +1526,7 @@ class Parser
         );
     }
 
-    private function readVariable(Operand $var)
+    public function readVariable(Operand $var): Operand
     {
         if ($var instanceof Operand\BoundVariable) {
             // bound variables are immune to SSA
@@ -1771,7 +1546,7 @@ class Parser
         return $var;
     }
 
-    private function writeVariable(Operand $var)
+    public function writeVariable(Operand $var): Operand
     {
         while ($var instanceof Temporary && $var->original) {
             $var = $var->original;
@@ -1789,7 +1564,7 @@ class Parser
         return $var;
     }
 
-    private function readVariableName($name, Block $block)
+    public function readVariableName($name, Block $block): Operand
     {
         if ($this->ctx->isLocalVariable($block, $name)) {
             return $this->ctx->scope[$block][$name];
@@ -1798,12 +1573,12 @@ class Parser
         return $this->readVariableRecursive($name, $block);
     }
 
-    private function writeVariableName($name, Operand $value, Block $block)
+    public function writeVariableName(string $name, Operand $value, Block $block): void
     {
         $this->ctx->setValueInScope($block, $name, $value);
     }
 
-    private function readVariableRecursive($name, Block $block)
+    public function readVariableRecursive(string $name, Block $block): Operand
     {
         if ($this->ctx->complete) {
             if (count($block->parents) === 1 && ! $block->parents[0]->dead) {
@@ -1833,7 +1608,7 @@ class Parser
         return $var;
     }
 
-    private function getVariableName(Variable $var)
+    public function getVariableName(Variable $var): string
     {
         assert($var->name instanceof Literal);
 

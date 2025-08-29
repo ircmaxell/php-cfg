@@ -11,13 +11,11 @@ declare(strict_types=1);
 
 namespace PHPCfg\AstVisitor;
 
-use PHPCfg\AstVisitor\MagicStringResolver;
-use PHPCfg\AstVisitor\NameResolver;
 use PhpParser\NodeTraverser;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;
-use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\CoversClass;
+use PHPUnit\Framework\TestCase;
 
 #[CoversClass(MagicStringResolver::class)]
 class MagicStringResolverTest extends TestCase
@@ -28,10 +26,10 @@ class MagicStringResolverTest extends TestCase
     protected function setUp(): void
     {
         $this->astParser = (new ParserFactory())->createForNewestSupportedVersion();
-        $this->traverser = new NodeTraverser;
+        $this->traverser = new NodeTraverser();
         // Always requires name resolution first
-        $this->traverser->addVisitor(new NameResolver);
-        $this->traverser->addVisitor(new MagicStringResolver);
+        $this->traverser->addVisitor(new NameResolver());
+        $this->traverser->addVisitor(new MagicStringResolver());
     }
 
     public function testParsesLineNumberCorrectly()
@@ -243,4 +241,3 @@ class MagicStringResolverTest extends TestCase
         $this->assertEquals("Foo\Bar", $ast[0]->stmts[0]->stmts[0]->stmts[0]->exprs[0]->class->name);
     }
 }
-

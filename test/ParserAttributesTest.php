@@ -12,9 +12,11 @@ declare(strict_types=1);
 namespace PHPCfg;
 
 use PhpParser\ParserFactory;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
+#[CoversNothing]
 class ParserAttributesTest extends TestCase
 {
     public function testDefault()

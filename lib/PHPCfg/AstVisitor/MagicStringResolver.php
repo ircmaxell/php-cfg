@@ -17,7 +17,6 @@ use PhpParser\NodeVisitorAbstract;
 
 class MagicStringResolver extends NodeVisitorAbstract
 {
-
     protected array $namespaceStack = [];
 
     protected array $classStack = [];
