@@ -17,13 +17,16 @@ use PhpParser\NodeVisitorAbstract;
 
 class MagicStringResolver extends NodeVisitorAbstract
 {
-    protected $classStack = [];
 
-    protected $parentStack = [];
+    protected array $namespaceStack = [];
 
-    protected $functionStack = [];
+    protected array $classStack = [];
 
-    protected $methodStack = [];
+    protected array $parentStack = [];
+
+    protected array $functionStack = [];
+
+    protected array $methodStack = [];
 
     public function enterNode(Node $node)
     {
@@ -36,9 +39,9 @@ class MagicStringResolver extends NodeVisitorAbstract
             } else {
                 $this->parentStack[] = '';
             }
-        }
-        $this->repairComments($node);
-        if ($node instanceof Node\Stmt\Function_) {
+        } elseif ($node instanceof Node\Stmt\Namespace_) {
+            $this->namespaceStack[] = $node->name->toString();
+        } elseif ($node instanceof Node\Stmt\Function_) {
             $this->functionStack[] = $node->namespacedName->toString();
         } elseif ($node instanceof Node\Stmt\ClassMethod) {
             $this->methodStack[] = end($this->classStack) . '::' . $node->name;
@@ -65,9 +68,7 @@ class MagicStringResolver extends NodeVisitorAbstract
                 return new Node\Scalar\String_(end($this->classStack), $node->getAttributes());
             }
         } elseif ($node instanceof Node\Scalar\MagicConst\Namespace_) {
-            if (! empty($this->classStack)) {
-                return new Node\Scalar\String_($this->stripClass(end($this->classStack)), $node->getAttributes());
-            }
+            return new Node\Scalar\String_(end($this->namespaceStack), $node->getAttributes());
         } elseif ($node instanceof Node\Scalar\MagicConst\Function_) {
             if (! empty($this->functionStack)) {
                 return new Node\Scalar\String_(end($this->functionStack), $node->getAttributes());
@@ -93,15 +94,10 @@ class MagicStringResolver extends NodeVisitorAbstract
         } elseif ($node instanceof Node\Stmt\ClassMethod) {
             assert(end($this->methodStack) === end($this->classStack) . '::' . $node->name);
             array_pop($this->methodStack);
+        } elseif ($node instanceof Node\Stmt\Namespace_) {
+            assert(end($this->namespaceStack) === $node->name->toString());
+            array_pop($this->namespaceStack);
         }
-    }
-
-    private function stripClass($class)
-    {
-        $parts = explode('\\', $class);
-        array_pop($parts);
-
-        return implode('\\', $parts);
     }
 
     private function repairComments(Node $node)

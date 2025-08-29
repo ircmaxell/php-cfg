@@ -12,7 +12,7 @@ cs-fix:
 
 .PHONY: test
 test:
-	XDEBUG_MODE=coverage vendor/bin/phpunit --coverage-text --display-deprecations
+	XDEBUG_MODE=coverage vendor/bin/phpunit --coverage-html ./coverage --display-deprecations
 
 .PHONY: t
 t:

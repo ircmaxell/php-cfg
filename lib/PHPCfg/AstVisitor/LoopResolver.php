@@ -20,11 +20,11 @@ use PhpParser\NodeVisitorAbstract;
 
 class LoopResolver extends NodeVisitorAbstract
 {
-    protected static $labelCounter = 0;
+    protected int $labelCounter = 0;
 
-    protected $continueStack = [];
+    protected array $continueStack = [];
 
-    protected $breakStack = [];
+    protected array $breakStack = [];
 
     public function enterNode(Node $node)
     {
@@ -36,8 +36,7 @@ class LoopResolver extends NodeVisitorAbstract
             case 'Stmt_Switch':
                 $lbl = $this->makeLabel();
                 $this->breakStack[] = $lbl;
-                $this->continueStack[] = $lbl;
-
+                $this->continueStack[] = $lbl;  
                 break;
             case 'Stmt_Do':
             case 'Stmt_While':
@@ -58,11 +57,8 @@ class LoopResolver extends NodeVisitorAbstract
             case 'Stmt_For':
             case 'Stmt_Foreach':
                 $node->stmts[] = new Label(array_pop($this->continueStack));
-
                 return [$node, new Label(array_pop($this->breakStack))];
             case 'Stmt_Switch':
-                array_pop($this->continueStack);
-
                 return [$node, new Label(array_pop($this->breakStack))];
         }
     }
@@ -77,8 +73,7 @@ class LoopResolver extends NodeVisitorAbstract
             if ($num >= count($stack)) {
                 throw new LogicException('Too high of a count for ' . $node->getType());
             }
-            $loc = array_slice($stack, -1 * $num, 1);
-
+            $loc = array_slice($stack, -1 * $num - 1, 1);
             return new Goto_($loc[0], $node->getAttributes());
         }
 
@@ -87,6 +82,6 @@ class LoopResolver extends NodeVisitorAbstract
 
     protected function makeLabel()
     {
-        return 'compiled_label_' . mt_rand(0, mt_getrandmax()) . '_' . self::$labelCounter++;
+        return 'compiled_label_' . mt_rand(0, mt_getrandmax()) . '_' . $this->labelCounter++;
     }
 }
