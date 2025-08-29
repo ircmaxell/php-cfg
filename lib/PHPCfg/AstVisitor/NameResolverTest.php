@@ -9,23 +9,26 @@ declare(strict_types=1);
  * @license MIT See LICENSE at the root of the project for more info
  */
 
-namespace PHPCfg;
+namespace PHPCfg\AstVisitor;
 
-use PHPCfg\AstVisitor\NameResolver;
 use PhpParser\NodeTraverser;
 use PhpParser\Parser;
 use PhpParser\ParserFactory;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\CoversClass;
 
+#[CoversClass(NameResolver::class)]
 class NameResolverTest extends TestCase
 {
-    /** @var Parser */
-    private $astParser;
+    private Parser $astParser;
+    private NodeTraverser $traverser;
 
     protected function setUp(): void
     {
         $this->astParser = (new ParserFactory())->createForNewestSupportedVersion();
+        $this->traverser = new NodeTraverser;
+        $this->traverser->addVisitor(new NameResolver);
     }
 
     #[DataProvider('provideIgnoresInvalidParamTypeInDocCommentCases')]
@@ -42,9 +45,7 @@ class NameResolverTest extends TestCase
             function foo(\$a) {}
             EOF;
         $ast = $this->astParser->parse($code);
-        $traverser = new NodeTraverser();
-        $traverser->addVisitor(new NameResolver());
-        $traverser->traverse($ast);
+        $this->traverser->traverse($ast);
         $this->assertEquals($doccomment, $ast[0]->getDocComment()->getText());
     }
 
@@ -83,9 +84,7 @@ class NameResolverTest extends TestCase
             EOF;
 
         $ast = $this->astParser->parse($code);
-        $traverser = new NodeTraverser();
-        $traverser->addVisitor(new NameResolver());
-        $traverser->traverse($ast);
+        $this->traverser->traverse($ast);
         $actual = $ast[1]->stmts[1]->getDocComment()->getText();
         $this->assertEquals($expected, $actual);
     }
@@ -114,10 +113,66 @@ class NameResolverTest extends TestCase
             EOF;
 
         $ast = $this->astParser->parse($code);
-        $traverser = new NodeTraverser();
-        $traverser->addVisitor(new NameResolver());
-        $traverser->traverse($ast);
+        $this->traverser->traverse($ast);
         $actual = $ast[1]->stmts[1]->getDocComment()->getText();
+        $this->assertEquals($expected, $actual);
+    }
+
+    public function testAnonymousClass()
+    {
+        $code = <<< EOF
+            <?php
+            namespace Foo {
+            	\$foo = new class {};
+            }
+            EOF;
+
+        $ast = $this->astParser->parse($code);
+        $this->traverser->traverse($ast);
+        $actual = $ast[0]->stmts[0]->expr->expr->class->name;
+        $this->assertEquals("{anonymousClass}#1", $actual);
+    }
+
+    public static function provideTypeDeclTests()
+    {
+        return [
+            ['int', 'int'],
+            ['int|float', 'int|float'],
+            ['int&float', 'int&float'],
+            ['?bool', '?bool'],
+            ['int[]', 'int[]'],
+            ['$var', '$var'],
+            ['\\Exception', 'Exception'],
+            ['10', '10'],
+
+        ];
+    }
+
+    #[DataProvider('provideTypeDeclTests')]
+    public function testTypeDeclTests(string $original, string $expected)
+    {
+        $formatString = <<< EOF
+            /**
+             * @param %s \$bar
+             */
+            EOF;
+        $original = sprintf($formatString, $original);
+        $expected = sprintf($formatString, $expected);
+        $code = <<< EOF
+            <?php
+            namespace Foo {
+            	class Bar {}
+            }
+
+            namespace {            	
+            	{$original}
+            	function baz(\$bar) {}
+            }
+            EOF;
+
+        $ast = $this->astParser->parse($code);
+        $this->traverser->traverse($ast);
+        $actual = $ast[1]->stmts[0]->getDocComment()->getText();
         $this->assertEquals($expected, $actual);
     }
 }

@@ -19,7 +19,7 @@ use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use RuntimeException;
 
-class ParserTest extends TestCase
+class CodeTest extends TestCase
 {
     #[DataProvider('provideTestParseAndDump')]
     public function testParseAndDump($code, $expectedDump)
@@ -47,7 +47,7 @@ class ParserTest extends TestCase
 
     public static function provideTestParseAndDump()
     {
-        $dir = __DIR__ . '/../code';
+        $dir = __DIR__ . '/code';
         $iter = new RecursiveIteratorIterator(
             new RecursiveDirectoryIterator($dir),
             RecursiveIteratorIterator::LEAVES_ONLY,

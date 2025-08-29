@@ -15,7 +15,7 @@ use PhpParser\ParserFactory;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
 
-class AttributesTest extends TestCase
+class ParserAttributesTest extends TestCase
 {
     public function testDefault()
     {

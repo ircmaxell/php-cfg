@@ -64,7 +64,6 @@ class NameResolver extends NameResolverParent
                     $regex,
                     function ($match) {
                         $type = $this->parseTypeDecl($match[2]);
-
                         return "@{$match[1]} {$type}";
                     },
                     $comment->getText(),
