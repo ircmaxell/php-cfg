@@ -11,9 +11,9 @@ declare(strict_types=1);
 
 namespace PHPCfg\Op\Stmt;
 
+use PHPCfg\Block;
 use PHPCfg\Op\Stmt;
 use PHPCfg\Operand;
-use PHPCfg\Block;
 
 class MatchTable extends Stmt
 {
@@ -38,7 +38,7 @@ class MatchTable extends Stmt
         $this->armConditions[] = $val;
         $this->armBlocks[] = $block;
     }
-    
+
     public function getSubBlocks(): array
     {
         return ['armBlocks' => $this->armBlocks];

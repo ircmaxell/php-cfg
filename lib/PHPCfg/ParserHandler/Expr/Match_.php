@@ -42,7 +42,8 @@ class Match_ extends ParserHandler implements Expr
         return true;
     }
 
-    private function implementNonJumpTable(Node\Expr\Match_ $expr): Operand {
+    private function implementNonJumpTable(Node\Expr\Match_ $expr): Operand
+    {
         $endResult = new Operand\Temporary();
         $endBlock = $this->createBlockWithCatchTarget();
         $phi = new Op\Phi($endResult, ['block' => $endBlock]);
@@ -73,7 +74,8 @@ class Match_ extends ParserHandler implements Expr
         return $endResult;
     }
 
-    private function implementJumpTable(Node\Expr\Match_ $expr): Operand {
+    private function implementJumpTable(Node\Expr\Match_ $expr): Operand
+    {
         $endBlock = $this->createBlockWithCatchTarget();
         $matchCond = $this->parser->readVariable($this->parser->parseExprNode($expr->cond));
         $thisBlock = $this->block();
@@ -98,13 +100,13 @@ class Match_ extends ParserHandler implements Expr
         $endResult = new Operand\Temporary();
         $phi = new Op\Phi($endResult, ['block' => $endBlock]);
         $endBlock->phi[] = $phi;
-        foreach ($table as list($case, $block, $result)) {
+        foreach ($table as [$case, $block, $result]) {
             $phi->addOperand($result);
             $match->addArm($case, $block);
         }
-        
+
         $this->block($endBlock);
-        
+
         return $endResult;
     }
 

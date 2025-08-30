@@ -16,7 +16,6 @@ use PHPCfg\Operand;
 
 class MatchError extends Terminal
 {
-
     public Operand $cond;
 
     public function __construct(Operand $cond, array $attributes = [])
