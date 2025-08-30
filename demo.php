@@ -13,7 +13,7 @@ use PhpParser\ParserFactory;
 
 require __DIR__ . '/vendor/autoload.php';
 
-$graphviz = true;
+$graphviz = false;
 [$fileName, $code] = getCode($argc, $argv);
 
 $parser = new PHPCfg\Parser((new ParserFactory())->createForNewestSupportedVersion());

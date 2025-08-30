@@ -51,8 +51,8 @@ class Match_ extends ParserHandler implements Expr
         $matchCond = $this->parser->readVariable($this->parser->parseExprNode($expr->cond));
         foreach ($expr->arms as $arm) {
             $current = $this->block();
-            $block = $this->block($this->createBlockWithCatchTarget());
-            $result = $this->parser->parseExprNode($arm->body);
+            $block = $this->block($this->createBlockWithParent());
+            $result = $this->ensureTemporary($this->parser->parseExprNode($arm->body));
             $phi->addOperand($result);
             if (empty($block->children)) {
                 $block = $endBlock;
@@ -81,8 +81,8 @@ class Match_ extends ParserHandler implements Expr
         $thisBlock = $this->block();
         $table = [];
         foreach ($expr->arms as $arm) {
-            $block = $this->block($this->createBlockWithCatchTarget());
-            $result = $this->parser->parseExprNode($arm->body);
+            $block = $this->block($this->createBlockWithParent());
+            $result = $this->ensureTemporary($this->parser->parseExprNode($arm->body));
             if (empty($block->children)) {
                 $block = $endBlock;
             } else {
@@ -108,6 +108,15 @@ class Match_ extends ParserHandler implements Expr
         $this->block($endBlock);
 
         return $endResult;
+    }
+
+    private function ensureTemporary(Operand $result): Operand
+    {
+        if ($result instanceof Operand\Literal) {
+            $this->addOp(new Op\Expr\Assign($r = new Operand\Temporary(), $result));
+            return $r;
+        }
+        return $result;
     }
 
 }

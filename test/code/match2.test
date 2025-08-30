@@ -17,12 +17,12 @@ Block#1
 
 Block#2
     Parent: Block#1
-    Parent: Block#3
-    Parent: Block#5
-    Var#2 = Phi(LITERAL('foo'), LITERAL('bar'), Var#3)
-    Terminal_Echo
-        expr: Var#2
-    Terminal_Return
+    Expr_Assign
+        var: Var#2
+        expr: LITERAL('foo')
+        result: Var#3
+    Stmt_Jump
+        target: Block#4
 
 Block#3
     Parent: Block#1
@@ -32,34 +32,52 @@ Block#3
         result: Var#4
     Stmt_JumpIf
         cond: Var#4
-        if: Block#2
-        else: Block#4
+        if: Block#5
+        else: Block#6
 
 Block#4
+    Parent: Block#2
+    Parent: Block#5
+    Parent: Block#7
+    Var#5 = Phi(Var#2, Var#6, Var#7)
+    Terminal_Echo
+        expr: Var#5
+    Terminal_Return
+
+Block#5
+    Parent: Block#3
+    Expr_Assign
+        var: Var#6
+        expr: LITERAL('bar')
+        result: Var#8
+    Stmt_Jump
+        target: Block#4
+
+Block#6
     Parent: Block#3
     Expr_BinaryOp_Plus
         left: LITERAL(5)
         right: LITERAL(5)
-        result: Var#5
+        result: Var#9
     Expr_BinaryOp_Identical
-        left: Var#5
+        left: Var#9
         right: LITERAL(10)
-        result: Var#6
+        result: Var#10
     Stmt_JumpIf
-        cond: Var#6
-        if: Block#5
-        else: Block#6
+        cond: Var#10
+        if: Block#7
+        else: Block#8
 
-Block#5
-    Parent: Block#4
+Block#7
+    Parent: Block#6
     Expr_BinaryOp_Concat
         left: LITERAL('baz')
         right: LITERAL('buz')
-        result: Var#3
+        result: Var#7
     Stmt_Jump
-        target: Block#2
+        target: Block#4
 
-Block#6
-    Parent: Block#4
+Block#8
+    Parent: Block#6
     Terminal_MatchError
         cond: LITERAL(10)
