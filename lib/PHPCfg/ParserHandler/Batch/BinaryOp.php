@@ -87,27 +87,27 @@ class BinaryOp extends ParserHandler
     {
         $result = new Operand\Temporary();
         $longBlock = $this->createBlockWithCatchTarget();
+        $midBlock = $this->createBlockWithCatchTarget();
         $endBlock = $this->createBlockWithCatchTarget();
 
         $left = $this->parser->readVariable($this->parser->parseExprNode($expr->left));
-        $if = $isOr ? $endBlock : $longBlock;
-        $else = $isOr ? $longBlock : $endBlock;
+        $if = $isOr ? $midBlock : $longBlock;
+        $else = $isOr ? $longBlock : $midBlock;
 
         $this->addOp(new Op\Stmt\JumpIf($left, $if, $else));
-        $longBlock->addParent($this->block());
-        $endBlock->addParent($this->block());
 
         $this->block($longBlock);
         $right = $this->parser->readVariable($this->parser->parseExprNode($expr->right));
-        $boolCast = new Op\Expr\Cast\Bool_($right);
-        $this->addOp($boolCast);
+        $castResult = $this->addExpr(new Op\Expr\Cast\Bool_($right));
         $this->addOp(new Op\Stmt\Jump($endBlock));
-        $endBlock->addParent($this->block());
+
+        $this->block($midBlock);
+        $this->addOp(new Op\Stmt\Jump($endBlock));
 
         $this->block($endBlock);
         $phi = new Op\Phi($result, ['block' => $this->block()]);
         $phi->addOperand(new Operand\Literal($isOr));
-        $phi->addOperand($boolCast->result);
+        $phi->addOperand($castResult);
         $this->block()->phi[] = $phi;
 
         $mode = $isOr ? Assertion::MODE_UNION : Assertion::MODE_INTERSECTION;

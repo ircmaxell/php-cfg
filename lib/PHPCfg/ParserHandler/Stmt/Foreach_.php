@@ -29,11 +29,9 @@ class Foreach_ extends ParserHandler
 
         $this->addOp(new Op\Stmt\Jump($loopInit, $attrs));
 
-        $loopInit->children[] = $validOp = new Op\Iterator\Valid($iterable, $attrs);
-        $loopInit->children[] = new Op\Stmt\JumpIf($validOp->result, $loopBody, $loopEnd, $attrs);
-        $this->parser->processAssertions($validOp->result, $loopBody, $loopEnd);
-        $loopBody->addParent($loopInit);
-        $loopEnd->addParent($loopInit);
+        $this->block($loopInit);
+        $result = $this->addExpr(new Op\Iterator\Valid($iterable, $attrs));
+        $this->addOp(new Op\Stmt\JumpIf($result, $loopBody, $loopEnd, $attrs));
 
         $this->block($loopBody);
 

@@ -23,7 +23,7 @@ class Interface_ extends ParserHandler
         $this->parser->currentClass = $name;
         $this->addOp(new Op\Stmt\Interface_(
             $name,
-            $this->parser->parseTypeList($node->extends),
+            $this->parser->parseTypeList(...$node->extends),
             $this->parser->parseNodes($node->stmts, $this->createBlock()),
             $this->parser->parseAttributeGroups($node->attrGroups),
             $this->mapAttributes($node),

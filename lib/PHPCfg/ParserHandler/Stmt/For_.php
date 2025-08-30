@@ -33,7 +33,6 @@ class For_ extends ParserHandler
             $cond = new Operand\Literal(true);
         }
         $this->addOp(new Op\Stmt\JumpIf($cond, $loopBody, $loopEnd, $this->mapAttributes($node)));
-        $this->parser->processAssertions($cond, $loopBody, $loopEnd);
 
         $this->block($this->parser->parseNodes($node->stmts, $loopBody));
         $this->parser->parseExprList($node->loop, Parser::MODE_READ);

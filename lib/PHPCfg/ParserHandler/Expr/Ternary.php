@@ -26,7 +26,6 @@ class Ternary extends ParserHandler
         $endBlock = $this->createBlockWithCatchTarget();
 
         $this->addOp(new Op\Stmt\JumpIf($cond, $ifBlock, $elseBlock, $attrs));
-        $this->parser->processAssertions($cond, $ifBlock, $elseBlock);
 
         $this->block($ifBlock);
         $ifVar = new Operand\Temporary();

@@ -31,7 +31,6 @@ class If_ extends ParserHandler
         $elseBlock = $this->createBlockWithCatchTarget();
 
         $this->addOp(new Op\Stmt\JumpIf($cond, $ifBlock, $elseBlock, $attrs));
-        $this->parser->processAssertions($cond, $ifBlock, $elseBlock);
 
         $this->block($this->parser->parseNodes($node->stmts, $ifBlock));
 

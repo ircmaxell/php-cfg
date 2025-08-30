@@ -97,21 +97,12 @@ class Parser
         }
     }
 
-    /**
-     * @param string $code
-     * @param string $fileName
-     * @returns Script
-     */
-    public function parse($code, $fileName)
+    public function parse(string $code, string $fileName): Script
     {
         return $this->parseAst($this->astParser->parse($code), $fileName);
     }
 
-    /**
-     * @param array  $ast      PHP-Parser AST
-     * @param string $fileName
-     */
-    public function parseAst($ast, $fileName): Script
+    protected function parseAst(array $ast, string $fileName): Script
     {
         $this->fileName = $fileName;
         $ast = $this->astTraverser->traverse($ast);
@@ -213,14 +204,9 @@ class Parser
         throw new RuntimeException('Unknown Node Encountered : ' . $type);
     }
 
-    public function parseTypeList(array $types): array
+    public function parseTypeList(?Node ...$types): array
     {
-        $parsedTypes = [];
-        foreach ($types as $type) {
-            $parsedTypes[] = $this->parseTypeNode($type);
-        }
-
-        return $parsedTypes;
+        return array_map([$this, 'parseTypeNode'], $types);
     }
 
     public function parseTypeNode(?Node $node): Op\Type
@@ -228,34 +214,29 @@ class Parser
         if (is_null($node)) {
             return new Op\Type\Mixed_();
         }
-        if ($node instanceof Node\Name) {
-            return new Op\Type\Literal(
-                $node->name,
-                $this->mapAttributes($node),
-            );
-        }
-        if ($node instanceof Node\NullableType) {
-            return new Op\Type\Nullable(
-                $this->parseTypeNode($node->type),
-                $this->mapAttributes($node),
-            );
-        }
-        if ($node instanceof Node\UnionType) {
-            $parsedTypes = [];
-            foreach ($node->types as $type) {
-                $parsedTypes[] = $this->parseTypeNode($type);
-            }
-
-            return new Op\Type\Union(
-                $parsedTypes,
-                $this->mapAttributes($node),
-            );
-        }
-        if ($node instanceof Node\Identifier) {
-            return new Op\Type\Literal(
-                $node->name,
-                $this->mapAttributes($node),
-            );
+        switch ($node->getType()) {
+            case 'Name':
+            case 'Name_FullyQualified':
+                // This is safe since we always run name resolution ahead of time
+                return new Op\Type\Literal(
+                    $node->name,
+                    $this->mapAttributes($node),
+                );
+            case 'NullableType':
+                return new Op\Type\Nullable(
+                    $this->parseTypeNode($node->type),
+                    $this->mapAttributes($node),
+                );
+            case 'UnionType':
+                return new Op\Type\Union(
+                    $this->parseTypeList(...$node->types),
+                    $this->mapAttributes($node),
+                );
+            case 'Identifier':
+                return new Op\Type\Literal(
+                    $node->name,
+                    $this->mapAttributes($node),
+                );
         }
         throw new LogicException("Unknown type node: " . $node->getType());
     }
@@ -278,17 +259,16 @@ class Parser
         return $vars;
     }
 
-    public function parseExprNode($expr)
+    public function parseExprNode($expr): ?Operand
     {
         if (null === $expr) {
-            return;
+            return null;
         }
         if (is_scalar($expr)) {
             return new Literal($expr);
         }
         if (is_array($expr)) {
             $list = $this->parseExprList($expr);
-
             return end($list);
         }
         if ($expr instanceof Node\Arg) {
@@ -296,28 +276,6 @@ class Parser
         }
         if ($expr instanceof Node\Identifier) {
             return new Literal($expr->name);
-        }
-        if ($expr instanceof Expr\Variable) {
-            if (is_scalar($expr->name)) {
-                if ($expr->name === 'this') {
-                    return new Operand\BoundVariable(
-                        $this->parseExprNode($expr->name),
-                        false,
-                        Operand\BoundVariable::SCOPE_OBJECT,
-                        $this->currentClass,
-                    );
-                }
-
-                return new Variable($this->parseExprNode($expr->name));
-            }
-
-            // variable variable
-            $this->block->children[] = $op = new Op\Expr\VarVar(
-                $this->readVariable($this->parseExprNode($expr->name)),
-                $this->mapAttributes($expr)
-            );
-
-            return $op->result;
         }
         if ($expr instanceof Node\Name) {
             $isReserved = in_array(strtolower($expr->getLast()), ['int', 'string', 'array', 'callable', 'float', 'bool'], true);
@@ -328,14 +286,10 @@ class Parser
 
             return new Literal($expr->toString());
         }
-        if ($expr instanceof Node\Scalar) {
-            return $this->parseScalarNode($expr);
-        }
+
         if ($expr instanceof Node\InterpolatedStringPart) {
             return new Literal($expr->value);
         }
-
-        $method = 'parse' . $expr->getType();
 
         if (isset($this->handlers[$expr->getType()])) {
             return $this->handlers[$expr->getType()]->handleExpr($expr);
@@ -367,27 +321,7 @@ class Parser
         return array_map([$this, 'parseAttributeGroup'], $attrGroups);
     }
 
-    public function processAssertions(Operand $op, Block $if, Block $else): void
-    {
-        $block = $this->block;
-        foreach ($op->assertions as $assert) {
-            $this->block = $if;
-            array_unshift($this->block->children, new Op\Expr\Assertion(
-                $this->readVariable($assert['var']),
-                $this->writeVariable($assert['var']),
-                $this->readAssertion($assert['assertion']),
-            ));
-            $this->block = $else;
-            array_unshift($this->block->children, new Op\Expr\Assertion(
-                $this->readVariable($assert['var']),
-                $this->writeVariable($assert['var']),
-                new Assertion\NegatedAssertion([$this->readAssertion($assert['assertion'])]),
-            ));
-        }
-        $this->block = $block;
-    }
-
-    protected function readAssertion(Assertion $assert): Assertion
+    public function readAssertion(Assertion $assert): Assertion
     {
         if ($assert->value instanceof Operand) {
             return new $assert($this->readVariable($assert->value));
@@ -407,46 +341,6 @@ class Parser
         }
     }
 
-
-
-
-    private function parseScalarNode(Node\Scalar $scalar): Operand
-    {
-        switch ($scalar->getType()) {
-            case 'Scalar_InterpolatedString':
-            case 'Scalar_Encapsed':
-                $op = new Op\Expr\ConcatList($this->parseExprList($scalar->parts, self::MODE_READ), $this->mapAttributes($scalar));
-                $this->block->children[] = $op;
-
-                return $op->result;
-            case 'Scalar_Float':
-            case 'Scalar_Int':
-            case 'Scalar_LNumber':
-            case 'Scalar_String':
-            case 'Scalar_InterpolatedStringPart':
-            case 'Scalar_EncapsedStringPart':
-                return new Literal($scalar->value);
-            case 'Scalar_MagicConst_Class':
-                // TODO
-                return new Literal('__CLASS__');
-            case 'Scalar_MagicConst_Dir':
-                return new Literal(dirname($this->fileName));
-            case 'Scalar_MagicConst_File':
-                return new Literal($this->fileName);
-            case 'Scalar_MagicConst_Namespace':
-                // TODO
-                return new Literal('__NAMESPACE__');
-            case 'Scalar_MagicConst_Method':
-                // TODO
-                return new Literal('__METHOD__');
-            case 'Scalar_MagicConst_Function':
-                // TODO
-                return new Literal('__FUNCTION__');
-            default:
-                var_dump($scalar);
-                throw new RuntimeException('Unknown how to deal with scalar type ' . $scalar->getType());
-        }
-    }
 
     public function parseParameterList(Func $func, array $params): array
     {
