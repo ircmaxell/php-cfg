@@ -25,7 +25,7 @@ class Interface_ extends ParserHandler
             $name,
             $this->parser->parseTypeList(...$node->extends),
             $this->parser->parseNodes($node->stmts, $this->createBlock()),
-            $this->parser->parseAttributeGroups($node->attrGroups),
+            $this->parser->parseAttributeGroups(...$node->attrGroups),
             $this->mapAttributes($node),
         ));
         $this->parser->currentClass = $old;

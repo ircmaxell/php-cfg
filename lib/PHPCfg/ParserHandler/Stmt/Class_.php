@@ -27,7 +27,7 @@ class Class_ extends ParserHandler
             $node->extends ? $this->parser->parseTypeNode($node->extends) : null,
             $this->parser->parseTypeList(...$node->implements),
             $this->parser->parseNodes($node->stmts, $this->createBlock()),
-            $this->parser->parseAttributeGroups($node->attrGroups),
+            $this->parser->parseAttributeGroups(...$node->attrGroups),
             $this->mapAttributes($node),
         ));
         $this->parser->currentClass = $old;

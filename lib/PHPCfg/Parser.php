@@ -159,7 +159,9 @@ class Parser
         }
 
         if ($this->ctx->unresolvedGotos) {
-            $this->throwUndefinedLabelError();
+            foreach ($this->ctx->unresolvedGotos as $name => $_) {
+                throw new RuntimeException("'goto' to undefined label '{$name}'");
+            }
         }
 
         $this->ctx->complete = true;
@@ -302,23 +304,21 @@ class Parser
         throw new RuntimeException('Unknown Expr Type ' . $expr->getType());
     }
 
-    public function parseAttribute(Node\Attribute $attr)
+    public function parseAttributes(Node\Attribute ...$attrs)
     {
-        $args = $this->parseExprList($attr->args);
-
-        return new Op\Attributes\Attribute($this->readVariable($this->parseExprNode($attr->name)), $args, $this->mapAttributes($attr));
+        return array_map(fn($attr) => new Op\Attributes\Attribute(
+            $this->readVariable($this->parseExprNode($attr->name)),
+            $this->parseExprList($attr->args),
+            $this->mapAttributes($attr)
+        ), $attrs);
     }
 
-    public function parseAttributeGroup(Node\AttributeGroup $attrGroup)
+    public function parseAttributeGroups(Node\AttributeGroup ...$attrGroups)
     {
-        $attrs = array_map([$this, 'parseAttribute'], $attrGroup->attrs);
-
-        return new Op\Attributes\AttributeGroup($attrs, $this->mapAttributes($attrGroup));
-    }
-
-    public function parseAttributeGroups(array $attrGroups)
-    {
-        return array_map([$this, 'parseAttributeGroup'], $attrGroups);
+        return array_map(fn($attrGroup) => new Op\Attributes\AttributeGroup(
+            $this->parseAttributes(...$attrGroup->attrs),
+            $this->mapAttributes($attrGroup)
+        ), $attrGroups);
     }
 
     public function readAssertion(Assertion $assert): Assertion
@@ -333,14 +333,6 @@ class Parser
 
         return new $assert($vars, $assert->mode);
     }
-
-    protected function throwUndefinedLabelError(): void
-    {
-        foreach ($this->ctx->unresolvedGotos as $name => $_) {
-            throw new RuntimeException("'goto' to undefined label '{$name}'");
-        }
-    }
-
 
     public function parseParameterList(Func $func, array $params): array
     {
@@ -363,7 +355,7 @@ class Parser
                 $this->parseTypeNode($param->type),
                 $param->byRef,
                 $param->variadic,
-                $this->parseAttributeGroups($param->attrGroups),
+                $this->parseAttributeGroups(...$param->attrGroups),
                 $defaultVar,
                 $defaultBlock,
                 $this->mapAttributes($param),

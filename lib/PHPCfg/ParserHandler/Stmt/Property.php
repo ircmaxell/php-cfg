@@ -38,7 +38,7 @@ class Property extends ParserHandler
                 $visibility,
                 (bool) $static,
                 (bool) $readonly,
-                $this->parser->parseAttributeGroups($node->attrGroups),
+                $this->parser->parseAttributeGroups(...$node->attrGroups),
                 $this->parser->parseTypeNode($node->type),
                 $defaultVar,
                 $defaultBlock,

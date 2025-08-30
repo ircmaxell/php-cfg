@@ -49,7 +49,7 @@ class ClassMethod extends ParserHandler
             (bool) $static,
             (bool) $final,
             (bool) $abstract,
-            $this->parser->parseAttributeGroups($node->attrGroups),
+            $this->parser->parseAttributeGroups(...$node->attrGroups),
             $this->mapAttributes($node),
         ));
         $func->callableOp = $class_method;

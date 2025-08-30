@@ -10,10 +10,11 @@
 namespace PHPCfg\ParserHandler\Batch;
 
 use PHPCfg\Op;
-use PHPCfg\ParserHandler;
-use PHPCfg\Parser;
-use PhpParser\Node;
 use PHPCfg\Operand;
+use PHPCfg\Parser;
+use PHPCfg\ParserHandler;
+use PhpParser\Node;
+use RuntimeException;
 
 class Scalar extends ParserHandler
 {
@@ -36,12 +37,13 @@ class Scalar extends ParserHandler
         return isset(self::MAP[$expr->getType()]) || strpos($expr->getType(), 'Scalar_MagicConst_') === 0;
     }
 
-    public function handleExpr(Node\Expr $scalar): Operand {
+    public function handleExpr(Node\Expr $scalar): Operand
+    {
         switch ($scalar->getType()) {
             case 'Scalar_InterpolatedString':
             case 'Scalar_Encapsed':
                 return $this->addExpr(new Op\Expr\ConcatList(
-                    $this->parser->parseExprList($scalar->parts, Parser::MODE_READ), 
+                    $this->parser->parseExprList($scalar->parts, Parser::MODE_READ),
                     $this->mapAttributes($scalar)
                 ));
             case 'Scalar_Float':
@@ -69,7 +71,7 @@ class Scalar extends ParserHandler
                 return new Operand\Literal('__FUNCTION__');
             default:
                 var_dump($scalar);
-                throw new \RuntimeException('Unknown how to deal with scalar type ' . $scalar->getType());
+                throw new RuntimeException('Unknown how to deal with scalar type ' . $scalar->getType());
         }
     }
 }

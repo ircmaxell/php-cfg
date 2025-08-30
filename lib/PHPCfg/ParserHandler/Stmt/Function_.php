@@ -27,7 +27,7 @@ class Function_ extends ParserHandler
         $this->parser->parseFunc($func, $node->params, $node->stmts, null);
         $this->addOp($function = new Op\Stmt\Function_(
             $func,
-            $this->parser->parseAttributeGroups($node->attrGroups),
+            $this->parser->parseAttributeGroups(...$node->attrGroups),
             $this->mapAttributes($node)
         ));
         $func->callableOp = $function;

@@ -23,7 +23,7 @@ class Trait_ extends ParserHandler
         $this->addOp(new Op\Stmt\Trait_(
             $name,
             $this->parser->parseNodes($node->stmts, $this->createBlock()),
-            $this->parser->parseAttributeGroups($node->attrGroups),
+            $this->parser->parseAttributeGroups(...$node->attrGroups),
             $this->mapAttributes($node),
         ));
         $this->parser->currentClass = $old;
