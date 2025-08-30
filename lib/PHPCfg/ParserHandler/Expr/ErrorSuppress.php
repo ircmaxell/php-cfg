@@ -13,11 +13,12 @@ use PHPCfg\ErrorSuppressBlock;
 use PHPCfg\Op;
 use PHPCfg\Operand;
 use PHPCfg\ParserHandler;
-use PhpParser\Node\Expr;
+use PHPCfg\ParserHandler\Expr;
+use PhpParser\Node;
 
-class ErrorSuppress extends ParserHandler
+class ErrorSuppress extends ParserHandler implements Expr
 {
-    public function handleExpr(Expr $expr): Operand
+    public function handleExpr(Node\Expr $expr): Operand
     {
         $attrs = $this->mapAttributes($expr);
         $block = new ErrorSuppressBlock();

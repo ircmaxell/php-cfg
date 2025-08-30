@@ -13,12 +13,12 @@ use PHPCfg\Op;
 use PHPCfg\Operand;
 use PHPCfg\Parser;
 use PHPCfg\ParserHandler;
+use PHPCfg\ParserHandler\Expr;
 use PhpParser\Node;
-use PhpParser\Node\Expr;
 
-class New_ extends ParserHandler
+class New_ extends ParserHandler implements Expr
 {
-    public function handleExpr(Expr $expr): Operand
+    public function handleExpr(Node\Expr $expr): Operand
     {
         if ($expr->class instanceof Node\Stmt\Class_) {
             $this->parser->parseNode($expr->class);

@@ -12,18 +12,19 @@ namespace PHPCfg\ParserHandler\Stmt;
 use PHPCfg\Block;
 use PHPCfg\Op;
 use PHPCfg\ParserHandler;
-use PhpParser\Node\Stmt;
+use PHPCfg\ParserHandler\Stmt;
+use PhpParser\Node;
 
-class If_ extends ParserHandler
+class If_ extends ParserHandler implements Stmt
 {
-    public function handleStmt(Stmt $node): void
+    public function handleStmt(Node\Stmt $node): void
     {
         $endBlock = $this->createBlockWithCatchTarget();
         $this->parseIf($node, $endBlock);
         $this->block($endBlock);
     }
 
-    protected function parseIf(Stmt $node, Block $endBlock): void
+    protected function parseIf(Node\Stmt $node, Block $endBlock): void
     {
         $attrs = $this->mapAttributes($node);
         $cond = $this->parser->readVariable($this->parser->parseExprNode($node->cond));
@@ -38,7 +39,7 @@ class If_ extends ParserHandler
 
         $this->block($elseBlock);
 
-        if ($node instanceof Stmt\If_) {
+        if ($node instanceof Node\Stmt\If_) {
             foreach ($node->elseifs as $elseIf) {
                 $this->parseIf($elseIf, $endBlock);
             }

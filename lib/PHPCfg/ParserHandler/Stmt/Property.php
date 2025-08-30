@@ -11,12 +11,13 @@ namespace PHPCfg\ParserHandler\Stmt;
 
 use PHPCfg\Op;
 use PHPCfg\ParserHandler;
+use PHPCfg\ParserHandler\Stmt;
 use PhpParser\Modifiers;
-use PhpParser\Node\Stmt;
+use PhpParser\Node;
 
-class Property extends ParserHandler
+class Property extends ParserHandler implements Stmt
 {
-    public function handleStmt(Stmt $node): void
+    public function handleStmt(Node\Stmt $node): void
     {
         $visibility = $node->flags & Modifiers::VISIBILITY_MASK;
         $static = $node->flags & Modifiers::STATIC;

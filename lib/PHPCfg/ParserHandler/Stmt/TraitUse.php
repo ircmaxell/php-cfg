@@ -12,11 +12,12 @@ namespace PHPCfg\ParserHandler\Stmt;
 use PHPCfg\Op;
 use PHPCfg\Operand;
 use PHPCfg\ParserHandler;
-use PhpParser\Node\Stmt;
+use PHPCfg\ParserHandler\Stmt;
+use PhpParser\Node;
 
-class TraitUse extends ParserHandler
+class TraitUse extends ParserHandler implements Stmt
 {
-    public function handleStmt(Stmt $node): void
+    public function handleStmt(Node\Stmt $node): void
     {
         $traits = [];
         $adaptations = [];
@@ -24,7 +25,7 @@ class TraitUse extends ParserHandler
             $traits[] = new Operand\Literal($trait_->toCodeString());
         }
         foreach ($node->adaptations as $adaptation) {
-            if ($adaptation instanceof Stmt\TraitUseAdaptation\Alias) {
+            if ($adaptation instanceof Node\Stmt\TraitUseAdaptation\Alias) {
                 $adaptations[] = new Op\TraitUseAdaptation\Alias(
                     $adaptation->trait != null ? new Operand\Literal($adaptation->trait->toCodeString()) : null,
                     new Operand\Literal($adaptation->method->name),
@@ -32,7 +33,7 @@ class TraitUse extends ParserHandler
                     $adaptation->newModifier,
                     $this->mapAttributes($adaptation),
                 );
-            } elseif ($adaptation instanceof Stmt\TraitUseAdaptation\Precedence) {
+            } elseif ($adaptation instanceof Node\Stmt\TraitUseAdaptation\Precedence) {
                 $insteadofs = [];
                 foreach ($adaptation->insteadof as $insteadof) {
                     $insteadofs[] = new Operand\Literal($insteadof->toCodeString());

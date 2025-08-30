@@ -12,11 +12,12 @@ namespace PHPCfg\ParserHandler\Expr;
 use PHPCfg\Op;
 use PHPCfg\Operand;
 use PHPCfg\ParserHandler;
-use PhpParser\Node\Expr;
+use PHPCfg\ParserHandler\Expr;
+use PhpParser\Node;
 
-class InstanceOf_ extends ParserHandler
+class InstanceOf_ extends ParserHandler implements Expr
 {
-    public function handleExpr(Expr $expr): Operand
+    public function handleExpr(Node\Expr $expr): Operand
     {
         $var = $this->parser->readVariable($this->parser->parseExprNode($expr->expr));
         $class = $this->parser->readVariable($this->parser->parseExprNode($expr->class));

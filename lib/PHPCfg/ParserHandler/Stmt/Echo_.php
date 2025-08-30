@@ -11,11 +11,12 @@ namespace PHPCfg\ParserHandler\Stmt;
 
 use PHPCfg\Op;
 use PHPCfg\ParserHandler;
-use PhpParser\Node\Stmt;
+use PHPCfg\ParserHandler\Stmt;
+use PhpParser\Node;
 
-class Echo_ extends ParserHandler
+class Echo_ extends ParserHandler implements Stmt
 {
-    public function handleStmt(Stmt $node): void
+    public function handleStmt(Node\Stmt $node): void
     {
         foreach ($node->exprs as $expr) {
             $this->addOp(new Op\Terminal\Echo_(

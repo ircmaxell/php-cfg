@@ -13,12 +13,12 @@ use PHPCfg\Func;
 use PHPCfg\Op;
 use PHPCfg\Operand;
 use PHPCfg\ParserHandler;
+use PHPCfg\ParserHandler\Expr;
 use PhpParser\Node;
-use PhpParser\Node\Expr;
 
-class ArrowFunction extends ParserHandler
+class ArrowFunction extends ParserHandler implements Expr
 {
-    public function handleExpr(Expr $expr): Operand
+    public function handleExpr(Node\Expr $expr): Operand
     {
         $flags = Func::FLAG_CLOSURE;
         $flags |= $expr->byRef ? Func::FLAG_RETURNS_REF : 0;

@@ -10,5 +10,13 @@
 namespace PHPCfg\ParserHandler\Stmt;
 
 use PHPCfg\ParserHandler;
+use PHPCfg\ParserHandler\Stmt;
+use PhpParser\Node;
 
-class Declare_ extends ParserHandler {}
+class Declare_ extends ParserHandler implements Stmt
+{
+    public function handleStmt(Node\Stmt $stmt): void
+    {
+        throw new LogicException("Stmt " . $stmt->getType() . " not Implemented Yet");
+    }
+}

@@ -13,10 +13,12 @@ use PHPCfg\Op;
 use PHPCfg\Operand;
 use PHPCfg\Parser;
 use PHPCfg\ParserHandler;
+use PHPCfg\ParserHandler\Batch;
+use PHPCfg\ParserHandler\Expr;
 use PhpParser\Node;
 use RuntimeException;
 
-class Scalar extends ParserHandler
+class Scalar extends ParserHandler implements Expr, Batch
 {
     private const MAP = [
         'Scalar_Encapsed' => true,
@@ -27,14 +29,14 @@ class Scalar extends ParserHandler
         'Scalar_String' => true,
     ];
 
-    public function isBatch(): bool
+    public function getExprSupport(): array
     {
-        return true;
+        return array_keys(self::MAP);
     }
 
-    public function supports(Node $expr): bool
+    public function getStmtSupport(): array
     {
-        return isset(self::MAP[$expr->getType()]) || strpos($expr->getType(), 'Scalar_MagicConst_') === 0;
+        return [];
     }
 
     public function handleExpr(Node\Expr $scalar): Operand

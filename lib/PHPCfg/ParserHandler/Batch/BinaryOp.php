@@ -13,11 +13,12 @@ use PHPCfg\Assertion;
 use PHPCfg\Op;
 use PHPCfg\Operand;
 use PHPCfg\ParserHandler;
+use PHPCfg\ParserHandler\Batch;
+use PHPCfg\ParserHandler\Expr;
 use PhpParser\Node;
-use PhpParser\Node\Expr;
 use PhpParser\Node\Expr\BinaryOp as AstBinaryOp;
 
-class BinaryOp extends ParserHandler
+class BinaryOp extends ParserHandler implements Expr, Batch
 {
     private const MAP = [
         'Expr_BinaryOp_LogicalAnd' => '',
@@ -40,6 +41,7 @@ class BinaryOp extends ParserHandler
         'Expr_BinaryOp_Mul' => Op\Expr\BinaryOp\Mul::class,
         'Expr_BinaryOp_NotEqual' => Op\Expr\BinaryOp\NotEqual::class,
         'Expr_BinaryOp_NotIdentical' => Op\Expr\BinaryOp\NotIdentical::class,
+        'Expr_BinaryOp_Pipe' => Op\Expr\BinaryOp\Pipe::class,
         'Expr_BinaryOp_Plus' => Op\Expr\BinaryOp\Plus::class,
         'Expr_BinaryOp_Pow' => Op\Expr\BinaryOp\Pow::class,
         'Expr_BinaryOp_ShiftLeft' => Op\Expr\BinaryOp\ShiftLeft::class,
@@ -49,17 +51,17 @@ class BinaryOp extends ParserHandler
         'Expr_BinaryOp_Spaceship' => Op\Expr\BinaryOp\Spaceship::class,
     ];
 
-    public function isBatch(): bool
+    public function getExprSupport(): array
     {
-        return true;
+        return array_keys(self::MAP);
     }
 
-    public function supports(Node $expr): bool
+    public function getStmtSupport(): array
     {
-        return isset(self::MAP[$expr->getType()]);
+        return [];
     }
 
-    public function handleExpr(Expr $expr): Operand
+    public function handleExpr(Node\Expr $expr): Operand
     {
         $type = $expr->getType();
         if (!isset(self::MAP[$type])) {

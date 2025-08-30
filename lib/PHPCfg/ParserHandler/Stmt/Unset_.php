@@ -12,11 +12,12 @@ namespace PHPCfg\ParserHandler\Stmt;
 use PHPCfg\Op;
 use PHPCfg\Parser;
 use PHPCfg\ParserHandler;
-use PhpParser\Node\Stmt;
+use PHPCfg\ParserHandler\Stmt;
+use PhpParser\Node;
 
-class Unset_ extends ParserHandler
+class Unset_ extends ParserHandler implements Stmt
 {
-    public function handleStmt(Stmt $node): void
+    public function handleStmt(Node\Stmt $node): void
     {
         $this->addOp(new Op\Terminal\Unset_(
             $this->parser->parseExprList($node->vars, Parser::MODE_WRITE),

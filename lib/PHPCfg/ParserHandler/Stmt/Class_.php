@@ -11,11 +11,12 @@ namespace PHPCfg\ParserHandler\Stmt;
 
 use PHPCfg\Op;
 use PHPCfg\ParserHandler;
-use PhpParser\Node\Stmt;
+use PHPCfg\ParserHandler\Stmt;
+use PhpParser\Node;
 
-class Class_ extends ParserHandler
+class Class_ extends ParserHandler implements Stmt
 {
-    public function handleStmt(Stmt $node): void
+    public function handleStmt(Node\Stmt $node): void
     {
         $name = $this->parser->parseTypeNode($node->namespacedName);
         $old = $this->parser->currentClass;

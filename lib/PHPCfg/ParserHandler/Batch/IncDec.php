@@ -12,11 +12,12 @@ namespace PHPCfg\ParserHandler\Batch;
 use PHPCfg\Op;
 use PHPCfg\Operand;
 use PHPCfg\ParserHandler;
+use PHPCfg\ParserHandler\Batch;
+use PHPCfg\ParserHandler\Expr;
 use PhpParser\Node;
-use PhpParser\Node\Expr;
 use RuntimeException;
 
-class IncDec extends ParserHandler
+class IncDec extends ParserHandler implements Expr, Batch
 {
     private const MAP = [
         'Expr_PostDec' => Op\Expr\BinaryOp\Minus::class,
@@ -25,17 +26,17 @@ class IncDec extends ParserHandler
         'Expr_PreInc' => Op\Expr\BinaryOp\Plus::class,
     ];
 
-    public function isBatch(): bool
+    public function getExprSupport(): array
     {
-        return true;
+        return array_keys(self::MAP);
     }
 
-    public function supports(Node $expr): bool
+    public function getStmtSupport(): array
     {
-        return isset(self::MAP[$expr->getType()]);
+        return [];
     }
 
-    public function handleExpr(Expr $expr): Operand
+    public function handleExpr(Node\Expr $expr): Operand
     {
         $type = $expr->getType();
         if (!isset(self::MAP[$type])) {

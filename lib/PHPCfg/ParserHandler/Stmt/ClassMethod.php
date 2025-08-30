@@ -12,13 +12,14 @@ namespace PHPCfg\ParserHandler\Stmt;
 use PHPCfg\Func;
 use PHPCfg\Op;
 use PHPCfg\ParserHandler;
+use PHPCfg\ParserHandler\Stmt;
 use PhpParser\Modifiers;
-use PhpParser\Node\Stmt;
+use PhpParser\Node;
 use RuntimeException;
 
-class ClassMethod extends ParserHandler
+class ClassMethod extends ParserHandler implements Stmt
 {
-    public function handleStmt(Stmt $node): void
+    public function handleStmt(Node\Stmt $node): void
     {
         if (! $this->parser->currentClass instanceof Op\Type\Literal) {
             throw new RuntimeException('Unknown current class');

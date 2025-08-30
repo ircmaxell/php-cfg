@@ -12,11 +12,12 @@ namespace PHPCfg\ParserHandler\Batch;
 use PHPCfg\Op;
 use PHPCfg\Operand;
 use PHPCfg\ParserHandler;
+use PHPCfg\ParserHandler\Batch;
+use PHPCfg\ParserHandler\Expr;
 use PhpParser\Node;
-use PhpParser\Node\Expr;
 use RuntimeException;
 
-class Unary extends ParserHandler
+class Unary extends ParserHandler implements Expr, Batch
 {
     private const MAP = [
         'Expr_BitwiseNot' => Op\Expr\BitwiseNot::class,
@@ -28,6 +29,7 @@ class Unary extends ParserHandler
         'Expr_Cast_Object' => Op\Expr\Cast\Object_::class,
         'Expr_Cast_String' => Op\Expr\Cast\String_::class,
         'Expr_Cast_Unset' => Op\Expr\Cast\Unset_::class,
+        'Expr_Cast_Void' => Op\Expr\Cast\Void_::class,
         'Expr_Empty' => Op\Expr\Empty_::class,
         'Expr_Eval' => Op\Expr\Eval_::class,
         'Expr_Print' => Op\Expr\Print_::class,
@@ -35,17 +37,18 @@ class Unary extends ParserHandler
         'Expr_UnaryPlus' => Op\Expr\UnaryPlus::class,
     ];
 
-    public function isBatch(): bool
+
+    public function getExprSupport(): array
     {
-        return true;
+        return array_keys(self::MAP);
     }
 
-    public function supports(Node $expr): bool
+    public function getStmtSupport(): array
     {
-        return isset(self::MAP[$expr->getType()]);
+        return [];
     }
 
-    public function handleExpr(Expr $expr): Operand
+    public function handleExpr(Node\Expr $expr): Operand
     {
         $type = $expr->getType();
         if (!isset(self::MAP[$type])) {
@@ -57,7 +60,7 @@ class Unary extends ParserHandler
             $this->mapAttributes($expr)
         ));
 
-        if ($expr instanceof Expr\BooleanNot) {
+        if ($expr instanceof Node\Expr\BooleanNot) {
             // process type assertions
             foreach ($cond->assertions as $assertion) {
                 $result->addAssertion($assertion['var'], new Assertion\NegatedAssertion([$assertion['assertion']]));

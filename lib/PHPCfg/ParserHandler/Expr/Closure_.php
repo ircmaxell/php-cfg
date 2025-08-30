@@ -13,11 +13,12 @@ use PHPCfg\Func;
 use PHPCfg\Op;
 use PHPCfg\Operand;
 use PHPCfg\ParserHandler;
-use PhpParser\Node\Expr;
+use PHPCfg\ParserHandler\Expr;
+use PhpParser\Node;
 
-class Closure_ extends ParserHandler
+class Closure_ extends ParserHandler implements Expr
 {
-    public function handleExpr(Expr $expr): Operand
+    public function handleExpr(Node\Expr $expr): Operand
     {
         $uses = [];
         foreach ($expr->uses as $use) {

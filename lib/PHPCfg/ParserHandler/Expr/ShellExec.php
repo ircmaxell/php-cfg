@@ -13,11 +13,12 @@ use PHPCfg\Op;
 use PHPCfg\Operand;
 use PHPCfg\Parser;
 use PHPCfg\ParserHandler;
-use PhpParser\Node\Expr;
+use PHPCfg\ParserHandler\Expr;
+use PhpParser\Node;
 
-class ShellExec extends ParserHandler
+class ShellExec extends ParserHandler implements Expr
 {
-    public function handleExpr(Expr $expr): Operand
+    public function handleExpr(Node\Expr $expr): Operand
     {
         $result = $this->addExpr(new Op\Expr\ConcatList(
             $this->parser->parseExprList($expr->parts, Parser::MODE_READ),

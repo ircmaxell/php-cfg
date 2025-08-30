@@ -11,20 +11,17 @@ namespace PHPCfg\ParserHandler\Expr;
 
 use PHPCfg\Op;
 use PHPCfg\Operand;
-use PHPCfg\Parser;
 use PHPCfg\ParserHandler;
 use PHPCfg\ParserHandler\Expr;
 use PhpParser\Node;
 
-class StaticCall extends ParserHandler implements Expr
+class YieldFrom extends ParserHandler implements Expr
 {
     public function handleExpr(Node\Expr $expr): Operand
     {
-        return $this->addExpr(new Op\Expr\StaticCall(
-            $this->parser->readVariable($this->parser->parseExprNode($expr->class)),
-            $this->parser->readVariable($this->parser->parseExprNode($expr->name)),
-            $this->parser->parseExprList($expr->args, Parser::MODE_READ),
-            $this->mapAttributes($expr),
-        ));
+        $from = $this->parser->readVariable($this->parser->parseExprNode($expr->expr));
+
+        return $this->addExpr(new Op\Expr\YieldFrom($from, $this->mapAttributes($expr)));
     }
+
 }

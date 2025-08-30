@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace PHPCfg;
 
-use LogicException;
 use PhpParser\Node;
 
 abstract class ParserHandler
@@ -21,20 +20,6 @@ abstract class ParserHandler
     public function __construct(Parser $parser)
     {
         $this->parser = $parser;
-    }
-
-    public function handleExpr(Node\Expr $expr): Operand
-    {
-        throw new LogicException("Expr " . $expr->getType() . " not Implemented Yet");
-    }
-    public function handleStmt(Node\Stmt $stmt): void
-    {
-        throw new LogicException("Stmt " . $stmt->getType() . " not Implemented Yet");
-    }
-
-    public function isBatch(): bool
-    {
-        return false;
     }
 
     public function getName(): string

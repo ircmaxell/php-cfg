@@ -14,12 +14,12 @@ use PHPCfg\Op;
 use PHPCfg\Operand;
 use PHPCfg\Parser;
 use PHPCfg\ParserHandler;
+use PHPCfg\ParserHandler\Expr;
 use PhpParser\Node;
-use PhpParser\Node\Expr;
 
-class FuncCall extends ParserHandler
+class FuncCall extends ParserHandler implements Expr
 {
-    public function handleExpr(Expr $expr): Operand
+    public function handleExpr(Node\Expr $expr): Operand
     {
         $args = $this->parser->parseExprList($expr->args, Parser::MODE_READ);
         $name = $this->parser->readVariable($this->parser->parseExprNode($expr->name));

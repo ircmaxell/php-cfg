@@ -11,11 +11,12 @@ namespace PHPCfg\ParserHandler\Stmt;
 
 use PHPCfg\Op;
 use PHPCfg\ParserHandler;
-use PhpParser\Node\Stmt;
+use PHPCfg\ParserHandler\Stmt;
+use PhpParser\Node;
 
-class Global_ extends ParserHandler
+class Global_ extends ParserHandler implements Stmt
 {
-    public function handleStmt(Stmt $node): void
+    public function handleStmt(Node\Stmt $node): void
     {
         foreach ($node->vars as $var) {
             // TODO $var is not necessarily a Variable node

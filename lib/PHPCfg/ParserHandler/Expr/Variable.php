@@ -12,11 +12,12 @@ namespace PHPCfg\ParserHandler\Expr;
 use PHPCfg\Op;
 use PHPCfg\Operand;
 use PHPCfg\ParserHandler;
-use PhpParser\Node\Expr;
+use PHPCfg\ParserHandler\Expr;
+use PhpParser\Node;
 
-class Variable extends ParserHandler
+class Variable extends ParserHandler implements Expr
 {
-    public function handleExpr(Expr $expr): Operand
+    public function handleExpr(Node\Expr $expr): Operand
     {
         if (is_scalar($expr->name)) {
             if ($expr->name === 'this') {

@@ -10,11 +10,12 @@
 namespace PHPCfg\ParserHandler\Stmt;
 
 use PHPCfg\ParserHandler;
-use PhpParser\Node\Stmt;
+use PHPCfg\ParserHandler\Stmt;
+use PhpParser\Node;
 
-class Expression extends ParserHandler
+class Expression extends ParserHandler implements Stmt
 {
-    public function handleStmt(Stmt $node): void
+    public function handleStmt(Node\Stmt $node): void
     {
         $this->parser->parseExprNode($node->expr);
     }

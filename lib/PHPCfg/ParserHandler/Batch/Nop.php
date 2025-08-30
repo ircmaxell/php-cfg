@@ -10,9 +10,11 @@
 namespace PHPCfg\ParserHandler\Batch;
 
 use PHPCfg\ParserHandler;
+use PHPCfg\ParserHandler\Batch;
+use PHPCfg\ParserHandler\Stmt;
 use PhpParser\Node;
 
-class Nop extends ParserHandler
+class Nop extends ParserHandler implements Batch, Stmt
 {
     private const MAP = [
         // ignore use statements, since names are already resolved
@@ -21,14 +23,14 @@ class Nop extends ParserHandler
         'Stmt_Use' => true,
     ];
 
-    public function isBatch(): bool
+    public function getExprSupport(): array
     {
-        return true;
+        return [];
     }
 
-    public function supports(Node $expr): bool
+    public function getStmtSupport(): array
     {
-        return isset(self::MAP[$expr->getType()]);
+        return array_keys(self::MAP);
     }
 
     public function handleStmt(Node\Stmt $node): void {}

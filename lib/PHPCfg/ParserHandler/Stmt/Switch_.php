@@ -11,12 +11,12 @@ namespace PHPCfg\ParserHandler\Stmt;
 
 use PHPCfg\Op;
 use PHPCfg\ParserHandler;
+use PHPCfg\ParserHandler\Stmt;
 use PhpParser\Node;
-use PhpParser\Node\Stmt;
 
-class Switch_ extends ParserHandler
+class Switch_ extends ParserHandler implements Stmt
 {
-    public function handleStmt(Stmt $node): void
+    public function handleStmt(Node\Stmt $node): void
     {
         if ($this->switchCanUseJumptable($node)) {
             $this->compileJumptableSwitch($node);
@@ -65,7 +65,7 @@ class Switch_ extends ParserHandler
     }
 
 
-    private function switchCanUseJumptable(Stmt\Switch_ $node): bool
+    private function switchCanUseJumptable(Node\Stmt\Switch_ $node): bool
     {
         foreach ($node->cases as $case) {
             if (
@@ -81,7 +81,7 @@ class Switch_ extends ParserHandler
     }
 
 
-    private function compileJumptableSwitch(Stmt\Switch_ $node): void
+    private function compileJumptableSwitch(Node\Stmt\Switch_ $node): void
     {
         $cond = $this->parser->readVariable($this->parser->parseExprNode($node->cond));
         $cases = [];

@@ -11,11 +11,12 @@ namespace PHPCfg\ParserHandler\Stmt;
 
 use PHPCfg\Op;
 use PHPCfg\ParserHandler;
-use PhpParser\Node\Stmt;
+use PHPCfg\ParserHandler\Stmt;
+use PhpParser\Node;
 
-class InlineHTML extends ParserHandler
+class InlineHTML extends ParserHandler implements Stmt
 {
-    public function handleStmt(Stmt $node): void
+    public function handleStmt(Node\Stmt $node): void
     {
         $this->addOp(new Op\Terminal\Echo_(
             $this->parser->readVariable($this->parser->parseExprNode($node->value)),

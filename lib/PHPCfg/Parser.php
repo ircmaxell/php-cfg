@@ -51,8 +51,9 @@ class Parser
 
     public $anonId = 0;
 
-    protected array $handlers = [];
-    protected array $batchHandlers = [];
+    protected array $stmtHandlers = [];
+    protected array $exprHandlers = [];
+    protected array $opHandlers = [];
 
     public function __construct(AstParser $astParser, ?AstTraverser $astTraverser = null)
     {
@@ -69,10 +70,20 @@ class Parser
 
     public function addHandler(string $name, ParserHandler $handler): void
     {
-        if ($handler->isBatch()) {
-            $this->batchHandlers[$name] = $handler;
-        } else {
-            $this->handlers[$name] = $handler;
+        if ($handler instanceof ParserHandler\Batch) {
+            foreach ($handler->getExprSupport() as $name) {
+                $this->exprHandlers[$name] = $handler;
+            }
+            foreach ($handler->getStmtSupport() as $name) {
+                $this->stmtHandlers[$name] = $handler;
+            }
+            return;
+        }
+        if ($handler instanceof ParserHandler\Expr) {
+            $this->exprHandlers[$name] = $handler;
+        }
+        if ($handler instanceof ParserHandler\Stmt) {
+            $this->stmtHandlers[$name] = $handler;
         }
     }
 
@@ -92,6 +103,11 @@ class Parser
             $class = str_replace(__DIR__, '', $file->getPathname());
             $class = __NAMESPACE__ . str_replace("/", "\\", $class);
             $class = substr($class, 0, -4);
+
+            if (!class_exists($class)) {
+                continue;
+            }
+
             $obj = new $class($this);
             $this->addHandler($obj->getName(), $obj);
         }
@@ -192,15 +208,9 @@ class Parser
         }
 
         $type = $node->getType();
-        if (isset($this->handlers[$type])) {
-            $this->handlers[$type]->handleStmt($node);
+        if (isset($this->stmtHandlers[$type])) {
+            $this->stmtHandlers[$type]->handleStmt($node);
             return;
-        }
-        foreach ($this->batchHandlers as $handler) {
-            if ($handler->supports($node)) {
-                $handler->handleStmt($node);
-                return;
-            }
         }
 
         throw new RuntimeException('Unknown Node Encountered : ' . $type);
@@ -293,13 +303,8 @@ class Parser
             return new Literal($expr->value);
         }
 
-        if (isset($this->handlers[$expr->getType()])) {
-            return $this->handlers[$expr->getType()]->handleExpr($expr);
-        }
-        foreach ($this->batchHandlers as $handler) {
-            if ($handler->supports($expr)) {
-                return $handler->handleExpr($expr);
-            }
+        if (isset($this->exprHandlers[$expr->getType()])) {
+            return $this->exprHandlers[$expr->getType()]->handleExpr($expr);
         }
         throw new RuntimeException('Unknown Expr Type ' . $expr->getType());
     }

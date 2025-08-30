@@ -12,11 +12,12 @@ namespace PHPCfg\ParserHandler\Batch;
 use PHPCfg\Op;
 use PHPCfg\Operand;
 use PHPCfg\ParserHandler;
+use PHPCfg\ParserHandler\Batch;
+use PHPCfg\ParserHandler\Expr;
 use PhpParser\Node;
-use PhpParser\Node\Expr;
 use RuntimeException;
 
-class AssignOp extends ParserHandler
+class AssignOp extends ParserHandler implements Expr, Batch
 {
     private const MAP = [
         'Expr_AssignOp_BitwiseAnd' => Op\Expr\BinaryOp\BitwiseAnd::class,
@@ -34,17 +35,17 @@ class AssignOp extends ParserHandler
         'Expr_AssignOp_ShiftRight' => Op\Expr\BinaryOp\ShiftRight::class,
     ];
 
-    public function isBatch(): bool
+    public function getExprSupport(): array
     {
-        return true;
+        return array_keys(self::MAP);
     }
 
-    public function supports(Node $expr): bool
+    public function getStmtSupport(): array
     {
-        return isset(self::MAP[$expr->getType()]);
+        return [];
     }
 
-    public function handleExpr(Expr $expr): Operand
+    public function handleExpr(Node\Expr $expr): Operand
     {
         $type = $expr->getType();
         if (!isset(self::MAP[$type])) {

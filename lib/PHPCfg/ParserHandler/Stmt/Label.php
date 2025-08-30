@@ -12,12 +12,13 @@ namespace PHPCfg\ParserHandler\Stmt;
 use PHPCfg\Block;
 use PHPCfg\Op;
 use PHPCfg\ParserHandler;
-use PhpParser\Node\Stmt;
+use PHPCfg\ParserHandler\Stmt;
+use PhpParser\Node;
 use RuntimeException;
 
-class Label extends ParserHandler
+class Label extends ParserHandler implements Stmt
 {
-    public function handleStmt(Stmt $node): void
+    public function handleStmt(Node\Stmt $node): void
     {
         if (isset($this->parser->ctx->labels[$node->name->toString()])) {
             throw new RuntimeException("Label '{$node->name->toString()}' already defined");
