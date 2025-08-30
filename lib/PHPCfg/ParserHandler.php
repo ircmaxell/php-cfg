@@ -51,14 +51,9 @@ abstract class ParserHandler
         return new Block(null, $this->parser->block->catchTarget);
     }
 
-    protected function mapAttributes(Node $expr): array
+    protected function mapAttributes(Node $node): array
     {
-        return array_merge(
-            [
-                'filename' => $this->parser->fileName,
-            ],
-            $expr->getAttributes(),
-        );
+        return $this->parser->mapAttributes($node);
     }
 
     protected function addOp(Op $op): void

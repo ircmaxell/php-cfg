@@ -9,6 +9,7 @@
 
 namespace PHPCfg\ParserHandler\Stmt;
 
+use LogicException;
 use PHPCfg\ParserHandler;
 use PHPCfg\ParserHandler\Stmt;
 use PhpParser\Node;
@@ -17,6 +18,20 @@ class Declare_ extends ParserHandler implements Stmt
 {
     public function handleStmt(Node\Stmt $stmt): void
     {
-        throw new LogicException("Stmt " . $stmt->getType() . " not Implemented Yet");
+        foreach ($stmt->declares as $declare) {
+            switch ($declare->key->toLowerString()) {
+                case 'ticks':
+                    $this->parser->script->ticks = $declare->value->value;
+                    break;
+                case 'strict_types':
+                    $this->parser->script->strict_types = (bool) $declare->value->value;
+                    break;
+                case 'encoding':
+                    $this->parser->script->encoding = $declare->value->value;
+                    break;
+                default:
+                    throw new LogicException("Unknown declare key found: " . $declare->key);
+            }
+        }
     }
 }

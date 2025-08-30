@@ -244,6 +244,11 @@ class Parser
                     $this->parseTypeList(...$node->types),
                     $this->mapAttributes($node),
                 );
+            case 'IntersectionType':
+                return new Op\Type\Intersection(
+                    $this->parseTypeList(...$node->types),
+                    $this->mapAttributes($node),
+                );
             case 'Identifier':
                 return new Op\Type\Literal(
                     $node->name,
@@ -267,7 +272,6 @@ class Parser
         } elseif ($readWrite === self::MODE_WRITE) {
             $vars = array_map([$this, 'writeVariable'], $vars);
         }
-
         return $vars;
     }
 
@@ -306,6 +310,7 @@ class Parser
         if (isset($this->exprHandlers[$expr->getType()])) {
             return $this->exprHandlers[$expr->getType()]->handleExpr($expr);
         }
+        var_dump(array_keys($this->exprHandlers));
         throw new RuntimeException('Unknown Expr Type ' . $expr->getType());
     }
 
@@ -331,12 +336,7 @@ class Parser
         if ($assert->value instanceof Operand) {
             return new $assert($this->readVariable($assert->value));
         }
-        $vars = [];
-        foreach ($assert->value as $child) {
-            $vars[] = $this->readAssertion($child);
-        }
-
-        return new $assert($vars, $assert->mode);
+        return new $assert(array_map(fn($child) => $this->readAssertion($child), $assert->value), $assert->mode);
     }
 
     public function parseParameterList(Func $func, array $params): array
@@ -371,8 +371,6 @@ class Parser
 
         return $result;
     }
-
-
 
     public function mapAttributes(Node $expr): array
     {

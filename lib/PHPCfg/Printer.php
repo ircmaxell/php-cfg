@@ -316,13 +316,14 @@ abstract class Printer
         if ($type instanceof Op\Type\Nullable) {
             return '?' . $this->renderType($type->subtype);
         }
-        if ($type instanceof Op\Type\Union) {
+        if ($type instanceof Op\Type\Union || $type instanceof Op\Type\Intersection) {
             $i = 1;
             $strTypes = "";
+            $sep = $type instanceof Op\Type\Union ? '|' : '&';
             foreach ($type->subtypes as $subtype) {
                 $strTypes .= $this->renderType($subtype);
                 if ($i < count($type->subtypes)) {
-                    $strTypes .= "|";
+                    $strTypes .= $sep;
                 }
                 $i++;
             }

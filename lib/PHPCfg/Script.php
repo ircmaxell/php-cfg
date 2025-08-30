@@ -16,6 +16,12 @@ class Script
     /** @var Func[] */
     public array $functions = [];
 
-    /** @var Func */
     public Func $main;
+
+    public bool $strict_types = false;
+
+    public int $ticks = 0;
+
+    public string $encoding = 'ISO-8859-1';
+
 }

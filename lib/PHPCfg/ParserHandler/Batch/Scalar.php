@@ -27,6 +27,12 @@ class Scalar extends ParserHandler implements Expr, Batch
         'Scalar_InterpolatedString' => true,
         'Scalar_LNumber' => true,
         'Scalar_String' => true,
+        'Scalar_MagicConst_Class' => true,
+        'Scalar_MagicConst_Dir' => true,
+        'Scalar_MagicConst_File' => true,
+        'Scalar_MagicConst_Namespace' => true,
+        'Scalar_MagicConst_Method' => true,
+        'Scalar_MagicConst_Function' => true,
     ];
 
     public function getExprSupport(): array
@@ -59,9 +65,9 @@ class Scalar extends ParserHandler implements Expr, Batch
                 // TODO
                 return new Operand\Literal('__CLASS__');
             case 'Scalar_MagicConst_Dir':
-                return new Operand\Literal(dirname($this->fileName));
+                return new Operand\Literal(dirname($this->parser->fileName));
             case 'Scalar_MagicConst_File':
-                return new Operand\Literal($this->fileName);
+                return new Operand\Literal($this->parser->fileName);
             case 'Scalar_MagicConst_Namespace':
                 // TODO
                 return new Operand\Literal('__NAMESPACE__');

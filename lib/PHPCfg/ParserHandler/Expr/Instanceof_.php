@@ -9,13 +9,14 @@
 
 namespace PHPCfg\ParserHandler\Expr;
 
+use PHPCfg\Assertion;
 use PHPCfg\Op;
 use PHPCfg\Operand;
 use PHPCfg\ParserHandler;
 use PHPCfg\ParserHandler\Expr;
 use PhpParser\Node;
 
-class InstanceOf_ extends ParserHandler implements Expr
+class Instanceof_ extends ParserHandler implements Expr
 {
     public function handleExpr(Node\Expr $expr): Operand
     {
