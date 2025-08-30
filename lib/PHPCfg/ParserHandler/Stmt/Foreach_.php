@@ -12,8 +12,8 @@ namespace PHPCfg\ParserHandler\Stmt;
 use PHPCfg\Op;
 use PHPCfg\ParserHandler;
 use PHPCfg\ParserHandler\Expr\Assign;
-use PhpParser\Node\Stmt;
 use PhpParser\Node\Expr;
+use PhpParser\Node\Stmt;
 
 class Foreach_ extends ParserHandler
 {
@@ -23,7 +23,7 @@ class Foreach_ extends ParserHandler
         $iterable = $this->parser->readVariable($this->parser->parseExprNode($node->expr));
         $this->addOp(new Op\Iterator\Reset($iterable, $attrs));
 
-        $loopInit = $this->createBlockWithParent();
+        $loopInit = $this->createBlockWithCatchTarget();
         $loopBody = $this->createBlockWithCatchTarget();
         $loopEnd = $this->createBlockWithCatchTarget();
 
@@ -54,8 +54,6 @@ class Foreach_ extends ParserHandler
 
         $this->block($this->parser->parseNodes($node->stmts, $this->block()));
         $this->addOp(new Op\Stmt\Jump($loopInit, $attrs));
-
-        $loopInit->addParent($this->block());
 
         $this->block($loopEnd);
     }

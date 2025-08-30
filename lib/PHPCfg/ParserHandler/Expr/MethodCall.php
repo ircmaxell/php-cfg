@@ -11,17 +11,19 @@ namespace PHPCfg\ParserHandler\Expr;
 
 use PHPCfg\Op;
 use PHPCfg\Operand;
+use PHPCfg\Parser;
 use PHPCfg\ParserHandler;
 use PhpParser\Node\Expr;
 
-class AssignRef extends ParserHandler
+class MethodCall extends ParserHandler
 {
     public function handleExpr(Expr $expr): Operand
     {
-        $e = $this->parser->readVariable($this->parser->parseExprNode($expr->expr));
-        $v = $this->parser->writeVariable($this->parser->parseExprNode($expr->var));
-
-        return $this->addExpr(new Op\Expr\AssignRef($v, $e, $this->mapAttributes($expr)));
+        return $this->addExpr(new Op\Expr\MethodCall(
+            $this->parser->readVariable($this->parser->parseExprNode($expr->var)),
+            $this->parser->readVariable($this->parser->parseExprNode($expr->name)),
+            $this->parser->parseExprList($expr->args, Parser::MODE_READ),
+            $this->mapAttributes($expr),
+        ));
     }
-
 }

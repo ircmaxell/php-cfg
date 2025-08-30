@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace PHPCfg;
 
+use LogicException;
 use PhpParser\Node;
 
 abstract class ParserHandler
@@ -24,11 +25,11 @@ abstract class ParserHandler
 
     public function handleExpr(Node\Expr $expr): Operand
     {
-        throw new \LogicException("Expr " . $expr->getType() . " not Implemented Yet");
+        throw new LogicException("Expr " . $expr->getType() . " not Implemented Yet");
     }
     public function handleStmt(Node\Stmt $stmt): void
     {
-        throw new \LogicException("Stmt " . $stmt->getType() . " not Implemented Yet");
+        throw new LogicException("Stmt " . $stmt->getType() . " not Implemented Yet");
     }
 
     public function getName(): string
@@ -73,6 +74,15 @@ abstract class ParserHandler
     protected function addOp(Op $op): void
     {
         $this->parser->block->children[] = $op;
+        switch ($op->getType()) {
+            case 'Stmt_JumpIf':
+                $op->if->addParent($this->parser->block);
+                $op->else->addParent($this->parser->block);
+                break;
+            case 'Stmt_Jump':
+                $op->target->addParent($this->parser->block);
+                break;
+        }
     }
 
     protected function addExpr(Op\Expr $expr): Operand

@@ -11,7 +11,6 @@ namespace PHPCfg\ParserHandler\Expr;
 
 use PHPCfg\Op;
 use PHPCfg\Operand;
-use PHPCfg\Parser;
 use PHPCfg\ParserHandler;
 use PhpParser\Node\Expr;
 

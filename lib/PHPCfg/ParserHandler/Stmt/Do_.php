@@ -17,18 +17,15 @@ class Do_ extends ParserHandler
 {
     public function handleStmt(Stmt $node): void
     {
-        $loopBody = $this->createBlockWithParent();
+        $loopBody = $this->createBlockWithCatchTarget();
         $loopEnd = $this->createBlockWithCatchTarget();
         $this->addOp(new Op\Stmt\Jump($loopBody, $this->mapAttributes($node)));
-        $loopBody->addParent($this->block());
 
         $this->block($loopBody);
         $this->block($this->parser->parseNodes($node->stmts, $loopBody));
         $cond = $this->parser->readVariable($this->parser->parseExprNode($node->cond));
         $this->addOp(new Op\Stmt\JumpIf($cond, $loopBody, $loopEnd, $this->mapAttributes($node)));
         $this->processAssertions($cond, $loopBody, $loopEnd);
-        $loopBody->addParent($this->block());
-        $loopEnd->addParent($this->block());
 
         $this->block($loopEnd);
     }

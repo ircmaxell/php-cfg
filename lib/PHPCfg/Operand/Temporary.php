@@ -15,7 +15,7 @@ use PHPCfg\Operand;
 
 class Temporary extends Operand
 {
-    public $original;
+    public ?Operand $original;
 
     /**
      * Constructs a temporary variable

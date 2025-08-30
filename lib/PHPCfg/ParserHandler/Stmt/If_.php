@@ -27,8 +27,8 @@ class If_ extends ParserHandler
     {
         $attrs = $this->mapAttributes($node);
         $cond = $this->parser->readVariable($this->parser->parseExprNode($node->cond));
-        $ifBlock = $this->createBlockWithParent();
-        $elseBlock = $this->createBlockWithParent();
+        $ifBlock = $this->createBlockWithCatchTarget();
+        $elseBlock = $this->createBlockWithCatchTarget();
 
         $this->addOp(new Op\Stmt\JumpIf($cond, $ifBlock, $elseBlock, $attrs));
         $this->parser->processAssertions($cond, $ifBlock, $elseBlock);
@@ -36,7 +36,6 @@ class If_ extends ParserHandler
         $this->block($this->parser->parseNodes($node->stmts, $ifBlock));
 
         $this->addOp(new Op\Stmt\Jump($endBlock, $attrs));
-        $endBlock->addParent($this->block());
 
         $this->block($elseBlock);
 
@@ -48,7 +47,6 @@ class If_ extends ParserHandler
                 $this->block($this->parser->parseNodes($node->else->stmts, $this->block()));
             }
             $this->addOp(new Op\Stmt\Jump($endBlock, $attrs));
-            $endBlock->addParent($this->block());
         }
     }
 }

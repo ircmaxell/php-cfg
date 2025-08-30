@@ -14,14 +14,14 @@ use PHPCfg\Operand;
 use PHPCfg\ParserHandler;
 use PhpParser\Node\Expr;
 
-class AssignRef extends ParserHandler
+class PropertyFetch extends ParserHandler
 {
     public function handleExpr(Expr $expr): Operand
     {
-        $e = $this->parser->readVariable($this->parser->parseExprNode($expr->expr));
-        $v = $this->parser->writeVariable($this->parser->parseExprNode($expr->var));
-
-        return $this->addExpr(new Op\Expr\AssignRef($v, $e, $this->mapAttributes($expr)));
+        return $this->addExpr(new Op\Expr\PropertyFetch(
+            $this->parser->readVariable($this->parser->parseExprNode($expr->var)),
+            $this->parser->readVariable($this->parser->parseExprNode($expr->name)),
+            $this->mapAttributes($expr),
+        ));
     }
-
 }

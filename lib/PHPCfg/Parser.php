@@ -25,7 +25,6 @@ use PHPCfg\Operand\Variable;
 use PhpParser\Modifiers;
 use PhpParser\Node;
 use PhpParser\Node\Expr;
-use PhpParser\Node\Expr\BinaryOp as AstBinaryOp;
 use PhpParser\Node\Stmt;
 use PhpParser\NodeTraverser as AstTraverser;
 use PhpParser\Parser as AstParser;
@@ -141,7 +140,7 @@ class Parser
         return $end;
     }
 
-    protected function parseFunc(Func $func, array $params, array $stmts): void
+    public function parseFunc(Func $func, array $params, array $stmts): void
     {
         // Switch to new function context
         $prevCtx = $this->ctx;
@@ -189,7 +188,7 @@ class Parser
         $this->ctx = $prevCtx;
     }
 
-    protected function parseNode(Node $node): void
+    public function parseNode(Node $node): void
     {
         if ($node instanceof Expr) {
             $this->parseExprNode($node);
@@ -321,32 +320,7 @@ class Parser
 
 
 
-    protected function parseStmt_For(Stmt\For_ $node): void
-    {
-        $this->parseExprList($node->init, self::MODE_READ);
 
-        $loopInit = new Block($this->block);
-        $loopBody = new Block(null, $this->block->catchTarget);
-        $loopEnd = new Block(null, $this->block->catchTarget);
-
-        $this->block->children[] = new Jump($loopInit, $this->mapAttributes($node));
-        $this->block = $loopInit;
-        if (! empty($node->cond)) {
-            $cond = $this->readVariable($this->parseExprNode($node->cond));
-        } else {
-            $cond = new Literal(true);
-        }
-        $this->block->children[] = new JumpIf($cond, $loopBody, $loopEnd, $this->mapAttributes($node));
-        $this->processAssertions($cond, $loopBody, $loopEnd);
-        $loopBody->addParent($this->block);
-        $loopEnd->addParent($this->block);
-
-        $this->block = $this->parseNodes($node->stmts, $loopBody);
-        $this->parseExprList($node->loop, self::MODE_READ);
-        $this->block->children[] = new Jump($loopInit, $this->mapAttributes($node));
-        $loopInit->addParent($this->block);
-        $this->block = $loopEnd;
-    }
 
 
 
@@ -706,7 +680,7 @@ class Parser
      *
      * @return Operand[]
      */
-    protected function parseExprList(array $expr, $readWrite = self::MODE_NONE): array
+    public function parseExprList(array $expr, $readWrite = self::MODE_NONE): array
     {
         $vars = array_map([$this, 'parseExprNode'], $expr);
         if ($readWrite === self::MODE_READ) {
@@ -730,6 +704,9 @@ class Parser
             $list = $this->parseExprList($expr);
 
             return end($list);
+        }
+        if ($expr instanceof Node\Arg) {
+            return $this->readVariable($this->parseExprNode($expr->value));
         }
         if ($expr instanceof Node\Identifier) {
             return new Literal($expr->name);
@@ -771,111 +748,19 @@ class Parser
         if ($expr instanceof Node\InterpolatedStringPart) {
             return new Literal($expr->value);
         }
-        if ($expr instanceof Expr\AssignOp) {
-            $var = $this->parseExprNode($expr->var);
-            $read = $this->readVariable($var);
-            $write = $this->writeVariable($var);
-            $e = $this->readVariable($this->parseExprNode($expr->expr));
-            $class = [
-                'Expr_AssignOp_BitwiseAnd' => Op\Expr\BinaryOp\BitwiseAnd::class,
-                'Expr_AssignOp_BitwiseOr' => Op\Expr\BinaryOp\BitwiseOr::class,
-                'Expr_AssignOp_BitwiseXor' => Op\Expr\BinaryOp\BitwiseXor::class,
-                'Expr_AssignOp_Coalesce' => Op\Expr\BinaryOp\Coalesce::class,
-                'Expr_AssignOp_Concat' => Op\Expr\BinaryOp\Concat::class,
-                'Expr_AssignOp_Div' => Op\Expr\BinaryOp\Div::class,
-                'Expr_AssignOp_Minus' => Op\Expr\BinaryOp\Minus::class,
-                'Expr_AssignOp_Mod' => Op\Expr\BinaryOp\Mod::class,
-                'Expr_AssignOp_Mul' => Op\Expr\BinaryOp\Mul::class,
-                'Expr_AssignOp_Plus' => Op\Expr\BinaryOp\Plus::class,
-                'Expr_AssignOp_Pow' => Op\Expr\BinaryOp\Pow::class,
-                'Expr_AssignOp_ShiftLeft' => Op\Expr\BinaryOp\ShiftLeft::class,
-                'Expr_AssignOp_ShiftRight' => Op\Expr\BinaryOp\ShiftRight::class,
-            ][$expr->getType()];
-            if (empty($class)) {
-                throw new RuntimeException('AssignOp Not Found: ' . $expr->getType());
-            }
-            $attrs = $this->mapAttributes($expr);
-            $this->block->children[] = $op = new $class($read, $e, $attrs);
-            $this->block->children[] = new Op\Expr\Assign($write, $op->result, $attrs);
-
-            return $op->result;
-        }
-        if ($expr instanceof AstBinaryOp) {
-            if ($expr instanceof AstBinaryOp\LogicalAnd || $expr instanceof AstBinaryOp\BooleanAnd) {
-                return $this->parseShortCircuiting($expr, false);
-            }
-            if ($expr instanceof AstBinaryOp\LogicalOr || $expr instanceof AstBinaryOp\BooleanOr) {
-                return $this->parseShortCircuiting($expr, true);
-            }
-
-            $left = $this->readVariable($this->parseExprNode($expr->left));
-            $right = $this->readVariable($this->parseExprNode($expr->right));
-            $class = [
-                'Expr_BinaryOp_BitwiseAnd' => Op\Expr\BinaryOp\BitwiseAnd::class,
-                'Expr_BinaryOp_BitwiseOr' => Op\Expr\BinaryOp\BitwiseOr::class,
-                'Expr_BinaryOp_BitwiseXor' => Op\Expr\BinaryOp\BitwiseXor::class,
-                'Expr_BinaryOp_Coalesce' => Op\Expr\BinaryOp\Coalesce::class,
-                'Expr_BinaryOp_Concat' => Op\Expr\BinaryOp\Concat::class,
-                'Expr_BinaryOp_Div' => Op\Expr\BinaryOp\Div::class,
-                'Expr_BinaryOp_Equal' => Op\Expr\BinaryOp\Equal::class,
-                'Expr_BinaryOp_Greater' => Op\Expr\BinaryOp\Greater::class,
-                'Expr_BinaryOp_GreaterOrEqual' => Op\Expr\BinaryOp\GreaterOrEqual::class,
-                'Expr_BinaryOp_Identical' => Op\Expr\BinaryOp\Identical::class,
-                'Expr_BinaryOp_LogicalXor' => Op\Expr\BinaryOp\LogicalXor::class,
-                'Expr_BinaryOp_Minus' => Op\Expr\BinaryOp\Minus::class,
-                'Expr_BinaryOp_Mod' => Op\Expr\BinaryOp\Mod::class,
-                'Expr_BinaryOp_Mul' => Op\Expr\BinaryOp\Mul::class,
-                'Expr_BinaryOp_NotEqual' => Op\Expr\BinaryOp\NotEqual::class,
-                'Expr_BinaryOp_NotIdentical' => Op\Expr\BinaryOp\NotIdentical::class,
-                'Expr_BinaryOp_Plus' => Op\Expr\BinaryOp\Plus::class,
-                'Expr_BinaryOp_Pow' => Op\Expr\BinaryOp\Pow::class,
-                'Expr_BinaryOp_ShiftLeft' => Op\Expr\BinaryOp\ShiftLeft::class,
-                'Expr_BinaryOp_ShiftRight' => Op\Expr\BinaryOp\ShiftRight::class,
-                'Expr_BinaryOp_Smaller' => Op\Expr\BinaryOp\Smaller::class,
-                'Expr_BinaryOp_SmallerOrEqual' => Op\Expr\BinaryOp\SmallerOrEqual::class,
-                'Expr_BinaryOp_Spaceship' => Op\Expr\BinaryOp\Spaceship::class,
-            ][$expr->getType()];
-            if (empty($class)) {
-                throw new RuntimeException('BinaryOp Not Found: ' . $expr->getType());
-            }
-            $this->block->children[] = $op = new $class($left, $right, $this->mapAttributes($expr));
-
-            return $op->result;
-        }
-        if ($expr instanceof Expr\Cast) {
-            $e = $this->readVariable($this->parseExprNode($expr->expr));
-            $class = [
-                'Expr_Cast_Array' => Op\Expr\Cast\Array_::class,
-                'Expr_Cast_Bool' => Op\Expr\Cast\Bool_::class,
-                'Expr_Cast_Double' => Op\Expr\Cast\Double::class,
-                'Expr_Cast_Int' => Op\Expr\Cast\Int_::class,
-                'Expr_Cast_Object' => Op\Expr\Cast\Object_::class,
-                'Expr_Cast_String' => Op\Expr\Cast\String_::class,
-                'Expr_Cast_Unset' => Op\Expr\Cast\Unset_::class,
-
-            ][$expr->getType()];
-            if (empty($class)) {
-                throw new RuntimeException('Cast Not Found: ' . $expr->getType());
-            }
-            $this->block->children[] = $op = new $class($e, $this->mapAttributes($expr));
-
-            return $op->result;
-        }
 
         $method = 'parse' . $expr->getType();
 
         if (isset($this->handlers[$expr->getType()])) {
             return $this->handlers[$expr->getType()]->handleExpr($expr);
-        } elseif (method_exists($this, $method)) {
-            $op = $this->{$method}($expr);
-            if ($op instanceof Op) {
-                $this->block->children[] = $op;
-
-                return $op->result;
-            }
-            if ($op instanceof Operand) {
-                return $op;
-            }
+        } elseif ($this->handlers['Batch_Unary']->supports($expr)) {
+            return $this->handlers['Batch_Unary']->handleExpr($expr);
+        } elseif ($this->handlers['Batch_AssignOp']->supports($expr)) {
+            return $this->handlers['Batch_AssignOp']->handleExpr($expr);
+        } elseif ($this->handlers['Batch_BinaryOp']->supports($expr)) {
+            return $this->handlers['Batch_BinaryOp']->handleExpr($expr);
+        } elseif ($this->handlers['Batch_IncDec']->supports($expr)) {
+            return $this->handlers['Batch_IncDec']->handleExpr($expr);
         } else {
             throw new RuntimeException('Unknown Expr Type ' . $expr->getType());
         }
@@ -883,14 +768,9 @@ class Parser
         throw new RuntimeException('Invalid state, should never happen');
     }
 
-    protected function parseArg(Node\Arg $expr)
-    {
-        return $this->readVariable($this->parseExprNode($expr->value));
-    }
-
     public function parseAttribute(Node\Attribute $attr)
     {
-        $args = array_map([$this, 'parseArg'], $attr->args);
+        $args = $this->parseExprList($attr->args);
 
         return new Op\Attributes\Attribute($this->readVariable($this->parseExprNode($attr->name)), $args, $this->mapAttributes($attr));
     }
@@ -905,410 +785,6 @@ class Parser
     public function parseAttributeGroups(array $attrGroups)
     {
         return array_map([$this, 'parseAttributeGroup'], $attrGroups);
-    }
-
-
-
-
-    protected function parseExpr_BitwiseNot(Expr\BitwiseNot $expr)
-    {
-        return new Op\Expr\BitwiseNot(
-            $this->readVariable($this->parseExprNode($expr->expr)),
-            $this->mapAttributes($expr),
-        );
-    }
-
-    protected function parseExpr_BooleanNot(Expr\BooleanNot $expr)
-    {
-        $cond = $this->readVariable($this->parseExprNode($expr->expr));
-        $op = new Op\Expr\BooleanNot($cond, $this->mapAttributes($expr));
-        foreach ($cond->assertions as $assertion) {
-            $op->result->addAssertion($assertion['var'], new Assertion\NegatedAssertion([$assertion['assertion']]));
-        }
-
-        return $op;
-    }
-
-    protected function parseExpr_Closure(Expr\Closure $expr)
-    {
-        $uses = [];
-        foreach ($expr->uses as $use) {
-            $uses[] = new Operand\BoundVariable(
-                $this->readVariable(new Literal($use->var->name)),
-                $use->byRef,
-                Operand\BoundVariable::SCOPE_LOCAL,
-            );
-        }
-
-        $flags = Func::FLAG_CLOSURE;
-        $flags |= $expr->byRef ? Func::FLAG_RETURNS_REF : 0;
-        $flags |= $expr->static ? Func::FLAG_STATIC : 0;
-
-        $this->script->functions[] = $func = new Func(
-            '{anonymous}#' . ++$this->anonId,
-            $flags,
-            $this->parseTypeNode($expr->returnType),
-            null,
-        );
-        $this->parseFunc($func, $expr->params, $expr->stmts, null);
-
-        $closure = new Op\Expr\Closure($func, $uses, $this->mapAttributes($expr));
-        $func->callableOp = $closure;
-
-        return $closure;
-    }
-
-    protected function parseExpr_ArrowFunction(Expr\ArrowFunction $expr)
-    {
-        $flags = Func::FLAG_CLOSURE;
-        $flags |= $expr->byRef ? Func::FLAG_RETURNS_REF : 0;
-        $flags |= $expr->static ? Func::FLAG_STATIC : 0;
-
-        $this->script->functions[] = $func = new Func(
-            '{anonymous}#' . ++$this->anonId,
-            $flags,
-            $this->parseTypeNode($expr->returnType),
-            null,
-        );
-        $stmts = [
-            new Stmt\Return_($expr->expr),
-        ];
-        $this->parseFunc($func, $expr->params, $stmts);
-
-        $closure = new Op\Expr\ArrowFunction($func, $this->mapAttributes($expr));
-        $func->callableOp = $closure;
-
-        return $closure;
-    }
-
-    protected function parseExpr_ClassConstFetch(Expr\ClassConstFetch $expr)
-    {
-        $c = $this->readVariable($this->parseExprNode($expr->class));
-        $n = $this->readVariable($this->parseExprNode($expr->name));
-
-        return new Op\Expr\ClassConstFetch($c, $n, $this->mapAttributes($expr));
-    }
-
-    protected function parseExpr_ConstFetch(Expr\ConstFetch $expr)
-    {
-        if ($expr->name->isUnqualified()) {
-            $lcname = strtolower($expr->name->toString());
-            switch ($lcname) {
-                case 'null':
-                    return new Literal(null);
-                case 'true':
-                    return new Literal(true);
-                case 'false':
-                    return new Literal(false);
-            }
-        }
-
-        $nsName = null;
-        if ($this->currentNamespace && $expr->name->isUnqualified()) {
-            $nsName = $this->parseExprNode(Node\Name::concat($this->currentNamespace, $expr->name));
-        }
-
-        return new Op\Expr\ConstFetch($this->parseExprNode($expr->name), $nsName, $this->mapAttributes($expr));
-    }
-
-    protected function parseExpr_Empty(Expr\Empty_ $expr)
-    {
-        return new Op\Expr\Empty_($this->readVariable($this->parseExprNode($expr->expr)), $this->mapAttributes($expr));
-    }
-
-    protected function parseExpr_ErrorSuppress(Expr\ErrorSuppress $expr)
-    {
-        $attrs = $this->mapAttributes($expr);
-        $block = new ErrorSuppressBlock();
-        $this->block->children[] = new Jump($block, $attrs);
-        $block->addParent($this->block);
-        $this->block = $block;
-        $result = $this->parseExprNode($expr->expr);
-        $end = new Block($this->block);
-        $this->block->children[] = new Jump($end, $attrs);
-        $this->block = $end;
-
-        return $result;
-    }
-
-    protected function parseExpr_Eval(Expr\Eval_ $expr)
-    {
-        return new Op\Expr\Eval_($this->readVariable($this->parseExprNode($expr->expr)), $this->mapAttributes($expr));
-    }
-
-    protected function parseExpr_Throw(Expr\Throw_ $expr)
-    {
-        $this->block->children[] = new Op\Terminal\Throw_(
-            $this->readVariable($this->parseExprNode($expr->expr)),
-            $this->mapAttributes($expr)
-        );
-
-        // Dump everything after the throw
-        $this->block = new Block(null, $this->block->catchTarget);
-        $this->block->dead = true;
-
-        return new Literal(1);
-    }
-
-    protected function parseExpr_Exit(Expr\Exit_ $expr)
-    {
-        $e = null;
-        if ($expr->expr) {
-            $e = $this->readVariable($this->parseExprNode($expr->expr));
-        }
-
-        $this->block->children[] = new Op\Terminal\Exit_($e, $this->mapAttributes($expr));
-        // Dump everything after the exit
-        $this->block = new Block(null, $this->block->catchTarget);
-        $this->block->dead = true;
-
-        return new Literal(1);
-    }
-
-    protected function parseExpr_FuncCall(Expr\FuncCall $expr)
-    {
-        $args = $this->parseExprList($expr->args, self::MODE_READ);
-        $name = $this->readVariable($this->parseExprNode($expr->name));
-        if ($this->currentNamespace && $expr->name instanceof Node\Name && $expr->name->isUnqualified()) {
-            $op = new Op\Expr\NsFuncCall(
-                $name,
-                $this->parseExprNode(Node\Name::concat($this->currentNamespace, $expr->name)),
-                $args,
-                $this->mapAttributes($expr),
-            );
-        } else {
-            $op = new Op\Expr\FuncCall($name, $args, $this->mapAttributes($expr));
-        }
-
-        if ($name instanceof Literal) {
-            static $assertionFunctions = [
-                'is_array' => 'array',
-                'is_bool' => 'bool',
-                'is_callable' => 'callable',
-                'is_double' => 'float',
-                'is_float' => 'float',
-                'is_int' => 'int',
-                'is_integer' => 'int',
-                'is_long' => 'int',
-                'is_null' => 'null',
-                'is_numeric' => 'numeric',
-                'is_object' => 'object',
-                'is_real' => 'float',
-                'is_string' => 'string',
-                'is_resource' => 'resource',
-            ];
-            $lname = strtolower($name->value);
-            if (isset($assertionFunctions[$lname])) {
-                $op->result->addAssertion(
-                    $args[0],
-                    new Assertion\TypeAssertion(new Literal($assertionFunctions[$lname])),
-                );
-            }
-        }
-
-        return $op;
-    }
-
-    protected function parseExpr_Include(Expr\Include_ $expr)
-    {
-        return new Op\Expr\Include_($this->readVariable($this->parseExprNode($expr->expr)), $expr->type, $this->mapAttributes($expr));
-    }
-
-    protected function parseExpr_Instanceof(Expr\Instanceof_ $expr)
-    {
-        $var = $this->readVariable($this->parseExprNode($expr->expr));
-        $class = $this->readVariable($this->parseExprNode($expr->class));
-        $op = new Op\Expr\InstanceOf_(
-            $var,
-            $class,
-            $this->mapAttributes($expr),
-        );
-        $op->result->addAssertion($var, new Assertion\TypeAssertion($class));
-
-        return $op;
-    }
-
-    protected function parseExpr_Isset(Expr\Isset_ $expr)
-    {
-        return new Op\Expr\Isset_(
-            $this->parseExprList($expr->vars, self::MODE_READ),
-            $this->mapAttributes($expr),
-        );
-    }
-
-    protected function parseExpr_MethodCall(Expr\MethodCall $expr)
-    {
-        return new Op\Expr\MethodCall(
-            $this->readVariable($this->parseExprNode($expr->var)),
-            $this->readVariable($this->parseExprNode($expr->name)),
-            $this->parseExprList($expr->args, self::MODE_READ),
-            $this->mapAttributes($expr),
-        );
-    }
-
-    protected function parseExpr_New(Expr\New_ $expr)
-    {
-        if ($expr->class instanceof Stmt\Class_) {
-            $this->parseNode($expr->class);
-            $classExpr = $expr->class->name;
-        } else {
-            $classExpr = $expr->class;
-        }
-
-        return new Op\Expr\New_(
-            $this->readVariable($this->parseExprNode($classExpr)),
-            $this->parseExprList($expr->args, self::MODE_READ),
-            $this->mapAttributes($expr),
-        );
-    }
-
-    protected function parseExpr_PostDec(Expr\PostDec $expr)
-    {
-        $var = $this->parseExprNode($expr->var);
-        $read = $this->readVariable($var);
-        $write = $this->writeVariable($var);
-        $this->block->children[] = $op = new Op\Expr\BinaryOp\Minus($read, new Literal(1), $this->mapAttributes($expr));
-        $this->block->children[] = new Op\Expr\Assign($write, $op->result, $this->mapAttributes($expr));
-
-        return $read;
-    }
-
-    protected function parseExpr_PostInc(Expr\PostInc $expr): Operand
-    {
-        $var = $this->parseExprNode($expr->var);
-        $read = $this->readVariable($var);
-        $write = $this->writeVariable($var);
-        $this->block->children[] = $op = new Op\Expr\BinaryOp\Plus($read, new Literal(1), $this->mapAttributes($expr));
-        $this->block->children[] = new Op\Expr\Assign($write, $op->result, $this->mapAttributes($expr));
-
-        return $read;
-    }
-
-    protected function parseExpr_PreDec(Expr\PreDec $expr): Operand
-    {
-        $var = $this->parseExprNode($expr->var);
-        $read = $this->readVariable($var);
-        $write = $this->writeVariable($var);
-        $this->block->children[] = $op = new Op\Expr\BinaryOp\Minus($read, new Literal(1), $this->mapAttributes($expr));
-        $this->block->children[] = new Op\Expr\Assign($write, $op->result, $this->mapAttributes($expr));
-
-        return $op->result;
-    }
-
-    protected function parseExpr_PreInc(Expr\PreInc $expr): Operand
-    {
-        $var = $this->parseExprNode($expr->var);
-        $read = $this->readVariable($var);
-        $write = $this->writeVariable($var);
-        $this->block->children[] = $op = new Op\Expr\BinaryOp\Plus($read, new Literal(1), $this->mapAttributes($expr));
-        $this->block->children[] = new Op\Expr\Assign($write, $op->result, $this->mapAttributes($expr));
-
-        return $op->result;
-    }
-
-    protected function parseExpr_Print(Expr\Print_ $expr): Op
-    {
-        return new Op\Expr\Print_($this->readVariable($this->parseExprNode($expr->expr)), $this->mapAttributes($expr));
-    }
-
-    protected function parseExpr_PropertyFetch(Expr\PropertyFetch $expr): Op
-    {
-        return new Op\Expr\PropertyFetch(
-            $this->readVariable($this->parseExprNode($expr->var)),
-            $this->readVariable($this->parseExprNode($expr->name)),
-            $this->mapAttributes($expr),
-        );
-    }
-
-    protected function parseExpr_StaticCall(Expr\StaticCall $expr): Op
-    {
-        return new Op\Expr\StaticCall(
-            $this->readVariable($this->parseExprNode($expr->class)),
-            $this->readVariable($this->parseExprNode($expr->name)),
-            $this->parseExprList($expr->args, self::MODE_READ),
-            $this->mapAttributes($expr),
-        );
-    }
-
-    protected function parseExpr_StaticPropertyFetch(Expr\StaticPropertyFetch $expr): Op
-    {
-        return new Op\Expr\StaticPropertyFetch(
-            $this->readVariable($this->parseExprNode($expr->class)),
-            $this->readVariable($this->parseExprNode($expr->name)),
-            $this->mapAttributes($expr),
-        );
-    }
-
-    protected function parseExpr_Ternary(Expr\Ternary $expr): Operand
-    {
-        $attrs = $this->mapAttributes($expr);
-        $cond = $this->readVariable($this->parseExprNode($expr->cond));
-
-        $ifBlock = new Block();
-        $elseBlock = new Block();
-        $endBlock = new Block();
-
-        $this->block->children[] = new JumpIf($cond, $ifBlock, $elseBlock, $attrs);
-        $this->processAssertions($cond, $ifBlock, $elseBlock);
-        $ifBlock->addParent($this->block);
-        $elseBlock->addParent($this->block);
-
-        $this->block = $ifBlock;
-        $ifVar = new Temporary();
-        if ($expr->if) {
-            $this->block->children[] = new Op\Expr\Assign(
-                $ifVar,
-                $this->readVariable($this->parseExprNode($expr->if)),
-                $attrs,
-            );
-        } else {
-            $this->block->children[] = new Op\Expr\Assign($ifVar, $cond, $attrs);
-        }
-        $this->block->children[] = new Jump($endBlock, $attrs);
-        $endBlock->addParent($this->block);
-
-        $this->block = $elseBlock;
-        $elseVar = new Temporary();
-        $this->block->children[] = new Op\Expr\Assign(
-            $elseVar,
-            $this->readVariable($this->parseExprNode($expr->else)),
-            $attrs,
-        );
-        $this->block->children[] = new Jump($endBlock, $attrs);
-        $endBlock->addParent($this->block);
-
-        $this->block = $endBlock;
-        $result = new Temporary();
-        $phi = new Op\Phi($result, ['block' => $this->block]);
-        $phi->addOperand($ifVar);
-        $phi->addOperand($elseVar);
-        $this->block->phi[] = $phi;
-
-        return $result;
-    }
-
-    protected function parseExpr_UnaryMinus(Expr\UnaryMinus $expr): Op
-    {
-        return new Op\Expr\UnaryMinus($this->readVariable($this->parseExprNode($expr->expr)), $this->mapAttributes($expr));
-    }
-
-    protected function parseExpr_UnaryPlus(Expr\UnaryPlus $expr): Op
-    {
-        return new Op\Expr\UnaryPlus($this->readVariable($this->parseExprNode($expr->expr)), $this->mapAttributes($expr));
-    }
-
-    protected function parseExpr_ShellExec(Expr\ShellExec $expr): Op
-    {
-        $this->block->children[] = $arg = new Op\Expr\ConcatList(
-            $this->parseExprList($expr->parts, self::MODE_READ),
-            $this->mapAttributes($expr),
-        );
-
-        return new Op\Expr\FuncCall(
-            new Literal('shell_exec'),
-            [$arg->result],
-            $this->mapAttributes($expr),
-        );
     }
 
     public function processAssertions(Operand $op, Block $if, Block $else): void
@@ -1478,43 +954,7 @@ class Parser
         return $result;
     }
 
-    private function parseShortCircuiting(AstBinaryOp $expr, $isOr): Operand
-    {
-        $result = new Temporary();
-        $longBlock = new Block(null, $this->block->catchTarget);
-        $endBlock = new Block(null, $this->block->catchTarget);
 
-        $left = $this->readVariable($this->parseExprNode($expr->left));
-        $if = $isOr ? $endBlock : $longBlock;
-        $else = $isOr ? $longBlock : $endBlock;
-
-        $this->block->children[] = new JumpIf($left, $if, $else);
-        $longBlock->addParent($this->block);
-        $endBlock->addParent($this->block);
-
-        $this->block = $longBlock;
-        $right = $this->readVariable($this->parseExprNode($expr->right));
-        $boolCast = new Op\Expr\Cast\Bool_($right);
-        $this->block->children[] = $boolCast;
-        $this->block->children[] = new Jump($endBlock);
-        $endBlock->addParent($this->block);
-
-        $this->block = $endBlock;
-        $phi = new Op\Phi($result, ['block' => $this->block]);
-        $phi->addOperand(new Literal($isOr));
-        $phi->addOperand($boolCast->result);
-        $this->block->phi[] = $phi;
-
-        $mode = $isOr ? Assertion::MODE_UNION : Assertion::MODE_INTERSECTION;
-        foreach ($left->assertions as $assert) {
-            $result->addAssertion($assert['var'], $assert['assertion'], $mode);
-        }
-        foreach ($right->assertions as $assert) {
-            $result->addAssertion($assert['var'], $assert['assertion'], $mode);
-        }
-
-        return $result;
-    }
 
     public function mapAttributes(Node $expr): array
     {

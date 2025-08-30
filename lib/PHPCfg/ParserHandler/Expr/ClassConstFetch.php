@@ -12,17 +12,17 @@ namespace PHPCfg\ParserHandler\Expr;
 use PHPCfg\Op;
 use PHPCfg\Operand;
 use PHPCfg\ParserHandler;
-use PhpParser\Node;
+use PhpParser\Node\Expr;
 
-class Clone_ extends ParserHandler
+class ClassConstFetch extends ParserHandler
 {
-    public function handle(Node $expr): Operand
+    public function handleExpr(Expr $expr): Operand
     {
-        return $this->addExpr(new Op\Expr\Clone_(
-            $this->parser->readVariable($this->parser->parseExprNode($expr->expr)),
+
+        return $this->addExpr(new Op\Expr\ClassConstFetch(
+            $this->parser->readVariable($this->parser->parseExprNode($expr->class)),
+            $this->parser->readVariable($this->parser->parseExprNode($expr->name)),
             $this->mapAttributes($expr)
         ));
-
     }
-
 }
