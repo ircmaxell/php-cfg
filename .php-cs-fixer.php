@@ -11,6 +11,7 @@ $finder = PhpCsFixer\Finder::create()
     ->name('.php_cs')
     ->exclude('vendor')
     ->exclude('.git')
+    ->exclude('coverage')
     ->in(__DIR__);
 
 return (new PhpCsFixer\Config())

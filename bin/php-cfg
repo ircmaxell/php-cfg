@@ -1,0 +1,13 @@
+#!/usr/bin/env php
+<?php
+require_once(__DIR__ . '/../vendor/autoload.php');
+
+// Init App with name and version
+$app = new Ahc\Cli\Application('PHP-CFG', 'v0.0.1');
+
+$app->add(new PHPCfg\Cli\PrintCommand, 'p');
+$app->add(new PHPCfg\Cli\DotCommand, 'd');
+
+$app->add(new PHPCfg\Cli\RunTestCommand);
+
+$app->handle($_SERVER['argv']); // if argv[1] is `i` or `init` it executes InitCommand
