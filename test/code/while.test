@@ -1,0 +1,35 @@
+<?php
+
+while(true) {
+    echo 1;
+}
+echo 2;
+
+-----
+Block#1
+    Stmt_Jump
+        target: Block#2
+
+Block#2
+    Parent: Block#1
+    Parent: Block#3
+    Expr_ConstFetch
+        name: LITERAL('true')
+        result: Var#1
+    Stmt_JumpIf
+        cond: Var#1
+        if: Block#3
+        else: Block#4
+
+Block#3
+    Parent: Block#2
+    Terminal_Echo
+        expr: LITERAL(1)
+    Stmt_Jump
+        target: Block#2
+
+Block#4
+    Parent: Block#2
+    Terminal_Echo
+        expr: LITERAL(2)
+    Terminal_Return

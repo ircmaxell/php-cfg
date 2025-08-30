@@ -12,20 +12,12 @@ declare(strict_types=1);
 namespace PHPCfg;
 
 use LogicException;
-use PHPCfg\Op\Stmt\Jump;
-use PHPCfg\Op\Stmt\JumpIf;
-use PHPCfg\Op\Stmt\TraitUse;
-use PHPCfg\Op\Stmt\Try_;
 use PHPCfg\Op\Terminal\Return_;
-use PHPCfg\Op\TraitUseAdaptation\Alias;
-use PHPCfg\Op\TraitUseAdaptation\Precedence;
 use PHPCfg\Operand\Literal;
 use PHPCfg\Operand\Temporary;
 use PHPCfg\Operand\Variable;
-use PhpParser\Modifiers;
 use PhpParser\Node;
 use PhpParser\Node\Expr;
-use PhpParser\Node\Stmt;
 use PhpParser\NodeTraverser as AstTraverser;
 use PhpParser\Parser as AstParser;
 use RecursiveDirectoryIterator;
@@ -60,6 +52,7 @@ class Parser
     public $anonId = 0;
 
     protected array $handlers = [];
+    protected array $batchHandlers = [];
 
     public function __construct(AstParser $astParser, ?AstTraverser $astTraverser = null)
     {
@@ -72,6 +65,15 @@ class Parser
         $this->astTraverser->addVisitor(new AstVisitor\LoopResolver());
         $this->astTraverser->addVisitor(new AstVisitor\MagicStringResolver());
         $this->loadHandlers();
+    }
+
+    public function addHandler(string $name, ParserHandler $handler): void
+    {
+        if ($handler->isBatch()) {
+            $this->batchHandlers[$name] = $handler;
+        } else {
+            $this->handlers[$name] = $handler;
+        }
     }
 
     protected function loadHandlers(): void
@@ -91,7 +93,7 @@ class Parser
             $class = __NAMESPACE__ . str_replace("/", "\\", $class);
             $class = substr($class, 0, -4);
             $obj = new $class($this);
-            $this->handlers[$obj->getName()] = $obj;
+            $this->addHandler($obj->getName(), $obj);
         }
     }
 
@@ -200,10 +202,12 @@ class Parser
         if (isset($this->handlers[$type])) {
             $this->handlers[$type]->handleStmt($node);
             return;
-        } elseif (method_exists($this, 'parse' . $type)) {
-            $this->{'parse' . $type}($node);
-
-            return;
+        }
+        foreach ($this->batchHandlers as $handler) {
+            if ($handler->supports($node)) {
+                $handler->handleStmt($node);
+                return;
+            }
         }
 
         throw new RuntimeException('Unknown Node Encountered : ' . $type);
@@ -254,424 +258,6 @@ class Parser
             );
         }
         throw new LogicException("Unknown type node: " . $node->getType());
-    }
-
-    protected function parseStmt_ClassConst(Stmt\ClassConst $node): void
-    {
-        if (! $this->currentClass instanceof Op\Type\Literal) {
-            throw new RuntimeException('Unknown current class');
-        }
-        foreach ($node->consts as $const) {
-            $tmp = $this->block;
-            $this->block = $valueBlock = new Block();
-            $value = $this->parseExprNode($const->value);
-            $this->block = $tmp;
-
-            $this->block->children[] = new Op\Terminal\Const_(
-                $this->parseExprNode($const->name),
-                $value,
-                $valueBlock,
-                $this->mapAttributes($node),
-            );
-        }
-    }
-
-    protected function parseStmt_ClassMethod(Stmt\ClassMethod $node): void
-    {
-        if (! $this->currentClass instanceof Op\Type\Literal) {
-            throw new RuntimeException('Unknown current class');
-        }
-
-        $this->script->functions[] = $func = new Func(
-            $node->name->toString(),
-            $node->flags | ($node->byRef ? Func::FLAG_RETURNS_REF : 0),
-            $this->parseTypeNode($node->returnType),
-            $this->currentClass,
-        );
-
-        if ($node->stmts !== null) {
-            $this->parseFunc($func, $node->params, $node->stmts, null);
-        } else {
-            $func->params = $this->parseParameterList($func, $node->params);
-            $func->cfg = null;
-        }
-
-        $visibility = $node->flags & Modifiers::VISIBILITY_MASK;
-        $static = $node->flags & Modifiers::STATIC;
-        $final = $node->flags & Modifiers::FINAL;
-        $abstract = $node->flags & Modifiers::ABSTRACT;
-
-        $this->block->children[] = $class_method = new Op\Stmt\ClassMethod(
-            $func,
-            $visibility,
-            (bool) $static,
-            (bool) $final,
-            (bool) $abstract,
-            $this->parseAttributeGroups($node->attrGroups),
-            $this->mapAttributes($node),
-        );
-        $func->callableOp = $class_method;
-    }
-
-    protected function parseStmt_Declare(Stmt\Declare_ $node): void
-    {
-        // TODO
-    }
-
-
-
-
-
-
-
-    protected function parseStmt_Function(Stmt\Function_ $node): void
-    {
-        $this->script->functions[] = $func = new Func(
-            $node->namespacedName->toString(),
-            $node->byRef ? Func::FLAG_RETURNS_REF : 0,
-            $this->parseTypeNode($node->returnType),
-            null,
-        );
-        $this->parseFunc($func, $node->params, $node->stmts, null);
-        $this->block->children[] = $function = new Op\Stmt\Function_($func, $this->parseAttributeGroups($node->attrGroups), $this->mapAttributes($node));
-        $func->callableOp = $function;
-    }
-
-    protected function parseStmt_Global(Stmt\Global_ $node): void
-    {
-        foreach ($node->vars as $var) {
-            // TODO $var is not necessarily a Variable node
-            $this->block->children[] = new Op\Terminal\GlobalVar(
-                $this->writeVariable($this->parseExprNode($var->name)),
-                $this->mapAttributes($node),
-            );
-        }
-    }
-
-    protected function parseStmt_Goto(Stmt\Goto_ $node): void
-    {
-        $attributes = $this->mapAttributes($node);
-        if (isset($this->ctx->labels[$node->name->toString()])) {
-            $labelBlock = $this->ctx->labels[$node->name->toString()];
-            $this->block->children[] = new Jump($labelBlock, $attributes);
-            $labelBlock->addParent($this->block);
-        } else {
-            $this->ctx->unresolvedGotos[$node->name->toString()][] = [$this->block, $attributes];
-        }
-        $this->block = new Block(null, $this->block->catchTarget);
-        $this->block->dead = true;
-    }
-
-    protected function parseStmt_GroupUse(Stmt\GroupUse $node): void
-    {
-        // ignore use statements, since names are already resolved
-    }
-
-    protected function parseStmt_HaltCompiler(Stmt\HaltCompiler $node): void
-    {
-        $this->block->children[] = new Op\Terminal\Echo_(
-            $this->readVariable(new Literal($node->remaining)),
-            $this->mapAttributes($node),
-        );
-    }
-
-    protected function parseStmt_InlineHTML(Stmt\InlineHTML $node): void
-    {
-        $this->block->children[] = new Op\Terminal\Echo_($this->parseExprNode($node->value), $this->mapAttributes($node));
-    }
-
-    protected function parseStmt_Interface(Stmt\Interface_ $node): void
-    {
-        $name = $this->parseTypeNode($node->namespacedName);
-        $old = $this->currentClass;
-        $this->currentClass = $name;
-        $this->block->children[] = new Op\Stmt\Interface_(
-            $name,
-            $this->parseTypeList($node->extends),
-            $this->parseNodes($node->stmts, new Block()),
-            $this->parseAttributeGroups($node->attrGroups),
-            $this->mapAttributes($node),
-        );
-        $this->currentClass = $old;
-    }
-
-    protected function parseStmt_Label(Stmt\Label $node): void
-    {
-        if (isset($this->ctx->labels[$node->name->toString()])) {
-            throw new RuntimeException("Label '{$node->name->toString()}' already defined");
-        }
-
-        $labelBlock = new Block($this->block);
-        $this->block->children[] = new Jump($labelBlock, $this->mapAttributes($node));
-        $labelBlock->addParent($this->block);
-        if (isset($this->ctx->unresolvedGotos[$node->name->toString()])) {
-            /**
-             * @var Block
-             * @var array $attributes
-             */
-            foreach ($this->ctx->unresolvedGotos[$node->name->toString()] as [$block, $attributes]) {
-                $block->children[] = new Jump($labelBlock, $attributes);
-                $labelBlock->addParent($block);
-            }
-            unset($this->ctx->unresolvedGotos[$node->name->toString()]);
-        }
-        $this->block = $this->ctx->labels[$node->name->toString()] = $labelBlock;
-    }
-
-    protected function parseStmt_Namespace(Stmt\Namespace_ $node): void
-    {
-        $this->currentNamespace = $node->name;
-        $this->block = $this->parseNodes($node->stmts, $this->block);
-    }
-
-    protected function parseStmt_Nop(Stmt\Nop $node): void
-    {
-        // Nothing to see here, move along
-    }
-
-    protected function parseStmt_Property(Stmt\Property $node): void
-    {
-        $visibility = $node->flags & Modifiers::VISIBILITY_MASK;
-        $static = $node->flags & Modifiers::STATIC;
-        $readonly = $node->flags & Modifiers::READONLY;
-
-        foreach ($node->props as $prop) {
-            if ($prop->default) {
-                $tmp = $this->block;
-                $this->block = $defaultBlock = new Block();
-                $defaultVar = $this->parseExprNode($prop->default);
-                $this->block = $tmp;
-            } else {
-                $defaultVar = null;
-                $defaultBlock = null;
-            }
-
-            $this->block->children[] = new Op\Stmt\Property(
-                $this->parseExprNode($prop->name),
-                $visibility,
-                (bool) $static,
-                (bool) $readonly,
-                $this->parseAttributeGroups($node->attrGroups),
-                $this->parseTypeNode($node->type),
-                $defaultVar,
-                $defaultBlock,
-                $this->mapAttributes($node),
-            );
-        }
-    }
-
-    protected function parseStmt_Return(Stmt\Return_ $node): void
-    {
-        $expr = null;
-        if ($node->expr) {
-            $expr = $this->readVariable($this->parseExprNode($node->expr));
-        }
-        $this->block->children[] = new Return_($expr, $this->mapAttributes($node));
-        // Dump everything after the return
-        $this->block = new Block($this->block);
-        $this->block->dead = true;
-    }
-
-    protected function parseStmt_Static(Stmt\Static_ $node): void
-    {
-        foreach ($node->vars as $var) {
-            $defaultBlock = null;
-            $defaultVar = null;
-            if ($var->default) {
-                $tmp = $this->block;
-                $this->block = $defaultBlock = new Block($this->block);
-                $defaultVar = $this->parseExprNode($var->default);
-                $this->block = $tmp;
-            }
-            $this->block->children[] = new Op\Terminal\StaticVar(
-                $this->writeVariable(new Operand\BoundVariable($this->parseExprNode($var->var->name), true, Operand\BoundVariable::SCOPE_FUNCTION)),
-                $defaultBlock,
-                $defaultVar,
-                $this->mapAttributes($node),
-            );
-        }
-    }
-
-    protected function parseStmt_Switch(Stmt\Switch_ $node): void
-    {
-        if ($this->switchCanUseJumptable($node)) {
-            $this->compileJumptableSwitch($node);
-
-            return;
-        }
-
-        // Desugar switch into compare-and-jump sequence
-        $cond = $this->parseExprNode($node->cond);
-        $endBlock = new Block(null, $this->block->catchTarget);
-        $defaultBlock = $endBlock;
-        /** @var Block|null $prevBlock */
-        $prevBlock = null;
-        foreach ($node->cases as $case) {
-            $ifBlock = new Block(null, $this->block->catchTarget);
-            if ($prevBlock && ! $prevBlock->dead) {
-                $prevBlock->children[] = new Jump($ifBlock);
-                $ifBlock->addParent($prevBlock);
-            }
-
-            if ($case->cond) {
-                $caseExpr = $this->parseExprNode($case->cond);
-                $this->block->children[] = $cmp = new Op\Expr\BinaryOp\Equal(
-                    $this->readVariable($cond),
-                    $this->readVariable($caseExpr),
-                    $this->mapAttributes($case),
-                );
-
-                $elseBlock = new Block(null, $this->block->catchTarget);
-                $this->block->children[] = new JumpIf($cmp->result, $ifBlock, $elseBlock);
-                $ifBlock->addParent($this->block);
-                $elseBlock->addParent($this->block);
-                $this->block = $elseBlock;
-            } else {
-                $defaultBlock = $ifBlock;
-            }
-
-            $prevBlock = $this->parseNodes($case->stmts, $ifBlock);
-        }
-
-        if ($prevBlock && ! $prevBlock->dead) {
-            $prevBlock->children[] = new Jump($endBlock);
-            $endBlock->addParent($prevBlock);
-        }
-
-        $this->block->children[] = new Jump($defaultBlock);
-        $defaultBlock->addParent($this->block);
-        $this->block = $endBlock;
-    }
-
-    protected function parseStmt_Trait(Stmt\Trait_ $node)
-    {
-        $name = $this->parseTypeNode($node->namespacedName);
-        $old = $this->currentClass;
-        $this->currentClass = $name;
-        $this->block->children[] = new Op\Stmt\Trait_(
-            $name,
-            $this->parseNodes($node->stmts, new Block()),
-            $this->parseAttributeGroups($node->attrGroups),
-            $this->mapAttributes($node),
-        );
-        $this->currentClass = $old;
-    }
-
-    protected function parseStmt_TraitUse(Stmt\TraitUse $node)
-    {
-        $traits = [];
-        $adaptations = [];
-        foreach ($node->traits as $trait_) {
-            $traits[] = new Literal($trait_->toCodeString());
-        }
-        foreach ($node->adaptations as $adaptation) {
-            if ($adaptation instanceof Stmt\TraitUseAdaptation\Alias) {
-                $adaptations[] = new Alias(
-                    $adaptation->trait != null ? new Literal($adaptation->trait->toCodeString()) : null,
-                    new Literal($adaptation->method->name),
-                    $adaptation->newName != null ? new Literal($adaptation->newName->name) : null,
-                    $adaptation->newModifier,
-                    $this->mapAttributes($adaptation),
-                );
-            } elseif ($adaptation instanceof Stmt\TraitUseAdaptation\Precedence) {
-                $insteadofs = [];
-                foreach ($adaptation->insteadof as $insteadof) {
-                    $insteadofs[] = new Literal($insteadof->toCodeString());
-                }
-                $adaptations[] = new Precedence(
-                    $adaptation->trait != null ? new Literal($adaptation->trait->toCodeString()) : null,
-                    new Literal($adaptation->method->name),
-                    $insteadofs,
-                    $this->mapAttributes($adaptation),
-                );
-            }
-        }
-        $this->block->children[] = new TraitUse($traits, $adaptations, $this->mapAttributes($node));
-    }
-
-    protected function parseStmt_TryCatch(Stmt\TryCatch $node)
-    {
-        $finally = new Block();
-        $catchTarget = new CatchTarget($finally);
-        $finallyTarget = new CatchTarget($finally);
-        $body = new Block($this->block, $catchTarget);
-        $finally->addParent($body);
-        $finally->setCatchTarget($this->block->catchTarget);
-        $next = new Block($finally);
-
-        foreach ($node->catches as $catch) {
-            if ($catch->var) {
-                $var = $this->writeVariable($this->parseExprNode($catch->var));
-            } else {
-                $var = new Operand\NullOperand();
-            }
-
-            $catchBody = new Block($body, $finallyTarget);
-            $finally->addParent($catchBody);
-            $catchBody2 = $this->parseNodes($catch->stmts, $catchBody);
-            $catchBody2->children[] = new Jump($finally);
-
-            $parsedTypes = [];
-            foreach ($catch->types as $type) {
-                $parsedTypes[] = $this->parseTypeNode($type);
-            }
-
-            $type = new Op\Type\Union(
-                $parsedTypes,
-                $this->mapAttributes($catch),
-            );
-
-            $catchTarget->addCatch($type, $var, $catchBody);
-        }
-
-        // parsing body stmts is done after the catches because we want
-        // to add catch blocks (and finally blocks) as parents of any subblock of the body
-        $next2 = $this->parseNodes($node->stmts, $body);
-        $next2->children[] = new Jump($finally);
-
-        if ($node->finally != null) {
-            $nf = $this->parseNodes($node->finally->stmts, $finally);
-            $nf->children[] = new Jump($next);
-        } else {
-            $finally->children[] = new Jump($next);
-        }
-
-        $this->block->children[] = new Try_($body, $catchTarget->catches, $finally, $this->mapAttributes($node));
-        $this->block = $next;
-    }
-
-    protected function parseStmt_Unset(Stmt\Unset_ $node)
-    {
-        $this->block->children[] = new Op\Terminal\Unset_(
-            $this->parseExprList($node->vars, self::MODE_WRITE),
-            $this->mapAttributes($node),
-        );
-    }
-
-    protected function parseStmt_Use(Stmt\Use_ $node)
-    {
-        // ignore use statements, since names are already resolved
-    }
-
-    protected function parseStmt_While(Stmt\While_ $node)
-    {
-        $loopInit = new Block(null, $this->block->catchTarget);
-        $loopBody = new Block(null, $this->block->catchTarget);
-        $loopEnd = new Block(null, $this->block->catchTarget);
-        $this->block->children[] = new Jump($loopInit, $this->mapAttributes($node));
-        $loopInit->addParent($this->block);
-        $this->block = $loopInit;
-        $cond = $this->readVariable($this->parseExprNode($node->cond));
-
-        $this->block->children[] = new JumpIf($cond, $loopBody, $loopEnd, $this->mapAttributes($node));
-        $this->processAssertions($cond, $loopBody, $loopEnd);
-        $loopBody->addParent($this->block);
-        $loopEnd->addParent($this->block);
-
-        $this->block = $this->parseNodes($node->stmts, $loopBody);
-        $this->block->children[] = new Jump($loopInit, $this->mapAttributes($node));
-        $loopInit->addParent($this->block);
-        $this->block = $loopEnd;
     }
 
     /**
@@ -753,19 +339,13 @@ class Parser
 
         if (isset($this->handlers[$expr->getType()])) {
             return $this->handlers[$expr->getType()]->handleExpr($expr);
-        } elseif ($this->handlers['Batch_Unary']->supports($expr)) {
-            return $this->handlers['Batch_Unary']->handleExpr($expr);
-        } elseif ($this->handlers['Batch_AssignOp']->supports($expr)) {
-            return $this->handlers['Batch_AssignOp']->handleExpr($expr);
-        } elseif ($this->handlers['Batch_BinaryOp']->supports($expr)) {
-            return $this->handlers['Batch_BinaryOp']->handleExpr($expr);
-        } elseif ($this->handlers['Batch_IncDec']->supports($expr)) {
-            return $this->handlers['Batch_IncDec']->handleExpr($expr);
-        } else {
-            throw new RuntimeException('Unknown Expr Type ' . $expr->getType());
         }
-
-        throw new RuntimeException('Invalid state, should never happen');
+        foreach ($this->batchHandlers as $handler) {
+            if ($handler->supports($expr)) {
+                return $handler->handleExpr($expr);
+            }
+        }
+        throw new RuntimeException('Unknown Expr Type ' . $expr->getType());
     }
 
     public function parseAttribute(Node\Attribute $attr)
@@ -827,61 +407,8 @@ class Parser
         }
     }
 
-    private function switchCanUseJumptable(Stmt\Switch_ $node): bool
-    {
-        foreach ($node->cases as $case) {
-            if (
-                null !== $case->cond
-                && ! $case->cond instanceof Node\Scalar\LNumber
-                && ! $case->cond instanceof Node\Scalar\String_
-            ) {
-                return false;
-            }
-        }
 
-        return true;
-    }
 
-    private function compileJumptableSwitch(Stmt\Switch_ $node): void
-    {
-        $cond = $this->readVariable($this->parseExprNode($node->cond));
-        $cases = [];
-        $targets = [];
-        $endBlock = new Block(null, $this->block->catchTarget);
-        $defaultBlock = $endBlock;
-        /** @var null|Block $block */
-        $block = null;
-        foreach ($node->cases as $case) {
-            $caseBlock = new Block($this->block);
-            if ($block && ! $block->dead) {
-                // wire up!
-                $block->children[] = new Jump($caseBlock);
-                $caseBlock->addParent($block);
-            }
-
-            if ($case->cond) {
-                $targets[] = $caseBlock;
-                $cases[] = $this->parseExprNode($case->cond);
-            } else {
-                $defaultBlock = $caseBlock;
-            }
-
-            $block = $this->parseNodes($case->stmts, $caseBlock);
-        }
-        $this->block->children[] = new Op\Stmt\Switch_(
-            $cond,
-            $cases,
-            $targets,
-            $defaultBlock,
-            $this->mapAttributes($node),
-        );
-        if ($block && ! $block->dead) {
-            // wire end of block to endblock
-            $block->children[] = new Jump($endBlock);
-            $endBlock->addParent($block);
-        }
-        $this->block = $endBlock;
-    }
 
     private function parseScalarNode(Node\Scalar $scalar): Operand
     {
@@ -921,7 +448,7 @@ class Parser
         }
     }
 
-    private function parseParameterList(Func $func, array $params): array
+    public function parseParameterList(Func $func, array $params): array
     {
         if (empty($params)) {
             return [];

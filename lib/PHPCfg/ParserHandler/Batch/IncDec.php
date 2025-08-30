@@ -25,6 +25,11 @@ class IncDec extends ParserHandler
         'Expr_PreInc' => Op\Expr\BinaryOp\Plus::class,
     ];
 
+    public function isBatch(): bool
+    {
+        return true;
+    }
+
     public function supports(Node $expr): bool
     {
         return isset(self::MAP[$expr->getType()]);

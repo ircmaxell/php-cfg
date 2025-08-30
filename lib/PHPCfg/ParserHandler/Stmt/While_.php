@@ -1,0 +1,34 @@
+<?php
+
+/**
+ * This file is part of PHP-CFG, a Control flow graph implementation for PHP
+ *
+ * @copyright 2015 Anthony Ferrara. All rights reserved
+ * @license MIT See LICENSE at the root of the project for more info
+ */
+
+namespace PHPCfg\ParserHandler\Stmt;
+
+use PHPCfg\Op;
+use PHPCfg\ParserHandler;
+use PhpParser\Node\Stmt;
+
+class While_ extends ParserHandler
+{
+    public function handleStmt(Stmt $node): void
+    {
+        $loopInit = $this->createBlockWithCatchTarget();
+        $loopBody = $this->createBlockWithCatchTarget();
+        $loopEnd = $this->createBlockWithCatchTarget();
+        $this->addOp(new Op\Stmt\Jump($loopInit, $this->mapAttributes($node)));
+        $this->block($loopInit);
+        $cond = $this->parser->readVariable($this->parser->parseExprNode($node->cond));
+
+        $this->addOp(new Op\Stmt\JumpIf($cond, $loopBody, $loopEnd, $this->mapAttributes($node)));
+        $this->parser->processAssertions($cond, $loopBody, $loopEnd);
+
+        $this->block($this->parser->parseNodes($node->stmts, $loopBody));
+        $this->addOp(new Op\Stmt\Jump($loopInit, $this->mapAttributes($node)));
+        $this->block($loopEnd);
+    }
+}

@@ -49,6 +49,11 @@ class BinaryOp extends ParserHandler
         'Expr_BinaryOp_Spaceship' => Op\Expr\BinaryOp\Spaceship::class,
     ];
 
+    public function isBatch(): bool
+    {
+        return true;
+    }
+
     public function supports(Node $expr): bool
     {
         return isset(self::MAP[$expr->getType()]);

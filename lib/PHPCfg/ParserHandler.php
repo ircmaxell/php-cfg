@@ -32,6 +32,11 @@ abstract class ParserHandler
         throw new LogicException("Stmt " . $stmt->getType() . " not Implemented Yet");
     }
 
+    public function isBatch(): bool
+    {
+        return false;
+    }
+
     public function getName(): string
     {
         $name = str_replace([__CLASS__ . '\\', '_'], '', get_class($this));

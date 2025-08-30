@@ -34,6 +34,11 @@ class AssignOp extends ParserHandler
         'Expr_AssignOp_ShiftRight' => Op\Expr\BinaryOp\ShiftRight::class,
     ];
 
+    public function isBatch(): bool
+    {
+        return true;
+    }
+
     public function supports(Node $expr): bool
     {
         return isset(self::MAP[$expr->getType()]);

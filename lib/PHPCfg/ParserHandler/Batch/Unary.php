@@ -35,6 +35,11 @@ class Unary extends ParserHandler
         'Expr_UnaryPlus' => Op\Expr\UnaryPlus::class,
     ];
 
+    public function isBatch(): bool
+    {
+        return true;
+    }
+
     public function supports(Node $expr): bool
     {
         return isset(self::MAP[$expr->getType()]);
