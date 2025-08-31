@@ -9,7 +9,7 @@ declare(strict_types=1);
  * @license MIT See LICENSE at the root of the project for more info
  */
 
-namespace PHPCfg;
+namespace PHPCfg\Printer;
 
 use LogicException;
 use PHPCfg\Operand\BoundVariable;
@@ -19,6 +19,14 @@ use PHPCfg\Operand\Temporary;
 use PHPCfg\Operand\Variable;
 use SplObjectStorage;
 use SplQueue;
+use PHPCfg\Script;
+use PHPCfg\Block;
+use PHPCfg\Func;
+use PHPCfg\Op;
+use PHPCfg\Operand;
+use PHPCfg\Assertion;
+use RecursiveIteratorIterator;
+use RecursiveDirectoryIterator;
 
 abstract class Printer
 {
@@ -30,10 +38,49 @@ abstract class Printer
 
     private bool $renderAttributes;
 
+    protected array $renderers = [];
+
     public function __construct(bool $renderAttributes = false)
     {
         $this->renderAttributes = $renderAttributes;
+        $this->loadRenderers();
         $this->reset();
+
+    }
+
+    public function addRenderer(Renderer $renderer, bool $prepend = false): void
+    {
+        if ($prepend) {
+            array_unshift($this->renderers, $renderer);
+        } else {
+            $this->renderers[] = $renderer;
+        }
+    }
+
+    protected function loadRenderers(): void
+    {
+        $it = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator(
+                __DIR__ . '/Renderer/',
+                RecursiveIteratorIterator::LEAVES_ONLY
+            )
+        );
+        $handlers = [];
+        foreach ($it as $file) {
+            if (!$file->isFile() || $file->getExtension() !== 'php') {
+                continue;
+            }
+            $class = str_replace(__DIR__, '', $file->getPathname());
+            $class = __NAMESPACE__ . str_replace("/", "\\", $class);
+            $class = substr($class, 0, -4);
+
+            if (!class_exists($class)) {
+                continue;
+            }
+
+            $obj = new $class($this);
+            $this->addRenderer($obj);
+        }
     }
 
     abstract public function printScript(Script $script): string;
@@ -42,9 +89,11 @@ abstract class Printer
 
     protected function reset(): void
     {
-        $this->varIds = new SplObjectStorage();
         $this->blocks = new SplObjectStorage();
         $this->blockQueue = new SplQueue();
+        foreach ($this->renderers as $renderer) {
+            $renderer->reset();
+        }
     }
 
     protected function getBlockId(Block $block): int
@@ -52,36 +101,18 @@ abstract class Printer
         return $this->blocks[$block];
     }
 
-    protected function renderOperand(Operand $var): string
+    public function renderOperand(Operand $var): string
     {
-        $type = isset($var->type) ? '<inferred:' . $var->type->toString() . '>' : '';
-        if ($var instanceof Literal) {
-            return "LITERAL{$type}(" . var_export($var->value, true) . ')';
-        }
-        if ($var instanceof Variable) {
-            assert($var->name instanceof Literal);
-            $prefix = "{$type}$";
-
-            if ($var instanceof BoundVariable) {
-                if ($var->byRef) {
-                    $prefix = '&$';
-                }
-                switch ($var->scope) {
-                    case BoundVariable::SCOPE_GLOBAL:
-                        return "global<{$prefix}{$var->name->value}>";
-                    case BoundVariable::SCOPE_LOCAL:
-                        return "local<{$prefix}{$var->name->value}>";
-                    case BoundVariable::SCOPE_OBJECT:
-                        return "this<{$prefix}{$var->name->value}>";
-                    case BoundVariable::SCOPE_FUNCTION:
-                        return "static<{$prefix}{$var->name->value}>";
-                    default:
-                        throw new LogicException('Unknown bound variable scope');
-                }
+        foreach ($this->renderers as $renderer) {
+            $result = $renderer->renderOperand($var);
+            if ($result !== null) {
+                $kind = $result['kind'];
+                $type = $result['type'];
+                unset($result['kind'], $result['type']);
+                return strtoupper($kind) . $type . '(' . trim(implode(" ", $result)) . ')';
             }
-
-            return $prefix . $var->name->value . $type;
         }
+        $type = isset($var->type) ? '<inferred:' . $var->type->toString() . '>' : '';
         if ($var instanceof Temporary) {
             $id = $this->getVarId($var);
             if ($var->original) {
@@ -257,14 +288,7 @@ abstract class Printer
         }
     }
 
-    protected function getVarId(Operand $var)
-    {
-        if (isset($this->varIds[$var])) {
-            return $this->varIds[$var];
-        }
 
-        return $this->varIds[$var] = $this->varIds->count() + 1;
-    }
 
     protected function render(Func $func)
     {
@@ -293,14 +317,14 @@ abstract class Printer
             $renderedBlocks[$block] = $ops;
         }
 
-        $varIds = $this->varIds;
+        //$varIds = $this->varIds;
         $blockIds = $this->blocks;
         $this->reset();
 
         return [
             'blocks' => $renderedBlocks,
             'ops' => $renderedOps,
-            'varIds' => $varIds,
+            //'varIds' => $varIds,
             'blockIds' => $blockIds,
         ];
     }

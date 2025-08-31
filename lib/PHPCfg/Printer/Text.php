@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace PHPCfg\Printer;
 
 use PHPCfg\Func;
-use PHPCfg\Printer;
 use PHPCfg\Script;
 
 class Text extends Printer
