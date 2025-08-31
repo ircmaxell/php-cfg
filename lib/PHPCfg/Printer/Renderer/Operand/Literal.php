@@ -38,6 +38,12 @@ class Literal implements Renderer
 
     public function renderOperand(Operand $operand): ?array
     {
+        if ($operand instanceof Operand\NullOperand) {
+            // Special case of a literal
+            return [
+                "kind" => "NULL",
+            ];
+        }
         if (!$operand instanceof Operand\Literal) {
             return null;
         }

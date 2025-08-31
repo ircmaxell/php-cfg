@@ -112,27 +112,6 @@ abstract class Printer
                 return strtoupper($kind) . $type . '(' . trim(implode(" ", $result)) . ')';
             }
         }
-        $type = isset($var->type) ? '<inferred:' . $var->type->toString() . '>' : '';
-        if ($var instanceof Temporary) {
-            $id = $this->getVarId($var);
-            if ($var->original) {
-                return "Var{$type}#{$id}" . '<' . $this->renderOperand($var->original) . '>';
-            }
-
-            return "Var{$type}#" . $this->getVarId($var);
-        }
-        if ($var instanceof NullOperand) {
-            return "NULL";
-        }
-        if (is_array($var)) {
-            $result = 'array' . $type;
-            foreach ($var as $k => $v) {
-                $result .= "\n    {$k}: " . $this->indent($this->renderOperand($v));
-            }
-
-            return $result;
-        }
-
         return 'UNKNOWN';
     }
 

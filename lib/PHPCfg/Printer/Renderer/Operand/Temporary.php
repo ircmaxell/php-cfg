@@ -48,7 +48,6 @@ class Temporary implements Renderer
         if (!$operand instanceof Operand\Temporary) {
             return null;
         }
-        var_dump($operand);
         return [
             "kind" => "TEMP",
             "type" => $operand->type ? "<{$operand->type}>" : "",
