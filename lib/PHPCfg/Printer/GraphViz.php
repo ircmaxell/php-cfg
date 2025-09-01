@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace PHPCfg\Printer;
 
 use PHPCfg\Func;
-use PHPCfg\Printer\Printer;
 use PHPCfg\Script;
 use phpDocumentor\GraphViz\Edge;
 use phpDocumentor\GraphViz\Graph;

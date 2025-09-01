@@ -11,11 +11,8 @@ declare(strict_types=1);
 
 namespace PHPCfg\Printer;
 
-use PHPCfg\Func;
-use PHPCfg\Script;
 use PHPCfg\Op;
 use PHPCfg\Operand;
-use PHPCfg\Block;
 
 interface Renderer
 {
@@ -24,5 +21,5 @@ interface Renderer
     public function renderOp(Op $op): ?array;
 
     public function renderOperand(Operand $operand): ?array;
-    
+
 }

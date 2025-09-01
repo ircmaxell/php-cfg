@@ -12,26 +12,20 @@ declare(strict_types=1);
 namespace PHPCfg\Printer;
 
 use LogicException;
-use PHPCfg\Operand\BoundVariable;
-use PHPCfg\Operand\Literal;
-use PHPCfg\Operand\NullOperand;
-use PHPCfg\Operand\Temporary;
-use PHPCfg\Operand\Variable;
-use SplObjectStorage;
-use SplQueue;
-use PHPCfg\Script;
 use PHPCfg\Block;
 use PHPCfg\Func;
 use PHPCfg\Op;
 use PHPCfg\Operand;
-use PHPCfg\Assertion;
-use RecursiveIteratorIterator;
+use PHPCfg\Script;
 use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use SplObjectStorage;
+use SplQueue;
 
 abstract class Printer
 {
-    const MODE_DEFAULT           = 0b00000;
-    const MODE_RENDER_ATTRIBUTES = 0b00001;
+    public const MODE_DEFAULT           = 0b00000;
+    public const MODE_RENDER_ATTRIBUTES = 0b00001;
 
     private SplQueue $blockQueue;
 

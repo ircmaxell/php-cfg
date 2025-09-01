@@ -11,17 +11,14 @@ declare(strict_types=1);
 
 namespace PHPCfg\Printer\Renderer\Operand;
 
-use PHPCfg\Func;
-use PHPCfg\Printer\Printer;
-use PHPCfg\Script;
+use LogicException;
 use PHPCfg\Op;
 use PHPCfg\Operand;
-use PHPCfg\Block;
+use PHPCfg\Printer\Printer;
 use PHPCfg\Printer\Renderer;
 
 class Variable implements Renderer
 {
-
     protected Printer $printer;
 
     public function __construct(Printer $printer)
@@ -29,8 +26,7 @@ class Variable implements Renderer
         $this->printer = $printer;
     }
 
-    public function reset(): void
-    {}
+    public function reset(): void {}
 
     public function renderOp(Op $op): ?array
     {
@@ -64,7 +60,7 @@ class Variable implements Renderer
                     $prefix = "static $prefix";
                     break;
                 default:
-                    throw new \LogicException('Unknown bound variable scope');
+                    throw new LogicException('Unknown bound variable scope');
             }
         }
 
@@ -74,5 +70,5 @@ class Variable implements Renderer
             "name" => $prefix . $operand->name->value,
         ];
     }
-    
+
 }

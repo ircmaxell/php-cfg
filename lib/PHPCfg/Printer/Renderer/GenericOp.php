@@ -11,17 +11,13 @@ declare(strict_types=1);
 
 namespace PHPCfg\Printer\Renderer;
 
-use PHPCfg\Func;
-use PHPCfg\Printer\Printer;
-use PHPCfg\Script;
 use PHPCfg\Op;
 use PHPCfg\Operand;
-use PHPCfg\Block;
+use PHPCfg\Printer\Printer;
 use PHPCfg\Printer\Renderer;
 
 class GenericOp implements Renderer
 {
-
     protected Printer $printer;
 
     public function __construct(Printer $printer)
@@ -38,7 +34,7 @@ class GenericOp implements Renderer
             'types' => [],
             'vars' => [],
             'attributes' => $this->renderAttributes($op->getAttributes()),
-            'childblocks' => [],         
+            'childblocks' => [],
         ];
 
         if ($op instanceof Op\CallableOp) {
@@ -99,7 +95,7 @@ class GenericOp implements Renderer
             $result['attrGroups'] = $this->renderAttrGroups($op);
         }
 
-        
+
 
         return $result;
     }
@@ -110,7 +106,7 @@ class GenericOp implements Renderer
     }
 
 
-    
+
     protected function renderAttributes(array $attributes): array
     {
         if (!$this->printer->renderAttributes) {

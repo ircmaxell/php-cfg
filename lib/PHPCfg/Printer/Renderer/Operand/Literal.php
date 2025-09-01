@@ -11,17 +11,13 @@ declare(strict_types=1);
 
 namespace PHPCfg\Printer\Renderer\Operand;
 
-use PHPCfg\Func;
-use PHPCfg\Printer\Printer;
-use PHPCfg\Script;
 use PHPCfg\Op;
 use PHPCfg\Operand;
-use PHPCfg\Block;
+use PHPCfg\Printer\Printer;
 use PHPCfg\Printer\Renderer;
 
 class Literal implements Renderer
 {
-
     protected Printer $printer;
 
     public function __construct(Printer $printer)
@@ -52,8 +48,8 @@ class Literal implements Renderer
         return [
             "kind" => "LITERAL",
             "type" => $operand->type ? "<{$operand->type}>" : "",
-            "value" => var_export($operand->value, true)
+            "value" => var_export($operand->value, true),
         ];
     }
-    
+
 }

@@ -11,18 +11,14 @@ declare(strict_types=1);
 
 namespace PHPCfg\Printer\Renderer\Operand;
 
-use PHPCfg\Func;
-use PHPCfg\Printer\Printer;
-use PHPCfg\Script;
 use PHPCfg\Op;
 use PHPCfg\Operand;
-use PHPCfg\Block;
+use PHPCfg\Printer\Printer;
 use PHPCfg\Printer\Renderer;
 use SplObjectStorage;
 
 class Temporary implements Renderer
 {
-
     protected Printer $printer;
 
     protected SplObjectStorage $varIds;
@@ -35,7 +31,7 @@ class Temporary implements Renderer
 
     public function reset(): void
     {
-        $this->varIds = new SplObjectStorage;
+        $this->varIds = new SplObjectStorage();
     }
 
     public function renderOp(Op $op): ?array
@@ -64,5 +60,5 @@ class Temporary implements Renderer
 
         return $this->varIds[$var] = $this->varIds->count() + 1;
     }
-    
+
 }
