@@ -7,19 +7,19 @@ $d = "aaaa'')";
 -----
 Block#1
     Expr_Assign
-        var: Var#1<$a>
+        var: TEMP(#1 <VARIABLE($a)>)
         expr: LITERAL('aaaa')
-        result: Var#2
+        result: TEMP(#2)
     Expr_Assign
-        var: Var#3<$b>
+        var: TEMP(#3 <VARIABLE($b)>)
         expr: LITERAL('aaaa\')eeee')
-        result: Var#4
+        result: TEMP(#4)
     Expr_Assign
-        var: Var#5<$c>
+        var: TEMP(#5 <VARIABLE($c)>)
         expr: LITERAL('aaaa\')')
-        result: Var#6
+        result: TEMP(#6)
     Expr_Assign
-        var: Var#7<$d>
+        var: TEMP(#7 <VARIABLE($d)>)
         expr: LITERAL('aaaa\'\')')
-        result: Var#8
+        result: TEMP(#8)
     Terminal_Return

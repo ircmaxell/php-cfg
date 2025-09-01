@@ -11,19 +11,19 @@ echo $a;
 -----
 Block#1
     Expr_Assign
-        var: Var#1<$a>
+        var: TEMP(#1 <VARIABLE($a)>)
         expr: LITERAL(1)
-        result: Var#2
+        result: TEMP(#2)
     Expr_Array
-        keys[0]: NULL
-        keys[1]: NULL
-        keys[2]: NULL
+        keys[0]: NULL()
+        keys[1]: NULL()
+        keys[2]: NULL()
         values[0]: LITERAL(1)
         values[1]: LITERAL(2)
         values[2]: LITERAL(3)
-        result: Var#3
+        result: TEMP(#3)
     Iterator_Reset
-        var: Var#3
+        var: TEMP(#3)
     Stmt_Jump
         target: Block#2
 
@@ -31,48 +31,48 @@ Block#2
     Parent: Block#1
     Parent: Block#3
     Parent: Block#5
-    Var#4<$a> = Phi(Var#1<$a>, Var#5<$a>)
+    TEMP(#4 <VARIABLE($a)>) = Phi(TEMP(#1 <VARIABLE($a)>), TEMP(#5 <VARIABLE($a)>))
     Iterator_Valid
-        var: Var#3
-        result: Var#6
+        var: TEMP(#3)
+        result: TEMP(#6)
     Stmt_JumpIf
-        cond: Var#6
+        cond: TEMP(#6)
         if: Block#3
         else: Block#4
 
 Block#3
     Parent: Block#2
     Iterator_Value
-        var: Var#3
-        result: Var#7
+        var: TEMP(#3)
+        result: TEMP(#7)
     Expr_Assign
-        var: Var#8<$b>
-        expr: Var#7
-        result: Var#9
+        var: TEMP(#8 <VARIABLE($b)>)
+        expr: TEMP(#7)
+        result: TEMP(#9)
     Expr_BinaryOp_Greater
-        left: Var#4<$a>
+        left: TEMP(#4 <VARIABLE($a)>)
         right: LITERAL(0)
-        result: Var#10
+        result: TEMP(#10)
     Stmt_JumpIf
-        cond: Var#10
+        cond: TEMP(#10)
         if: Block#5
         else: Block#2
 
 Block#4
     Parent: Block#2
     Terminal_Echo
-        expr: Var#4<$a>
+        expr: TEMP(#4 <VARIABLE($a)>)
     Terminal_Return
 
 Block#5
     Parent: Block#3
     Expr_BinaryOp_Plus
-        left: Var#4<$a>
-        right: Var#8<$b>
-        result: Var#11
+        left: TEMP(#4 <VARIABLE($a)>)
+        right: TEMP(#8 <VARIABLE($b)>)
+        result: TEMP(#11)
     Expr_Assign
-        var: Var#5<$a>
-        expr: Var#11
-        result: Var#12
+        var: TEMP(#5 <VARIABLE($a)>)
+        expr: TEMP(#11)
+        result: TEMP(#12)
     Stmt_Jump
         target: Block#2

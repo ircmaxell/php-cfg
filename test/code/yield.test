@@ -11,16 +11,17 @@ foreach ($generator as $value) {
 }
 -----
 Block#1
-    Stmt_Function<'gen_one_to_three'>
+    Stmt_Function
+        name: gen_one_to_three
     Expr_FuncCall
         name: LITERAL('gen_one_to_three')
-        result: Var#1
+        result: TEMP(#1)
     Expr_Assign
-        var: Var#2<$generator>
-        expr: Var#1
-        result: Var#3
+        var: TEMP(#2 <VARIABLE($generator)>)
+        expr: TEMP(#1)
+        result: TEMP(#3)
     Iterator_Reset
-        var: Var#2<$generator>
+        var: TEMP(#2 <VARIABLE($generator)>)
     Stmt_Jump
         target: Block#2
 
@@ -28,29 +29,29 @@ Block#2
     Parent: Block#1
     Parent: Block#3
     Iterator_Valid
-        var: Var#2<$generator>
-        result: Var#4
+        var: TEMP(#2 <VARIABLE($generator)>)
+        result: TEMP(#4)
     Stmt_JumpIf
-        cond: Var#4
+        cond: TEMP(#4)
         if: Block#3
         else: Block#4
 
 Block#3
     Parent: Block#2
     Iterator_Value
-        var: Var#2<$generator>
-        result: Var#5
+        var: TEMP(#2 <VARIABLE($generator)>)
+        result: TEMP(#5)
     Expr_Assign
-        var: Var#6<$value>
-        expr: Var#5
-        result: Var#7
+        var: TEMP(#6 <VARIABLE($value)>)
+        expr: TEMP(#5)
+        result: TEMP(#7)
     Expr_ConcatList
-        list[0]: Var#6<$value>
+        list[0]: TEMP(#6 <VARIABLE($value)>)
         list[1]: LITERAL('
         ')
-        result: Var#8
+        result: TEMP(#8)
     Terminal_Echo
-        expr: Var#8
+        expr: TEMP(#8)
     Stmt_Jump
         target: Block#2
 
@@ -61,30 +62,30 @@ Block#4
 Function 'gen_one_to_three': mixed
 Block#1
     Expr_Assign
-        var: Var#1<$i>
+        var: TEMP(#1 <VARIABLE($i)>)
         expr: LITERAL(1)
-        result: Var#2
+        result: TEMP(#2)
     Stmt_Jump
         target: Block#2
 
 Block#2
     Parent: Block#1
     Parent: Block#5
-    Var#3<$i> = Phi(Var#1<$i>, Var#4<$i>)
+    TEMP(#3 <VARIABLE($i)>) = Phi(TEMP(#1 <VARIABLE($i)>), TEMP(#4 <VARIABLE($i)>))
     Expr_BinaryOp_SmallerOrEqual
-        left: Var#3<$i>
+        left: TEMP(#3 <VARIABLE($i)>)
         right: LITERAL(3)
-        result: Var#5
+        result: TEMP(#5)
     Stmt_JumpIf
-        cond: Var#5
+        cond: TEMP(#5)
         if: Block#3
         else: Block#4
 
 Block#3
     Parent: Block#2
     Expr_Yield
-        key: Var#3<$i>
-        result: Var#6
+        key: TEMP(#3 <VARIABLE($i)>)
+        result: TEMP(#6)
     Stmt_Jump
         target: Block#5
 
@@ -95,12 +96,12 @@ Block#4
 Block#5
     Parent: Block#3
     Expr_BinaryOp_Plus
-        left: Var#3<$i>
+        left: TEMP(#3 <VARIABLE($i)>)
         right: LITERAL(1)
-        result: Var#7
+        result: TEMP(#7)
     Expr_Assign
-        var: Var#4<$i>
-        expr: Var#7
-        result: Var#8
+        var: TEMP(#4 <VARIABLE($i)>)
+        expr: TEMP(#7)
+        result: TEMP(#8)
     Stmt_Jump
         target: Block#2

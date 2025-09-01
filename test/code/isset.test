@@ -6,12 +6,12 @@ if (isset($a, $b, $c)) {
 -----
 Block#1
     Expr_Isset
-        vars[0]: Var#1<$a>
-        vars[1]: Var#2<$b>
-        vars[2]: Var#3<$c>
-        result: Var#4
+        vars[0]: TEMP(#1 <VARIABLE($a)>)
+        vars[1]: TEMP(#2 <VARIABLE($b)>)
+        vars[2]: TEMP(#3 <VARIABLE($c)>)
+        result: TEMP(#4)
     Stmt_JumpIf
-        cond: Var#4
+        cond: TEMP(#4)
         if: Block#2
         else: Block#3
 

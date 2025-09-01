@@ -42,6 +42,7 @@ class Literal implements Renderer
             // Special case of a literal
             return [
                 "kind" => "NULL",
+                "type" => "",
             ];
         }
         if (!$operand instanceof Operand\Literal) {

@@ -5,7 +5,8 @@ function foo($a) {
 }
 -----
 Block#1
-    Stmt_Function<'NS\foo'>
+    Stmt_Function
+        name: NS\foo
     Terminal_Return
 
 Function 'NS\foo': mixed
@@ -13,6 +14,6 @@ Block#1
     Expr_Param
         declaredType: mixed
         name: LITERAL('a')
-        result: Var#1<$a>
+        result: TEMP(#1 <VARIABLE($a)>)
     Terminal_Return
-        expr: Var#1<$a>
+        expr: TEMP(#1 <VARIABLE($a)>)

@@ -13,7 +13,7 @@ Block#1
     Terminal_Echo
         expr: LITERAL('a')
     Expr_Assign
-        var: Var#1<$aaaa>
+        var: TEMP(#1 <VARIABLE($aaaa)>)
         expr: LITERAL(1)
-        result: Var#2
+        result: TEMP(#2)
     Terminal_Return

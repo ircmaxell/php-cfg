@@ -5,13 +5,13 @@ $x ??= a();
 Block#1
     Expr_FuncCall
         name: LITERAL('a')
-        result: Var#1
+        result: TEMP(#1)
     Expr_BinaryOp_Coalesce
-        left: Var#2<$x>
-        right: Var#1
-        result: Var#3
+        left: TEMP(#2 <VARIABLE($x)>)
+        right: TEMP(#1)
+        result: TEMP(#3)
     Expr_Assign
-        var: Var#4<$x>
-        expr: Var#3
-        result: Var#5
+        var: TEMP(#4 <VARIABLE($x)>)
+        expr: TEMP(#3)
+        result: TEMP(#5)
     Terminal_Return

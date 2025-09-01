@@ -12,94 +12,94 @@ echo $foo->{$arr}[1];
 -----
 Block#1
     Expr_VarVar
-        var: Var#1<$foo>
-        result: Var#2
+        var: TEMP(#1 <VARIABLE($foo)>)
+        result: TEMP(#2)
     Expr_Assign
-        var: Var#2
+        var: TEMP(#2)
         expr: LITERAL('bar')
-        result: Var#3
+        result: TEMP(#3)
     Expr_BinaryOp_Concat
-        left: Var#4<$foo1>
+        left: TEMP(#4 <VARIABLE($foo1)>)
         right: LITERAL('plus')
-        result: Var#5
+        result: TEMP(#5)
     Expr_BinaryOp_Concat
-        left: Var#5
-        right: Var#6<$foo2>
-        result: Var#7
+        left: TEMP(#5)
+        right: TEMP(#6 <VARIABLE($foo2)>)
+        result: TEMP(#7)
     Expr_VarVar
-        var: Var#7
-        result: Var#8
+        var: TEMP(#7)
+        result: TEMP(#8)
     Expr_Assign
-        var: Var#8
+        var: TEMP(#8)
         expr: LITERAL('bar')
-        result: Var#9
+        result: TEMP(#9)
     Expr_VarVar
-        var: Var#1<$foo>
-        result: Var#10
+        var: TEMP(#1 <VARIABLE($foo)>)
+        result: TEMP(#10)
     Expr_Assign
-        var: Var#10
+        var: TEMP(#10)
         expr: LITERAL('bar')
-        result: Var#11
+        result: TEMP(#11)
     Expr_VarVar
-        var: Var#12<$a>
-        result: Var#13
+        var: TEMP(#12 <VARIABLE($a)>)
+        result: TEMP(#13)
     Expr_VarVar
-        var: Var#13
-        result: Var#14
+        var: TEMP(#13)
+        result: TEMP(#14)
     Expr_VarVar
-        var: Var#14
-        result: Var#15
+        var: TEMP(#14)
+        result: TEMP(#15)
     Expr_VarVar
-        var: Var#15
-        result: Var#16
+        var: TEMP(#15)
+        result: TEMP(#16)
     Expr_VarVar
-        var: Var#16
-        result: Var#17
+        var: TEMP(#16)
+        result: TEMP(#17)
     Expr_VarVar
-        var: Var#17
-        result: Var#18
+        var: TEMP(#17)
+        result: TEMP(#18)
     Expr_Assign
-        var: Var#18
+        var: TEMP(#18)
         expr: LITERAL('b')
-        result: Var#19
+        result: TEMP(#19)
     Expr_ArrayDimFetch
-        var: Var#20<$baz>
+        var: TEMP(#20 <VARIABLE($baz)>)
         dim: LITERAL(1)
-        result: Var#21
+        result: TEMP(#21)
     Expr_PropertyFetch
-        var: Var#1<$foo>
-        name: Var#21
-        result: Var#22
+        var: TEMP(#1 <VARIABLE($foo)>)
+        name: TEMP(#21)
+        result: TEMP(#22)
     Terminal_Echo
-        expr: Var#22
+        expr: TEMP(#22)
     Expr_BinaryOp_Concat
-        left: Var#23<$start>
-        right: Var#24<$end>
-        result: Var#25
+        left: TEMP(#23 <VARIABLE($start)>)
+        right: TEMP(#24 <VARIABLE($end)>)
+        result: TEMP(#25)
     Expr_PropertyFetch
-        var: Var#1<$foo>
-        name: Var#25
-        result: Var#26
+        var: TEMP(#1 <VARIABLE($foo)>)
+        name: TEMP(#25)
+        result: TEMP(#26)
     Terminal_Echo
-        expr: Var#26
+        expr: TEMP(#26)
     Expr_ArrayDimFetch
-        var: Var#27<$arr>
+        var: TEMP(#27 <VARIABLE($arr)>)
         dim: LITERAL(1)
-        result: Var#28
+        result: TEMP(#28)
     Expr_PropertyFetch
-        var: Var#1<$foo>
-        name: Var#28
-        result: Var#29
+        var: TEMP(#1 <VARIABLE($foo)>)
+        name: TEMP(#28)
+        result: TEMP(#29)
     Terminal_Echo
-        expr: Var#29
+        expr: TEMP(#29)
     Expr_PropertyFetch
-        var: Var#1<$foo>
-        name: Var#27<$arr>
-        result: Var#30
+        var: TEMP(#1 <VARIABLE($foo)>)
+        name: TEMP(#27 <VARIABLE($arr)>)
+        result: TEMP(#30)
     Expr_ArrayDimFetch
-        var: Var#30
+        var: TEMP(#30)
         dim: LITERAL(1)
-        result: Var#31
+        result: TEMP(#31)
     Terminal_Echo
-        expr: Var#31
+        expr: TEMP(#31)
     Terminal_Return

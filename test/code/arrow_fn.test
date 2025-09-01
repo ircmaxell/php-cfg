@@ -7,23 +7,24 @@ var_dump($b);
 -----
 Block#1
     Expr_Assign
-        var: Var#1<$b>
+        var: TEMP(#1 <VARIABLE($b)>)
         expr: LITERAL(1)
-        result: Var#2
-    Expr_ArrowFunction<'{anonymous}#1'>
-        result: Var#3
+        result: TEMP(#2)
+    Expr_ArrowFunction
+        name: {anonymous}#1
+        result: TEMP(#3)
     Expr_Assign
-        var: Var#4<$fn>
-        expr: Var#3
-        result: Var#5
+        var: TEMP(#4 <VARIABLE($fn)>)
+        expr: TEMP(#3)
+        result: TEMP(#5)
     Expr_FuncCall
-        name: Var#4<$fn>
+        name: TEMP(#4 <VARIABLE($fn)>)
         args[0]: LITERAL(3)
-        result: Var#6
+        result: TEMP(#6)
     Expr_FuncCall
         name: LITERAL('var_dump')
-        args[0]: Var#1<$b>
-        result: Var#7
+        args[0]: TEMP(#1 <VARIABLE($b)>)
+        result: TEMP(#7)
     Terminal_Return
 
 Function '{anonymous}#1': mixed
@@ -31,18 +32,18 @@ Block#1
     Expr_Param
         declaredType: mixed
         name: LITERAL('a')
-        result: Var#1<$a>
+        result: TEMP(#1 <VARIABLE($a)>)
     Expr_BinaryOp_Plus
-        left: Var#2<$b>
+        left: TEMP(#2 <VARIABLE($b)>)
         right: LITERAL(1)
-        result: Var#3
+        result: TEMP(#3)
     Expr_Assign
-        var: Var#4<$b>
-        expr: Var#3
-        result: Var#5
+        var: TEMP(#4 <VARIABLE($b)>)
+        expr: TEMP(#3)
+        result: TEMP(#5)
     Expr_BinaryOp_Mul
-        left: Var#4<$b>
-        right: Var#1<$a>
-        result: Var#6
+        left: TEMP(#4 <VARIABLE($b)>)
+        right: TEMP(#1 <VARIABLE($a)>)
+        result: TEMP(#6)
     Terminal_Return
-        expr: Var#6
+        expr: TEMP(#6)

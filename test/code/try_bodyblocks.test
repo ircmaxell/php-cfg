@@ -17,20 +17,20 @@ try {
 Block#1
     Stmt_Try
         catchTypes[0]: Exception
-        catchVars[0]: Var#1<$e>
+        catchVars[0]: TEMP(#1 <VARIABLE($e)>)
         body: Block#2
         catch[0]: Block#3
         finally: Block#4
 
 Block#2
     Parent: Block#1
-        catchTarget<Exception>(Var#1<$e>): Block#3
+        catchTarget<Exception>(TEMP(#1 <VARIABLE($e)>)): Block#3
         finallyTarget: Block#4
     Expr_FuncCall
         name: LITERAL('doBar')
-        result: Var#2
+        result: TEMP(#2)
     Stmt_JumpIf
-        cond: Var#2
+        cond: TEMP(#2)
         if: Block#5
         else: Block#6
 
@@ -42,9 +42,9 @@ Block#3
     Parent: Block#7
     Parent: Block#8
         finallyTarget: Block#4
-    Var#3<$e> = Phi(Var#1<$e>, Var#4<$e>, Var#5<$e>)
+    TEMP(#3 <VARIABLE($e)>) = Phi(TEMP(#1 <VARIABLE($e)>), TEMP(#4 <VARIABLE($e)>), TEMP(#5 <VARIABLE($e)>))
     Terminal_Return
-        expr: Var#3<$e>
+        expr: TEMP(#3 <VARIABLE($e)>)
 
 Block#4
     Parent: Block#2
@@ -59,51 +59,51 @@ Block#4
 
 Block#5
     Parent: Block#2
-        catchTarget<Exception>(Var#1<$e>): Block#3
+        catchTarget<Exception>(TEMP(#1 <VARIABLE($e)>)): Block#3
         finallyTarget: Block#4
     Expr_New
         class: LITERAL('Exception')
         args[0]: LITERAL('foo')
-        result: Var#6
+        result: TEMP(#6)
     Terminal_Throw
-        expr: Var#6
+        expr: TEMP(#6)
 
 Block#6
     Parent: Block#2
-        catchTarget<Exception>(Var#1<$e>): Block#3
+        catchTarget<Exception>(TEMP(#1 <VARIABLE($e)>)): Block#3
         finallyTarget: Block#4
     Expr_FuncCall
         name: LITERAL('doFoo')
-        result: Var#7
+        result: TEMP(#7)
     Stmt_JumpIf
-        cond: Var#7
+        cond: TEMP(#7)
         if: Block#7
         else: Block#8
 
 Block#7
     Parent: Block#6
-        catchTarget<Exception>(Var#1<$e>): Block#3
+        catchTarget<Exception>(TEMP(#1 <VARIABLE($e)>)): Block#3
         finallyTarget: Block#4
     Expr_FuncCall
         name: LITERAL('doFi')
-        result: Var#8
+        result: TEMP(#8)
     Stmt_Jump
         target: Block#9
 
 Block#8
     Parent: Block#6
-        catchTarget<Exception>(Var#1<$e>): Block#3
+        catchTarget<Exception>(TEMP(#1 <VARIABLE($e)>)): Block#3
         finallyTarget: Block#4
     Expr_FuncCall
         name: LITERAL('doFi')
-        result: Var#9
+        result: TEMP(#9)
     Stmt_Jump
         target: Block#9
 
 Block#9
     Parent: Block#7
     Parent: Block#8
-        catchTarget<Exception>(Var#1<$e>): Block#3
+        catchTarget<Exception>(TEMP(#1 <VARIABLE($e)>)): Block#3
         finallyTarget: Block#4
     Stmt_Jump
         target: Block#4

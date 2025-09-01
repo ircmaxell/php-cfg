@@ -11,15 +11,15 @@ Block#1
         stmts: Block#2
     Expr_New
         class: LITERAL('NS\\NameOfClass')
-        result: Var#1
+        result: TEMP(#1)
     Expr_Assign
-        var: Var#2<$obj>
-        expr: Var#1
-        result: Var#3
+        var: TEMP(#2 <VARIABLE($obj)>)
+        expr: TEMP(#1)
+        result: TEMP(#3)
     Terminal_Return
 
 Block#2
     Stmt_Property
-        flags: public
         declaredType: ?NS\NameOfClass
+        flags: public
         name: LITERAL('self')

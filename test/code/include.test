@@ -6,21 +6,21 @@ require_once($foo);
 -----
 Block#1
     Expr_Include
+        expr: TEMP(#1 <VARIABLE($foo)>)
+        result: TEMP(#2)
         type: include
-        expr: Var#1<$foo>
-        result: Var#2
     Expr_Include
+        expr: TEMP(#1 <VARIABLE($foo)>)
+        result: TEMP(#3)
         type: include_once
-        expr: Var#1<$foo>
-        result: Var#3
     Expr_Include
+        expr: TEMP(#1 <VARIABLE($foo)>)
+        result: TEMP(#4)
         type: require
-        expr: Var#1<$foo>
-        result: Var#4
     Expr_Include
+        expr: TEMP(#1 <VARIABLE($foo)>)
+        result: TEMP(#5)
         type: require_once
-        expr: Var#1<$foo>
-        result: Var#5
     Terminal_Return
 
 

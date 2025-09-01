@@ -5,21 +5,21 @@ var_dump(empty($a['b']));
 -----
 Block#1
     Expr_Empty
-        expr: Var#1<$a>
-        result: Var#2
+        expr: TEMP(#1 <VARIABLE($a)>)
+        result: TEMP(#2)
     Expr_FuncCall
         name: LITERAL('var_dump')
-        args[0]: Var#2
-        result: Var#3
+        args[0]: TEMP(#2)
+        result: TEMP(#3)
     Expr_ArrayDimFetch
-        var: Var#1<$a>
+        var: TEMP(#1 <VARIABLE($a)>)
         dim: LITERAL('b')
-        result: Var#4
+        result: TEMP(#4)
     Expr_Empty
-        expr: Var#4
-        result: Var#5
+        expr: TEMP(#4)
+        result: TEMP(#5)
     Expr_FuncCall
         name: LITERAL('var_dump')
-        args[0]: Var#5
-        result: Var#6
+        args[0]: TEMP(#5)
+        result: TEMP(#6)
     Terminal_Return
