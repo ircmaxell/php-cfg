@@ -13,7 +13,7 @@ use LogicException;
 use PHPCfg\Op;
 use RuntimeException;
 
-class Parser
+class Helper
 {
     public const KIND_VAR = 1;
     public const KIND_PARAM = 2;
@@ -54,9 +54,20 @@ class Parser
         return self::makeCachedType(Type::TYPE_NULL);
     }
 
-    public static function object(): Type
+    public static function object(?string $userType = null): Type
     {
+        if ($userType !== null) {
+            return new Type(Type::TYPE_OBJECT, [], $userType);
+        }
         return self::makeCachedType(Type::TYPE_OBJECT);
+    }
+
+    public static function array(?Type $subType = null): Type
+    {
+        if ($subType !== null) {
+            return new Type(Type::TYPE_ARRAY, [$subType]);
+        }
+        return self::makeCachedType(Type::TYPE_ARRAY);
     }
 
     public static function void(): Type
@@ -64,12 +75,14 @@ class Parser
         return self::makeCachedType(Type::TYPE_VOID);
     }
 
+    public static function callable(): Type
+    {
+        return self::makeCachedType(Type::TYPE_CALLABLE);
+    }
+
     public static function nullable(Type $type): Type
     {
-        return (new Type(Type::TYPE_UNION, [
-            $type,
-            new Type(Type::TYPE_NULL),
-        ]))->simplify();
+        return static::union($type, static::null())->simplify();
     }
 
     private static function makeCachedType(int $key): Type
@@ -83,7 +96,7 @@ class Parser
     public static function numeric(): Type
     {
         if (!isset(self::$typeCache["numeric"])) {
-            self::$typeCache["numeric"] = new Type(Type::TYPE_UNION, [self::int(), self::float()]);
+            self::$typeCache["numeric"] = static::union(static::int(), static::float());
         }
         return self::$typeCache["numeric"];
     }
@@ -96,14 +109,19 @@ class Parser
             foreach (Type::getPrimitives() as $key => $name) {
                 $subs[] = self::makeCachedType($key);
             }
-            self::$typeCache["mixed"] = new Type(Type::TYPE_UNION, $subs);
+            self::$typeCache["mixed"] = static::union(...$subs);
         }
         return self::$typeCache["mixed"];
     }
 
     public static function union(Type ...$subTypes): Type
     {
-        return new Type(Type::TYPE_UNION, $subTypes);
+        return (new Type(Type::TYPE_UNION, $subTypes))->simplify();
+    }
+
+    public static function intersection(Type ...$subTypes): Type
+    {
+        return (new Type(Type::TYPE_INTERSECTION, $subTypes))->simplify();
     }
 
     /**
@@ -153,38 +171,41 @@ class Parser
             case 'bool':
             case 'false':
             case 'true':
-                return new Type(Type::TYPE_BOOLEAN);
+                return static::bool();
             case 'integer':
             case 'int':
-                return new Type(Type::TYPE_LONG);
+                return static::int();
             case 'double':
             case 'real':
             case 'float':
-                return new Type(Type::TYPE_DOUBLE);
+                return static::float();
             case 'string':
-                return new Type(Type::TYPE_STRING);
+                return static::string();
             case 'array':
-                return new Type(Type::TYPE_ARRAY);
+                return static::array();
             case 'callable':
-                return new Type(Type::TYPE_CALLABLE);
+                return static::callable();
             case 'null':
+                return static::null();
             case 'void':
-                return new Type(Type::TYPE_NULL);
+                return static::void();
             case 'numeric':
                 return static::parseDecl('int|float');
+            case 'mixed':
+                return static::mixed();
         }
         if (strpos($decl, '|') !== false || strpos($decl, '&') !== false || strpos($decl, '(') !== false) {
             return self::parseCompexDecl($decl)->simplify();
         }
         if (substr($decl, -2) === '[]') {
             $type = static::parseDecl(substr($decl, 0, -2));
-            return new Type(Type::TYPE_ARRAY, [$type]);
+            return static::array($type);
         }
         $regex = '(^([a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*\\\\)*[a-zA-Z_\x7f-\xff][a-zA-Z0-9_\x7f-\xff]*$)';
-        if (!preg_match($regex, $decl)) {
-            throw new RuntimeException("Unknown type declaration found: $decl");
+        if ($decl === 'unknown' || !preg_match($regex, $decl)) {
+            return static::unknown();
         }
-        return new Type(Type::TYPE_OBJECT, [], $decl);
+        return static::object($decl);
     }
 
     private static function parseCompexDecl(string $decl): Type
@@ -231,9 +252,9 @@ class Parser
             $combinator = substr($decl, $pos, 1);
         }
         if ($combinator === '|') {
-            return new Type(Type::TYPE_UNION, [$left, $right]);
+            return static::union($left, $right);
         } elseif ($combinator === '&') {
-            return new Type(Type::TYPE_INTERSECTION, [$left, $right]);
+            return static::intersection($left, $right);
         }
         throw new RuntimeException("Unknown combinator $combinator");
     }
@@ -258,16 +279,11 @@ class Parser
             return self::nullable(static::fromOpType($type->subtype));
         }
         if ($type instanceof Op\Type\Union) {
-            return (new Type(
-                Type::TYPE_UNION,
-                array_map(fn($sub) => static::fromOpType($sub), $type->subtypes)
-            ))->simplify();
+            return static::union(...array_map(fn($sub) => static::fromOpType($sub), $type->subtypes))->simplify();
         }
         if ($type instanceof Op\Type\Intersection) {
-            return (new Type(
-                Type::TYPE_INTERSECTION,
-                array_map(fn($sub) => static::fromOpType($sub), $type->subtypes)
-            ))->simplify();
+            return static::intersection(...array_map(fn($sub) => static::fromOpType($sub), $type->subtypes)
+            )->simplify();
         }
         throw new LogicException("Unknown type " . $type->getType());
     }

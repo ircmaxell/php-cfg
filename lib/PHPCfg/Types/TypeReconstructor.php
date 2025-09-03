@@ -33,11 +33,11 @@ class TypeReconstructor
             if (!empty($op->type) && $op->type->type !== Type::TYPE_UNKNOWN) {
                 $resolved[$op] = $op->type;
             } elseif ($op instanceof Operand\BoundVariable && $op->scope === Operand\BoundVariable::SCOPE_OBJECT) {
-                $resolved[$op] = $op->type = Parser::parseDecl($op->extra->name);
+                $resolved[$op] = $op->type = Helper::parseDecl($op->extra->name);
             } elseif ($op instanceof Operand\Literal) {
-                $resolved[$op] = $op->type = Parser::fromValue($op->value);
+                $resolved[$op] = $op->type = Helper::fromValue($op->value);
             } else {
-                $unresolved[$op] = Parser::unknown();
+                $unresolved[$op] = Helper::unknown();
             }
         }
 
@@ -82,7 +82,7 @@ class TypeReconstructor
                 $same = false;
             }
             if ($type->type === Type::TYPE_UNKNOWN) {
-                return Parser::unknown();
+                return Helper::unknown();
             }
         }
         if ($same) {
@@ -95,7 +95,7 @@ class TypeReconstructor
     {
         foreach ($this->state->tryStmts as $try) {
             foreach ($try->catchVars as $id => $var) {
-                $var->type = Parser::fromOpType($try->catchTypes[$id]);
+                $var->type = Helper::fromOpType($try->catchTypes[$id]);
             }
         }
     }
@@ -149,16 +149,16 @@ class TypeReconstructor
             case 'Expr_Cast_Bool':
             case 'Expr_Empty':
             case 'Expr_Isset':
-                return [Parser::bool()];
+                return [Helper::bool()];
             case 'Expr_BinaryOp_BitwiseAnd':
             case 'Expr_BinaryOp_BitwiseOr':
             case 'Expr_BinaryOp_BitwiseXor':
                 if ($resolved->contains($op->left) && $resolved->contains($op->right)) {
                     switch ([$resolved[$op->left]->type, $resolved[$op->right]->type]) {
                         case [Type::TYPE_STRING, Type::TYPE_STRING]:
-                            return [Parser::string()];
+                            return [Helper::string()];
                         default:
-                            return [Parser::int()];
+                            return [Helper::int()];
                     }
                 }
                 return null;
@@ -166,9 +166,9 @@ class TypeReconstructor
                 if ($resolved->contains($op->expr)) {
                     switch ($resolved[$op->expr]->type) {
                         case Type::TYPE_STRING:
-                            return [Parser::string()];
+                            return [Helper::string()];
                         default:
-                            return [Parser::int()];
+                            return [Helper::int()];
                     }
                 }
                 return null;
@@ -179,11 +179,11 @@ class TypeReconstructor
                 if ($resolved->contains($op->left) && $resolved->contains($op->right)) {
                     switch ([$resolved[$op->left]->type, $resolved[$op->right]->type]) {
                         case [Type::TYPE_LONG, Type::TYPE_LONG]:
-                            return [Parser::int()];
+                            return [Helper::int()];
                         case [Type::TYPE_DOUBLE, TYPE::TYPE_LONG]:
                         case [Type::TYPE_LONG, TYPE::TYPE_DOUBLE]:
                         case [Type::TYPE_DOUBLE, TYPE::TYPE_DOUBLE]:
-                            return [Parser::float()];
+                            return [Helper::float()];
                         case [Type::TYPE_ARRAY, Type::TYPE_ARRAY]:
                             $sub = $this->computeMergedType(...array_merge($resolved[$op->left]->subTypes, $resolved[$op->right]->subTypes));
                             if ($sub) {
@@ -191,7 +191,7 @@ class TypeReconstructor
                             }
                             return [new Type(Type::TYPE_ARRAY)];
                         default:
-                            return [Parser::mixed()];
+                            return [Helper::mixed()];
                             throw new RuntimeException("Math op on unknown types {$resolved[$op->left]} + {$resolved[$op->right]}");
                     }
                 }
@@ -199,15 +199,15 @@ class TypeReconstructor
             case 'Expr_BinaryOp_Concat':
             case 'Expr_Cast_String':
             case 'Expr_ConcatList':
-                return [Parser::string()];
+                return [Helper::string()];
             case 'Expr_BinaryOp_Mod':
             case 'Expr_BinaryOp_ShiftLeft':
             case 'Expr_BinaryOp_ShiftRight':
             case 'Expr_Cast_Int':
             case 'Expr_Print':
-                return [Parser::int()];
+                return [Helper::int()];
             case 'Expr_Cast_Double':
-                return [Parser::float()];
+                return [Helper::float()];
             case 'Expr_UnaryMinus':
             case 'Expr_UnaryPlus':
                 if ($resolved->contains($op->expr)) {
@@ -216,7 +216,7 @@ class TypeReconstructor
                         case Type::TYPE_DOUBLE:
                             return [$resolved[$op->expr]];
                     }
-                    return [Parser::numeric()];
+                    return [Helper::numeric()];
                 }
                 return null;
             case 'Expr_Eval':
@@ -229,9 +229,9 @@ class TypeReconstructor
                 return null;
             case 'Expr_Exit':
             case 'Iterator_Reset':
-                return [Parser::null()];
+                return [Helper::null()];
             case 'Iterator_Valid':
-                return [Parser::bool()];
+                return [Helper::bool()];
             case 'Iterator_Value':
                 if ($resolved->contains($op->var)) {
                     if ($resolved[$op->var]->subTypes) {
@@ -247,7 +247,7 @@ class TypeReconstructor
                         var_dump($op);
                         throw new LogicException("Scope is null with a static call?");
                     }
-                    $type = Parser::fromOpType($op->scope);
+                    $type = Helper::fromOpType($op->scope);
                 } else {
                     $type = $this->getClassType($op->class, $resolved);
                 }
@@ -306,7 +306,7 @@ class TypeReconstructor
             if ($type->type === Type::TYPE_STRING) {
                 return [$type];
             }
-            return [Parser::mixed()];
+            return [Helper::mixed()];
         }
         return null;
     }
@@ -338,7 +338,7 @@ class TypeReconstructor
     protected function resolveOp_Expr_Cast_Object(Operand $var, Op\Expr\Cast\Object_ $op, SplObjectStorage $resolved): ?array
     {
         if ($resolved->contains($op->expr)) {
-            if ($resolved[$op->expr]->type->resolves(Parser::object())) {
+            if ($resolved[$op->expr]->type->resolves(Helper::object())) {
                 return [$resolved[$op->expr]];
             }
             return [new Type(Type::TYPE_OBJECT, [], 'stdClass')];
@@ -395,10 +395,10 @@ class TypeReconstructor
             $result = [];
             foreach ($this->state->functionLookup[$name] as $func) {
                 if ($func->returnType) {
-                    $result[] = Parser::parseDecl($func->returnType->value);
+                    $result[] = Helper::parseDecl($func->returnType->value);
                 } else {
                     // Check doc comment
-                    $result[] = Parser::extractTypeFromComment("return", $func->getAttribute('doccomment'));
+                    $result[] = Helper::extractTypeFromComment("return", $func->getAttribute('doccomment'));
                 }
             }
             return $result;
@@ -408,7 +408,7 @@ class TypeReconstructor
                 if (empty($type['return'])) {
                     return null;
                 }
-                return [Parser::parseDecl($type['return'])];
+                return [Helper::parseDecl($type['return'])];
             }
         }
         // we can't resolve the function
@@ -421,16 +421,16 @@ class TypeReconstructor
         if ($type) {
             return [$type];
         }
-        return [Parser::object()];
+        return [Helper::object()];
     }
 
     protected function resolveOp_Expr_Param(Operand $var, Op\Expr\Param $op, SplObjectStorage $resolved): ?array
     {
         if ($op->declaredType) {
-            $type = Parser::fromOpType($op->declaredType);
+            $type = Helper::fromOpType($op->declaredType);
             return [$type];
         }
-        return [Parser::mixed()];
+        return [Helper::mixed()];
         //return [$docType];
     }
 
@@ -443,7 +443,7 @@ class TypeReconstructor
     {
         if (!$op->name instanceof Operand\Literal) {
             // variable property fetch
-            return [Parser::mixed()];
+            return [Helper::mixed()];
         }
         $propName = $op->name->value;
         if ($op instanceof Op\Expr\StaticPropertyFetch) {
@@ -473,9 +473,9 @@ class TypeReconstructor
             switch ($constant) {
                 case 'true':
                 case 'false':
-                    return [Parser::bool()];
+                    return [Helper::bool()];
                 case 'null':
-                    return [Parser::null()];
+                    return [Helper::null()];
                 default:
                     if (isset($this->state->constants[$op->name->value])) {
                         $return = [];
@@ -567,9 +567,9 @@ class TypeReconstructor
             foreach ($class->stmts->children as $stmt) {
                 if ($stmt instanceof Op\Stmt\Property) {
                     if ($stmt->declaredType) {
-                        $stmt->type = Parser::parseDecl($stmt->declaredType->name);
+                        $stmt->type = Helper::parseDecl($stmt->declaredType->name);
                     } else {
-                        $stmt->type = Parser::extractTypeFromComment("var", $stmt->getAttribute('doccomment'));
+                        $stmt->type = Helper::extractTypeFromComment("var", $stmt->getAttribute('doccomment'));
                     }
                 }
             }
@@ -685,13 +685,13 @@ class TypeReconstructor
                     if (isset($this->state->internalTypeInfo->methods[$child]['methods'][$methodName])) {
                         $method = $this->state->internalTypeInfo->methods[$child]['methods'][$methodName];
                         if ($method['return']) {
-                            return Parser::parseDecl($method['return']);
+                            return Helper::parseDecl($method['return']);
                         }
                     }
                 }
             }
             // Unknown method call, assume mixed
-            return Parser::mixed();
+            return Helper::mixed();
         }
         foreach ($this->state->classResolves[$className] as $class) {
             $method = $this->findMethod($class, $methodName);
@@ -699,10 +699,10 @@ class TypeReconstructor
                 continue;
             }
             if (isset($method->func->returnType)) {
-                return Parser::parseDecl($method->func->returnType->name);
+                return Helper::parseDecl($method->func->returnType->name);
             }
         }
-        return Parser::mixed();
+        return Helper::mixed();
     }
 
     private function resolveMethodCall(Type $class, $name, Op $op, SplObjectStorage $resolved): ?array
@@ -722,7 +722,7 @@ class TypeReconstructor
             return new Type(Type::TYPE_OBJECT, [], $var->value);
         } elseif ($var instanceof Operand\BoundVariable && $var->scope === Operand\BoundVariable::SCOPE_OBJECT) {
             assert($var->extra instanceof Op\Type\Literal);
-            return Parser::parseDecl($var->extra->name);
+            return Helper::parseDecl($var->extra->name);
         } elseif ($resolved->contains($var)) {
             $type = $resolved[$var];
             return $type;
@@ -753,7 +753,7 @@ class TypeReconstructor
     {
         if ($assertion->value instanceof Operand) {
             if ($assertion->value instanceof Operand\Literal) {
-                return Parser::parseDecl($assertion->value->value);
+                return Helper::parseDecl($assertion->value->value);
             }
             if (isset($resolved[$assertion->value])) {
                 return $resolved[$assertion->value];

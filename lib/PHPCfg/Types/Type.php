@@ -35,17 +35,17 @@ class Type
         self::TYPE_INTERSECTION => self::TYPE_INTERSECTION,
     ];
 
-    public int $type = 0;
+    public readonly int $type;
 
     /**
      * @var Type[]
      */
-    public array $subTypes = [];
+    public readonly array $subTypes;
 
     /**
      * @var string
      */
-    public string $userType = '';
+    public readonly ?string $userType;
 
     /**
      * Get the primitives
@@ -74,16 +74,21 @@ class Type
     public function __construct(int $type, array $subTypes = [], ?string $userType = null)
     {
         $this->type = $type;
-        if ($type === self::TYPE_OBJECT) {
-            $this->userType = (string) $userType;
+        if ($type === self::TYPE_OBJECT && $userType !== null) {
+            $this->userType = $userType;
+            $this->subTypes = [];
         } elseif (isset(self::HAS_SUBTYPES[$type])) {
-            $this->subTypes = $subTypes;
-            foreach ($subTypes as $sub) {
-                if (!$sub instanceof Type) {
-                    throw new RuntimeException("Sub types must implement Type");
-                }
-            }
+            $this->setSubTypes(...$subTypes);
+            $this->userType = null;
+        } else {
+            $this->userType = null;
+            $this->subTypes = [];
         }
+    }
+
+    private function setSubTypes(Type ...$subTypes): void
+    {
+        $this->subTypes = $subTypes;
     }
 
     /**
@@ -96,6 +101,9 @@ class Type
         if ($this->type === Type::TYPE_UNKNOWN) {
             $ctr--;
             return "unknown";
+        } elseif ($this->type === Type::TYPE_VOID) {
+            $ctr--;
+            return 'void';
         }
         $primitives = self::getPrimitives();
         if (isset($primitives[$this->type])) {
@@ -109,10 +117,15 @@ class Type
         }
         $value = '';
         if ($this->type === Type::TYPE_UNION) {
-            $value = implode('|', $this->subTypes);
+            if ($this->equals(Helper::mixed())) {
+                $value = 'mixed';
+            } else {
+                $value = implode('|', $this->subTypes);
+            }
         } elseif ($this->type === Type::TYPE_INTERSECTION) {
             $value = implode('&', $this->subTypes);
         } else {
+            $ctr = 0;
             throw new RuntimeException("Assertion failure: unknown type {$this->type}");
         }
         $ctr--;
@@ -157,22 +170,53 @@ class Type
         if ($this->type !== Type::TYPE_UNION && $this->type !== Type::TYPE_INTERSECTION) {
             return $this;
         }
+        $rerun = false;
         $new = [];
+
         foreach ($this->subTypes as $subType) {
             $subType = $subType->simplify();
             if ($this->type === $subType->type) {
                 $new = array_merge($new, $subType->subTypes);
+                // Flattened, re-run simplification
+                $rerun = true;
             } else {
-                $new[] = $subType->simplify();
+                $simplifiedSubType = $subType->simplify();
+                $skip = false;
+                foreach ($new as $t) {
+                    if ($t->equals($simplifiedSubType)) {
+                        // Skip duplicate types
+                        $skip = true;
+                    }
+                }
+                if (!$skip) {
+                    $new[] = $subType->simplify();
+                }
             }
         }
         // TODO: compute redundant unions
         if (count($new) === 1) {
-            return $new[0];
+            $type = $new[0];
         } elseif (empty($new)) {
-            return Parser::void();
+            return Helper::void();
+        } else {
+            $type = (new Type($this->type, $new));
         }
-        return (new Type($this->type, $new));
+        return $rerun ? $type->simplify() : $type;
+    }
+
+    public function resolves(Type $type): bool
+    {
+        if ($this->equals($type)) {
+            return true;
+        }
+        if ($this->type !== Type::TYPE_OBJECT || $type->type !== Type::TYPE_OBJECT) {
+            return false;
+        }
+        // check to see if this is a super-set of type
+        if ($this->userType === null) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -189,6 +233,12 @@ class Type
             return false;
         }
         if ($type->type === Type::TYPE_OBJECT) {
+            if ($type->userType === null && $this->userType === null) {
+                // not reachable since top $type === $this check catches
+            } elseif ($type->userType !== null XOR $this->userType !== null) {
+                // One is typed, the other isn't
+                return false;
+            }
             return strtolower($type->userType) === strtolower($this->userType);
         }
         // TODO: handle sub types
@@ -225,18 +275,18 @@ class Type
         if (!isset(self::HAS_SUBTYPES[$this->type])) {
             if ($this->equals($type)) {
                 // left with an unknown type
-                return Parser::unknown();
+                return Helper::unknown();
             }
             return $this;
         }
         $new = [];
         foreach ($this->subTypes as $key => $st) {
-            if (!$st->equals($type)) {
+            if (!$type->resolves($st)) {
                 $new[] = $st;
             }
         }
         if (empty($new)) {
-            return Parser::void();
+            return Helper::void();
         } elseif (count($new) === 1) {
             return $new[0];
         }

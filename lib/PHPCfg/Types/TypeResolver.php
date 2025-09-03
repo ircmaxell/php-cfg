@@ -18,7 +18,7 @@ class TypeResolver
     public function __construct(State $state)
     {
         $this->state = $state;
-        $this->callableUnion = Parser::parseDecl("string|array|object");
+        $this->callableUnion = Helper::parseDecl("string|array|object");
     }
 
     public function resolves(Type $a, Type $b): bool
