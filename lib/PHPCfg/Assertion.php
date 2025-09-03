@@ -13,7 +13,7 @@ namespace PHPCfg;
 
 use RuntimeException;
 
-class Assertion
+abstract class Assertion
 {
     public const MODE_NONE = 0;
 

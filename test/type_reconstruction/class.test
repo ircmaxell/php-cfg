@@ -1,0 +1,52 @@
+<?php
+
+class A {
+    public function foo(string $abc): int {
+        return $this->bar($abc);
+    }
+
+    protected function bar(float $def): int {
+        return floor($def);
+    }
+}
+-----
+Block#1
+    Stmt_Class
+        name: A
+        stmts: Block#2
+    Terminal_Return
+
+Block#2
+    Stmt_ClassMethod
+        name: foo
+        flags: public
+    Stmt_ClassMethod
+        name: bar
+        flags: protected
+
+Function 'A::foo': int
+Block#1
+    Expr_Param
+        declaredType: string
+        name: LITERAL<string>('abc')
+        result: TEMP<string>(#1 <VARIABLE($abc)>)
+    Expr_MethodCall
+        var: VARIABLE<A>(this $this)
+        name: LITERAL<string>('bar')
+        args[0]: TEMP<string>(#1 <VARIABLE($abc)>)
+        result: TEMP<int>(#2)
+    Terminal_Return
+        expr: TEMP<int>(#2)
+
+Function 'A::bar': int
+Block#1
+    Expr_Param
+        declaredType: float
+        name: LITERAL<string>('def')
+        result: TEMP<float>(#1 <VARIABLE($def)>)
+    Expr_FuncCall
+        name: LITERAL<string>('floor')
+        args[0]: TEMP<float>(#1 <VARIABLE($def)>)
+        result: TEMP<int>(#2)
+    Terminal_Return
+        expr: TEMP<int>(#2)

@@ -1,0 +1,15 @@
+<?php
+
+$x = 1;
+$y = 2;
+-----
+Block#1
+    Expr_Assign
+        var: TEMP<int>(#1 <VARIABLE($x)>)
+        expr: LITERAL<int>(1)
+        result: TEMP<int>(#2)
+    Expr_Assign
+        var: TEMP<int>(#3 <VARIABLE($y)>)
+        expr: LITERAL<int>(2)
+        result: TEMP<int>(#4)
+    Terminal_Return

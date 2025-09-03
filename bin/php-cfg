@@ -1,6 +1,19 @@
 #!/usr/bin/env php
 <?php
-require_once(__DIR__ . '/../vendor/autoload.php');
+
+$startFolder = realpath(__DIR__ . '/../vendor/');
+
+$n = 0;
+while (!empty($startFolder) && !file_exists($startFolder . "/autoload.php")) {
+    $startFolder = dirname($startFolder);
+    $n++;
+}
+if ($n > 5) {
+    echo "Too deep nesting, could not find autoloader, exiting\n";
+    exit(1);
+}
+
+require_once($startFolder . "/autoload.php");
 
 // Init App with name and version
 $app = new Ahc\Cli\Application('PHP-CFG', 'v0.0.1');

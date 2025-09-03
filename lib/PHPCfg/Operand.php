@@ -11,11 +11,9 @@ declare(strict_types=1);
 
 namespace PHPCfg;
 
-use PHPTypes\Type;
-
 abstract class Operand
 {
-    public ?Type $type = null;
+    public ?Types\Type $type = null;
 
     public array $assertions = [];
 
@@ -68,7 +66,7 @@ abstract class Operand
         foreach ($this->assertions as $key => $orig) {
             if ($orig['var'] === $op) {
                 // Merge them
-                $this->assertions[$key]['assertion'] = new Assertion(
+                $this->assertions[$key]['assertion'] = new Assertion\TypeAssertion(
                     [$orig['assertion'], $assert],
                     $mode,
                 );
@@ -86,7 +84,7 @@ abstract class Operand
             }
             if ($orig['var']->original->name->value === $op->original->name->value) {
                 // merge
-                $this->assertions[$key]['assertion'] = new Assertion(
+                $this->assertions[$key]['assertion'] = new Assertion\TypeAssertion(
                     [$orig['assertion'], $assert],
                     $mode,
                 );

@@ -21,12 +21,14 @@ class Trait_ extends ParserHandler implements Stmt
         $name = $this->parser->parseTypeNode($node->namespacedName);
         $old = $this->parser->currentClass;
         $this->parser->currentClass = $name;
-        $this->addOp(new Op\Stmt\Trait_(
+        $trait = new Op\Stmt\Trait_(
             $name,
             $this->parser->parseNodes($node->stmts, $this->createBlock()),
             $this->parser->parseAttributeGroups(...$node->attrGroups),
             $this->mapAttributes($node),
-        ));
+        );
+        Class_::addScope($trait, $name);
+        $this->addOp($trait);
         $this->parser->currentClass = $old;
     }
 }
