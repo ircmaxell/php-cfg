@@ -13,6 +13,8 @@ namespace PHPCfg;
 
 abstract class Op
 {
+    public ?Op\Type $scope = null;
+
     protected array $attributes = [];
 
     protected array $writeVariables = [];

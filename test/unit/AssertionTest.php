@@ -23,7 +23,7 @@ class AssertionTest extends TestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage("Empty value supplied for Assertion");
 
-        new Assertion([]);
+        new Assertion\TypeAssertion([]);
     }
 
     public function testInvalidAssertion()
@@ -31,7 +31,7 @@ class AssertionTest extends TestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage("Invalid array key supplied for Assertion");
 
-        new Assertion([123]);
+        new Assertion\TypeAssertion([123]);
     }
 
     public function testInvalidModeArray()
@@ -39,19 +39,19 @@ class AssertionTest extends TestCase
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage("Invalid mode supplied for Assertion");
 
-        new Assertion([new Assertion(new class extends Operand {})], 99);
+        new Assertion\TypeAssertion([new Assertion\TypeAssertion(new class extends Operand {})], 99);
     }
 
     public function testValidModeArray()
     {
-        $assert = new Assertion([new Assertion(new class extends Operand {})], Assertion::MODE_INTERSECTION);
+        $assert = new Assertion\TypeAssertion([new Assertion\TypeAssertion(new class extends Operand {})], Assertion::MODE_INTERSECTION);
         $this->assertEquals(Assertion::MODE_INTERSECTION, $assert->mode);
     }
 
     public function testGetKind()
     {
-        $assert = new Assertion([new Assertion(new class extends Operand {})], Assertion::MODE_INTERSECTION);
-        $this->assertEquals('', $assert->getKind());
+        $assert = new Assertion\TypeAssertion([new Assertion\TypeAssertion(new class extends Operand {})], Assertion::MODE_INTERSECTION);
+        $this->assertEquals('type', $assert->getKind());
     }
 
     public function testInvalidMode()

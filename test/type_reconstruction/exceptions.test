@@ -1,0 +1,134 @@
+<?php
+function foo(Bar $bar)
+{
+    try {
+        if ($bar->isFoo()) {
+            echo $bar->getFoo();
+        } else {
+            echo "1";
+        }
+        return 8;
+    
+    } catch (Error|RuntimeException $e) {
+        echo $e->getMessage();
+        return 8;
+    } catch (Exception $e) {
+        echo $e->getMessage();
+        return 9;
+    } finally {
+        echo "4";
+        return 10;
+    }
+}
+-----
+Block#1
+    Stmt_Function
+        name: foo
+    Terminal_Return
+
+Function 'foo': mixed
+Block#1
+    Expr_Param
+        declaredType: Bar
+        name: LITERAL<string>('bar')
+        result: TEMP<Bar>(#1 <VARIABLE($bar)>)
+    Stmt_Try
+        catchTypes[0]: Error|RuntimeException
+        catchTypes[1]: Exception
+        catchVars[0]: TEMP<Error|RuntimeException>(#2 <VARIABLE($e)>)
+        catchVars[1]: TEMP<Exception>(#3 <VARIABLE($e)>)
+        body: Block#2
+        catch[0]: Block#3
+        catch[1]: Block#4
+        finally: Block#5
+
+Block#2
+    Parent: Block#1
+        catchTarget<Error|RuntimeException>(TEMP<Error|RuntimeException>(#1 <VARIABLE($e)>)): Block#3
+        catchTarget<Exception>(TEMP<Exception>(#2 <VARIABLE($e)>)): Block#4
+        finallyTarget: Block#5
+    Expr_MethodCall
+        var: TEMP<Bar>(#1 <VARIABLE($bar)>)
+        name: LITERAL<string>('isFoo')
+        result: TEMP<null|bool|int|float|string|object|array|callable>(#4)
+    Stmt_JumpIf
+        cond: TEMP<null|bool|int|float|string|object|array|callable>(#4)
+        if: Block#6
+        else: Block#7
+
+Block#3
+    Parent: Block#2
+    Parent: Block#8
+    Parent: Block#6
+    Parent: Block#7
+        finallyTarget: Block#5
+    TEMP<Exception>(#5 <VARIABLE($e)>) = Phi(TEMP<Exception>(#3 <VARIABLE($e)>), TEMP<Exception>(#6 <VARIABLE($e)>))
+    Expr_MethodCall
+        var: TEMP<Exception>(#5 <VARIABLE($e)>)
+        name: LITERAL<string>('getMessage')
+        result: TEMP<string>(#7)
+    Terminal_Echo
+        expr: TEMP<string>(#7)
+    Terminal_Return
+        expr: LITERAL<int>(8)
+
+Block#4
+    Parent: Block#2
+    Parent: Block#8
+    Parent: Block#6
+    Parent: Block#7
+        finallyTarget: Block#5
+    TEMP<Exception>(#8 <VARIABLE($e)>) = Phi(TEMP<Exception>(#3 <VARIABLE($e)>), TEMP<Exception>(#6 <VARIABLE($e)>))
+    Expr_MethodCall
+        var: TEMP<Exception>(#8 <VARIABLE($e)>)
+        name: LITERAL<string>('getMessage')
+        result: TEMP<string>(#9)
+    Terminal_Echo
+        expr: TEMP<string>(#9)
+    Terminal_Return
+        expr: LITERAL<int>(9)
+
+Block#5
+    Parent: Block#2
+    Parent: Block#3
+    Parent: Block#4
+    Parent: Block#8
+    Parent: Block#6
+    Parent: Block#7
+    Terminal_Echo
+        expr: LITERAL<string>('4')
+    Terminal_Return
+        expr: LITERAL<int>(10)
+
+Block#6
+    Parent: Block#2
+        catchTarget<Error|RuntimeException>(TEMP<Error|RuntimeException>(#1 <VARIABLE($e)>)): Block#3
+        catchTarget<Exception>(TEMP<Exception>(#2 <VARIABLE($e)>)): Block#4
+        finallyTarget: Block#5
+    Expr_MethodCall
+        var: TEMP<Bar>(#1 <VARIABLE($bar)>)
+        name: LITERAL<string>('getFoo')
+        result: TEMP<null|bool|int|float|string|object|array|callable>(#10)
+    Terminal_Echo
+        expr: TEMP<null|bool|int|float|string|object|array|callable>(#10)
+    Stmt_Jump
+        target: Block#8
+
+Block#7
+    Parent: Block#2
+        catchTarget<Error|RuntimeException>(TEMP<Error|RuntimeException>(#1 <VARIABLE($e)>)): Block#3
+        catchTarget<Exception>(TEMP<Exception>(#2 <VARIABLE($e)>)): Block#4
+        finallyTarget: Block#5
+    Terminal_Echo
+        expr: LITERAL<string>('1')
+    Stmt_Jump
+        target: Block#8
+
+Block#8
+    Parent: Block#6
+    Parent: Block#7
+        catchTarget<Error|RuntimeException>(TEMP<Error|RuntimeException>(#1 <VARIABLE($e)>)): Block#3
+        catchTarget<Exception>(TEMP<Exception>(#2 <VARIABLE($e)>)): Block#4
+        finallyTarget: Block#5
+    Terminal_Return
+        expr: LITERAL<int>(8)

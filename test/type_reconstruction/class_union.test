@@ -1,0 +1,80 @@
+<?php
+
+if ($a instanceof RuntimeException || $a instanceof LogicException) {
+    echo $a->getMessage();
+}
+
+-----
+Block#1
+    Expr_InstanceOf
+        expr: TEMP<unknown>(#1 <VARIABLE($a)>)
+        class: LITERAL<string>('RuntimeException')
+        result: TEMP<bool>(#2)
+    Stmt_JumpIf
+        cond: TEMP<bool>(#2)
+        if: Block#2
+        else: Block#3
+
+Block#2
+    Parent: Block#1
+    Expr_Assertion
+        expr: TEMP<unknown>(#1 <VARIABLE($a)>)
+        result: TEMP<RuntimeException>(#3 <VARIABLE($a)>)
+        assert: LITERAL<string>('RuntimeException')
+    Stmt_Jump
+        target: Block#4
+
+Block#3
+    Parent: Block#1
+    Expr_Assertion
+        expr: TEMP<unknown>(#1 <VARIABLE($a)>)
+        result: TEMP<unknown>(#4 <VARIABLE($a)>)
+        assert: not(LITERAL<string>('RuntimeException'))
+    Expr_InstanceOf
+        expr: TEMP<unknown>(#4 <VARIABLE($a)>)
+        class: LITERAL<string>('LogicException')
+        result: TEMP<bool>(#5)
+    Expr_Cast_Bool
+        expr: TEMP<bool>(#5)
+        result: TEMP<bool>(#6)
+    Stmt_Jump
+        target: Block#4
+
+Block#4
+    Parent: Block#3
+    Parent: Block#2
+    TEMP<bool>(#7) = Phi(LITERAL<bool>(true), TEMP<bool>(#6))
+    TEMP<unknown>(#8 <VARIABLE($a)>) = Phi(TEMP<unknown>(#4 <VARIABLE($a)>), TEMP<RuntimeException>(#3 <VARIABLE($a)>))
+    Stmt_JumpIf
+        cond: TEMP<bool>(#7)
+        if: Block#5
+        else: Block#6
+
+Block#5
+    Parent: Block#4
+    Expr_Assertion
+        expr: TEMP<unknown>(#8 <VARIABLE($a)>)
+        result: TEMP<RuntimeException|LogicException>(#9 <VARIABLE($a)>)
+        assert: LITERAL<string>('RuntimeException')|LITERAL<string>('LogicException')
+    Expr_MethodCall
+        var: TEMP<RuntimeException|LogicException>(#9 <VARIABLE($a)>)
+        name: LITERAL<string>('getMessage')
+        result: TEMP<string>(#10)
+    Terminal_Echo
+        expr: TEMP<string>(#10)
+    Stmt_Jump
+        target: Block#7
+
+Block#6
+    Parent: Block#4
+    Expr_Assertion
+        expr: TEMP<unknown>(#8 <VARIABLE($a)>)
+        result: TEMP<unknown>(#11 <VARIABLE($a)>)
+        assert: not(LITERAL<string>('RuntimeException')|LITERAL<string>('LogicException'))
+    Stmt_Jump
+        target: Block#7
+
+Block#7
+    Parent: Block#5
+    Parent: Block#6
+    Terminal_Return

@@ -11,6 +11,7 @@ namespace PHPCfg\ParserHandler\Batch;
 
 use PHPCfg\Assertion;
 use PHPCfg\Op;
+use PHPCfg\Assertion\NegatedAssertion;
 use PHPCfg\Operand;
 use PHPCfg\ParserHandler;
 use PHPCfg\ParserHandler\Batch;
@@ -64,7 +65,7 @@ class Unary extends ParserHandler implements Expr, Batch
         if ($expr instanceof Node\Expr\BooleanNot) {
             // process type assertions
             foreach ($cond->assertions as $assertion) {
-                $result->addAssertion($assertion['var'], new Assertion\NegatedAssertion([$assertion['assertion']]));
+                $result->addAssertion($assertion['var'], new NegatedAssertion([$assertion['assertion']]));
             }
         }
 

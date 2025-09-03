@@ -1,0 +1,13 @@
+<?php
+
+~1;
+~"";
+-----
+Block#1
+    Expr_BitwiseNot
+        expr: LITERAL<int>(1)
+        result: TEMP<int>(#1)
+    Expr_BitwiseNot
+        expr: LITERAL<string>('')
+        result: TEMP<string>(#2)
+    Terminal_Return

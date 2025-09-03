@@ -1,0 +1,148 @@
+<?php
+
+class A {
+    const FOO = 1;
+    public function foo(): int {
+        return self::FOO;
+    }
+
+    protected function bar(): int {
+        return static::FOO;
+    }
+
+    protected function baz(): int {
+        return A::FOO;
+    }
+
+    protected function biz(): int {
+        return B::FOO;
+    }
+
+    protected function buz(): int {
+        return C::BAR;
+    }
+
+    protected function boz(): int {
+        return D::BAR;
+    }
+}
+
+class B extends A {}
+
+interface C {
+    const BAR = 1;
+}
+
+class D extends B implements C {}
+
+
+-----
+Block#1
+    Stmt_Class
+        name: A
+        stmts: Block#2
+    Stmt_Class
+        name: B
+        extends: A
+        stmts: Block#3
+    Stmt_Interface
+        name: C
+        stmts: Block#4
+    Stmt_Class
+        name: D
+        extends: B
+        implements[0]: C
+        stmts: Block#5
+    Terminal_Return
+
+Block#2
+    Terminal_Const
+        name: LITERAL<string>('FOO')
+        value: LITERAL<int>(1)
+        valueBlock: Block#6
+    Stmt_ClassMethod
+        name: foo
+        flags: public
+    Stmt_ClassMethod
+        name: bar
+        flags: protected
+    Stmt_ClassMethod
+        name: baz
+        flags: protected
+    Stmt_ClassMethod
+        name: biz
+        flags: protected
+    Stmt_ClassMethod
+        name: buz
+        flags: protected
+    Stmt_ClassMethod
+        name: boz
+        flags: protected
+
+Block#3
+
+Block#4
+    Terminal_Const
+        name: LITERAL<string>('BAR')
+        value: LITERAL<int>(1)
+        valueBlock: Block#7
+
+Block#5
+
+Block#6
+
+Block#7
+
+Function 'A::foo': int
+Block#1
+    Expr_ClassConstFetch
+        class: LITERAL<string>('A')
+        name: LITERAL<string>('FOO')
+        result: TEMP<int>(#1)
+    Terminal_Return
+        expr: TEMP<int>(#1)
+
+Function 'A::bar': int
+Block#1
+    Expr_ClassConstFetch
+        class: LITERAL<string>('static')
+        name: LITERAL<string>('FOO')
+        result: TEMP<int>(#1)
+    Terminal_Return
+        expr: TEMP<int>(#1)
+
+Function 'A::baz': int
+Block#1
+    Expr_ClassConstFetch
+        class: LITERAL<string>('A')
+        name: LITERAL<string>('FOO')
+        result: TEMP<int>(#1)
+    Terminal_Return
+        expr: TEMP<int>(#1)
+
+Function 'A::biz': int
+Block#1
+    Expr_ClassConstFetch
+        class: LITERAL<string>('B')
+        name: LITERAL<string>('FOO')
+        result: TEMP<int>(#1)
+    Terminal_Return
+        expr: TEMP<int>(#1)
+
+Function 'A::buz': int
+Block#1
+    Expr_ClassConstFetch
+        class: LITERAL<string>('C')
+        name: LITERAL<string>('BAR')
+        result: TEMP<int>(#1)
+    Terminal_Return
+        expr: TEMP<int>(#1)
+
+Function 'A::boz': int
+Block#1
+    Expr_ClassConstFetch
+        class: LITERAL<string>('D')
+        name: LITERAL<string>('BAR')
+        result: TEMP<int>(#1)
+    Terminal_Return
+        expr: TEMP<int>(#1)
