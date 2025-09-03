@@ -10,16 +10,14 @@
 namespace PHPCfg\Types;
 
 use LogicException;
-use RuntimeException;
-
 use PHPCfg\Op;
+use RuntimeException;
 
 class Parser
 {
-
-    const KIND_VAR = 1;
-    const KIND_PARAM = 2;
-    const KIND_RETURN = 3;
+    public const KIND_VAR = 1;
+    public const KIND_PARAM = 2;
+    public const KIND_RETURN = 3;
 
     /**
      * @var Type[]
@@ -271,7 +269,7 @@ class Parser
                 array_map(fn($sub) => static::fromOpType($sub), $type->subtypes)
             ))->simplify();
         }
-        throw new \LogicException("Unknown type " . $type->getType());
+        throw new LogicException("Unknown type " . $type->getType());
     }
 
 }

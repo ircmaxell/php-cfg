@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of PHP-Types, a Type Inference and resolver enginefor PHP
+ * This file is part of PHP-CFG, a Control flow graph implementation for PHP
  *
  * @copyright 2015 Anthony Ferrara. All rights reserved
  * @license MIT See LICENSE at the root of the project for more info
@@ -18,7 +18,6 @@ use SplObjectStorage;
 
 class State
 {
-
     public array $blocks = [];
 
     /**
@@ -80,7 +79,7 @@ class State
     public function __construct()
     {
         $this->resolver = new TypeResolver($this);
-        $this->variables = new SplObjectStorage;
+        $this->variables = new SplObjectStorage();
         $this->internalTypeInfo = new InternalArgInfo();
     }
 

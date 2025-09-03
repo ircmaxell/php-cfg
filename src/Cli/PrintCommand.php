@@ -44,7 +44,7 @@ class PrintCommand extends BaseCommand
         $script = $this->exec($file, $code, $optimize);
 
         if ($types) {
-            $engine = new Types\Engine;
+            $engine = new Types\Engine();
             $engine->addScript($script);
             foreach ($deps as $dep) {
                 if (file_exists($dep)) {

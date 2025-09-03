@@ -23,7 +23,6 @@ use RuntimeException;
 #[CoversNothing]
 class CodeTest extends TestCase
 {
-
     public static function provideTestTypeReconstruction()
     {
         yield from self::findTests('type_reconstruction');
@@ -74,7 +73,7 @@ class CodeTest extends TestCase
     {
         try {
             $script = $this->runScript($code);
-            $engine = new Types\Engine;
+            $engine = new Types\Engine();
             $engine->addScript($script);
             $engine->run();
             $printer = new Printer\Text();
@@ -88,7 +87,7 @@ class CodeTest extends TestCase
             $this->canonicalize($result),
         );
     }
-    
+
     protected function runScript(string $code): Script
     {
         $astTraverser = new PhpParser\NodeTraverser();

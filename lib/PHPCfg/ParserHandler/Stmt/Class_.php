@@ -9,12 +9,11 @@
 
 namespace PHPCfg\ParserHandler\Stmt;
 
-use PHPCfg\Block;
 use PHPCfg\Op;
-use PHPCfg\Operand;
 use PHPCfg\ParserHandler;
 use PHPCfg\ParserHandler\Stmt;
 use PhpParser\Node;
+use SplObjectStorage;
 
 class Class_ extends ParserHandler implements Stmt
 {
@@ -41,8 +40,8 @@ class Class_ extends ParserHandler implements Stmt
 
     public static function addScope(Op\Stmt\ClassLike $class, Op\Type $name): void
     {
-        $toprocess = new \SplObjectStorage;
-        $processed = new \SplObjectStorage;
+        $toprocess = new SplObjectStorage();
+        $processed = new SplObjectStorage();
         $toprocess->attach($class->stmts);
         while ($toprocess->count() > 0) {
             $block = $toprocess->current();
