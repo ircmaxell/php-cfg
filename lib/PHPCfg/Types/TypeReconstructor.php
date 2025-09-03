@@ -1,7 +1,7 @@
 <?php
 
 /**
- * This file is part of PHP-Types, a Type Inference and resolver enginefor PHP
+ * This file is part of PHP-CFG, a Control flow graph implementation for PHP
  *
  * @copyright 2015 Anthony Ferrara. All rights reserved
  * @license MIT See LICENSE at the root of the project for more info
@@ -245,9 +245,9 @@ class TypeReconstructor
                     //todo change to static class
                     if (!$op->scope) {
                         var_dump($op);
-                        throw new \LogicException("Scope is null with a static call?");
+                        throw new LogicException("Scope is null with a static call?");
                     }
-                    $type = Parser::fromOpType($op->scope);   
+                    $type = Parser::fromOpType($op->scope);
                 } else {
                     $type = $this->getClassType($op->class, $resolved);
                 }
@@ -746,7 +746,7 @@ class TypeReconstructor
             }
             return null;
         }
-        throw new \LogicException("Should never be reached, unknown assertion type: " . get_class($assertion));
+        throw new LogicException("Should never be reached, unknown assertion type: " . get_class($assertion));
     }
 
     protected function processTypeAssertion(Assertion\TypeAssertion $assertion, Operand $source, SplObjectStorage $resolved): Type

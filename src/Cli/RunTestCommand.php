@@ -43,9 +43,9 @@ class RunTestCommand extends BaseCommand
         $script = $this->exec($file, $code, true);
 
         if (substr($test, 0, 25) === "test/type_reconstruction/") {
-            $state = new Types\State;
+            $state = new Types\State();
             $state->addScript($script);
-            $reconstructor = new Types\TypeReconstructor;
+            $reconstructor = new Types\TypeReconstructor();
             $reconstructor->resolve($state);
         }
 

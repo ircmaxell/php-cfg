@@ -4,11 +4,15 @@ targets=$(shell for file in `find . -name '*Test.php' -type f -printf "%P\n"`; d
 
 
 .PHONY: build
-build: cs-fix test
+build: cs-fix testbuild
 
 .PHONY: cs-fix
 cs-fix:
 	vendor/bin/php-cs-fixer fix
+
+.PHONY: testbuild
+testbuild:
+	XDEBUG_MODE=coverage vendor/bin/phpunit --display-deprecations
 
 .PHONY: test
 test:

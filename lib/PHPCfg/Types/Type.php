@@ -9,10 +9,7 @@
 
 namespace PHPCfg\Types;
 
-use LogicException;
 use RuntimeException;
-
-use PHPCfg\Op;
 
 class Type
 {
