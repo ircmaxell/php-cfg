@@ -17,10 +17,10 @@ Block#1
     Expr_Param
         declaredType: mixed
         name: LITERAL<string>('a')
-        result: TEMP<null|bool|int|float|string|object|array|callable>(#1 <VARIABLE($a)>)
+        result: TEMP<mixed>(#1 <VARIABLE($a)>)
     Expr_FuncCall
         name: LITERAL<string>('is_string')
-        args[0]: TEMP<null|bool|int|float|string|object|array|callable>(#1 <VARIABLE($a)>)
+        args[0]: TEMP<mixed>(#1 <VARIABLE($a)>)
         result: TEMP<bool>(#2)
     Stmt_JumpIf
         cond: TEMP<bool>(#2)
@@ -30,7 +30,7 @@ Block#1
 Block#2
     Parent: Block#1
     Expr_Assertion
-        expr: TEMP<null|bool|int|float|string|object|array|callable>(#1 <VARIABLE($a)>)
+        expr: TEMP<mixed>(#1 <VARIABLE($a)>)
         result: TEMP<string>(#3 <VARIABLE($a)>)
         assert: LITERAL('string')
     Terminal_Echo
@@ -41,7 +41,7 @@ Block#2
 Block#3
     Parent: Block#1
     Expr_Assertion
-        expr: TEMP<null|bool|int|float|string|object|array|callable>(#1 <VARIABLE($a)>)
+        expr: TEMP<mixed>(#1 <VARIABLE($a)>)
         result: TEMP<null|bool|int|float|object|array|callable>(#4 <VARIABLE($a)>)
         assert: not(LITERAL('string'))
     Stmt_Jump

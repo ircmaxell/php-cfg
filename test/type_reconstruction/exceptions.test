@@ -50,9 +50,9 @@ Block#2
     Expr_MethodCall
         var: TEMP<Bar>(#1 <VARIABLE($bar)>)
         name: LITERAL<string>('isFoo')
-        result: TEMP<null|bool|int|float|string|object|array|callable>(#4)
+        result: TEMP<mixed>(#4)
     Stmt_JumpIf
-        cond: TEMP<null|bool|int|float|string|object|array|callable>(#4)
+        cond: TEMP<mixed>(#4)
         if: Block#6
         else: Block#7
 
@@ -108,9 +108,9 @@ Block#6
     Expr_MethodCall
         var: TEMP<Bar>(#1 <VARIABLE($bar)>)
         name: LITERAL<string>('getFoo')
-        result: TEMP<null|bool|int|float|string|object|array|callable>(#10)
+        result: TEMP<mixed>(#10)
     Terminal_Echo
-        expr: TEMP<null|bool|int|float|string|object|array|callable>(#10)
+        expr: TEMP<mixed>(#10)
     Stmt_Jump
         target: Block#8
 
