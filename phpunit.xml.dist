@@ -5,19 +5,14 @@
          stopOnFailure="false"
          bootstrap="./vendor/autoload.php">
     <testsuites>
-        <testsuite name="PHPCfg Integration Tests">
+        <testsuite name="PHPCfg Tests">
             <directory>./test/</directory>
-        </testsuite>
-        <testsuite name="PHPCfg Unit Test Suite">
-            <directory>./lib/</directory>
         </testsuite>
     </testsuites>
     <source>
         <include>
             <directory suffix=".php">./lib/</directory>
+            <directory suffix=".php">./src/</directory>
         </include>
-        <exclude>
-            <directory suffix="Test.php">./lib/</directory>
-        </exclude>
     </source>
 </phpunit>
