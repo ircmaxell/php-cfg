@@ -13,15 +13,16 @@ Block#1
     Terminal_Return
 
 Block#2
-    Stmt_ClassMethod<'doSomething'>
+    Stmt_ClassMethod
+        name: doSomething
         flags: public
 
 Function 'NameOfClass::doSomething': mixed
 Block#1
     Expr_MethodCall
-        var: this<$this>
+        var: VARIABLE(this $this)
         name: LITERAL('hello')
-        result: Var#1
+        result: TEMP(#1)
     Terminal_Echo
-        expr: Var#1
+        expr: TEMP(#1)
     Terminal_Return

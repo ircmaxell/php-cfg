@@ -5,29 +5,29 @@ $x = a() || b();
 Block#1
     Expr_FuncCall
         name: LITERAL('a')
-        result: Var#1
+        result: TEMP(#1)
     Stmt_JumpIf
-        cond: Var#1
+        cond: TEMP(#1)
         if: Block#2
         else: Block#3
 
 Block#2
     Parent: Block#3
     Parent: Block#1
-    Var#2 = Phi(LITERAL(true), Var#3)
+    TEMP(#2) = Phi(LITERAL(true), TEMP(#3))
     Expr_Assign
-        var: Var#4<$x>
-        expr: Var#2
-        result: Var#5
+        var: TEMP(#4 <VARIABLE($x)>)
+        expr: TEMP(#2)
+        result: TEMP(#5)
     Terminal_Return
 
 Block#3
     Parent: Block#1
     Expr_FuncCall
         name: LITERAL('b')
-        result: Var#6
+        result: TEMP(#6)
     Expr_Cast_Bool
-        expr: Var#6
-        result: Var#3
+        expr: TEMP(#6)
+        result: TEMP(#3)
     Stmt_Jump
         target: Block#2

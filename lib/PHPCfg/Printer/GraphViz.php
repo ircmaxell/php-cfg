@@ -12,7 +12,6 @@ declare(strict_types=1);
 namespace PHPCfg\Printer;
 
 use PHPCfg\Func;
-use PHPCfg\Printer;
 use PHPCfg\Script;
 use phpDocumentor\GraphViz\Edge;
 use phpDocumentor\GraphViz\Graph;
@@ -46,57 +45,13 @@ class GraphViz extends Printer
             $this->printFuncWithHeader($func, $graph, 'func_' . ++$i . '_');
         }
 
-        return (string) $graph;
+        return (string) $graph . "\n";
     }
 
     public function printFunc(Func $func): string
     {
         $graph = $this->createGraph();
         $this->printFuncInfo($func, $graph, '');
-
-        return (string) $graph;
-    }
-
-    public function printVars(Func $func): string
-    {
-        $graph = Graph::create('vars');
-        foreach ($this->options['graph'] as $name => $value) {
-            $setter = 'set' . $name;
-            $graph->{$setter}($value);
-        }
-        $rendered = $this->render($func->cfg);
-        $nodes = new SplObjectStorage();
-        foreach ($rendered['varIds'] as $var) {
-            if (empty($var->ops) && empty($var->usages)) {
-                continue;
-            }
-            $id = $rendered['varIds'][$var];
-            $output = $this->renderOperand($var);
-            $nodes[$var] = $this->createNode('var_' . $id, $output);
-            $graph->setNode($nodes[$var]);
-        }
-        foreach ($rendered['varIds'] as $var) {
-            foreach ($var->ops as $write) {
-                $b = $write->getAttribute('block');
-                foreach ($write->getVariableNames() as $varName => $vs) {
-                    if (! is_array($vs)) {
-                        $vs = [$vs];
-                    }
-                    foreach ($vs as $v) {
-                        if (! $v || $write->isWriteVariable($varName) || ! $nodes->contains($v)) {
-                            continue;
-                        }
-                        $edge = $this->createEdge($nodes[$v], $nodes[$var]);
-                        if ($b) {
-                            $edge->setlabel('Block<' . $rendered['blockIds'][$b] . '>' . $write->getType() . ':' . $varName);
-                        } else {
-                            $edge->setlabel($write->getType() . ':' . $varName);
-                        }
-                        $graph->link($edge);
-                    }
-                }
-            }
-        }
 
         return (string) $graph;
     }

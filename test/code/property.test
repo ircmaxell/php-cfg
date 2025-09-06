@@ -24,51 +24,51 @@ Block#1
 
 Block#2
     Stmt_Property
-        flags: public
         declaredType: mixed
+        flags: public
         name: LITERAL('prop')
         defaultVar: LITERAL(1)
         defaultBlock: Block#3
     Stmt_Property
-        flags: private
         declaredType: mixed
+        flags: private
         name: LITERAL('prop2')
-        defaultVar: Var#1
+        defaultVar: TEMP(#1)
         defaultBlock: Block#4
     Stmt_Property
-        flags: readonly|private
         declaredType: mixed
+        flags: readonly|private
         name: LITERAL('prop3')
     Stmt_Property
-        flags: readonly|private
         declaredType: mixed
+        flags: readonly|private
         name: LITERAL('prop4')
     Stmt_Property
-        flags: readonly|static|private
         declaredType: mixed
+        flags: readonly|static|private
         name: LITERAL('prop5')
     Stmt_Property
-        flags: static|public
         declaredType: mixed
+        flags: static|public
         name: LITERAL('prop6')
     Stmt_Property
-        flags: protected
         declaredType: mixed
+        flags: protected
         name: LITERAL('prop7')
     Expr_ConstFetch
         name: LITERAL('null')
-        result: Var#2
+        result: TEMP(#2)
     Stmt_Property
+        declaredType: string
+        flags: private
+        name: LITERAL('foo5')
         attrGroup[0]:
             attr[0]:
                 name: LITERAL('ConstAttr')
         attrGroup[1]:
             attr[0]:
                 name: LITERAL('FooAttribute')
-                args[0]: Var#2
-        flags: private
-        declaredType: string
-        name: LITERAL('foo5')
+                args[0]: TEMP(#2)
     Terminal_Const
         name: LITERAL('FOO')
         value: LITERAL('foo')
@@ -80,6 +80,6 @@ Block#4
     Expr_BinaryOp_Plus
         left: LITERAL(1)
         right: LITERAL(1)
-        result: Var#1
+        result: TEMP(#1)
 
 Block#5

@@ -11,27 +11,27 @@ try {
 Block#1
     Stmt_Try
         catchTypes[0]: Exception
-        catchVars[0]: Var#1<$e>
+        catchVars[0]: TEMP(#1 <VARIABLE($e)>)
         body: Block#2
         catch[0]: Block#3
         finally: Block#4
 
 Block#2
     Parent: Block#1
-        catchTarget<Exception>(Var#1<$e>): Block#3
+        catchTarget<Exception>(TEMP(#1 <VARIABLE($e)>)): Block#3
         finallyTarget: Block#4
     Expr_New
         class: LITERAL('Exception')
         args[0]: LITERAL('foo')
-        result: Var#2
+        result: TEMP(#2)
     Terminal_Throw
-        expr: Var#2
+        expr: TEMP(#2)
 
 Block#3
     Parent: Block#2
         finallyTarget: Block#4
     Terminal_Return
-        expr: Var#1<$e>
+        expr: TEMP(#1 <VARIABLE($e)>)
 
 Block#4
     Parent: Block#2

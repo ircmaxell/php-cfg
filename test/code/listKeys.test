@@ -5,23 +5,23 @@ list('a' => $a, $key => $b) = $array;
 -----
 Block#1
     Expr_Assign
-        var: Var#1<$key>
+        var: TEMP(#1 <VARIABLE($key)>)
         expr: LITERAL('b')
-        result: Var#2
+        result: TEMP(#2)
     Expr_ArrayDimFetch
-        var: Var#3<$array>
+        var: TEMP(#3 <VARIABLE($array)>)
         dim: LITERAL('a')
-        result: Var#4
+        result: TEMP(#4)
     Expr_Assign
-        var: Var#5<$a>
-        expr: Var#4
-        result: Var#6
+        var: TEMP(#5 <VARIABLE($a)>)
+        expr: TEMP(#4)
+        result: TEMP(#6)
     Expr_ArrayDimFetch
-        var: Var#3<$array>
-        dim: Var#1<$key>
-        result: Var#7
+        var: TEMP(#3 <VARIABLE($array)>)
+        dim: TEMP(#1 <VARIABLE($key)>)
+        result: TEMP(#7)
     Expr_Assign
-        var: Var#8<$b>
-        expr: Var#7
-        result: Var#9
+        var: TEMP(#8 <VARIABLE($b)>)
+        expr: TEMP(#7)
+        result: TEMP(#9)
     Terminal_Return

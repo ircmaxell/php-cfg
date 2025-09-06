@@ -11,21 +11,21 @@ Block#1
     Expr_ConstFetch
         nsName: LITERAL('Foo\\BAR')
         name: LITERAL('BAR')
-        result: Var#1
+        result: TEMP(#1)
     Expr_FuncCall
         name: LITERAL('var_dump')
-        args[0]: Var#1
-        result: Var#2
+        args[0]: TEMP(#1)
+        result: TEMP(#2)
     Expr_FuncCall
         name: LITERAL('var_dump')
         args[0]: LITERAL(true)
-        result: Var#3
+        result: TEMP(#3)
     Expr_FuncCall
         name: LITERAL('var_dump')
         args[0]: LITERAL(false)
-        result: Var#4
+        result: TEMP(#4)
     Expr_FuncCall
         name: LITERAL('var_dump')
         args[0]: LITERAL(NULL)
-        result: Var#5
+        result: TEMP(#5)
     Terminal_Return

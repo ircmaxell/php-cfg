@@ -7,9 +7,9 @@ echo $dbname;
 -----
 Block#1
     Expr_Assign
-        var: Var#1<$dbname>
+        var: TEMP(#1 <VARIABLE($dbname)>)
         expr: LITERAL('database name')
-        result: Var#2
+        result: TEMP(#2)
     Stmt_Jump
         target: Block#2
 
@@ -17,7 +17,7 @@ Block#2
     Parent: Block#1
     Expr_Print
         expr: LITERAL('hostname')
-        result: Var#3
+        result: TEMP(#3)
     Terminal_Echo
-        expr: Var#1<$dbname>
+        expr: TEMP(#1 <VARIABLE($dbname)>)
     Terminal_Return

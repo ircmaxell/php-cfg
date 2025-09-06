@@ -4,61 +4,61 @@ $a = $b ?: ($b ?: $c);
 -----
 Block#1
     Stmt_JumpIf
-        cond: Var#1<$b>
+        cond: TEMP(#1 <VARIABLE($b)>)
         if: Block#2
         else: Block#3
 
 Block#2
     Parent: Block#1
     Expr_Assign
-        var: Var#2
-        expr: Var#1<$b>
-        result: Var#3
+        var: TEMP(#2)
+        expr: TEMP(#1 <VARIABLE($b)>)
+        result: TEMP(#3)
     Stmt_Jump
         target: Block#4
 
 Block#3
     Parent: Block#1
     Stmt_JumpIf
-        cond: Var#1<$b>
+        cond: TEMP(#1 <VARIABLE($b)>)
         if: Block#5
         else: Block#6
 
 Block#4
     Parent: Block#2
     Parent: Block#7
-    Var#4 = Phi(Var#2, Var#5)
+    TEMP(#4) = Phi(TEMP(#2), TEMP(#5))
     Expr_Assign
-        var: Var#6<$a>
-        expr: Var#4
-        result: Var#7
+        var: TEMP(#6 <VARIABLE($a)>)
+        expr: TEMP(#4)
+        result: TEMP(#7)
     Terminal_Return
 
 Block#5
     Parent: Block#3
     Expr_Assign
-        var: Var#8
-        expr: Var#1<$b>
-        result: Var#9
+        var: TEMP(#8)
+        expr: TEMP(#1 <VARIABLE($b)>)
+        result: TEMP(#9)
     Stmt_Jump
         target: Block#7
 
 Block#6
     Parent: Block#3
     Expr_Assign
-        var: Var#10
-        expr: Var#11<$c>
-        result: Var#12
+        var: TEMP(#10)
+        expr: TEMP(#11 <VARIABLE($c)>)
+        result: TEMP(#12)
     Stmt_Jump
         target: Block#7
 
 Block#7
     Parent: Block#5
     Parent: Block#6
-    Var#13 = Phi(Var#8, Var#10)
+    TEMP(#13) = Phi(TEMP(#8), TEMP(#10))
     Expr_Assign
-        var: Var#5
-        expr: Var#13
-        result: Var#14
+        var: TEMP(#5)
+        expr: TEMP(#13)
+        result: TEMP(#14)
     Stmt_Jump
         target: Block#4

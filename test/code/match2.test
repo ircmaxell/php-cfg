@@ -9,18 +9,18 @@ Block#1
     Expr_BinaryOp_Identical
         left: LITERAL(1)
         right: LITERAL(10)
-        result: Var#1
+        result: TEMP(#1)
     Stmt_JumpIf
-        cond: Var#1
+        cond: TEMP(#1)
         if: Block#2
         else: Block#3
 
 Block#2
     Parent: Block#1
     Expr_Assign
-        var: Var#2
+        var: TEMP(#2)
         expr: LITERAL('foo')
-        result: Var#3
+        result: TEMP(#3)
     Stmt_Jump
         target: Block#4
 
@@ -29,9 +29,9 @@ Block#3
     Expr_BinaryOp_Identical
         left: LITERAL(5)
         right: LITERAL(10)
-        result: Var#4
+        result: TEMP(#4)
     Stmt_JumpIf
-        cond: Var#4
+        cond: TEMP(#4)
         if: Block#5
         else: Block#6
 
@@ -39,17 +39,17 @@ Block#4
     Parent: Block#2
     Parent: Block#5
     Parent: Block#7
-    Var#5 = Phi(Var#2, Var#6, Var#7)
+    TEMP(#5) = Phi(TEMP(#2), TEMP(#6), TEMP(#7))
     Terminal_Echo
-        expr: Var#5
+        expr: TEMP(#5)
     Terminal_Return
 
 Block#5
     Parent: Block#3
     Expr_Assign
-        var: Var#6
+        var: TEMP(#6)
         expr: LITERAL('bar')
-        result: Var#8
+        result: TEMP(#8)
     Stmt_Jump
         target: Block#4
 
@@ -58,13 +58,13 @@ Block#6
     Expr_BinaryOp_Plus
         left: LITERAL(5)
         right: LITERAL(5)
-        result: Var#9
+        result: TEMP(#9)
     Expr_BinaryOp_Identical
-        left: Var#9
+        left: TEMP(#9)
         right: LITERAL(10)
-        result: Var#10
+        result: TEMP(#10)
     Stmt_JumpIf
-        cond: Var#10
+        cond: TEMP(#10)
         if: Block#7
         else: Block#8
 
@@ -73,7 +73,7 @@ Block#7
     Expr_BinaryOp_Concat
         left: LITERAL('baz')
         right: LITERAL('buz')
-        result: Var#7
+        result: TEMP(#7)
     Stmt_Jump
         target: Block#4
 

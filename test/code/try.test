@@ -12,8 +12,8 @@ Block#1
     Stmt_Try
         catchTypes[0]: MyException|MyOtherException
         catchTypes[1]: MyException2
-        catchVars[0]: Var#1<$e>
-        catchVars[1]: NULL
+        catchVars[0]: TEMP(#1 <VARIABLE($e)>)
+        catchVars[1]: NULL()
         body: Block#2
         catch[0]: Block#3
         catch[1]: Block#4
@@ -21,24 +21,24 @@ Block#1
 
 Block#2
     Parent: Block#1
-        catchTarget<MyException|MyOtherException>(Var#1<$e>): Block#3
-        catchTarget<MyException2>(NULL): Block#4
+        catchTarget<MyException|MyOtherException>(TEMP(#1 <VARIABLE($e)>)): Block#3
+        catchTarget<MyException2>(NULL()): Block#4
     Expr_New
         class: LITERAL('MyException')
-        result: Var#2
+        result: TEMP(#2)
     Terminal_Throw
-        expr: Var#2
+        expr: TEMP(#2)
 
 Block#3
     Parent: Block#2
     Expr_FuncCall
         name: LITERAL('get_class')
-        args[0]: Var#1<$e>
-        result: Var#3
+        args[0]: TEMP(#1 <VARIABLE($e)>)
+        result: TEMP(#3)
     Expr_FuncCall
         name: LITERAL('var_dump')
-        args[0]: Var#3
-        result: Var#4
+        args[0]: TEMP(#3)
+        result: TEMP(#4)
     Stmt_Jump
         target: Block#5
 

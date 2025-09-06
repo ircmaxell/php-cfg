@@ -7,5 +7,5 @@ Block#1
     Expr_NsFuncCall
         nsName: LITERAL('Foo\\call')
         name: LITERAL('call')
-        result: Var#1
+        result: TEMP(#1)
     Terminal_Return

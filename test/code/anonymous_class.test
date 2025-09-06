@@ -13,29 +13,30 @@ Block#1
         stmts: Block#2
     Expr_New
         class: LITERAL('{anonymousClass}#1')
-        result: Var#1
+        result: TEMP(#1)
     Expr_Assign
-        var: Var#2<$var>
-        expr: Var#1
-        result: Var#3
+        var: TEMP(#2 <VARIABLE($var)>)
+        expr: TEMP(#1)
+        result: TEMP(#3)
     Stmt_Class
+        name: {anonymousClass}#2
         attrGroup[0]:
             attr[0]:
                 name: LITERAL('Attr')
                 args[0]: LITERAL('foo')
-        name: {anonymousClass}#2
         stmts: Block#3
     Expr_New
         class: LITERAL('{anonymousClass}#2')
-        result: Var#4
+        result: TEMP(#4)
     Expr_Assign
-        var: Var#5<$instance>
-        expr: Var#4
-        result: Var#6
+        var: TEMP(#5 <VARIABLE($instance)>)
+        expr: TEMP(#4)
+        result: TEMP(#6)
     Terminal_Return
 
 Block#2
-    Stmt_ClassMethod<'doSomething'>
+    Stmt_ClassMethod
+        name: doSomething
         flags: public
 
 Block#3
