@@ -282,7 +282,8 @@ class Helper
             return static::union(...array_map(fn($sub) => static::fromOpType($sub), $type->subtypes))->simplify();
         }
         if ($type instanceof Op\Type\Intersection) {
-            return static::intersection(...array_map(fn($sub) => static::fromOpType($sub), $type->subtypes)
+            return static::intersection(
+                ...array_map(fn($sub) => static::fromOpType($sub), $type->subtypes)
             )->simplify();
         }
         throw new LogicException("Unknown type " . $type->getType());

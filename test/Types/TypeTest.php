@@ -46,7 +46,7 @@ class TypeTest extends TestCase
     {
         $this->assertEquals($decl, (string) $result);
     }
-    
+
     public function testHasSubTypes()
     {
         $this->assertFalse((new Type(Type::TYPE_LONG))->hasSubTypes());
@@ -67,7 +67,7 @@ class TypeTest extends TestCase
             Helper::union(Helper::int(), Helper::null(), Helper::string()),
             Helper::union(Helper::int(), Helper::null())
         ), false];
-    }   
+    }
 
     #[DataProvider("provideTestAllowsNull")]
     public function testAllowsNull(Type $type, $isAllowed)
@@ -86,28 +86,42 @@ class TypeTest extends TestCase
         yield ["empty intersection", new Type(Type::TYPE_INTERSECTION, []), Helper::void()];
 
         // Nested same complex types
-        yield ["nested same union", new Type(Type::TYPE_UNION, [
-            new Type(Type::TYPE_UNION, [Helper::int()])
-        ]), Helper::int()];
-        yield ["nested same intersection", new Type(Type::TYPE_INTERSECTION, [
-            new Type(Type::TYPE_INTERSECTION, [Helper::int()])
-        ]), Helper::int()];
+        yield [
+            "nested same union",
+            new Type(Type::TYPE_UNION, [
+                new Type(Type::TYPE_UNION, [Helper::int()]),
+            ]),
+            Helper::int(),
+        ];
+        yield [
+            "nested same intersection",
+            new Type(Type::TYPE_INTERSECTION, [
+                new Type(Type::TYPE_INTERSECTION, [Helper::int()]),
+            ]),
+            Helper::int(),
+        ];
 
         // Nested different complex types
-        yield ["nested intersection unions", new Type(Type::TYPE_UNION, [
-            new Type(Type::TYPE_INTERSECTION, [Helper::int(), Helper::float()]),
-            new Type(Type::TYPE_INTERSECTION, [Helper::string(), Helper::float()])
-        ]), Helper::union(
-            Helper::intersection(Helper::int(), Helper::float()),
-            Helper::intersection(Helper::string(), Helper::float())
-        )];
+        yield [
+            "nested intersection unions",
+            new Type(Type::TYPE_UNION, [
+                new Type(Type::TYPE_INTERSECTION, [Helper::int(), Helper::float()]),
+                new Type(Type::TYPE_INTERSECTION, [Helper::string(), Helper::float()]),
+            ]),
+            Helper::union(
+                Helper::intersection(Helper::int(), Helper::float()),
+                Helper::intersection(Helper::string(), Helper::float())
+            ),
+        ];
 
         // Nested same complex types. Tests elimination of duplicated types
-        yield ["nested intersection unions", new Type(Type::TYPE_UNION, [
+        yield [
+            "nested intersection unions",
+            new Type(Type::TYPE_UNION, [
                 new Type(Type::TYPE_INTERSECTION, [Helper::int(), Helper::float()]),
-                new Type(Type::TYPE_INTERSECTION, [Helper::int(), Helper::float()])
-            ]), 
-            Helper::intersection(Helper::int(), Helper::float())
+                new Type(Type::TYPE_INTERSECTION, [Helper::int(), Helper::float()]),
+            ]),
+            Helper::intersection(Helper::int(), Helper::float()),
         ];
     }
 
