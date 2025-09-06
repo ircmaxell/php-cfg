@@ -235,7 +235,7 @@ class Type
         if ($type->type === Type::TYPE_OBJECT) {
             if ($type->userType === null && $this->userType === null) {
                 // not reachable since top $type === $this check catches
-            } elseif ($type->userType !== null XOR $this->userType !== null) {
+            } elseif ($type->userType !== null xor $this->userType !== null) {
                 // One is typed, the other isn't
                 return false;
             }
