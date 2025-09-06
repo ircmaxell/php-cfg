@@ -18,21 +18,27 @@ namespace PHPCfg;
  */
 abstract class AbstractVisitor implements Visitor
 {
-    public function enterScript(Script $script) {}
+    public function enterScript(Script $script): void {}
 
-    public function leaveScript(Script $script) {}
+    public function leaveScript(Script $script): void {}
 
-    public function enterFunc(Func $func) {}
+    public function enterFunc(Func $func): void {}
 
-    public function leaveFunc(Func $func) {}
+    public function leaveFunc(Func $func): void {}
 
-    public function enterBlock(Block $block, ?Block $prior = null) {}
+    public function enterBlock(Block $block, ?Block $prior = null): void {}
 
-    public function leaveBlock(Block $block, ?Block $prior = null) {}
+    public function leaveBlock(Block $block, ?Block $prior = null): Block|int|null
+    {
+        return null;
+    }
 
-    public function skipBlock(Block $block, ?Block $prior = null) {}
+    public function skipBlock(Block $block, ?Block $prior = null): void {}
 
-    public function enterOp(Op $op, Block $block) {}
+    public function enterOp(Op $op, Block $block): void {}
 
-    public function leaveOp(Op $op, Block $block) {}
+    public function leaveOp(Op $op, Block $block): Op|int|null
+    {
+        return null;
+    }
 }

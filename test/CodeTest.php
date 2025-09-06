@@ -13,10 +13,15 @@ namespace PHPCfg;
 
 use PhpParser;
 use PhpParser\ParserFactory;
-use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\TestCase;
+use RecursiveDirectoryIterator;
+use RecursiveIteratorIterator;
+use RuntimeException;
 
-class ParserTest extends TestCase
+#[CoversNothing]
+class CodeTest extends TestCase
 {
     #[DataProvider('provideTestParseAndDump')]
     public function testParseAndDump($code, $expectedDump)
@@ -32,7 +37,7 @@ class ParserTest extends TestCase
             $script = $parser->parse($code, 'foo.php');
             $traverser->traverse($script);
             $result = $printer->printScript($script);
-        } catch (\RuntimeException $e) {
+        } catch (RuntimeException $e) {
             $result = $e->getMessage();
         }
 
@@ -44,10 +49,10 @@ class ParserTest extends TestCase
 
     public static function provideTestParseAndDump()
     {
-        $dir = __DIR__ . '/../code';
-        $iter = new \RecursiveIteratorIterator(
-            new \RecursiveDirectoryIterator($dir),
-            \RecursiveIteratorIterator::LEAVES_ONLY,
+        $dir = __DIR__ . '/code';
+        $iter = new RecursiveIteratorIterator(
+            new RecursiveDirectoryIterator($dir),
+            RecursiveIteratorIterator::LEAVES_ONLY,
         );
 
         foreach ($iter as $file) {

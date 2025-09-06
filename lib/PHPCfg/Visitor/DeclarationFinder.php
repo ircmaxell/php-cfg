@@ -17,49 +17,49 @@ use PHPCfg\Op;
 
 class DeclarationFinder extends AbstractVisitor
 {
-    protected $traits = [];
+    protected array $traits = [];
 
-    protected $classes = [];
+    protected array $classes = [];
 
-    protected $methods = [];
+    protected array $methods = [];
 
-    protected $functions = [];
+    protected array $functions = [];
 
-    protected $interfaces = [];
+    protected array $interfaces = [];
 
-    protected $constants = [];
+    protected array $constants = [];
 
-    public function getConstants()
+    public function getConstants(): array
     {
         return $this->constants;
     }
 
-    public function getTraits()
+    public function getTraits(): array
     {
         return $this->traits;
     }
 
-    public function getClasses()
+    public function getClasses(): array
     {
         return $this->classes;
     }
 
-    public function getMethods()
+    public function getMethods(): array
     {
         return $this->methods;
     }
 
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return $this->functions;
     }
 
-    public function getInterfaces()
+    public function getInterfaces(): array
     {
         return $this->interfaces;
     }
 
-    public function enterOp(Op $op, Block $block)
+    public function enterOp(Op $op, Block $block): void
     {
         if ($op instanceof Op\Stmt\Trait_) {
             $this->traits[] = $op;

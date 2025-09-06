@@ -11,8 +11,8 @@ declare(strict_types=1);
 
 namespace PHPCfg\Op\TraitUseAdaptation;
 
-use PHPCfg\Operand;
 use PHPCfg\Op\TraitUseAdaptation;
+use PHPCfg\Operand;
 
 class Precedence extends TraitUseAdaptation
 {

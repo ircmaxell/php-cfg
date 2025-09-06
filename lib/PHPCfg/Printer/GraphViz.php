@@ -17,10 +17,11 @@ use PHPCfg\Script;
 use phpDocumentor\GraphViz\Edge;
 use phpDocumentor\GraphViz\Graph;
 use phpDocumentor\GraphViz\Node;
+use SplObjectStorage;
 
 class GraphViz extends Printer
 {
-    protected $options = [
+    protected array $options = [
         'graph' => [],
         'node' => [
             'shape' => 'rect',
@@ -28,7 +29,7 @@ class GraphViz extends Printer
         'edge' => [],
     ];
 
-    protected $graph;
+    protected Graph $graph;
 
     public function __construct(array $options = [])
     {
@@ -36,7 +37,7 @@ class GraphViz extends Printer
         $this->options = $options + $this->options;
     }
 
-    public function printScript(Script $script)
+    public function printScript(Script $script): string
     {
         $i = 0;
         $graph = $this->createGraph();
@@ -45,18 +46,18 @@ class GraphViz extends Printer
             $this->printFuncWithHeader($func, $graph, 'func_' . ++$i . '_');
         }
 
-        return $graph;
+        return (string) $graph;
     }
 
-    public function printFunc(Func $func)
+    public function printFunc(Func $func): string
     {
         $graph = $this->createGraph();
         $this->printFuncInfo($func, $graph, '');
 
-        return $graph;
+        return (string) $graph;
     }
 
-    public function printVars(Func $func)
+    public function printVars(Func $func): string
     {
         $graph = Graph::create('vars');
         foreach ($this->options['graph'] as $name => $value) {
@@ -64,7 +65,7 @@ class GraphViz extends Printer
             $graph->{$setter}($value);
         }
         $rendered = $this->render($func->cfg);
-        $nodes = new \SplObjectStorage();
+        $nodes = new SplObjectStorage();
         foreach ($rendered['varIds'] as $var) {
             if (empty($var->ops) && empty($var->usages)) {
                 continue;
@@ -97,10 +98,10 @@ class GraphViz extends Printer
             }
         }
 
-        return $graph;
+        return (string) $graph;
     }
 
-    protected function printFuncWithHeader(Func $func, Graph $graph, $prefix)
+    protected function printFuncWithHeader(Func $func, Graph $graph, $prefix): void
     {
         $name = $func->getScopedName();
         $header = $this->createNode(
@@ -114,7 +115,7 @@ class GraphViz extends Printer
         $graph->link($edge);
     }
 
-    protected function getEdgeTypeColor(string $type)
+    protected function getEdgeTypeColor(string $type): string
     {
         static $colors = [
             "#D54E4E",
@@ -140,10 +141,10 @@ class GraphViz extends Printer
         return $edgeColors[$type];
     }
 
-    protected function printFuncInto(Func $func, Graph $graph, $prefix)
+    protected function printFuncInto(Func $func, Graph $graph, $prefix): Node
     {
         $rendered = $this->render($func);
-        $nodes = new \SplObjectStorage();
+        $nodes = new SplObjectStorage();
         foreach ($rendered['blocks'] as $block) {
             $blockId = $rendered['blockIds'][$block];
             $ops = $rendered['blocks'][$block];
@@ -196,7 +197,7 @@ class GraphViz extends Printer
         return str_replace(["\n", '\\l'], '\\l    ', $str);
     }
 
-    private function createGraph()
+    private function createGraph(): Graph
     {
         $graph = Graph::create('cfg');
         foreach ($this->options['graph'] as $name => $value) {
@@ -207,7 +208,7 @@ class GraphViz extends Printer
         return $graph;
     }
 
-    private function createNode($id, $content)
+    private function createNode($id, $content): Node
     {
         $node = new Node($id, $content);
         foreach ($this->options['node'] as $name => $value) {
@@ -217,7 +218,7 @@ class GraphViz extends Printer
         return $node;
     }
 
-    private function createEdge(Node $from, Node $to)
+    private function createEdge(Node $from, Node $to): Edge
     {
         $edge = new Edge($from, $to);
         foreach ($this->options['edge'] as $name => $value) {

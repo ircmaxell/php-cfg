@@ -17,49 +17,61 @@ Block#1
 
 Block#2
     Parent: Block#1
-    Parent: Block#3
-    Var#3 = Phi(LITERAL(true), Var#4)
-    Stmt_JumpIf
-        cond: Var#3
-        if: Block#4
-        else: Block#5
+    Expr_Assertion<type(LITERAL('int'))>
+        expr: Var#1<$a>
+        result: Var#3<$a>
+    Stmt_Jump
+        target: Block#4
 
 Block#3
     Parent: Block#1
+    Expr_Assertion<not(type(LITERAL('int')))>
+        expr: Var#1<$a>
+        result: Var#4<$a>
     Expr_FuncCall
         name: LITERAL('is_float')
-        args[0]: Var#1<$a>
+        args[0]: Var#4<$a>
         result: Var#5
     Expr_Cast_Bool
         expr: Var#5
-        result: Var#4
+        result: Var#6
     Stmt_Jump
-        target: Block#2
+        target: Block#4
 
 Block#4
+    Parent: Block#3
     Parent: Block#2
-    Expr_Assertion<(type(LITERAL('int'))|type(LITERAL('float')))>
-        expr: Var#1<$a>
-        result: Var#6<$a>
-    Terminal_Echo
-        expr: Var#6<$a>
-    Stmt_Jump
-        target: Block#6
+    Var#7 = Phi(LITERAL(true), Var#6)
+    Var#8<$a> = Phi(Var#4<$a>, Var#3<$a>)
+    Stmt_JumpIf
+        cond: Var#7
+        if: Block#5
+        else: Block#6
 
 Block#5
-    Parent: Block#2
-    Expr_Assertion<not((type(LITERAL('int'))|type(LITERAL('float'))))>
-        expr: Var#1<$a>
-        result: Var#7<$a>
+    Parent: Block#4
+    Expr_Assertion<(type(LITERAL('int'))|type(LITERAL('float')))>
+        expr: Var#8<$a>
+        result: Var#9<$a>
+    Terminal_Echo
+        expr: Var#9<$a>
     Stmt_Jump
-        target: Block#6
+        target: Block#7
 
 Block#6
     Parent: Block#4
+    Expr_Assertion<not((type(LITERAL('int'))|type(LITERAL('float'))))>
+        expr: Var#8<$a>
+        result: Var#10<$a>
+    Stmt_Jump
+        target: Block#7
+
+Block#7
     Parent: Block#5
-    Var#8<$a> = Phi(Var#6<$a>, Var#7<$a>)
+    Parent: Block#6
+    Var#11<$a> = Phi(Var#9<$a>, Var#10<$a>)
     Expr_FuncCall
         name: LITERAL('var_dump')
-        args[0]: Var#8<$a>
-        result: Var#9
+        args[0]: Var#11<$a>
+        result: Var#12
     Terminal_Return

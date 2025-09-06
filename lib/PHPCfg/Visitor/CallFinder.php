@@ -79,18 +79,18 @@ class CallFinder extends AbstractVisitor
         return $this->funcCalls;
     }
 
-    public function enterFunc(Func $func)
+    public function enterFunc(Func $func): void
     {
         $this->funcStack[] = $this->func;
         $this->func = $func;
     }
 
-    public function leaveFunc(Func $func)
+    public function leaveFunc(Func $func): void
     {
         $this->func = array_pop($this->funcStack);
     }
 
-    public function enterOp(Op $op, Block $block)
+    public function enterOp(Op $op, Block $block): void
     {
         if ($op instanceof Op\Expr\FuncCall) {
             $this->funcCalls[] = [$op, $this->func];

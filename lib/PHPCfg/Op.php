@@ -81,35 +81,23 @@ abstract class Op
         return in_array($name, $this->writeVariables, true);
     }
 
-    protected function addReadRefs(Operand ...$op): array
+    protected function addReadRefs(Operand ...$operand): array
     {
         $result = [];
-        foreach ($op as $key => $o) {
+        foreach ($operand as $key => $o) {
             $result[] = $this->addReadRef($o);
         }
 
         return $result;
     }
 
-    protected function addReadRef(Operand $op): Operand
+    protected function addReadRef(Operand $operand): Operand
     {
-        return $op->addUsage($this);
+        return $operand->addUsage($this);
     }
 
-    protected function addWriteRef(Operand $op): Operand
+    protected function addWriteRef(Operand $operand): Operand
     {
-        if (is_array($op)) {
-            $new = [];
-            foreach ($op as $key => $o) {
-                $new[$key] = $this->addWriteRef($o);
-            }
-
-            return $new;
-        }
-        if (! $op instanceof Operand) {
-            return $op;
-        }
-
-        return $op->addWriteOp($this);
+        return $operand->addWriteOp($this);
     }
 }

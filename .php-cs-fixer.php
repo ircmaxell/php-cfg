@@ -11,6 +11,7 @@ $finder = PhpCsFixer\Finder::create()
     ->name('.php_cs')
     ->exclude('vendor')
     ->exclude('.git')
+    ->exclude('coverage')
     ->in(__DIR__);
 
 return (new PhpCsFixer\Config())
@@ -23,5 +24,11 @@ return (new PhpCsFixer\Config())
             'comment_type' => 'PHPDoc',
             'header' => $header,
         ],
+        'fully_qualified_strict_types' => true,
+        'global_namespace_import' => true,
+        'no_unused_imports' => true,
+        'ordered_imports' => true,
+        'single_line_after_imports' => true,
+        'single_import_per_statement' => true,
     ])
     ->setFinder($finder);

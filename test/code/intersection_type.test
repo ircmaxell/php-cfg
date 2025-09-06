@@ -1,0 +1,17 @@
+<?php
+function foo(array&string&null $string) {
+
+}
+-----
+Block#1
+    Stmt_Function<'foo'>
+    Terminal_Return
+
+Function 'foo': mixed
+Block#1
+    Expr_Param
+        declaredType: array&string&null
+        name: LITERAL('string')
+        result: Var#1<$string>
+    Terminal_Return
+

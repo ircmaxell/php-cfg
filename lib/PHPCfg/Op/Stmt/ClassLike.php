@@ -12,10 +12,10 @@ declare(strict_types=1);
 namespace PHPCfg\Op\Stmt;
 
 use PhpCfg\Block;
-use PHPCfg\Op\Stmt;
+use PHPCfg\Op;
 use PHPCfg\Op\AttributableOp;
 use PHPCfg\Op\Attributes\Attributable;
-use PHPCfg\Op;
+use PHPCfg\Op\Stmt;
 
 abstract class ClassLike extends Stmt implements AttributableOp
 {

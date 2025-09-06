@@ -11,33 +11,31 @@ declare(strict_types=1);
 
 namespace PHPCfg;
 
+use SplObjectStorage;
+
 /**
  * Stores per-function compiler state.
  */
 class FuncContext
 {
     /** @var Block[] */
-    public $labels = [];
+    public array $labels = [];
 
-    /** @var \SplObjectStorage */
-    public $scope;
+    public SplObjectStorage $scope;
 
-    /** @var \SplObjectStorage */
-    public $incompletePhis;
+    public SplObjectStorage $incompletePhis;
 
-    /** @var bool */
-    public $complete = false;
+    public bool $complete = false;
 
-    /** @var array[] */
-    public $unresolvedGotos = [];
+    public array $unresolvedGotos = [];
 
     public function __construct()
     {
-        $this->scope = new \SplObjectStorage();
-        $this->incompletePhis = new \SplObjectStorage();
+        $this->scope = new SplObjectStorage();
+        $this->incompletePhis = new SplObjectStorage();
     }
 
-    public function setValueInScope(Block $block, $name, Operand $value)
+    public function setValueInScope(Block $block, $name, Operand $value): void
     {
         if (! isset($this->scope[$block])) {
             $this->scope[$block] = [];
@@ -48,7 +46,7 @@ class FuncContext
         $this->scope[$block] = $vars;
     }
 
-    public function isLocalVariable(Block $block, $name)
+    public function isLocalVariable(Block $block, string $name): bool
     {
         if (! isset($this->scope[$block])) {
             return false;
@@ -58,7 +56,7 @@ class FuncContext
         return isset($vars[$name]);
     }
 
-    public function addToIncompletePhis(Block $block, $name, Op\Phi $phi)
+    public function addToIncompletePhis(Block $block, string $name, Op\Phi $phi): void
     {
         if (! isset($this->incompletePhis[$block])) {
             $this->incompletePhis[$block] = [];

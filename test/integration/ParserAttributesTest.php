@@ -12,9 +12,12 @@ declare(strict_types=1);
 namespace PHPCfg;
 
 use PhpParser\ParserFactory;
+use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
+use RuntimeException;
 
-class AttributesTest extends TestCase
+#[CoversNothing]
+class ParserAttributesTest extends TestCase
 {
     public function testDefault()
     {
@@ -49,7 +52,7 @@ class AttributesTest extends TestCase
             $script = $parser->parse($code, 'foo.php');
             $traverser->traverse($script);
             $result = $printer->printScript($script);
-        } catch (\RuntimeException $e) {
+        } catch (RuntimeException $e) {
             $result = $e->getMessage();
         }
 
@@ -163,7 +166,7 @@ class AttributesTest extends TestCase
             $script = $parser->parse($code, 'foo.php');
             $traverser->traverse($script);
             $result = $printer->printScript($script);
-        } catch (\RuntimeException $e) {
+        } catch (RuntimeException $e) {
             $result = $e->getMessage();
         }
 

@@ -37,3 +37,11 @@ To dump the graph, simply use the built-in dumper:
 $dumper = new PHPCfg\Printer\Text();
 echo $dumper->printScript($script);
 ```
+
+## CLI
+
+You can leverage the CLI binary to generate debug traces of the CFG for any file, or for printing GraphViz visualizations.
+
+```shell
+bin/php-cfg dot -o output.dot path/to/file.php
+```

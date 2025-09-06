@@ -33,26 +33,20 @@ class Func extends Op
 
     public const FLAG_CLOSURE = 0x80;
 
-    /** @var string */
-    public $name;
+    public string $name;
 
-    /** @var int */
-    public $flags;
+    public int $flags;
 
-    /** @var */
     public Op\Type $returnType;
 
-    /** @var Op\Type\Literal */
-    public $class;
+    public ?Op\Type\Literal $class;
 
     /** @var Op\Expr\Param[] */
-    public $params;
+    public array $params;
 
-    /** @var Block|null */
-    public $cfg;
+    public ?Block $cfg;
 
-    /** @var CallableOp|null */
-    public $callableOp;
+    public ?CallableOp $callableOp;
 
     public function __construct(string $name, int $flags, Op\Type $returnType, ?Op\Type\Literal $class, array $attributes = [])
     {
@@ -65,7 +59,7 @@ class Func extends Op
         $this->cfg = new Block();
     }
 
-    public function getScopedName()
+    public function getScopedName(): string
     {
         if (null !== $this->class) {
             return $this->class->name . '::' . $this->name;

@@ -23,9 +23,9 @@ class BoundVariable extends Variable
 
     public const SCOPE_FUNCTION = 4;
 
-    public $byRef;
+    public bool $byRef;
 
-    public $scope;
+    public int $scope;
 
     public ?Op\Type\Literal $extra;
 

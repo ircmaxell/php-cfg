@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace PHPCfg\AstVisitor;
 
+use LogicException;
 use PhpParser\Node;
 use PhpParser\Node\Scalar\LNumber;
 use PhpParser\Node\Stmt\Goto_;
@@ -19,11 +20,11 @@ use PhpParser\NodeVisitorAbstract;
 
 class LoopResolver extends NodeVisitorAbstract
 {
-    protected static $labelCounter = 0;
+    protected int $labelCounter = 0;
 
-    protected $continueStack = [];
+    protected array $continueStack = [];
 
-    protected $breakStack = [];
+    protected array $breakStack = [];
 
     public function enterNode(Node $node)
     {
@@ -36,7 +37,6 @@ class LoopResolver extends NodeVisitorAbstract
                 $lbl = $this->makeLabel();
                 $this->breakStack[] = $lbl;
                 $this->continueStack[] = $lbl;
-
                 break;
             case 'Stmt_Do':
             case 'Stmt_While':
@@ -57,11 +57,8 @@ class LoopResolver extends NodeVisitorAbstract
             case 'Stmt_For':
             case 'Stmt_Foreach':
                 $node->stmts[] = new Label(array_pop($this->continueStack));
-
                 return [$node, new Label(array_pop($this->breakStack))];
             case 'Stmt_Switch':
-                array_pop($this->continueStack);
-
                 return [$node, new Label(array_pop($this->breakStack))];
         }
     }
@@ -74,18 +71,17 @@ class LoopResolver extends NodeVisitorAbstract
         if ($node->num instanceof LNumber) {
             $num = $node->num->value - 1;
             if ($num >= count($stack)) {
-                throw new \LogicException('Too high of a count for ' . $node->getType());
+                throw new LogicException('Too high of a count for ' . $node->getType());
             }
-            $loc = array_slice($stack, -1 * $num, 1);
-
+            $loc = array_slice($stack, -1 * $num - 1, 1);
             return new Goto_($loc[0], $node->getAttributes());
         }
 
-        throw new \LogicException('Unimplemented Node Value Type');
+        throw new LogicException('Unimplemented Node Value Type');
     }
 
     protected function makeLabel()
     {
-        return 'compiled_label_' . mt_rand(0, mt_getrandmax()) . '_' . self::$labelCounter++;
+        return 'compiled_label_' . mt_rand(0, mt_getrandmax()) . '_' . $this->labelCounter++;
     }
 }

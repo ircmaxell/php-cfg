@@ -24,7 +24,7 @@ class NegatedAssertion extends Assertion
         parent::__construct($value, self::MODE_INTERSECTION);
     }
 
-    public function getKind()
+    public function getKind(): string
     {
         return 'not';
     }

@@ -1,0 +1,54 @@
+<?php
+echo match(10) {
+    1 => 'foo',
+    5 => 'bar',
+    10 => 'baz' . 'buz',
+};
+-----
+Block#1
+    Stmt_MatchTable
+        cond: LITERAL(10)
+        armConditions[0]: LITERAL(1)
+        armConditions[1]: LITERAL(5)
+        armConditions[2]: LITERAL(10)
+        armBlocks[0]: Block#2
+        armBlocks[1]: Block#3
+        armBlocks[2]: Block#4
+
+Block#2
+    Parent: Block#1
+    Expr_Assign
+        var: Var#1
+        expr: LITERAL('foo')
+        result: Var#2
+    Stmt_Jump
+        target: Block#5
+
+Block#3
+    Parent: Block#1
+    Expr_Assign
+        var: Var#3
+        expr: LITERAL('bar')
+        result: Var#4
+    Stmt_Jump
+        target: Block#5    
+
+Block#4
+    Parent: Block#1
+    Expr_BinaryOp_Concat
+        left: LITERAL('baz')
+        right: LITERAL('buz')
+        result: Var#5
+    Stmt_Jump
+        target: Block#5
+
+Block#5
+    Parent: Block#2
+    Parent: Block#3
+    Parent: Block#4
+    Var#6 = Phi(Var#1, Var#3, Var#5)
+    Terminal_Echo
+        expr: Var#6
+    Terminal_Return
+
+

@@ -14,29 +14,30 @@ namespace PHPCfg\Visitor;
 use PHPCfg\AbstractVisitor;
 use PHPCfg\Block;
 use PHPCfg\Op;
+use SplObjectStorage;
 
 class VariableFinder extends AbstractVisitor
 {
-    protected $variables;
+    protected SplObjectStorage $variables;
 
     public function __construct()
     {
-        $this->variables = new \SplObjectStorage();
+        $this->variables = new SplObjectStorage();
     }
 
-    public function getVariables()
+    public function getVariables(): SplObjectStorage
     {
         return $this->variables;
     }
 
-    public function enterBlock(Block $block, ?Block $prior = null)
+    public function enterBlock(Block $block, ?Block $prior = null): void
     {
         foreach ($block->phi as $phi) {
             $this->enterOp($phi, $block);
         }
     }
 
-    public function enterOp(Op $op, Block $block)
+    public function enterOp(Op $op, Block $block): void
     {
         foreach ($op->getVariableNames() as $var) {
             if (! is_array($var)) {
