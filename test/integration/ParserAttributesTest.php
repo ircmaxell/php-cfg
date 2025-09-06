@@ -30,7 +30,8 @@ class ParserAttributesTest extends TestCase
 
         $expected = <<< EOF
             Block#1
-                Stmt_Function<'foo'>
+                Stmt_Function
+                    name: foo
                 Terminal_Return
 
             Function 'foo': mixed
@@ -38,9 +39,9 @@ class ParserAttributesTest extends TestCase
                 Expr_Param
                     declaredType: mixed
                     name: LITERAL('a')
-                    result: Var#1<\$a>
+                    result: TEMP(#1 <VARIABLE(\$a)>)
                 Terminal_Return
-                    expr: Var#1<\$a>
+                    expr: TEMP(#1 <VARIABLE(\$a)>)
             EOF;
 
         $parser = new Parser((new ParserFactory())->createForNewestSupportedVersion(), null);
@@ -75,7 +76,8 @@ class ParserAttributesTest extends TestCase
 
         $expected = <<<'EOF'
             Block#1
-                Stmt_Function<'foo'>
+                Stmt_Function
+                    name: foo
                     attribute['filename']: foo.php
                     attribute['startLine']: 2
                     attribute['startTokenPos']: 1
@@ -83,7 +85,8 @@ class ParserAttributesTest extends TestCase
                     attribute['endLine']: 4
                     attribute['endTokenPos']: 15
                     attribute['endFilePos']: 40
-                Stmt_Function<'foowithattribute'>
+                Stmt_Function
+                    name: foowithattribute
                     attribute['filename']: foo.php
                     attribute['startLine']: 6
                     attribute['startTokenPos']: 17
@@ -113,6 +116,9 @@ class ParserAttributesTest extends TestCase
             Function 'foo': mixed
             Block#1
                 Expr_Param
+                    declaredType: mixed
+                    name: LITERAL('a')
+                    result: TEMP(#1 <VARIABLE($a)>)
                     attribute['filename']: foo.php
                     attribute['startLine']: 2
                     attribute['startTokenPos']: 5
@@ -120,10 +126,8 @@ class ParserAttributesTest extends TestCase
                     attribute['endLine']: 2
                     attribute['endTokenPos']: 5
                     attribute['endFilePos']: 20
-                    declaredType: mixed
-                    name: LITERAL('a')
-                    result: Var#1<$a>
                 Terminal_Return
+                    expr: TEMP(#1 <VARIABLE($a)>)
                     attribute['filename']: foo.php
                     attribute['startLine']: 3
                     attribute['startTokenPos']: 10
@@ -131,11 +135,13 @@ class ParserAttributesTest extends TestCase
                     attribute['endLine']: 3
                     attribute['endTokenPos']: 13
                     attribute['endFilePos']: 38
-                    expr: Var#1<$a>
 
             Function 'foowithattribute': mixed
             Block#1
                 Expr_Param
+                    declaredType: mixed
+                    name: LITERAL('a')
+                    result: TEMP(#1 <VARIABLE($a)>)
                     attribute['filename']: foo.php
                     attribute['startLine']: 7
                     attribute['startTokenPos']: 25
@@ -143,10 +149,8 @@ class ParserAttributesTest extends TestCase
                     attribute['endLine']: 7
                     attribute['endTokenPos']: 25
                     attribute['endFilePos']: 78
-                    declaredType: mixed
-                    name: LITERAL('a')
-                    result: Var#1<$a>
                 Terminal_Return
+                    expr: TEMP(#1 <VARIABLE($a)>)
                     attribute['filename']: foo.php
                     attribute['startLine']: 8
                     attribute['startTokenPos']: 30
@@ -154,13 +158,12 @@ class ParserAttributesTest extends TestCase
                     attribute['endLine']: 8
                     attribute['endTokenPos']: 33
                     attribute['endFilePos']: 96
-                    expr: Var#1<$a>
             EOF;
 
         $parser = new Parser((new ParserFactory())->createForNewestSupportedVersion(), null);
         $traverser = new Traverser();
         $traverser->addVisitor(new Visitor\Simplifier());
-        $printer = new Printer\Text(true);
+        $printer = new Printer\Text(Printer\Printer::MODE_RENDER_ATTRIBUTES);
 
         try {
             $script = $parser->parse($code, 'foo.php');

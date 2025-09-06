@@ -4,34 +4,34 @@ $a = $b ? $c : $d;
 -----
 Block#1
     Stmt_JumpIf
-        cond: Var#1<$b>
+        cond: TEMP(#1 <VARIABLE($b)>)
         if: Block#2
         else: Block#3
 
 Block#2
     Parent: Block#1
     Expr_Assign
-        var: Var#2
-        expr: Var#3<$c>
-        result: Var#4
+        var: TEMP(#2)
+        expr: TEMP(#3 <VARIABLE($c)>)
+        result: TEMP(#4)
     Stmt_Jump
         target: Block#4
 
 Block#3
     Parent: Block#1
     Expr_Assign
-        var: Var#5
-        expr: Var#6<$d>
-        result: Var#7
+        var: TEMP(#5)
+        expr: TEMP(#6 <VARIABLE($d)>)
+        result: TEMP(#7)
     Stmt_Jump
         target: Block#4
 
 Block#4
     Parent: Block#2
     Parent: Block#3
-    Var#8 = Phi(Var#2, Var#5)
+    TEMP(#8) = Phi(TEMP(#2), TEMP(#5))
     Expr_Assign
-        var: Var#9<$a>
-        expr: Var#8
-        result: Var#10
+        var: TEMP(#9 <VARIABLE($a)>)
+        expr: TEMP(#8)
+        result: TEMP(#10)
     Terminal_Return

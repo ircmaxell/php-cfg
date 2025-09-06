@@ -40,29 +40,36 @@ Block#1
         stmts: Block#3
     Expr_New
         class: LITERAL('NS\\NameOfClass')
-        result: Var#1
+        result: TEMP(#1)
     Expr_Assign
-        var: Var#2<$obj>
-        expr: Var#1
-        result: Var#3
+        var: TEMP(#2 <VARIABLE($obj)>)
+        expr: TEMP(#1)
+        result: TEMP(#3)
     Terminal_Return
 
 Block#2
 
 Block#3
-    Stmt_ClassMethod<'doSomething'>
+    Stmt_ClassMethod
+        name: doSomething
         flags: public
-    Stmt_ClassMethod<'method1'>
+    Stmt_ClassMethod
+        name: method1
         flags: private
-    Stmt_ClassMethod<'method2'>
+    Stmt_ClassMethod
+        name: method2
         flags: protected
-    Stmt_ClassMethod<'method3'>
+    Stmt_ClassMethod
+        name: method3
         flags: static|private
-    Stmt_ClassMethod<'method4'>
+    Stmt_ClassMethod
+        name: method4
         flags: final|private
-    Stmt_ClassMethod<'method5'>
+    Stmt_ClassMethod
+        name: method5
         flags: abstract|private
-    Stmt_ClassMethod<'method6'>
+    Stmt_ClassMethod
+        name: method6
         flags: abstract|static|protected
 
 Function 'NS\NameOfClass::doSomething': mixed

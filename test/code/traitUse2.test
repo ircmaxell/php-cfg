@@ -26,23 +26,24 @@ Block#1
     Terminal_Return
 
 Block#2
-    Stmt_ClassMethod<'sayHello'>
+    Stmt_ClassMethod
+        name: sayHello
         flags: public
 
 Block#3
     Stmt_TraitUse
         use[0]: LITERAL('\\HelloWorld')
         adaptation[0]: Alias
-            method:LITERAL('sayHello')
-            newModifier:protected
+            method: LITERAL('sayHello')
+            newModifier: protected
 
 Block#4
     Stmt_TraitUse
         use[0]: LITERAL('\\HelloWorld')
         adaptation[0]: Alias
-            method:LITERAL('sayHello')
-            newName:LITERAL('myPrivateHello')
-            newModifier:private
+            method: LITERAL('sayHello')
+            newName: LITERAL('myPrivateHello')
+            newModifier: private
 
 Function 'HelloWorld::sayHello': mixed
 Block#1

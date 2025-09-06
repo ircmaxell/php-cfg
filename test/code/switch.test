@@ -14,7 +14,7 @@ switch ($i) {
 -----
 Block#1
     Stmt_Switch
-        cond: Var#1<$i>
+        cond: TEMP(#1 <VARIABLE($i)>)
         cases[0]: LITERAL(0)
         cases[1]: LITERAL(1)
         cases[2]: LITERAL(2)

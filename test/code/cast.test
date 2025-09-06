@@ -6,9 +6,9 @@ $a = (string) 12;
 Block#1
     Expr_Cast_String
         expr: LITERAL(12)
-        result: Var#1
+        result: TEMP(#1)
     Expr_Assign
-        var: Var#2<$a>
-        expr: Var#1
-        result: Var#3
+        var: TEMP(#2 <VARIABLE($a)>)
+        expr: TEMP(#1)
+        result: TEMP(#3)
     Terminal_Return

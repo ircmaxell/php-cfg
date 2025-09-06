@@ -12,6 +12,7 @@ $finder = PhpCsFixer\Finder::create()
     ->exclude('vendor')
     ->exclude('.git')
     ->exclude('coverage')
+    ->notPath('lib/PHPCfg/Types/InternalArgInfo.php')
     ->in(__DIR__);
 
 return (new PhpCsFixer\Config())

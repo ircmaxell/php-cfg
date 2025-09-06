@@ -5,10 +5,10 @@
 Block#1
     Expr_ConcatList
         list[0]: LITERAL('ls ')
-        list[1]: Var#1<$dir>
-        result: Var#2
+        list[1]: TEMP(#1 <VARIABLE($dir)>)
+        result: TEMP(#2)
     Expr_FuncCall
         name: LITERAL('shell_exec')
-        args[0]: Var#2
-        result: Var#3
+        args[0]: TEMP(#2)
+        result: TEMP(#3)
     Terminal_Return

@@ -14,11 +14,11 @@ echo "D";
 -----
 Block#1
     Expr_BinaryOp_Equal
-        left: Var#1<$i>
-        right: Var#2<$j>
-        result: Var#3
+        left: TEMP(#1 <VARIABLE($i)>)
+        right: TEMP(#2 <VARIABLE($j)>)
+        result: TEMP(#3)
     Stmt_JumpIf
-        cond: Var#3
+        cond: TEMP(#3)
         if: Block#2
         else: Block#3
 
@@ -34,11 +34,11 @@ Block#2
 Block#3
     Parent: Block#1
     Expr_BinaryOp_Equal
-        left: Var#1<$i>
-        right: Var#4<$k>
-        result: Var#5
+        left: TEMP(#1 <VARIABLE($i)>)
+        right: TEMP(#4 <VARIABLE($k)>)
+        result: TEMP(#5)
     Stmt_JumpIf
-        cond: Var#5
+        cond: TEMP(#5)
         if: Block#2
         else: Block#5
 
@@ -53,11 +53,11 @@ Block#4
 Block#5
     Parent: Block#3
     Expr_BinaryOp_Equal
-        left: Var#1<$i>
-        right: Var#6<$x>
-        result: Var#7
+        left: TEMP(#1 <VARIABLE($i)>)
+        right: TEMP(#6 <VARIABLE($x)>)
+        result: TEMP(#7)
     Stmt_JumpIf
-        cond: Var#7
+        cond: TEMP(#7)
         if: Block#4
         else: Block#7
 
@@ -71,11 +71,11 @@ Block#6
 Block#7
     Parent: Block#5
     Expr_BinaryOp_Equal
-        left: Var#1<$i>
-        right: Var#8<$y>
-        result: Var#9
+        left: TEMP(#1 <VARIABLE($i)>)
+        right: TEMP(#8 <VARIABLE($y)>)
+        result: TEMP(#9)
     Stmt_JumpIf
-        cond: Var#9
+        cond: TEMP(#9)
         if: Block#8
         else: Block#2
 

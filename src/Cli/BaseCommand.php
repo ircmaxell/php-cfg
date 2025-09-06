@@ -30,6 +30,7 @@ abstract class BaseCommand extends Command
 
         $script = $parser->parse($code, $file);
         $traverser->traverse($script);
+
         return $script;
     }
 }

@@ -6,13 +6,13 @@ foreach ($a as $b) {
 -----
 Block#1
     Expr_Array
-        result: Var#1
+        result: TEMP(#1)
     Expr_Assign
-        var: Var#2<$a>
-        expr: Var#1
-        result: Var#3
+        var: TEMP(#2 <VARIABLE($a)>)
+        expr: TEMP(#1)
+        result: TEMP(#3)
     Iterator_Reset
-        var: Var#2<$a>
+        var: TEMP(#2 <VARIABLE($a)>)
     Stmt_Jump
         target: Block#2
 
@@ -20,24 +20,24 @@ Block#2
     Parent: Block#1
     Parent: Block#3
     Iterator_Valid
-        var: Var#2<$a>
-        result: Var#4
+        var: TEMP(#2 <VARIABLE($a)>)
+        result: TEMP(#4)
     Stmt_JumpIf
-        cond: Var#4
+        cond: TEMP(#4)
         if: Block#3
         else: Block#4
 
 Block#3
     Parent: Block#2
     Iterator_Value
-        var: Var#2<$a>
-        result: Var#5
+        var: TEMP(#2 <VARIABLE($a)>)
+        result: TEMP(#5)
     Expr_Assign
-        var: Var#6<$b>
-        expr: Var#5
-        result: Var#7
+        var: TEMP(#6 <VARIABLE($b)>)
+        expr: TEMP(#5)
+        result: TEMP(#7)
     Terminal_Echo
-        expr: Var#6<$b>
+        expr: TEMP(#6 <VARIABLE($b)>)
     Stmt_Jump
         target: Block#2
 

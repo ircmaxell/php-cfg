@@ -48,15 +48,19 @@ Block#1
     Terminal_Return
 
 Block#2
-    Stmt_ClassMethod<'smallTalk'>
+    Stmt_ClassMethod
+        name: smallTalk
         flags: public
-    Stmt_ClassMethod<'bigTalk'>
+    Stmt_ClassMethod
+        name: bigTalk
         flags: public
 
 Block#3
-    Stmt_ClassMethod<'smallTalk'>
+    Stmt_ClassMethod
+        name: smallTalk
         flags: public
-    Stmt_ClassMethod<'bigTalk'>
+    Stmt_ClassMethod
+        name: bigTalk
         flags: public
 
 Block#4
@@ -64,12 +68,12 @@ Block#4
         use[0]: LITERAL('\\A')
         use[1]: LITERAL('\\B')
         adaptation[0]: Insteadof
-            trait:LITERAL('\\B')
-            method:LITERAL('smallTalk')
+            trait: LITERAL('\\B')
+            method: LITERAL('smallTalk')
             insteadof[0]: LITERAL('\\A')
         adaptation[1]: Insteadof
-            trait:LITERAL('\\A')
-            method:LITERAL('bigTalk')
+            trait: LITERAL('\\A')
+            method: LITERAL('bigTalk')
             insteadof[0]: LITERAL('\\B')
 
 Block#5
@@ -77,18 +81,18 @@ Block#5
         use[0]: LITERAL('\\A')
         use[1]: LITERAL('\\B')
         adaptation[0]: Insteadof
-            trait:LITERAL('\\B')
-            method:LITERAL('smallTalk')
+            trait: LITERAL('\\B')
+            method: LITERAL('smallTalk')
             insteadof[0]: LITERAL('\\A')
         adaptation[1]: Insteadof
-            trait:LITERAL('\\A')
-            method:LITERAL('bigTalk')
+            trait: LITERAL('\\A')
+            method: LITERAL('bigTalk')
             insteadof[0]: LITERAL('\\B')
         adaptation[2]: Alias
-            trait:LITERAL('\\B')
-            method:LITERAL('bigTalk')
-            newName:LITERAL('talk')
-            newModifier:private
+            trait: LITERAL('\\B')
+            method: LITERAL('bigTalk')
+            newName: LITERAL('talk')
+            newModifier: private
 
 Function 'A::smallTalk': mixed
 Block#1

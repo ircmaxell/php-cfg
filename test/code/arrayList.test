@@ -4,31 +4,31 @@
 -----
 Block#1
     Expr_ArrayDimFetch
-        var: Var#1<$array>
+        var: TEMP(#1 <VARIABLE($array)>)
         dim: LITERAL(0)
-        result: Var#2
+        result: TEMP(#2)
     Expr_Assign
-        var: Var#3<$a>
-        expr: Var#2
-        result: Var#4
+        var: TEMP(#3 <VARIABLE($a)>)
+        expr: TEMP(#2)
+        result: TEMP(#4)
     Expr_ArrayDimFetch
-        var: Var#1<$array>
+        var: TEMP(#1 <VARIABLE($array)>)
         dim: LITERAL(1)
-        result: Var#5
+        result: TEMP(#5)
     Expr_Assign
-        var: Var#6<$b>
-        expr: Var#5
-        result: Var#7
+        var: TEMP(#6 <VARIABLE($b)>)
+        expr: TEMP(#5)
+        result: TEMP(#7)
     Expr_ArrayDimFetch
-        var: Var#1<$array>
+        var: TEMP(#1 <VARIABLE($array)>)
         dim: LITERAL(2)
-        result: Var#8
+        result: TEMP(#8)
     Expr_ArrayDimFetch
-        var: Var#8
+        var: TEMP(#8)
         dim: LITERAL(0)
-        result: Var#9
+        result: TEMP(#9)
     Expr_Assign
-        var: Var#10<$c>
-        expr: Var#9
-        result: Var#11
+        var: TEMP(#10 <VARIABLE($c)>)
+        expr: TEMP(#9)
+        result: TEMP(#11)
     Terminal_Return

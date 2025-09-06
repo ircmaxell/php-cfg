@@ -13,6 +13,7 @@ use PHPCfg\Op;
 use PHPCfg\ParserHandler;
 use PHPCfg\ParserHandler\Stmt;
 use PhpParser\Node;
+use SplObjectStorage;
 
 class Class_ extends ParserHandler implements Stmt
 {
@@ -22,7 +23,7 @@ class Class_ extends ParserHandler implements Stmt
         $old = $this->parser->currentClass;
         $this->parser->currentClass = $name;
 
-        $this->addOp(new Op\Stmt\Class_(
+        $class = new Op\Stmt\Class_(
             $name,
             $node->flags,
             $node->extends ? $this->parser->parseTypeNode($node->extends) : null,
@@ -30,7 +31,42 @@ class Class_ extends ParserHandler implements Stmt
             $this->parser->parseNodes($node->stmts, $this->createBlock()),
             $this->parser->parseAttributeGroups(...$node->attrGroups),
             $this->mapAttributes($node),
-        ));
+        );
+
+        $this->addScope($class, $name);
+        $this->addOp($class);
         $this->parser->currentClass = $old;
+    }
+
+    public static function addScope(Op\Stmt\ClassLike $class, Op\Type $name): void
+    {
+        $toprocess = new SplObjectStorage();
+        $processed = new SplObjectStorage();
+        $toprocess->attach($class->stmts);
+        while ($toprocess->count() > 0) {
+            $block = $toprocess->current();
+            $toprocess->detach($block);
+            $processed->attach($block);
+            foreach ($block->children as $op) {
+                $op->scope = $name;
+                if ($op instanceof Op\CallableOp) {
+                    if ($op->func->cfg && !$processed->contains($op->func->cfg)) {
+                        $toprocess->attach($op->func->cfg);
+                    }
+                }
+                foreach ($op->getSubBlocks() as $sub) {
+                    if (is_array($sub)) {
+                        foreach ($sub as $s) {
+                            if ($s && !$processed->contains($s)) {
+                                $toprocess->attach($s);
+                            }
+                        }
+                    } elseif ($sub && !$processed->contains($sub)) {
+                        $toprocess->attach($sub);
+                    }
+                }
+            }
+            $toprocess->rewind();
+        }
     }
 }

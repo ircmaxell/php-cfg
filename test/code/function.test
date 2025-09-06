@@ -4,7 +4,8 @@ function foo($a) {
 }
 -----
 Block#1
-    Stmt_Function<'foo'>
+    Stmt_Function
+        name: foo
     Terminal_Return
 
 Function 'foo': mixed
@@ -12,6 +13,6 @@ Block#1
     Expr_Param
         declaredType: mixed
         name: LITERAL('a')
-        result: Var#1<$a>
+        result: TEMP(#1 <VARIABLE($a)>)
     Terminal_Return
-        expr: Var#1<$a>
+        expr: TEMP(#1 <VARIABLE($a)>)

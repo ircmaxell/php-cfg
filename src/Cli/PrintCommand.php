@@ -11,6 +11,7 @@ namespace PHPCfg\Cli;
 
 use Ahc\Cli\Output\Color;
 use PHPCfg\Printer;
+use PHPCfg\Types;
 
 class PrintCommand extends BaseCommand
 {
@@ -20,13 +21,15 @@ class PrintCommand extends BaseCommand
 
 
         $this
-            ->argument('<file>', 'File to process')
+            ->argument('<file>', 'File to print')
+            ->argument('[deps...]', 'Dependencies to parse for type recongition')
             ->option('-n|--no-optimize', 'Disable Optimizers', 'boolval', false)
             ->option('-a|--attributes', 'Render Attributes', 'boolval', false)
+            ->option('-t|--types', 'ResolveTypes', 'boolval', false)
         ;
     }
 
-    public function execute($file, $optimize, $attributes)
+    public function execute(string $file, array $deps, bool $optimize, bool $attributes, bool $types)
     {
         $io = $this->app()->io();
         $color = new Color();
@@ -40,7 +43,24 @@ class PrintCommand extends BaseCommand
 
         $script = $this->exec($file, $code, $optimize);
 
-        $dumper = new Printer\Text($attributes);
+        if ($types) {
+            $engine = new Types\Engine();
+            $engine->addScript($script);
+            foreach ($deps as $dep) {
+                if (file_exists($dep)) {
+                    $code = file_get_contents($dep);
+                } else {
+                    $io->write($color->error("Unknown dep $file"));
+                    return 1;
+                }
+                $engine->addScript($this->exec($dep, $code, $optimize));
+            }
+            $engine->run();
+        }
+
+        $dumper = new Printer\Text($attributes ? Printer\Printer::MODE_RENDER_ATTRIBUTES : Printer\Printer::MODE_DEFAULT);
         $io->write($dumper->printScript($script), true);
     }
+
+
 }

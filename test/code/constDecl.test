@@ -12,23 +12,23 @@ Block#1
         valueBlock: Block#2
     Terminal_Const
         name: LITERAL('B')
-        value: Var#1
+        value: TEMP(#1)
         valueBlock: Block#3
     Stmt_Class
         name: C
         stmts: Block#4
     Expr_ConstFetch
         name: LITERAL('A')
-        result: Var#2
+        result: TEMP(#2)
     Expr_ClassConstFetch
         class: LITERAL('C')
         name: LITERAL('D')
-        result: Var#3
+        result: TEMP(#3)
     Expr_FuncCall
         name: LITERAL('var_dump')
-        args[0]: Var#2
-        args[1]: Var#3
-        result: Var#4
+        args[0]: TEMP(#2)
+        args[1]: TEMP(#3)
+        result: TEMP(#4)
     Terminal_Return
 
 Block#2
@@ -37,7 +37,7 @@ Block#3
     Expr_BinaryOp_Plus
         left: LITERAL(2)
         right: LITERAL(2)
-        result: Var#1
+        result: TEMP(#1)
 
 Block#4
     Terminal_Const
@@ -46,7 +46,7 @@ Block#4
         valueBlock: Block#5
     Terminal_Const
         name: LITERAL('E')
-        value: Var#5
+        value: TEMP(#5)
         valueBlock: Block#6
 
 Block#5
@@ -55,4 +55,4 @@ Block#6
     Expr_BinaryOp_Plus
         left: LITERAL(4)
         right: LITERAL(4)
-        result: Var#5
+        result: TEMP(#5)

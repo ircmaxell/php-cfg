@@ -12,37 +12,39 @@ function gen_zero_four() {
 }
 -----
 Block#1
-    Stmt_Function<'gen_one_to_three'>
-    Stmt_Function<'gen_zero_four'>
+    Stmt_Function
+        name: gen_one_to_three
+    Stmt_Function
+        name: gen_zero_four
     Terminal_Return
 
 Function 'gen_one_to_three': mixed
 Block#1
     Expr_Assign
-        var: Var#1<$i>
+        var: TEMP(#1 <VARIABLE($i)>)
         expr: LITERAL(1)
-        result: Var#2
+        result: TEMP(#2)
     Stmt_Jump
         target: Block#2
 
 Block#2
     Parent: Block#1
     Parent: Block#5
-    Var#3<$i> = Phi(Var#1<$i>, Var#4<$i>)
+    TEMP(#3 <VARIABLE($i)>) = Phi(TEMP(#1 <VARIABLE($i)>), TEMP(#4 <VARIABLE($i)>))
     Expr_BinaryOp_SmallerOrEqual
-        left: Var#3<$i>
+        left: TEMP(#3 <VARIABLE($i)>)
         right: LITERAL(3)
-        result: Var#5
+        result: TEMP(#5)
     Stmt_JumpIf
-        cond: Var#5
+        cond: TEMP(#5)
         if: Block#3
         else: Block#4
 
 Block#3
     Parent: Block#2
     Expr_Yield
-        key: Var#3<$i>
-        result: Var#6
+        key: TEMP(#3 <VARIABLE($i)>)
+        result: TEMP(#6)
     Stmt_Jump
         target: Block#5
 
@@ -53,13 +55,13 @@ Block#4
 Block#5
     Parent: Block#3
     Expr_BinaryOp_Plus
-        left: Var#3<$i>
+        left: TEMP(#3 <VARIABLE($i)>)
         right: LITERAL(1)
-        result: Var#7
+        result: TEMP(#7)
     Expr_Assign
-        var: Var#4<$i>
-        expr: Var#7
-        result: Var#8
+        var: TEMP(#4 <VARIABLE($i)>)
+        expr: TEMP(#7)
+        result: TEMP(#8)
     Stmt_Jump
         target: Block#2
 
@@ -67,14 +69,14 @@ Function 'gen_zero_four': mixed
 Block#1
     Expr_Yield
         key: LITERAL(0)
-        result: Var#1
+        result: TEMP(#1)
     Expr_FuncCall
         name: LITERAL('gen_one_to_three')
-        result: Var#2
+        result: TEMP(#2)
     Expr_YieldFrom
-        expr: Var#2
-        result: Var#3
+        expr: TEMP(#2)
+        result: TEMP(#3)
     Expr_Yield
         key: LITERAL(4)
-        result: Var#4
+        result: TEMP(#4)
     Terminal_Return
