@@ -7,7 +7,6 @@ foreach ([1, 2, 3] as $b) {
     }
 }
 echo $a;
-
 -----
 Block#1
     Expr_Assign
@@ -31,7 +30,10 @@ Block#2
     Parent: Block#1
     Parent: Block#3
     Parent: Block#5
-    TEMP(#4 <VARIABLE($a)>) = Phi(TEMP(#1 <VARIABLE($a)>), TEMP(#5 <VARIABLE($a)>))
+    Phi
+        vars[0]: TEMP(#1 <VARIABLE($a)>)
+        vars[1]: TEMP(#4 <VARIABLE($a)>)
+        result: TEMP(#5 <VARIABLE($a)>)
     Iterator_Valid
         var: TEMP(#3)
         result: TEMP(#6)
@@ -50,7 +52,7 @@ Block#3
         expr: TEMP(#7)
         result: TEMP(#9)
     Expr_BinaryOp_Greater
-        left: TEMP(#4 <VARIABLE($a)>)
+        left: TEMP(#5 <VARIABLE($a)>)
         right: LITERAL(0)
         result: TEMP(#10)
     Stmt_JumpIf
@@ -61,17 +63,17 @@ Block#3
 Block#4
     Parent: Block#2
     Terminal_Echo
-        expr: TEMP(#4 <VARIABLE($a)>)
+        expr: TEMP(#5 <VARIABLE($a)>)
     Terminal_Return
 
 Block#5
     Parent: Block#3
     Expr_BinaryOp_Plus
-        left: TEMP(#4 <VARIABLE($a)>)
+        left: TEMP(#5 <VARIABLE($a)>)
         right: TEMP(#8 <VARIABLE($b)>)
         result: TEMP(#11)
     Expr_Assign
-        var: TEMP(#5 <VARIABLE($a)>)
+        var: TEMP(#4 <VARIABLE($a)>)
         expr: TEMP(#11)
         result: TEMP(#12)
     Stmt_Jump

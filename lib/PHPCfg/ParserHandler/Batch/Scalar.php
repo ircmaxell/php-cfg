@@ -78,7 +78,6 @@ class Scalar extends ParserHandler implements Expr, Batch
                 // TODO
                 return new Operand\Literal('__FUNCTION__');
             default:
-                var_dump($scalar);
                 throw new RuntimeException('Unknown how to deal with scalar type ' . $scalar->getType());
         }
     }

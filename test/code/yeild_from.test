@@ -30,9 +30,12 @@ Block#1
 Block#2
     Parent: Block#1
     Parent: Block#5
-    TEMP(#3 <VARIABLE($i)>) = Phi(TEMP(#1 <VARIABLE($i)>), TEMP(#4 <VARIABLE($i)>))
+    Phi
+        vars[0]: TEMP(#1 <VARIABLE($i)>)
+        vars[1]: TEMP(#3 <VARIABLE($i)>)
+        result: TEMP(#4 <VARIABLE($i)>)
     Expr_BinaryOp_SmallerOrEqual
-        left: TEMP(#3 <VARIABLE($i)>)
+        left: TEMP(#4 <VARIABLE($i)>)
         right: LITERAL(3)
         result: TEMP(#5)
     Stmt_JumpIf
@@ -43,7 +46,7 @@ Block#2
 Block#3
     Parent: Block#2
     Expr_Yield
-        key: TEMP(#3 <VARIABLE($i)>)
+        key: TEMP(#4 <VARIABLE($i)>)
         result: TEMP(#6)
     Stmt_Jump
         target: Block#5
@@ -55,11 +58,11 @@ Block#4
 Block#5
     Parent: Block#3
     Expr_BinaryOp_Plus
-        left: TEMP(#3 <VARIABLE($i)>)
+        left: TEMP(#4 <VARIABLE($i)>)
         right: LITERAL(1)
         result: TEMP(#7)
     Expr_Assign
-        var: TEMP(#4 <VARIABLE($i)>)
+        var: TEMP(#3 <VARIABLE($i)>)
         expr: TEMP(#7)
         result: TEMP(#8)
     Stmt_Jump

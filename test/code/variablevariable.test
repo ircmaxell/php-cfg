@@ -2,7 +2,7 @@
 
 ${$foo} = "bar";
 ${$foo1."plus".$foo2} = "bar";
-$$foo = "bar"; 
+$$foo = "bar";
 $$$$$$$a = "b";
 
 echo $foo->{$baz[1]};

@@ -23,7 +23,7 @@ class ConstFetch extends ParserHandler implements Expr
             $lcname = strtolower($expr->name->toString());
             switch ($lcname) {
                 case 'null':
-                    return new Operand\Literal(null);
+                    return new Operand\NullOperand();
                 case 'true':
                     return new Operand\Literal(true);
                 case 'false':

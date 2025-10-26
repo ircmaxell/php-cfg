@@ -3,7 +3,7 @@
 try {
     try {
         echo "nested try";
-    } 
+    }
     catch(Exception1 $e1) {
         echo $e1;
     }
@@ -39,9 +39,12 @@ Block#3
     Parent: Block#2
     Parent: Block#7
         finallyTarget: Block#4
-    TEMP(#3 <VARIABLE($e2)>) = Phi(TEMP(#1 <VARIABLE($e2)>), TEMP(#4 <VARIABLE($e2)>))
+    Phi
+        vars[0]: TEMP(#1 <VARIABLE($e2)>)
+        vars[1]: TEMP(#3 <VARIABLE($e2)>)
+        result: TEMP(#4 <VARIABLE($e2)>)
     Terminal_Echo
-        expr: TEMP(#3 <VARIABLE($e2)>)
+        expr: TEMP(#4 <VARIABLE($e2)>)
     Stmt_Jump
         target: Block#4
 

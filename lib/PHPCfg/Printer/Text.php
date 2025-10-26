@@ -11,6 +11,8 @@ declare(strict_types=1);
 
 namespace PHPCfg\Printer;
 
+use LogicException;
+use PHPCfg\Operand;
 use PHPCfg\Func;
 use PHPCfg\Script;
 
@@ -86,5 +88,77 @@ class Text extends Printer
         }
 
         return $output;
+    }
+
+    public function renderOperand(Operand $var): string
+    {
+        foreach ($this->renderers as $renderer) {
+            $result = $renderer->renderOperand($var);
+            if ($result !== null) {
+                $kind = $result['kind'];
+                $type =  $result['type'] ? "<{$result['type']}>" : "";
+
+                if($kind == "TEMP" ) {
+                    $result['id'] = "#" . $result['id'];
+                    if(isset($result['original']) && $result['original']) {
+                        $result['original'] = "<" . $result['original'] . ">";
+                    }
+                }
+                else if($kind == "VARIABLE") {
+                    $result['name'] = $result['reference'] ? "&$" . $result['name'] : "$" . $result['name'];
+                    
+                    if($result['scope']) {
+                        $result['name'] = $result['scope'] ." ". $result['name'];
+                    }
+
+                    unset($result['scope'], $result['reference']);
+                } else if($kind == "LITERAL"){
+                    $result['value'] = var_export($result['value'], true);
+                }
+
+                unset($result['kind'], $result['type']);
+                return strtoupper($kind) . $type . '(' . trim(implode(" ", $result)) . ')';
+            }
+        }
+
+        throw new LogicException("Unknown operand rendering: " . get_class($var));
+    }
+
+    public function renderOpLabelValue(array | string $value, string $prefix): string
+    {
+        $result = '';
+        if (is_array($value)) {
+            foreach ($value as $k => $v) {
+                $newprefix = is_string($k) ? "{$prefix}['{$k}']" : "{$prefix}[{$k}]";
+                if (is_array($v)) {
+                    $result .= $this->renderOpLabelValue($v, $newprefix);
+                } else {
+                    $result .= $this->indent("{$newprefix}: {$v}");
+                }
+            }
+        } else {
+            $result .= $this->indent("{$prefix}: {$value}");
+        }
+
+        return $result;
+    }
+
+    public function renderOpLabel(array $desc): string
+    {
+        $result = "{$desc['kind']}";
+        unset($desc['kind'], $desc['childblocks']);
+
+        foreach ($desc as $name => $val) {
+            if (is_array($val)) {
+                foreach ($val as $k => $v) {
+                    $prefix = "\n{$k}";
+                    $result .= $this->renderOpLabelValue($v, $prefix);
+                }
+            } else {
+                $result .= $this->indent("\n{$name}: {$val}");
+            }
+        }
+        
+        return $result;
     }
 }

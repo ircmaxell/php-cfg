@@ -29,7 +29,7 @@ Block#3
     Expr_Assertion
         expr: TEMP(#1 <VARIABLE($a)>)
         result: TEMP(#4 <VARIABLE($a)>)
-        assert: not(LITERAL('int'))
+        assert['not']: LITERAL('int')
     Expr_FuncCall
         name: LITERAL('is_float')
         args[0]: TEMP(#4 <VARIABLE($a)>)
@@ -43,8 +43,14 @@ Block#3
 Block#4
     Parent: Block#3
     Parent: Block#2
-    TEMP(#7) = Phi(LITERAL(true), TEMP(#6))
-    TEMP(#8 <VARIABLE($a)>) = Phi(TEMP(#4 <VARIABLE($a)>), TEMP(#3 <VARIABLE($a)>))
+    Phi
+        vars[0]: LITERAL(true)
+        vars[1]: TEMP(#6)
+        result: TEMP(#7)
+    Phi
+        vars[0]: TEMP(#4 <VARIABLE($a)>)
+        vars[1]: TEMP(#3 <VARIABLE($a)>)
+        result: TEMP(#8 <VARIABLE($a)>)
     Stmt_JumpIf
         cond: TEMP(#7)
         if: Block#5
@@ -55,7 +61,8 @@ Block#5
     Expr_Assertion
         expr: TEMP(#8 <VARIABLE($a)>)
         result: TEMP(#9 <VARIABLE($a)>)
-        assert: LITERAL('int')|LITERAL('float')
+        assert['|'][0]: LITERAL('int')
+        assert['|'][1]: LITERAL('float')
     Terminal_Echo
         expr: TEMP(#9 <VARIABLE($a)>)
     Stmt_Jump
@@ -66,14 +73,18 @@ Block#6
     Expr_Assertion
         expr: TEMP(#8 <VARIABLE($a)>)
         result: TEMP(#10 <VARIABLE($a)>)
-        assert: not(LITERAL('int')|LITERAL('float'))
+        assert['not']['|'][0]: LITERAL('int')
+        assert['not']['|'][1]: LITERAL('float')
     Stmt_Jump
         target: Block#7
 
 Block#7
     Parent: Block#5
     Parent: Block#6
-    TEMP(#11 <VARIABLE($a)>) = Phi(TEMP(#9 <VARIABLE($a)>), TEMP(#10 <VARIABLE($a)>))
+    Phi
+        vars[0]: TEMP(#9 <VARIABLE($a)>)
+        vars[1]: TEMP(#10 <VARIABLE($a)>)
+        result: TEMP(#11 <VARIABLE($a)>)
     Expr_FuncCall
         name: LITERAL('var_dump')
         args[0]: TEMP(#11 <VARIABLE($a)>)

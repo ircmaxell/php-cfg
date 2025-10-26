@@ -7,7 +7,7 @@ class A {
     private readonly static $prop5;
     static $prop6;
     protected $prop7;
-    
+
     #[ConstAttr]
     #[FooAttribute(null)]
     private string $foo5;
@@ -59,16 +59,12 @@ Block#2
         name: LITERAL('null')
         result: TEMP(#2)
     Stmt_Property
+        attrGroup[0][0]['name']: LITERAL('ConstAttr')
+        attrGroup[1][0]['name']: LITERAL('FooAttribute')
+        attrGroup[1][0]['arg'][0]: TEMP(#2)
         declaredType: string
         flags: private
         name: LITERAL('foo5')
-        attrGroup[0]:
-            attr[0]:
-                name: LITERAL('ConstAttr')
-        attrGroup[1]:
-            attr[0]:
-                name: LITERAL('FooAttribute')
-                args[0]: TEMP(#2)
     Terminal_Const
         name: LITERAL('FOO')
         value: LITERAL('foo')

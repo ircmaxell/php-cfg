@@ -40,24 +40,26 @@ class Variable implements Renderer
         }
 
         assert($operand->name instanceof Operand\Literal);
-        $prefix = "$";
+        $reference = false;
+        $scope = "";
 
         if ($operand instanceof Operand\BoundVariable) {
             if ($operand->byRef) {
-                $prefix = '&$';
+                $reference = true;
             }
+
             switch ($operand->scope) {
                 case Operand\BoundVariable::SCOPE_GLOBAL:
-                    $prefix = "global $prefix";
+                    $scope = "global";
                     break;
                 case Operand\BoundVariable::SCOPE_LOCAL:
-                    $prefix = "local $prefix";
+                    $scope = "local";
                     break;
                 case Operand\BoundVariable::SCOPE_OBJECT:
-                    $prefix = "this $prefix";
+                    $scope = "this";
                     break;
                 case Operand\BoundVariable::SCOPE_FUNCTION:
-                    $prefix = "static $prefix";
+                    $scope = "static";
                     break;
                 default:
                     throw new LogicException('Unknown bound variable scope');
@@ -66,9 +68,10 @@ class Variable implements Renderer
 
         return [
             "kind" => "VARIABLE",
-            "type" => $operand->type ? "<{$operand->type}>" : "",
-            "name" => $prefix . $operand->name->value,
+            "type" => $operand->type,
+            "name" => $operand->name->value,
+            "scope" => $scope,
+            "reference" => $reference,
         ];
     }
-
 }

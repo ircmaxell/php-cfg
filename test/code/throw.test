@@ -11,7 +11,10 @@ Block#1
 
 Block#2
     Parent: Block#1
-    TEMP(#2) = Phi(LITERAL(true), TEMP(#3))
+    Phi
+        vars[0]: LITERAL(true)
+        vars[1]: TEMP(#2)
+        result: TEMP(#3)
     Expr_New
         class: LITERAL('InvalidArgumentException')
         args[0]: LITERAL('foo')

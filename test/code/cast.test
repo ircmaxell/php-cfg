@@ -1,7 +1,6 @@
 <?php
 
 $a = (string) 12;
-
 -----
 Block#1
     Expr_Cast_String

@@ -9,6 +9,7 @@
 
 namespace PHPCfg\ParserHandler\Batch;
 
+use PHPCfg\Assertion;
 use PHPCfg\Op;
 use PHPCfg\Operand;
 use PHPCfg\ParserHandler;

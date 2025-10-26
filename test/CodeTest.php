@@ -42,8 +42,8 @@ class CodeTest extends TestCase
         }
 
         $this->assertEquals(
-            $this->canonicalize($expectedDump),
-            $this->canonicalize($result),
+            CodeTest::canonicalize($expectedDump),
+            CodeTest::canonicalize($result),
         );
     }
 
@@ -65,7 +65,7 @@ class CodeTest extends TestCase
         }
     }
 
-    private function canonicalize($str)
+    public static function canonicalize($str)
     {
         // trim from both sides
         $str = trim($str);

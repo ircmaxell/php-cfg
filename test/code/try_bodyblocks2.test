@@ -44,9 +44,13 @@ Block#3
     Parent: Block#8
     Parent: Block#9
         finallyTarget: Block#4
-    TEMP(#3 <VARIABLE($e)>) = Phi(TEMP(#1 <VARIABLE($e)>), TEMP(#4 <VARIABLE($e)>), TEMP(#5 <VARIABLE($e)>))
+    Phi
+        vars[0]: TEMP(#1 <VARIABLE($e)>)
+        vars[1]: TEMP(#3 <VARIABLE($e)>)
+        vars[2]: TEMP(#4 <VARIABLE($e)>)
+        result: TEMP(#5 <VARIABLE($e)>)
     Terminal_Return
-        expr: TEMP(#3 <VARIABLE($e)>)
+        expr: TEMP(#5 <VARIABLE($e)>)
 
 Block#4
     Parent: Block#2

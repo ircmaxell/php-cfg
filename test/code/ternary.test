@@ -29,7 +29,10 @@ Block#3
 Block#4
     Parent: Block#2
     Parent: Block#3
-    TEMP(#8) = Phi(TEMP(#2), TEMP(#5))
+    Phi
+        vars[0]: TEMP(#2)
+        vars[1]: TEMP(#5)
+        result: TEMP(#8)
     Expr_Assign
         var: TEMP(#9 <VARIABLE($a)>)
         expr: TEMP(#8)

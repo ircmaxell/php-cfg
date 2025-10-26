@@ -25,21 +25,21 @@ class Include_ extends GenericOp
 
         switch ($op->type) {
             case 1:
-                $result['vars'][] = "type: include";
+                $result['vars']['type'] = "include";
                 break;
             case 2:
-                $result['vars'][] = "type: include_once";
+                $result['vars']['type'] = "include_once";
                 break;
             case 3:
-                $result['vars'][] = "type: require";
+                $result['vars']['type'] = "require";
                 break;
             case 4:
-                $result['vars'][] = "type: require_once";
+                $result['vars']['type'] = "require_once";
                 break;
             default:
                 throw new LogicException("Unknown include type rendering: " . $type);
         }
+        
         return $result;
     }
-
 }

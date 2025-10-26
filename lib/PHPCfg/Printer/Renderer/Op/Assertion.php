@@ -24,25 +24,30 @@ class Assertion extends GenericOp
         }
 
         $result = parent::renderOp($op);
-        $result['assert'] = 'assert: ' . $this->renderAssertion($op->assertion);
+        $result['vars']['assert'] = $this->renderAssertion($op->assertion);
         return $result;
     }
 
-    protected function renderAssertion(CoreAssertion $assert): string
+    protected function renderAssertion(CoreAssertion $assert): mixed
     {
-
         if (is_array($assert->value)) {
             $combinator = $assert->mode === CoreAssertion::MODE_UNION ? '|' : '&';
-
-            $ret = implode($combinator, array_map([$this, 'renderAssertion'], $assert->value));
+            if(count($assert->value) == 1) {
+                $ret = $this->renderAssertion($assert->value[0]);
+            } else {
+                foreach($assert->value as $value) {
+                    $ret[$combinator][] = $this->renderAssertion($value);
+                }
+            }
         } else {
             $ret = $this->printer->renderOperand($assert->value);
         }
+
         $kind = $assert->getKind();
         if ($kind === 'type' || empty($kind)) {
             return $ret;
         }
-        return "$kind({$ret})";
 
+        return [$kind => $ret];
     }
 }

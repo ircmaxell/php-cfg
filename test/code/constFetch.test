@@ -26,6 +26,6 @@ Block#1
         result: TEMP(#4)
     Expr_FuncCall
         name: LITERAL('var_dump')
-        args[0]: LITERAL(NULL)
+        args[0]: NULL()
         result: TEMP(#5)
     Terminal_Return
