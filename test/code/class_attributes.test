@@ -36,8 +36,8 @@ Block#1
         stmts: Block#2
     Stmt_Class
         attrGroup[0][0]['name']: LITERAL('ExampleAttribute')
-        attrGroup[0][0]['arg'][0]: LITERAL('foo')
-        attrGroup[0][0]['arg'][1]: LITERAL('bar')
+        attrGroup[0][0]['args'][0]: LITERAL('foo')
+        attrGroup[0][0]['args'][1]: LITERAL('bar')
         name: NameOfClass2
         stmts: Block#3
     Stmt_Class
@@ -64,7 +64,7 @@ Block#1
         result: TEMP(#3)
     Stmt_Class
         attrGroup[0][0]['name']: LITERAL('Attribute')
-        attrGroup[0][0]['arg'][0]: TEMP(#3)
+        attrGroup[0][0]['args'][0]: TEMP(#3)
         name: NameOfClass5
         stmts: Block#6
     Expr_ConstFetch
@@ -73,7 +73,7 @@ Block#1
     Stmt_Class
         attrGroup[0][0]['name']: LITERAL('ConstAttr')
         attrGroup[1][0]['name']: LITERAL('FooAttribute')
-        attrGroup[1][0]['arg'][0]: TEMP(#4)
+        attrGroup[1][0]['args'][0]: TEMP(#4)
         name: NameOfClass6
         stmts: Block#7
     Terminal_Return
@@ -81,8 +81,8 @@ Block#1
 Block#2
     Stmt_ClassMethod
         attrGroup[0][0]['name']: LITERAL('ExampleAttributeMethod')
-        attrGroup[0][0]['arg'][0]: LITERAL('foo')
-        attrGroup[0][0]['arg'][1]: LITERAL('bar')
+        attrGroup[0][0]['args'][0]: LITERAL('foo')
+        attrGroup[0][0]['args'][1]: LITERAL('bar')
         name: method1
         flags: private
 
@@ -100,7 +100,7 @@ Function 'NameOfClass1::method1': mixed
 Block#1
     Expr_Param
         attrGroup[0][0]['name']: LITERAL('FooParamAttrib')
-        attrGroup[0][0]['arg'][0]: LITERAL('Foo1')
+        attrGroup[0][0]['args'][0]: LITERAL('Foo1')
         declaredType: mixed
         name: LITERAL('foo')
         result: TEMP(#1 <VARIABLE($foo)>)

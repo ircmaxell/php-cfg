@@ -135,7 +135,7 @@ class GenericOp implements Renderer
                 }
                 $result['attrGroup'][$indexGroup][$indexAttr]['name'] = $this->printer->renderOperand($attr->name);
                 foreach ($attr->args as $indexArg => $arg) {
-                    $result['attrGroup'][$indexGroup][$indexAttr]['arg'][$indexArg] = $this->printer->renderOperand($arg);
+                    $result['attrGroup'][$indexGroup][$indexAttr]['args'][$indexArg] = $this->printer->renderOperand($arg);
                 }
             }
         }

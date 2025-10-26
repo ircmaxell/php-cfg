@@ -12,8 +12,8 @@ function foo_func(#[FooParamAttrib('Foo1')] $foo) {}
 Block#1
     Stmt_Function
         attrGroup[0][0]['name']: LITERAL('ExampleAttribute')
-        attrGroup[0][0]['arg'][0]: LITERAL('foo')
-        attrGroup[0][0]['arg'][1]: LITERAL('bar')
+        attrGroup[0][0]['args'][0]: LITERAL('foo')
+        attrGroup[0][0]['args'][1]: LITERAL('bar')
         name: foo2
     Expr_ConstFetch
         name: LITERAL('null')
@@ -21,7 +21,7 @@ Block#1
     Stmt_Function
         attrGroup[0][0]['name']: LITERAL('ConstAttr')
         attrGroup[1][0]['name']: LITERAL('FooAttribute')
-        attrGroup[1][0]['arg'][0]: TEMP(#1)
+        attrGroup[1][0]['args'][0]: TEMP(#1)
         name: foo5
     Stmt_Function
         name: foo_func
@@ -39,7 +39,7 @@ Function 'foo_func': mixed
 Block#1
     Expr_Param
         attrGroup[0][0]['name']: LITERAL('FooParamAttrib')
-        attrGroup[0][0]['arg'][0]: LITERAL('Foo1')
+        attrGroup[0][0]['args'][0]: LITERAL('Foo1')
         declaredType: mixed
         name: LITERAL('foo')
         result: TEMP(#1 <VARIABLE($foo)>)

@@ -351,7 +351,7 @@ class NameOfClass6 {
                                                                                 }
                                                                             }
                                                                         },
-                                                                        "arg": {
+                                                                        "args": {
                                                                             "map": {
                                                                                 "value": {
                                                                                     "0": {
@@ -1277,7 +1277,7 @@ class NameOfClass6 {
                                                                                 }
                                                                             }
                                                                         },
-                                                                        "arg": {
+                                                                        "args": {
                                                                             "map": {
                                                                                 "value": {
                                                                                     "0": {
@@ -1633,7 +1633,7 @@ class NameOfClass6 {
                                                                                 }
                                                                             }
                                                                         },
-                                                                        "arg": {
+                                                                        "args": {
                                                                             "map": {
                                                                                 "value": {
                                                                                     "0": {
@@ -1834,7 +1834,7 @@ class NameOfClass6 {
                                                                                 }
                                                                             }
                                                                         },
-                                                                        "arg": {
+                                                                        "args": {
                                                                             "map": {
                                                                                 "value": {
                                                                                     "0": {
@@ -2055,7 +2055,7 @@ class NameOfClass6 {
                                                                                 }
                                                                             }
                                                                         },
-                                                                        "arg": {
+                                                                        "args": {
                                                                             "map": {
                                                                                 "value": {
                                                                                     "0": {

@@ -20,7 +20,7 @@ Block#1
         result: TEMP(#3)
     Stmt_Class
         attrGroup[0][0]['name']: LITERAL('Attr')
-        attrGroup[0][0]['arg'][0]: LITERAL('foo')
+        attrGroup[0][0]['args'][0]: LITERAL('foo')
         name: {anonymousClass}#2
         stmts: Block#3
     Expr_New

@@ -61,7 +61,7 @@ Block#2
     Stmt_Property
         attrGroup[0][0]['name']: LITERAL('ConstAttr')
         attrGroup[1][0]['name']: LITERAL('FooAttribute')
-        attrGroup[1][0]['arg'][0]: TEMP(#2)
+        attrGroup[1][0]['args'][0]: TEMP(#2)
         declaredType: string
         flags: private
         name: LITERAL('foo5')
