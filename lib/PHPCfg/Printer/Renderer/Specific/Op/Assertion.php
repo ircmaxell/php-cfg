@@ -9,7 +9,7 @@ declare(strict_types=1);
  * @license MIT See LICENSE at the root of the project for more info
  */
 
-namespace PHPCfg\Printer\Renderer\Op;
+namespace PHPCfg\Printer\Renderer\Specific\Op;
 
 use PHPCfg\Assertion as CoreAssertion;
 use PHPCfg\Op;

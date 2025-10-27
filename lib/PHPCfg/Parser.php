@@ -91,9 +91,9 @@ class Parser
     {
         $it = new RecursiveIteratorIterator(
             new RecursiveDirectoryIterator(
-                __DIR__ . '/ParserHandler/',
-                RecursiveIteratorIterator::LEAVES_ONLY
-            )
+                __DIR__ . '/ParserHandler/'
+            ),
+            RecursiveIteratorIterator::LEAVES_ONLY
         );
         $handlers = [];
         foreach ($it as $file) {

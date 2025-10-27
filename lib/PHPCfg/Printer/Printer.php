@@ -17,6 +17,7 @@ use PHPCfg\Func;
 use PHPCfg\Op;
 use PHPCfg\Operand;
 use PHPCfg\Script;
+use FilesystemIterator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplObjectStorage;
@@ -59,9 +60,11 @@ abstract class Printer
         $it = new RecursiveIteratorIterator(
             new RecursiveDirectoryIterator(
                 __DIR__ . '/Renderer/',
-                RecursiveIteratorIterator::LEAVES_ONLY
-            )
+                FilesystemIterator::SKIP_DOTS
+            ),
+            RecursiveIteratorIterator::CHILD_FIRST
         );
+
         $handlers = [];
         foreach ($it as $file) {
             if (!$file->isFile() || $file->getExtension() !== 'php') {
