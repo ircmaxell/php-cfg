@@ -62,10 +62,11 @@ abstract class Printer
                 __DIR__ . '/Renderer/',
                 FilesystemIterator::SKIP_DOTS
             ),
-            RecursiveIteratorIterator::CHILD_FIRST
+            RecursiveIteratorIterator::LEAVES_ONLY
         );
 
         $handlers = [];
+        $classes = [];
         foreach ($it as $file) {
             if (!$file->isFile() || $file->getExtension() !== 'php') {
                 continue;
@@ -78,6 +79,20 @@ abstract class Printer
                 continue;
             }
 
+            $classes[] = $class;
+        }
+
+        usort($classes, function ($a, $b)  {
+            $aParts = substr_count($a, '\\');
+            $bParts = substr_count($b, '\\');
+
+            if ($aParts == $bParts) {
+                return 0;
+            }
+            return ($aParts < $bParts) ? 1 : -1;
+        });
+
+        foreach ($classes as $class) {
             $obj = new $class($this);
             $this->addRenderer($obj);
         }

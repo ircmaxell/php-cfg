@@ -9,7 +9,7 @@ declare(strict_types=1);
  * @license MIT See LICENSE at the root of the project for more info
  */
 
-namespace PHPCfg\Printer\Renderer\Specific\Operand;
+namespace PHPCfg\Printer\Renderer\Operand;
 
 use LogicException;
 use PHPCfg\Op;
