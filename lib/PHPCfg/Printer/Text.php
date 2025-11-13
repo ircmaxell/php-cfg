@@ -124,17 +124,13 @@ class Text extends Printer
         throw new LogicException("Unknown operand rendering: " . get_class($var));
     }
 
-    public function renderOpLabelValue(array | string $value, string $prefix): string
+    public function renderOpLabelValue(array | string | int $value, string $prefix): string
     {
         $result = '';
         if (is_array($value)) {
             foreach ($value as $k => $v) {
                 $newprefix = is_string($k) ? "{$prefix}['{$k}']" : "{$prefix}[{$k}]";
-                if (is_array($v)) {
-                    $result .= $this->renderOpLabelValue($v, $newprefix);
-                } else {
-                    $result .= $this->indent("{$newprefix}: {$v}");
-                }
+                $result .= $this->renderOpLabelValue($v, $newprefix);
             }
         } else {
             $result .= $this->indent("{$prefix}: {$value}");

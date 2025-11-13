@@ -48,7 +48,7 @@ class Literal implements Renderer
 
         return [
             "kind" => "LITERAL",
-            "type" => $operand->type,
+            "type" => $this->printer->renderType($operand->type),
             "value" => $operand->value,
         ];
     }

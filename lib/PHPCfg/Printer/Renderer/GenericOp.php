@@ -53,7 +53,7 @@ class GenericOp implements Renderer
 
         foreach ($op->getTypeNames() as $typeName => $type) {
             if (is_array($type)) {
-                $result['vars'][$typeName] = [];
+                $result['types'][$typeName] = [];
                 foreach ($type as $key => $subType) {
                     if (! $subType) {
                         continue;

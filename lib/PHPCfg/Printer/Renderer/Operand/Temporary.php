@@ -47,7 +47,7 @@ class Temporary implements Renderer
         
         return [
             "kind" => "TEMP",
-            "type" => $operand->type,
+            "type" => $this->printer->renderType($operand->type),
             "id" => $this->getVarId($operand),
             "original" => $operand->original ? $this->printer->renderOperand($operand->original) : null,
         ];

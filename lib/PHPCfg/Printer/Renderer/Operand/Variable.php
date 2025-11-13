@@ -68,7 +68,7 @@ class Variable implements Renderer
 
         return [
             "kind" => "VARIABLE",
-            "type" => $operand->type,
+            "type" => $this->printer->renderType($operand->type),
             "name" => $operand->name->value,
             "scope" => $scope,
             "reference" => $reference,
