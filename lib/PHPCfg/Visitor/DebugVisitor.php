@@ -71,7 +71,7 @@ class DebugVisitor implements Visitor
 
     protected function getBlockId(Block $block)
     {
-        if (! $this->blocks->contains($block)) {
+        if (! $this->blocks->offsetExists($block)) {
             $this->blocks[$block] = count($this->blocks) + 1;
         }
 

@@ -129,6 +129,7 @@ abstract class Printer
                 $childblocks = $result['childblocks'];
                 return [
                     'op' => $op,
+                    'kind' => $kind,
                     'label' => $this->renderOpLabel($result),
                     'childBlocks' => $childblocks,
                 ];
@@ -149,7 +150,7 @@ abstract class Printer
 
     public function enqueueBlock(Block $block): void
     {
-        if (! $this->blocks->contains($block)) {
+        if (! $this->blocks->offsetExists($block)) {
             $this->blocks[$block] = count($this->blocks) + 1;
             $this->blockQueue->enqueue($block);
         }

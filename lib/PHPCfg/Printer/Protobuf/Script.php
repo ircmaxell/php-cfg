@@ -6,8 +6,8 @@
 namespace PHPCfg\Printer\Protobuf;
 
 use Google\Protobuf\Internal\GPBType;
-use Google\Protobuf\Internal\RepeatedField;
 use Google\Protobuf\Internal\GPBUtil;
+use Google\Protobuf\RepeatedField;
 
 /**
  * Generated from protobuf message <code>protos.Script</code>
@@ -25,7 +25,7 @@ class Script extends \Google\Protobuf\Internal\Message
      * @param array $data {
      *     Optional. Data for populating the Message object.
      *
-     *     @type array<\PHPCfg\Printer\Protobuf\Script\PBFunction>|\Google\Protobuf\Internal\RepeatedField $functions
+     *     @type \PHPCfg\Printer\Protobuf\Script\PBFunction[] $functions
      * }
      */
     public function __construct($data = NULL) {
@@ -35,7 +35,7 @@ class Script extends \Google\Protobuf\Internal\Message
 
     /**
      * Generated from protobuf field <code>repeated .protos.Script.Function functions = 1;</code>
-     * @return \Google\Protobuf\Internal\RepeatedField
+     * @return RepeatedField<\PHPCfg\Printer\Protobuf\Script\PBFunction>
      */
     public function getFunctions()
     {
@@ -44,7 +44,7 @@ class Script extends \Google\Protobuf\Internal\Message
 
     /**
      * Generated from protobuf field <code>repeated .protos.Script.Function functions = 1;</code>
-     * @param array<\PHPCfg\Printer\Protobuf\Script\PBFunction>|\Google\Protobuf\Internal\RepeatedField $var
+     * @param \PHPCfg\Printer\Protobuf\Script\PBFunction[] $var
      * @return $this
      */
     public function setFunctions($var)

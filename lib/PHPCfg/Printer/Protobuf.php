@@ -15,7 +15,7 @@ use LogicException;
 use PHPCfg\Func;
 use PHPCfg\Script;
 use PHPCfg\Operand;
-use PHPCfg\Printer\Protobuf\PrimitiveType as PBPrimitiveType;
+use PHPCfg\Printer\Protobuf\Scalar as PBScalar;
 use PHPCfg\Printer\Protobuf\Script as PBScript;
 use PHPCfg\Printer\Protobuf\Script\PBFunction;
 use PHPCfg\Printer\Protobuf\Script\PBFunction\Block as PBBlock;
@@ -31,7 +31,6 @@ use PHPCfg\Printer\Protobuf\Script\PBFunction\Block\Operand\OneOperand as PBOneO
 
 use PHPCfg\Printer\Protobuf\Script\PBFunction\Block\Op\MapLabel as PBMapLabel;
 use PHPCfg\Printer\Protobuf\Script\PBFunction\Block\Op\OneLabelType as PBOneLabelType;
-use PHPCfg\Printer\Protobuf\Script\PBFunction\Block\Op\ChildBlock as PBChildBlock;
 
 class Protobuf extends Printer
 {
@@ -44,7 +43,7 @@ class Protobuf extends Printer
         foreach ($script->functions as $func) {
             $functions[] =  $this->printFunc($func);
         }
-        
+
         $protoscript->setFunctions($functions);
         return $protoscript;
     }
@@ -53,7 +52,7 @@ class Protobuf extends Printer
     {
         $function = new PBFunction();
         $function->setName($func->name);
-        if($func->class) {
+        if ($func->class) {
             $function->setClass($func->class->name);
         }
 
@@ -67,7 +66,7 @@ class Protobuf extends Printer
 
             $pbblockParents = [];
             foreach ($block->parents as $prev) {
-                if ($rendered['blockIds']->contains($prev)) {
+                if ($rendered['blockIds']->offsetExists($prev)) {
                     $pbblockParents[] = $rendered['blockIds'][$prev];
                 }
             }
@@ -83,12 +82,12 @@ class Protobuf extends Printer
                     $pbcatchTargets[] = $pbcatchTarget;
                 }
 
-                if ($rendered['blockIds']->contains($block->catchTarget->finally)) {
+                if ($rendered['blockIds']->offsetExists($block->catchTarget->finally)) {
                     $pbfinallyTarget = new PBFinallyTarget();
                     $pbfinallyTarget->setBlockId($rendered['blockIds'][$block->catchTarget->finally]);
                     $pbblock->setFinallyTarget($pbfinallyTarget);
                 }
-                
+
                 $pbblock->setCatchTargets($pbcatchTargets);
             }
 
@@ -97,7 +96,8 @@ class Protobuf extends Printer
             foreach ($ops as $op) {
                 $pbop = new PBOp();
                 $pbop->setLabel($op['label']);
-                
+                $pbop->setKind($op['kind']);
+
                 $childpbblocks = [];
                 foreach ($op['childBlocks'] as $child) {
                     $childpbblocks[$child['name']] = $rendered['blockIds'][$child['block']];
@@ -110,7 +110,7 @@ class Protobuf extends Printer
             $pbblock->setOps($pbops);
             $pbblocks[] = $pbblock;
         }
-        
+
         $function->setBlocks($pbblocks);
 
         return $function;
@@ -124,37 +124,42 @@ class Protobuf extends Printer
                 $kind = $result['kind'];
                 $type = $result['type'];
 
-                if($kind == "NULL") {
+                if ($kind == "NULL") {
                     $pboneOperand = new PBOneOperand();
                     $pboneOperand->setNull(new PBNull());
                     return $pboneOperand;
-                } else if($kind == "LITERAL") {
+                } else if ($kind == "LITERAL") {
                     $pboneOperand = new PBOneOperand();
                     $literaloperand = new PBLiteral();
-                    $literaloperand->setType($type);
-                    $primitive = $this->renderPrimitiveType($result["value"]);
-                    if($primitive) {
-                        $literaloperand->setValue($primitive);
+
+                    $value = $result["value"];
+                    $type = gettype($value);
+                    if (is_bool($value)) {
+                        $value = $value ? "true" : "false";
+                    } else {
+                        $value = strval($value);
                     }
+
+                    $literaloperand->setType($type);
+                    $literaloperand->setValue($value);
                     $pboneOperand->setLiteral($literaloperand);
                     return $pboneOperand;
-                } else if($kind == "TEMP") {
+                } else if ($kind == "TEMP") {
                     $pboneOperand = new PBOneOperand();
                     $tempoperand = new PBTemporary();
                     $tempoperand->setType($type);
                     $tempoperand->setId($result["id"]);
-                    if($result["original"] && $result["original"]->hasVariable()) {
+                    if ($result["original"] && $result["original"]->hasVariable()) {
                         $tempoperand->setOriginal($result["original"]->getVariable());
                     }
                     $pboneOperand->setTemporary($tempoperand);
                     return $pboneOperand;
-                    
-                } else if($kind == "VARIABLE") {
+                } else if ($kind == "VARIABLE") {
                     $pboneOperand = new PBOneOperand();
                     $varoperand = new PBVariable();
                     $varoperand->setType($type);
                     $varoperand->setName("$" . $result["name"]);
-                    if(!empty($result["scope"])) {
+                    if (!empty($result["scope"])) {
                         $varoperand->setScope($result["scope"]);
                     }
                     $varoperand->setReference($result["reference"]);
@@ -167,27 +172,25 @@ class Protobuf extends Printer
         throw new LogicException("Unknown operand rendering: " . get_class($var));
     }
 
-    public function renderPrimitiveType(string | float | int | bool $value): ?PBPrimitiveType
+    public function renderScalar(string | float | int | bool $value): PBScalar
     {
-        if(is_string($value)) {
-            $primitive = new PBPrimitiveType();
-            $primitive->setString($value);
-            return $primitive;
-        } else if(is_bool($value)) {
-            $primitive = new PBPrimitiveType();
-            $primitive->setBool($value);
-            return $primitive;
-        } else if(is_float($value)) {
-            $primitive = new PBPrimitiveType();
-            $primitive->setFloat($value);
-            return $primitive;
-        } else if(is_int($value)) {
-            $primitive = new PBPrimitiveType();
-            $primitive->setInt($value);
-            return $primitive;
+        if (is_bool($value)) {
+            $scalar = new PBScalar();
+            $scalar->setBool($value);
+            return $scalar;
+        } else if (is_float($value)) {
+            $scalar = new PBScalar();
+            $scalar->setFloat($value);
+            return $scalar;
+        } else if (is_int($value)) {
+            $scalar = new PBScalar();
+            $scalar->setInt($value);
+            return $scalar;
         }
 
-        return null;
+        $scalar = new PBScalar();
+        $scalar->setString(strval($value));
+        return $scalar;
     }
 
     public function renderOpLabelValue(mixed $value): PBOneLabelType
@@ -202,14 +205,11 @@ class Protobuf extends Printer
             }
 
             $maplabel->setValue($map);
-            $result ->setMap($maplabel);
-        } else if($value instanceof PBOneOperand) {
+            $result->setMap($maplabel);
+        } else if ($value instanceof PBOneOperand) {
             $result->setOperand($value);
         } else {
-            $primitive = $this->renderPrimitiveType($value);
-            if($primitive) {
-                $result->setPrimitive($primitive);
-            }
+            $result->setScalar($this->renderScalar($value));
         }
 
         return $result;
@@ -218,18 +218,18 @@ class Protobuf extends Printer
     public function renderOpLabel(array $desc): PBMapLabel
     {
         unset($desc['childblocks']);
+        unset($desc['kind']);
 
+        $map = [];
         foreach ($desc as $name => $val) {
             if (is_array($val)) {
                 foreach ($val as $k => $v) {
                     $map[$k] = $this->renderOpLabelValue($v);
                 }
             } else {
-                $stringlabel = new PBOneLabelType();
-                $primitive = new PBPrimitiveType();
-                $primitive->setString($val);
-                $stringlabel->setPrimitive($primitive);
-                $map[$name] = $stringlabel;
+                $label = new PBOneLabelType();
+                $label->setScalar($this->renderScalar($val));
+                $map[$name] = $label;
             }
         }
 

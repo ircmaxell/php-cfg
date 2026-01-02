@@ -1,5 +1,4 @@
 <?php
 goto nowhere;
 echo "a\n";
------
-'goto' to undefined label 'nowhere'
+-----'goto' to undefined label 'nowhere'

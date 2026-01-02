@@ -43,10 +43,10 @@ class Simplifier extends AbstractVisitor
 
     public function enterOp(Op $op, Block $block): void
     {
-        if ($this->recursionProtection->contains($op)) {
+        if ($this->recursionProtection->offsetExists($op)) {
             return;
         }
-        $this->recursionProtection->attach($op);
+        $this->recursionProtection->offsetSet($op);
         foreach ($op->getSubBlocks() as $name => $targets) {
             /** @var Block $block */
             if (! is_array($targets)) {
@@ -58,7 +58,7 @@ class Simplifier extends AbstractVisitor
                 if (! $target || ! isset($target->children[0]) || ! $target->children[0] instanceof Op\Stmt\Jump) {
                     continue;
                 }
-                if ($this->removed->contains($target)) {
+                if ($this->removed->offsetExists($target)) {
                     // short circuit
                     $results[$key] = $target->children[0]->target;
                     if (! in_array($block, $target->children[0]->target->parents, true)) {
@@ -111,7 +111,7 @@ class Simplifier extends AbstractVisitor
                     }
                     $target->phi = [];
                 }
-                $this->removed->attach($target);
+                $this->removed->offsetSet($target);
                 $target->dead = true;
 
                 // Remove the target from the list of parents
@@ -132,18 +132,18 @@ class Simplifier extends AbstractVisitor
                 $op->{$name} = $results;
             }
         }
-        $this->recursionProtection->detach($op);
+        $this->recursionProtection->offsetUnset($op);
     }
 
     private function removeTrivialPhi(Block $block): void
     {
         $toReplace = new SplObjectStorage();
         $replaced = new SplObjectStorage();
-        $toReplace->attach($block);
+        $toReplace->offsetSet($block);
         while ($toReplace->count() > 0) {
             foreach ($toReplace as $block) {
-                $toReplace->detach($block);
-                $replaced->attach($block);
+                $toReplace->offsetUnset($block);
+                $replaced->offsetSet($block);
                 foreach ($block->phi as $key => $phi) {
                     if ($this->tryRemoveTrivialPhi($phi, $block)) {
                         unset($block->phi[$key]);
@@ -158,8 +158,8 @@ class Simplifier extends AbstractVisitor
                             $subBlocks = [$subBlocks];
                         }
                         foreach ($subBlocks as $subBlock) {
-                            if (! $replaced->contains($subBlock)) {
-                                $toReplace->attach($subBlock);
+                            if (! $replaced->offsetExists($subBlock)) {
+                                $toReplace->offsetSet($subBlock);
                             }
                         }
                     }
@@ -169,7 +169,7 @@ class Simplifier extends AbstractVisitor
         while ($this->trivialPhiCandidates->count() > 0) {
             foreach ($this->trivialPhiCandidates as $phi) {
                 $block = $this->trivialPhiCandidates[$phi];
-                $this->trivialPhiCandidates->detach($phi);
+                $this->trivialPhiCandidates->offsetUnset($phi);
                 if ($this->tryRemoveTrivialPhi($phi, $block)) {
                     $key = array_search($phi, $block->phi, true);
                     if ($key !== false) {
@@ -201,11 +201,11 @@ class Simplifier extends AbstractVisitor
     {
         $toReplace = new SplObjectStorage();
         $replaced = new SplObjectStorage();
-        $toReplace->attach($block);
+        $toReplace->offsetSet($block);
         while ($toReplace->count() > 0) {
             foreach ($toReplace as $block) {
-                $toReplace->detach($block);
-                $replaced->attach($block);
+                $toReplace->offsetUnset($block);
+                $replaced->offsetSet($block);
                 foreach ($block->phi as $phi) {
                     if ($phi->hasOperand($from)) {
                         // Since we're removing from the phi, it may become trivial
@@ -225,7 +225,7 @@ class Simplifier extends AbstractVisitor
                         }
                         foreach ($subBlocks as $subBlock) {
                             if (! $replaced->contains($subBlock)) {
-                                $toReplace->attach($subBlock);
+                                $toReplace->offsetSet($subBlock);
                             }
                         }
                     }

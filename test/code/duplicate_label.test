@@ -1,5 +1,4 @@
 <?php
 foo:
 foo:
------
-Label 'foo' already defined
+-----Label 'foo' already defined

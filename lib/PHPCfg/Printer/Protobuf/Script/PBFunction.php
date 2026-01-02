@@ -6,8 +6,8 @@
 namespace PHPCfg\Printer\Protobuf\Script;
 
 use Google\Protobuf\Internal\GPBType;
-use Google\Protobuf\Internal\RepeatedField;
 use Google\Protobuf\Internal\GPBUtil;
+use Google\Protobuf\RepeatedField;
 
 /**
  * Generated from protobuf message <code>protos.Script.Function</code>
@@ -37,7 +37,7 @@ class PBFunction extends \Google\Protobuf\Internal\Message
      * @param array $data {
      *     Optional. Data for populating the Message object.
      *
-     *     @type array<\PHPCfg\Printer\Protobuf\Script\PBFunction\Block>|\Google\Protobuf\Internal\RepeatedField $blocks
+     *     @type \PHPCfg\Printer\Protobuf\Script\PBFunction\Block[] $blocks
      *     @type string $name
      *     @type string $class
      *     @type string $returnType
@@ -50,7 +50,7 @@ class PBFunction extends \Google\Protobuf\Internal\Message
 
     /**
      * Generated from protobuf field <code>repeated .protos.Script.Function.Block blocks = 1;</code>
-     * @return \Google\Protobuf\Internal\RepeatedField
+     * @return RepeatedField<\PHPCfg\Printer\Protobuf\Script\PBFunction\Block>
      */
     public function getBlocks()
     {
@@ -59,7 +59,7 @@ class PBFunction extends \Google\Protobuf\Internal\Message
 
     /**
      * Generated from protobuf field <code>repeated .protos.Script.Function.Block blocks = 1;</code>
-     * @param array<\PHPCfg\Printer\Protobuf\Script\PBFunction\Block>|\Google\Protobuf\Internal\RepeatedField $var
+     * @param \PHPCfg\Printer\Protobuf\Script\PBFunction\Block[] $var
      * @return $this
      */
     public function setBlocks($var)

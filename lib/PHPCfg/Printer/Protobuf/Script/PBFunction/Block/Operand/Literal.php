@@ -6,8 +6,8 @@
 namespace PHPCfg\Printer\Protobuf\Script\PBFunction\Block\Operand;
 
 use Google\Protobuf\Internal\GPBType;
-use Google\Protobuf\Internal\RepeatedField;
 use Google\Protobuf\Internal\GPBUtil;
+use Google\Protobuf\RepeatedField;
 
 /**
  * Generated from protobuf message <code>protos.Script.Function.Block.Operand.Literal</code>
@@ -19,9 +19,9 @@ class Literal extends \Google\Protobuf\Internal\Message
      */
     protected $type = '';
     /**
-     * Generated from protobuf field <code>.protos.PrimitiveType value = 2;</code>
+     * Generated from protobuf field <code>string value = 2;</code>
      */
-    protected $value = null;
+    protected $value = '';
 
     /**
      * Constructor.
@@ -30,7 +30,7 @@ class Literal extends \Google\Protobuf\Internal\Message
      *     Optional. Data for populating the Message object.
      *
      *     @type string $type
-     *     @type \PHPCfg\Printer\Protobuf\PrimitiveType $value
+     *     @type string $value
      * }
      */
     public function __construct($data = NULL) {
@@ -61,32 +61,22 @@ class Literal extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>.protos.PrimitiveType value = 2;</code>
-     * @return \PHPCfg\Printer\Protobuf\PrimitiveType|null
+     * Generated from protobuf field <code>string value = 2;</code>
+     * @return string
      */
     public function getValue()
     {
         return $this->value;
     }
 
-    public function hasValue()
-    {
-        return isset($this->value);
-    }
-
-    public function clearValue()
-    {
-        unset($this->value);
-    }
-
     /**
-     * Generated from protobuf field <code>.protos.PrimitiveType value = 2;</code>
-     * @param \PHPCfg\Printer\Protobuf\PrimitiveType $var
+     * Generated from protobuf field <code>string value = 2;</code>
+     * @param string $var
      * @return $this
      */
     public function setValue($var)
     {
-        GPBUtil::checkMessage($var, \PHPCfg\Printer\Protobuf\PrimitiveType::class);
+        GPBUtil::checkString($var, True);
         $this->value = $var;
 
         return $this;

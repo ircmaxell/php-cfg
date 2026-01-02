@@ -23,59 +23,55 @@ try {
                 {
                     "ops": [
                         {
+                            "kind": "Stmt_Try",
                             "label": {
                                 "value": {
                                     "attribute": {
                                         "map": {
                                             "value": {
                                                 "filename": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "string": "foo.php"
                                                     }
                                                 },
                                                 "startLine": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "int": 3
                                                     }
                                                 },
                                                 "startTokenPos": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "int": 2
                                                     }
                                                 },
                                                 "startFilePos": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "int": 7
                                                     }
                                                 },
                                                 "endLine": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "int": 17
                                                     }
                                                 },
                                                 "endTokenPos": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "int": 71
                                                     }
                                                 },
                                                 "endFilePos": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "int": 219
                                                     }
                                                 }
                                             }
                                         }
                                     },
-                                    "kind": {
-                                        "primitive": {
-                                            "string": "Stmt_Try"
-                                        }
-                                    },
                                     "catchTypes": {
                                         "map": {
                                             "value": {
                                                 "0": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "string": "Exception2"
                                                     }
                                                 }
@@ -113,59 +109,55 @@ try {
                 {
                     "ops": [
                         {
+                            "kind": "Stmt_Try",
                             "label": {
                                 "value": {
                                     "attribute": {
                                         "map": {
                                             "value": {
                                                 "filename": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "string": "foo.php"
                                                     }
                                                 },
                                                 "startLine": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "int": 4
                                                     }
                                                 },
                                                 "startTokenPos": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "int": 6
                                                     }
                                                 },
                                                 "startFilePos": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "int": 17
                                                     }
                                                 },
                                                 "endLine": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "int": 12
                                                     }
                                                 },
                                                 "endTokenPos": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "int": 42
                                                     }
                                                 },
                                                 "endFilePos": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "int": 147
                                                     }
                                                 }
                                             }
                                         }
                                     },
-                                    "kind": {
-                                        "primitive": {
-                                            "string": "Stmt_Try"
-                                        }
-                                    },
                                     "catchTypes": {
                                         "map": {
                                             "value": {
                                                 "0": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "string": "Exception1"
                                                     }
                                                 }
@@ -224,13 +216,9 @@ try {
                 {
                     "ops": [
                         {
+                            "kind": "Phi",
                             "label": {
                                 "value": {
-                                    "kind": {
-                                        "primitive": {
-                                            "string": "Phi"
-                                        }
-                                    },
                                     "vars": {
                                         "map": {
                                             "value": {
@@ -274,52 +262,48 @@ try {
                             }
                         },
                         {
+                            "kind": "Terminal_Echo",
                             "label": {
                                 "value": {
                                     "attribute": {
                                         "map": {
                                             "value": {
                                                 "filename": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "string": "foo.php"
                                                     }
                                                 },
                                                 "startLine": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "int": 14
                                                     }
                                                 },
                                                 "startTokenPos": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "int": 57
                                                     }
                                                 },
                                                 "startFilePos": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "int": 184
                                                     }
                                                 },
                                                 "endLine": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "int": 14
                                                     }
                                                 },
                                                 "endTokenPos": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "int": 57
                                                     }
                                                 },
                                                 "endFilePos": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "int": 186
                                                     }
                                                 }
                                             }
-                                        }
-                                    },
-                                    "kind": {
-                                        "primitive": {
-                                            "string": "Terminal_Echo"
                                         }
                                     },
                                     "expr": {
@@ -337,15 +321,8 @@ try {
                             }
                         },
                         {
-                            "label": {
-                                "value": {
-                                    "kind": {
-                                        "primitive": {
-                                            "string": "Stmt_Jump"
-                                        }
-                                    }
-                                }
-                            },
+                            "kind": "Stmt_Jump",
+                            "label": {},
                             "childBlocks": {
                                 "target": 4
                             }
@@ -363,60 +340,55 @@ try {
                 {
                     "ops": [
                         {
+                            "kind": "Expr_ConstFetch",
                             "label": {
                                 "value": {
                                     "attribute": {
                                         "map": {
                                             "value": {
                                                 "filename": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "string": "foo.php"
                                                     }
                                                 },
                                                 "startLine": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "int": 16
                                                     }
                                                 },
                                                 "startTokenPos": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "int": 68
                                                     }
                                                 },
                                                 "startFilePos": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "int": 212
                                                     }
                                                 },
                                                 "endLine": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "int": 16
                                                     }
                                                 },
                                                 "endTokenPos": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "int": 68
                                                     }
                                                 },
                                                 "endFilePos": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "int": 216
                                                     }
                                                 }
                                             }
                                         }
                                     },
-                                    "kind": {
-                                        "primitive": {
-                                            "string": "Expr_ConstFetch"
-                                        }
-                                    },
                                     "name": {
                                         "operand": {
                                             "literal": {
-                                                "value": {
-                                                    "string": "false"
-                                                }
+                                                "type": "string",
+                                                "value": "false"
                                             }
                                         }
                                     },
@@ -431,52 +403,48 @@ try {
                             }
                         },
                         {
+                            "kind": "Terminal_Return",
                             "label": {
                                 "value": {
                                     "attribute": {
                                         "map": {
                                             "value": {
                                                 "filename": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "string": "foo.php"
                                                     }
                                                 },
                                                 "startLine": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "int": 16
                                                     }
                                                 },
                                                 "startTokenPos": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "int": 66
                                                     }
                                                 },
                                                 "startFilePos": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "int": 205
                                                     }
                                                 },
                                                 "endLine": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "int": 16
                                                     }
                                                 },
                                                 "endTokenPos": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "int": 69
                                                     }
                                                 },
                                                 "endFilePos": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "int": 217
                                                     }
                                                 }
                                             }
-                                        }
-                                    },
-                                    "kind": {
-                                        "primitive": {
-                                            "string": "Terminal_Return"
                                         }
                                     },
                                     "expr": {
@@ -500,70 +468,65 @@ try {
                 {
                     "ops": [
                         {
+                            "kind": "Terminal_Echo",
                             "label": {
                                 "value": {
                                     "attribute": {
                                         "map": {
                                             "value": {
                                                 "filename": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "string": "foo.php"
                                                     }
                                                 },
                                                 "startLine": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "int": 5
                                                     }
                                                 },
                                                 "startTokenPos": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "int": 12
                                                     }
                                                 },
                                                 "startFilePos": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "int": 36
                                                     }
                                                 },
                                                 "endLine": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "int": 5
                                                     }
                                                 },
                                                 "endTokenPos": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "int": 12
                                                     }
                                                 },
                                                 "endFilePos": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "int": 47
                                                     }
                                                 },
                                                 "kind": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "int": 2
                                                     }
                                                 },
                                                 "rawValue": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "string": "\"nested try\""
                                                     }
                                                 }
                                             }
                                         }
                                     },
-                                    "kind": {
-                                        "primitive": {
-                                            "string": "Terminal_Echo"
-                                        }
-                                    },
                                     "expr": {
                                         "operand": {
                                             "literal": {
-                                                "value": {
-                                                    "string": "nested try"
-                                                }
+                                                "type": "string",
+                                                "value": "nested try"
                                             }
                                         }
                                     }
@@ -571,15 +534,8 @@ try {
                             }
                         },
                         {
-                            "label": {
-                                "value": {
-                                    "kind": {
-                                        "primitive": {
-                                            "string": "Stmt_Jump"
-                                        }
-                                    }
-                                }
-                            },
+                            "kind": "Stmt_Jump",
+                            "label": {},
                             "childBlocks": {
                                 "target": 7
                             }
@@ -611,52 +567,48 @@ try {
                 {
                     "ops": [
                         {
+                            "kind": "Terminal_Echo",
                             "label": {
                                 "value": {
                                     "attribute": {
                                         "map": {
                                             "value": {
                                                 "filename": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "string": "foo.php"
                                                     }
                                                 },
                                                 "startLine": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "int": 8
                                                     }
                                                 },
                                                 "startTokenPos": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "int": 28
                                                     }
                                                 },
                                                 "startFilePos": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "int": 97
                                                     }
                                                 },
                                                 "endLine": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "int": 8
                                                     }
                                                 },
                                                 "endTokenPos": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "int": 28
                                                     }
                                                 },
                                                 "endFilePos": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "int": 99
                                                     }
                                                 }
                                             }
-                                        }
-                                    },
-                                    "kind": {
-                                        "primitive": {
-                                            "string": "Terminal_Echo"
                                         }
                                     },
                                     "expr": {
@@ -674,15 +626,8 @@ try {
                             }
                         },
                         {
-                            "label": {
-                                "value": {
-                                    "kind": {
-                                        "primitive": {
-                                            "string": "Stmt_Jump"
-                                        }
-                                    }
-                                }
-                            },
+                            "kind": "Stmt_Jump",
+                            "label": {},
                             "childBlocks": {
                                 "target": 7
                             }
@@ -699,60 +644,55 @@ try {
                 {
                     "ops": [
                         {
+                            "kind": "Expr_ConstFetch",
                             "label": {
                                 "value": {
                                     "attribute": {
                                         "map": {
                                             "value": {
                                                 "filename": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "string": "foo.php"
                                                     }
                                                 },
                                                 "startLine": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "int": 11
                                                     }
                                                 },
                                                 "startTokenPos": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "int": 39
                                                     }
                                                 },
                                                 "startFilePos": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "int": 137
                                                     }
                                                 },
                                                 "endLine": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "int": 11
                                                     }
                                                 },
                                                 "endTokenPos": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "int": 39
                                                     }
                                                 },
                                                 "endFilePos": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "int": 140
                                                     }
                                                 }
                                             }
                                         }
                                     },
-                                    "kind": {
-                                        "primitive": {
-                                            "string": "Expr_ConstFetch"
-                                        }
-                                    },
                                     "name": {
                                         "operand": {
                                             "literal": {
-                                                "value": {
-                                                    "string": "true"
-                                                }
+                                                "type": "string",
+                                                "value": "true"
                                             }
                                         }
                                     },
@@ -767,52 +707,48 @@ try {
                             }
                         },
                         {
+                            "kind": "Terminal_Return",
                             "label": {
                                 "value": {
                                     "attribute": {
                                         "map": {
                                             "value": {
                                                 "filename": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "string": "foo.php"
                                                     }
                                                 },
                                                 "startLine": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "int": 11
                                                     }
                                                 },
                                                 "startTokenPos": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "int": 37
                                                     }
                                                 },
                                                 "startFilePos": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "int": 130
                                                     }
                                                 },
                                                 "endLine": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "int": 11
                                                     }
                                                 },
                                                 "endTokenPos": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "int": 40
                                                     }
                                                 },
                                                 "endFilePos": {
-                                                    "primitive": {
+                                                    "scalar": {
                                                         "int": 141
                                                     }
                                                 }
                                             }
-                                        }
-                                    },
-                                    "kind": {
-                                        "primitive": {
-                                            "string": "Terminal_Return"
                                         }
                                     },
                                     "expr": {

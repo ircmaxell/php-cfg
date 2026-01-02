@@ -7,7 +7,7 @@ package protos;
 option php_namespace = "PHPCfg\\Printer\\Protobuf";
 option php_metadata_namespace = "PHPCfg\\Printer\\Protobuf";
 
-message PrimitiveType {
+message Scalar {
   oneof value {
     string string = 1;
     float float = 2;
@@ -48,7 +48,7 @@ message Script {
 
         message Literal {
           string type = 1;
-          PrimitiveType value = 2;
+          string value = 2;
         }
 
         message Temporary {
@@ -82,13 +82,14 @@ message Script {
         message OneLabelType {
           oneof value {
             MapLabel map = 1;
-            PrimitiveType primitive = 2;
+            Scalar scalar = 2;
             Operand.OneOperand operand = 3;
           }
         }
 
-        MapLabel label = 1;
-        map<string, uint32> childBlocks = 2;
+        string kind = 1;
+        MapLabel label = 2;
+        map<string, uint32> childBlocks = 3;
       }
     }
   }

@@ -6,8 +6,8 @@
 namespace PHPCfg\Printer\Protobuf\Script\PBFunction;
 
 use Google\Protobuf\Internal\GPBType;
-use Google\Protobuf\Internal\RepeatedField;
 use Google\Protobuf\Internal\GPBUtil;
+use Google\Protobuf\RepeatedField;
 
 /**
  * Generated from protobuf message <code>protos.Script.Function.Block</code>
@@ -41,10 +41,10 @@ class Block extends \Google\Protobuf\Internal\Message
      * @param array $data {
      *     Optional. Data for populating the Message object.
      *
-     *     @type array<\PHPCfg\Printer\Protobuf\Script\PBFunction\Block\Op>|\Google\Protobuf\Internal\RepeatedField $ops
+     *     @type \PHPCfg\Printer\Protobuf\Script\PBFunction\Block\Op[] $ops
      *     @type int $id
-     *     @type array<int>|\Google\Protobuf\Internal\RepeatedField $parentIds
-     *     @type array<\PHPCfg\Printer\Protobuf\Script\PBFunction\Block\CatchTarget>|\Google\Protobuf\Internal\RepeatedField $catchTargets
+     *     @type int[] $parentIds
+     *     @type \PHPCfg\Printer\Protobuf\Script\PBFunction\Block\CatchTarget[] $catchTargets
      *     @type \PHPCfg\Printer\Protobuf\Script\PBFunction\Block\FinallyTarget $finallyTarget
      * }
      */
@@ -55,7 +55,7 @@ class Block extends \Google\Protobuf\Internal\Message
 
     /**
      * Generated from protobuf field <code>repeated .protos.Script.Function.Block.Op ops = 1;</code>
-     * @return \Google\Protobuf\Internal\RepeatedField
+     * @return RepeatedField<\PHPCfg\Printer\Protobuf\Script\PBFunction\Block\Op>
      */
     public function getOps()
     {
@@ -64,7 +64,7 @@ class Block extends \Google\Protobuf\Internal\Message
 
     /**
      * Generated from protobuf field <code>repeated .protos.Script.Function.Block.Op ops = 1;</code>
-     * @param array<\PHPCfg\Printer\Protobuf\Script\PBFunction\Block\Op>|\Google\Protobuf\Internal\RepeatedField $var
+     * @param \PHPCfg\Printer\Protobuf\Script\PBFunction\Block\Op[] $var
      * @return $this
      */
     public function setOps($var)
@@ -99,7 +99,7 @@ class Block extends \Google\Protobuf\Internal\Message
 
     /**
      * Generated from protobuf field <code>repeated uint32 parentIds = 3;</code>
-     * @return \Google\Protobuf\Internal\RepeatedField
+     * @return RepeatedField<int>
      */
     public function getParentIds()
     {
@@ -108,7 +108,7 @@ class Block extends \Google\Protobuf\Internal\Message
 
     /**
      * Generated from protobuf field <code>repeated uint32 parentIds = 3;</code>
-     * @param array<int>|\Google\Protobuf\Internal\RepeatedField $var
+     * @param int[] $var
      * @return $this
      */
     public function setParentIds($var)
@@ -121,7 +121,7 @@ class Block extends \Google\Protobuf\Internal\Message
 
     /**
      * Generated from protobuf field <code>repeated .protos.Script.Function.Block.CatchTarget catchTargets = 4;</code>
-     * @return \Google\Protobuf\Internal\RepeatedField
+     * @return RepeatedField<\PHPCfg\Printer\Protobuf\Script\PBFunction\Block\CatchTarget>
      */
     public function getCatchTargets()
     {
@@ -130,7 +130,7 @@ class Block extends \Google\Protobuf\Internal\Message
 
     /**
      * Generated from protobuf field <code>repeated .protos.Script.Function.Block.CatchTarget catchTargets = 4;</code>
-     * @param array<\PHPCfg\Printer\Protobuf\Script\PBFunction\Block\CatchTarget>|\Google\Protobuf\Internal\RepeatedField $var
+     * @param \PHPCfg\Printer\Protobuf\Script\PBFunction\Block\CatchTarget[] $var
      * @return $this
      */
     public function setCatchTargets($var)

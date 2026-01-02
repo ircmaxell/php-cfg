@@ -39,7 +39,7 @@ class Text extends Printer
             $ops = $rendered['blocks'][$block];
             $output .= "\nBlock#" . $rendered['blockIds'][$block];
             foreach ($block->parents as $prev) {
-                if ($rendered['blockIds']->contains($prev)) {
+                if ($rendered['blockIds']->offsetExists($prev)) {
                     $output .= $this->indent("\nParent: Block#" . $rendered['blockIds'][$prev]);
                 }
             }
@@ -48,7 +48,7 @@ class Text extends Printer
                     $output .= $this->indent("\ncatchTarget<" . $this->renderType($catch['type']) . ">(" . $this->renderOperand($catch['var']) . "): Block#" . $rendered['blockIds'][$catch['block']], 2);
                 }
 
-                if ($rendered['blockIds']->contains($block->catchTarget->finally)) {
+                if ($rendered['blockIds']->offsetExists($block->catchTarget->finally)) {
                     $output .= $this->indent("\nfinallyTarget: Block#" . $rendered['blockIds'][$block->catchTarget->finally], 2);
                 }
             }
@@ -74,13 +74,13 @@ class Text extends Printer
             $output .= "\nVar#{$id}";
             $output .= $this->indent("\n" . 'WriteOps:');
             foreach ($var->ops as $writeOp) {
-                if ($rendered['ops']->contains($writeOp)) {
+                if ($rendered['ops']->offsetExists($writeOp)) {
                     $output .= $this->indent("\n" . $rendered['ops'][$writeOp]['label'], 2);
                 }
             }
             $output .= $this->indent("\n" . 'ReadOps:');
             foreach ($var->usages as $usage) {
-                if ($rendered['ops']->contains($usage)) {
+                if ($rendered['ops']->offsetExists($usage)) {
                     $output .= $this->indent("\n" . $rendered['ops'][$usage]['label'], 2);
                 }
             }

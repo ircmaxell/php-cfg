@@ -6,8 +6,8 @@
 namespace PHPCfg\Printer\Protobuf\Script\PBFunction\Block\Op;
 
 use Google\Protobuf\Internal\GPBType;
-use Google\Protobuf\Internal\RepeatedField;
 use Google\Protobuf\Internal\GPBUtil;
+use Google\Protobuf\RepeatedField;
 
 /**
  * Generated from protobuf message <code>protos.Script.Function.Block.Op.OneLabelType</code>
@@ -23,7 +23,7 @@ class OneLabelType extends \Google\Protobuf\Internal\Message
      *     Optional. Data for populating the Message object.
      *
      *     @type \PHPCfg\Printer\Protobuf\Script\PBFunction\Block\Op\MapLabel $map
-     *     @type \PHPCfg\Printer\Protobuf\PrimitiveType $primitive
+     *     @type \PHPCfg\Printer\Protobuf\Scalar $scalar
      *     @type \PHPCfg\Printer\Protobuf\Script\PBFunction\Block\Operand\OneOperand $operand
      * }
      */
@@ -60,27 +60,27 @@ class OneLabelType extends \Google\Protobuf\Internal\Message
     }
 
     /**
-     * Generated from protobuf field <code>.protos.PrimitiveType primitive = 2;</code>
-     * @return \PHPCfg\Printer\Protobuf\PrimitiveType|null
+     * Generated from protobuf field <code>.protos.Scalar scalar = 2;</code>
+     * @return \PHPCfg\Printer\Protobuf\Scalar|null
      */
-    public function getPrimitive()
+    public function getScalar()
     {
         return $this->readOneof(2);
     }
 
-    public function hasPrimitive()
+    public function hasScalar()
     {
         return $this->hasOneof(2);
     }
 
     /**
-     * Generated from protobuf field <code>.protos.PrimitiveType primitive = 2;</code>
-     * @param \PHPCfg\Printer\Protobuf\PrimitiveType $var
+     * Generated from protobuf field <code>.protos.Scalar scalar = 2;</code>
+     * @param \PHPCfg\Printer\Protobuf\Scalar $var
      * @return $this
      */
-    public function setPrimitive($var)
+    public function setScalar($var)
     {
-        GPBUtil::checkMessage($var, \PHPCfg\Printer\Protobuf\PrimitiveType::class);
+        GPBUtil::checkMessage($var, \PHPCfg\Printer\Protobuf\Scalar::class);
         $this->writeOneof(2, $var);
 
         return $this;
