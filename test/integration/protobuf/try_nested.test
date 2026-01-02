@@ -340,69 +340,6 @@ try {
                 {
                     "ops": [
                         {
-                            "kind": "Expr_ConstFetch",
-                            "label": {
-                                "value": {
-                                    "attribute": {
-                                        "map": {
-                                            "value": {
-                                                "filename": {
-                                                    "scalar": {
-                                                        "string": "foo.php"
-                                                    }
-                                                },
-                                                "startLine": {
-                                                    "scalar": {
-                                                        "int": 16
-                                                    }
-                                                },
-                                                "startTokenPos": {
-                                                    "scalar": {
-                                                        "int": 68
-                                                    }
-                                                },
-                                                "startFilePos": {
-                                                    "scalar": {
-                                                        "int": 212
-                                                    }
-                                                },
-                                                "endLine": {
-                                                    "scalar": {
-                                                        "int": 16
-                                                    }
-                                                },
-                                                "endTokenPos": {
-                                                    "scalar": {
-                                                        "int": 68
-                                                    }
-                                                },
-                                                "endFilePos": {
-                                                    "scalar": {
-                                                        "int": 216
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    },
-                                    "name": {
-                                        "operand": {
-                                            "literal": {
-                                                "type": "string",
-                                                "value": "false"
-                                            }
-                                        }
-                                    },
-                                    "result": {
-                                        "operand": {
-                                            "temporary": {
-                                                "id": 5
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        {
                             "kind": "Terminal_Return",
                             "label": {
                                 "value": {
@@ -449,8 +386,9 @@ try {
                                     },
                                     "expr": {
                                         "operand": {
-                                            "temporary": {
-                                                "id": 5
+                                            "literal": {
+                                                "type": "boolean",
+                                                "value": "false"
                                             }
                                         }
                                     }
@@ -644,69 +582,6 @@ try {
                 {
                     "ops": [
                         {
-                            "kind": "Expr_ConstFetch",
-                            "label": {
-                                "value": {
-                                    "attribute": {
-                                        "map": {
-                                            "value": {
-                                                "filename": {
-                                                    "scalar": {
-                                                        "string": "foo.php"
-                                                    }
-                                                },
-                                                "startLine": {
-                                                    "scalar": {
-                                                        "int": 11
-                                                    }
-                                                },
-                                                "startTokenPos": {
-                                                    "scalar": {
-                                                        "int": 39
-                                                    }
-                                                },
-                                                "startFilePos": {
-                                                    "scalar": {
-                                                        "int": 137
-                                                    }
-                                                },
-                                                "endLine": {
-                                                    "scalar": {
-                                                        "int": 11
-                                                    }
-                                                },
-                                                "endTokenPos": {
-                                                    "scalar": {
-                                                        "int": 39
-                                                    }
-                                                },
-                                                "endFilePos": {
-                                                    "scalar": {
-                                                        "int": 140
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    },
-                                    "name": {
-                                        "operand": {
-                                            "literal": {
-                                                "type": "string",
-                                                "value": "true"
-                                            }
-                                        }
-                                    },
-                                    "result": {
-                                        "operand": {
-                                            "temporary": {
-                                                "id": 6
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        {
                             "kind": "Terminal_Return",
                             "label": {
                                 "value": {
@@ -753,8 +628,9 @@ try {
                                     },
                                     "expr": {
                                         "operand": {
-                                            "temporary": {
-                                                "id": 6
+                                            "literal": {
+                                                "type": "boolean",
+                                                "value": "true"
                                             }
                                         }
                                     }

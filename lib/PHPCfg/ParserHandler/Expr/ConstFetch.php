@@ -19,18 +19,16 @@ class ConstFetch extends ParserHandler implements Expr
 {
     public function handleExpr(Node\Expr $expr): Operand
     {
-        if ($expr->name->isUnqualified()) {
-            $lcname = strtolower($expr->name->toString());
-            switch ($lcname) {
-                case 'null':
-                    return new Operand\NullOperand();
-                case 'true':
-                    return new Operand\Literal(true);
-                case 'false':
-                    return new Operand\Literal(false);
-            }
+        $lcname = strtolower($expr->name->toString());
+        switch ($lcname) {
+            case 'null':
+                return new Operand\NullOperand();
+            case 'true':
+                return new Operand\Literal(true);
+            case 'false':
+                return new Operand\Literal(false);
         }
-
+        
         $nsName = null;
         if ($this->parser->currentNamespace && $expr->name->isUnqualified()) {
             $nsName = $this->parser->parseExprNode(Node\Name::concat($this->parser->currentNamespace, $expr->name));

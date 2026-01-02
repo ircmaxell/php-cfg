@@ -1274,69 +1274,6 @@ class NameOfClass6 {
                             }
                         },
                         {
-                            "kind": "Expr_ConstFetch",
-                            "label": {
-                                "value": {
-                                    "attribute": {
-                                        "map": {
-                                            "value": {
-                                                "filename": {
-                                                    "scalar": {
-                                                        "string": "foo.php"
-                                                    }
-                                                },
-                                                "startLine": {
-                                                    "scalar": {
-                                                        "int": 28
-                                                    }
-                                                },
-                                                "startTokenPos": {
-                                                    "scalar": {
-                                                        "int": 123
-                                                    }
-                                                },
-                                                "startFilePos": {
-                                                    "scalar": {
-                                                        "int": 422
-                                                    }
-                                                },
-                                                "endLine": {
-                                                    "scalar": {
-                                                        "int": 28
-                                                    }
-                                                },
-                                                "endTokenPos": {
-                                                    "scalar": {
-                                                        "int": 123
-                                                    }
-                                                },
-                                                "endFilePos": {
-                                                    "scalar": {
-                                                        "int": 425
-                                                    }
-                                                }
-                                            }
-                                        }
-                                    },
-                                    "name": {
-                                        "operand": {
-                                            "literal": {
-                                                "type": "string",
-                                                "value": "null"
-                                            }
-                                        }
-                                    },
-                                    "result": {
-                                        "operand": {
-                                            "temporary": {
-                                                "id": 4
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-                        },
-                        {
                             "kind": "Stmt_Class",
                             "label": {
                                 "value": {
@@ -1587,9 +1524,7 @@ class NameOfClass6 {
                                                                                 "value": {
                                                                                     "0": {
                                                                                         "operand": {
-                                                                                            "temporary": {
-                                                                                                "id": 4
-                                                                                            }
+                                                                                            "null": {}
                                                                                         }
                                                                                     }
                                                                                 }

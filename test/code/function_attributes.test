@@ -15,13 +15,10 @@ Block#1
         attrGroup[0][0]['args'][0]: LITERAL('foo')
         attrGroup[0][0]['args'][1]: LITERAL('bar')
         name: foo2
-    Expr_ConstFetch
-        name: LITERAL('null')
-        result: TEMP(#1)
     Stmt_Function
         attrGroup[0][0]['name']: LITERAL('ConstAttr')
         attrGroup[1][0]['name']: LITERAL('FooAttribute')
-        attrGroup[1][0]['args'][0]: TEMP(#1)
+        attrGroup[1][0]['args'][0]: NULL()
         name: foo5
     Stmt_Function
         name: foo_func

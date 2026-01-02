@@ -12,11 +12,8 @@ Block#1
 Block#2
     Parent: Block#1
     Parent: Block#3
-    Expr_ConstFetch
-        name: LITERAL('true')
-        result: TEMP(#1)
     Stmt_JumpIf
-        cond: TEMP(#1)
+        cond: LITERAL(true)
         if: Block#3
         else: Block#4
 

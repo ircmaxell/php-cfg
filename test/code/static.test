@@ -5,7 +5,7 @@ echo $flag;
 Block#1
     Terminal_StaticVar
         var: TEMP(#1 <VARIABLE(static &$flag)>)
-        defaultVar: TEMP(#2)
+        defaultVar: LITERAL(false)
         defaultBlock: Block#2
     Terminal_Echo
         expr: TEMP(#1 <VARIABLE(static &$flag)>)
@@ -13,6 +13,3 @@ Block#1
 
 Block#2
     Parent: Block#1
-    Expr_ConstFetch
-        name: LITERAL('FALSE')
-        result: TEMP(#2)

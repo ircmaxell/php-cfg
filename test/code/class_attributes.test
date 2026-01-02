@@ -67,13 +67,10 @@ Block#1
         attrGroup[0][0]['args'][0]: TEMP(#3)
         name: NameOfClass5
         stmts: Block#6
-    Expr_ConstFetch
-        name: LITERAL('null')
-        result: TEMP(#4)
     Stmt_Class
         attrGroup[0][0]['name']: LITERAL('ConstAttr')
         attrGroup[1][0]['name']: LITERAL('FooAttribute')
-        attrGroup[1][0]['args'][0]: TEMP(#4)
+        attrGroup[1][0]['args'][0]: NULL()
         name: NameOfClass6
         stmts: Block#7
     Terminal_Return
