@@ -39,7 +39,7 @@ class Include_ extends GenericOp
             default:
                 throw new LogicException("Unknown include type rendering: " . $type);
         }
-        
+
         return $result;
     }
 }

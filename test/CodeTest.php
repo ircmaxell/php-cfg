@@ -24,7 +24,7 @@ use RuntimeException;
 class CodeTest extends TestCase
 {
     #[DataProvider('provideTestParseAndDump')]
-    public function testParseAndDump($code, $expectedDump)
+    public function testParseAndDump($code, $expectedDump, $file)
     {
         $astTraverser = new PhpParser\NodeTraverser();
         $astTraverser->addVisitor(new PhpParser\NodeVisitor\NameResolver());
@@ -40,6 +40,8 @@ class CodeTest extends TestCase
         } catch (RuntimeException $e) {
             $result = $e->getMessage();
         }
+
+        // file_put_contents($file, $code . "\n-----" . $result . "\n");
 
         $this->assertEquals(
             CodeTest::canonicalize($expectedDump),
@@ -61,7 +63,7 @@ class CodeTest extends TestCase
             }
 
             $contents = file_get_contents($file->getPathname());
-            yield $file->getBasename() => explode('-----', $contents);
+            yield $file->getBasename() => array_merge(explode('-----', $contents), [$file->getPathname()]);
         }
     }
 

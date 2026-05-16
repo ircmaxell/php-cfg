@@ -4,6 +4,7 @@ class C {
     const D = 3, E = 4 + 4;
 }
 var_dump(A, C::D);
+
 -----
 Block#1
     Terminal_Const
@@ -56,3 +57,4 @@ Block#6
         left: LITERAL(4)
         right: LITERAL(4)
         result: TEMP(#5)
+

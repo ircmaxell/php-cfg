@@ -7,6 +7,7 @@ foreach ([1, 2, 3] as $b) {
     }
 }
 echo $a;
+
 -----
 Block#1
     Expr_Assign
@@ -78,3 +79,4 @@ Block#5
         result: TEMP(#12)
     Stmt_Jump
         target: Block#2
+

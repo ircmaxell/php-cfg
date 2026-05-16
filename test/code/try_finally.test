@@ -7,6 +7,7 @@ try {
 } finally {
     return 'finally';
 }
+
 -----
 Block#1
     Stmt_Try
@@ -38,3 +39,4 @@ Block#4
     Parent: Block#3
     Terminal_Return
         expr: LITERAL('finally')
+

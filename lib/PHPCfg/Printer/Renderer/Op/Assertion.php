@@ -32,10 +32,10 @@ class Assertion extends GenericOp
     {
         if (is_array($assert->value)) {
             $combinator = $assert->mode === CoreAssertion::MODE_UNION ? '|' : '&';
-            if(count($assert->value) == 1) {
+            if (count($assert->value) == 1) {
                 $ret = $this->renderAssertion($assert->value[0]);
             } else {
-                foreach($assert->value as $value) {
+                foreach ($assert->value as $value) {
                     $ret[$combinator][] = $this->renderAssertion($value);
                 }
             }

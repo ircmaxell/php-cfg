@@ -1,6 +1,7 @@
 <?php
 
 [$a, $b, [$c]] = $array;
+
 -----
 Block#1
     Expr_ArrayDimFetch
@@ -32,3 +33,4 @@ Block#1
         expr: TEMP(#9)
         result: TEMP(#11)
     Terminal_Return
+

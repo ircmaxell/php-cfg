@@ -11,6 +11,7 @@ switch ($i) {
         echo "C";
 }
 echo "D";
+
 -----
 Block#1
     Expr_BinaryOp_Equal
@@ -85,3 +86,4 @@ Block#8
         expr: LITERAL('C')
     Stmt_Jump
         target: Block#6
+

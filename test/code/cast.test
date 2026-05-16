@@ -1,6 +1,7 @@
 <?php
 
 $a = (string) 12;
+
 -----
 Block#1
     Expr_Cast_String
@@ -11,3 +12,4 @@ Block#1
         expr: TEMP(#1)
         result: TEMP(#3)
     Terminal_Return
+

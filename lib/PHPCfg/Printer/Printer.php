@@ -11,13 +11,13 @@ declare(strict_types=1);
 
 namespace PHPCfg\Printer;
 
+use FilesystemIterator;
 use LogicException;
 use PHPCfg\Block;
 use PHPCfg\Func;
 use PHPCfg\Op;
 use PHPCfg\Operand;
 use PHPCfg\Script;
-use FilesystemIterator;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplObjectStorage;
@@ -82,7 +82,7 @@ abstract class Printer
             $classes[] = $class;
         }
 
-        usort($classes, function ($a, $b)  {
+        usort($classes, function ($a, $b) {
             $aParts = substr_count($a, '\\');
             $bParts = substr_count($b, '\\');
 

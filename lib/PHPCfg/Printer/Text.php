@@ -12,8 +12,8 @@ declare(strict_types=1);
 namespace PHPCfg\Printer;
 
 use LogicException;
-use PHPCfg\Operand;
 use PHPCfg\Func;
+use PHPCfg\Operand;
 use PHPCfg\Script;
 
 class Text extends Printer
@@ -98,21 +98,20 @@ class Text extends Printer
                 $kind = $result['kind'];
                 $type =  $result['type'] ? "<{$result['type']}>" : "";
 
-                if($kind == "TEMP" ) {
+                if ($kind == "TEMP") {
                     $result['id'] = "#" . $result['id'];
-                    if(isset($result['original']) && $result['original']) {
+                    if (isset($result['original']) && $result['original']) {
                         $result['original'] = "<" . $result['original'] . ">";
                     }
-                }
-                else if($kind == "VARIABLE") {
+                } elseif ($kind == "VARIABLE") {
                     $result['name'] = $result['reference'] ? "&$" . $result['name'] : "$" . $result['name'];
-                    
-                    if($result['scope']) {
-                        $result['name'] = $result['scope'] ." ". $result['name'];
+
+                    if ($result['scope']) {
+                        $result['name'] = $result['scope'] . " " . $result['name'];
                     }
 
                     unset($result['scope'], $result['reference']);
-                } else if($kind == "LITERAL"){
+                } elseif ($kind == "LITERAL") {
                     $result['value'] = var_export($result['value'], true);
                 }
 
@@ -124,7 +123,7 @@ class Text extends Printer
         throw new LogicException("Unknown operand rendering: " . get_class($var));
     }
 
-    public function renderOpLabelValue(array | string | int $value, string $prefix): string
+    public function renderOpLabelValue(array|string|int $value, string $prefix): string
     {
         $result = '';
         if (is_array($value)) {
@@ -154,7 +153,7 @@ class Text extends Printer
                 $result .= $this->indent("\n{$name}: {$val}");
             }
         }
-        
+
         return $result;
     }
 }

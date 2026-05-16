@@ -2,6 +2,7 @@
 $a = 1;
 exit('Quitting with message: ' . $a);
 echo $a;
+
 -----
 Block#1
     Expr_Assign
@@ -14,3 +15,4 @@ Block#1
         result: TEMP(#3)
     Terminal_Exit
         expr: TEMP(#3)
+

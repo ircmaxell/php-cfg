@@ -15,6 +15,7 @@ class A {
     #[NameOfAttribute]
     private const FOO = 'foo';
 }
+
 -----
 Block#1
     Stmt_Class
@@ -76,3 +77,4 @@ Block#4
         result: TEMP(#1)
 
 Block#5
+

@@ -1,6 +1,7 @@
 <?php
 
 $x = a() || b();
+
 -----
 Block#1
     Expr_FuncCall
@@ -34,3 +35,4 @@ Block#3
         result: TEMP(#2)
     Stmt_Jump
         target: Block#2
+
