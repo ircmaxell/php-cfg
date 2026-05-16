@@ -26,6 +26,7 @@ class NameOfClass extends \X implements Iface {
     }
 }
 $obj = new NameOfClass();
+
 -----
 Block#1
     Stmt_Interface
@@ -101,3 +102,4 @@ Block#1
 Function 'NS\NameOfClass::method6': mixed
 Block#1
     Terminal_Return
+

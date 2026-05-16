@@ -2,6 +2,7 @@
 function foo(array&string&null $string) {
 
 }
+
 -----
 Block#1
     Stmt_Function
@@ -15,3 +16,4 @@ Block#1
         name: LITERAL('string')
         result: TEMP(#1 <VARIABLE($string)>)
     Terminal_Return
+

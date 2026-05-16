@@ -2,6 +2,7 @@
 
 $key = 'b';
 list('a' => $a, $key => $b) = $array;
+
 -----
 Block#1
     Expr_Assign
@@ -25,3 +26,4 @@ Block#1
         expr: TEMP(#7)
         result: TEMP(#9)
     Terminal_Return
+

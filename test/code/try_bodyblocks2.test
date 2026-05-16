@@ -15,6 +15,7 @@ try {
 }
 
 echo "next";
+
 -----
 Block#1
     Stmt_Try
@@ -121,3 +122,4 @@ Block#10
         finallyTarget: Block#4
     Stmt_Jump
         target: Block#4
+

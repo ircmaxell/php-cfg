@@ -8,6 +8,7 @@ function foo2(){}
 function foo5(){}
 
 function foo_func(#[FooParamAttrib('Foo1')] $foo) {}
+
 -----
 Block#1
     Stmt_Function
@@ -41,3 +42,4 @@ Block#1
         name: LITERAL('foo')
         result: TEMP(#1 <VARIABLE($foo)>)
     Terminal_Return
+

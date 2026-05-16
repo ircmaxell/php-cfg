@@ -31,6 +31,7 @@ class Aliased_Talker {
         B::bigTalk as private talk;
     }
 }
+
 -----
 Block#1
     Stmt_Trait
@@ -112,3 +113,4 @@ Block#1
     Terminal_Echo
         expr: LITERAL('B')
     Terminal_Return
+

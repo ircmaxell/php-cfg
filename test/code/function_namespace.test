@@ -3,6 +3,7 @@ namespace NS;
 function foo($a) {
     return $a;
 }
+
 -----
 Block#1
     Stmt_Function
@@ -17,3 +18,4 @@ Block#1
         result: TEMP(#1 <VARIABLE($a)>)
     Terminal_Return
         expr: TEMP(#1 <VARIABLE($a)>)
+

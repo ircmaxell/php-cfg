@@ -2,6 +2,7 @@
 class NameOfClass {
     function doSomething() {}
 }
+
 -----
 Block#1
     Stmt_Class
@@ -17,3 +18,4 @@ Block#2
 Function 'NameOfClass::doSomething': mixed
 Block#1
     Terminal_Return
+

@@ -28,6 +28,7 @@ class NameOfClass5 {
 #[FooAttribute(null)]
 class NameOfClass6 {
 }
+
 -----
 Block#1
     Stmt_Class
@@ -102,3 +103,4 @@ Block#1
         name: LITERAL('foo')
         result: TEMP(#1 <VARIABLE($foo)>)
     Terminal_Return
+

@@ -26,7 +26,7 @@ class TraitUse extends GenericOp
         foreach ($op->traits as $index => $trait_) {
             $result['vars']['use'][$index] = $this->printer->renderOperand($trait_);
         }
-        
+
         $adapt = [];
         foreach ($op->adaptations as $index => $adaptation) {
             if ($adaptation instanceof Op\TraitUseAdaptation\Alias) {
@@ -63,7 +63,7 @@ class TraitUse extends GenericOp
                 }
             }
         }
-        
+
         $result['vars'] = array_merge($result['vars'], $adapt);
 
         return $result;

@@ -1,6 +1,7 @@
 <?php
 
 $x = a() && b();
+
 -----
 Block#1
     Expr_FuncCall
@@ -34,3 +35,4 @@ Block#3
         expr: TEMP(#4)
         result: TEMP(#6)
     Terminal_Return
+

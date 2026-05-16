@@ -15,7 +15,6 @@ use PhpParser\ParserFactory;
 use PHPUnit\Framework\Attributes\CoversNothing;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
-use PHPCfg\CodeTest;
 
 #[CoversNothing]
 class ParserAttributesTest extends TestCase

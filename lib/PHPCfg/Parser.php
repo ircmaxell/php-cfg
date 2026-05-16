@@ -310,7 +310,7 @@ class Parser
         if (isset($this->exprHandlers[$expr->getType()])) {
             return $this->exprHandlers[$expr->getType()]->handleExpr($expr);
         }
-        
+
         throw new RuntimeException('Unknown Expr Type ' . $expr->getType());
     }
 
@@ -456,7 +456,7 @@ class Parser
 
             return $var;
         }
-        
+
         $var = new Temporary(new Variable(new Literal($name)));
         $phi = new Op\Phi($var, ['block' => $block]);
         $this->ctx->addToIncompletePhis($block, $name, $phi);

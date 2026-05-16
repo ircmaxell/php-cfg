@@ -41,7 +41,7 @@ class Literal implements Renderer
                 "type" => "",
             ];
         }
-        
+
         if (!$operand instanceof Operand\Literal) {
             return null;
         }

@@ -4,6 +4,7 @@ $a = "aaaa";
 $b = "aaaa')eeee";
 $c = "aaaa')";
 $d = "aaaa'')";
+
 -----
 Block#1
     Expr_Assign
@@ -23,3 +24,4 @@ Block#1
         expr: LITERAL('aaaa\'\')')
         result: TEMP(#8)
     Terminal_Return
+

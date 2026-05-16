@@ -2,6 +2,7 @@
 
 $a = "print_r";
 $a("some string");
+
 -----
 Block#1
     Expr_Assign
@@ -13,3 +14,4 @@ Block#1
         args[0]: LITERAL('some string')
         result: TEMP(#3)
     Terminal_Return
+
