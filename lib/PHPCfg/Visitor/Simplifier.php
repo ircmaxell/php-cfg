@@ -224,7 +224,7 @@ class Simplifier extends AbstractVisitor
                             $subBlocks = [$subBlocks];
                         }
                         foreach ($subBlocks as $subBlock) {
-                            if (! $replaced->contains($subBlock)) {
+                            if (! $replaced->offsetExists($subBlock)) {
                                 $toReplace->offsetSet($subBlock);
                             }
                         }
