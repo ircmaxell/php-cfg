@@ -20,6 +20,7 @@ function foo(Bar $bar)
         return 10;
     }
 }
+
 -----
 Block#1
     Stmt_Function
@@ -62,9 +63,12 @@ Block#3
     Parent: Block#6
     Parent: Block#7
         finallyTarget: Block#5
-    TEMP<Exception>(#5 <VARIABLE($e)>) = Phi(TEMP<Exception>(#3 <VARIABLE($e)>), TEMP<Exception>(#6 <VARIABLE($e)>))
+    Phi
+        vars[0]: TEMP<Exception>(#3 <VARIABLE($e)>)
+        vars[1]: TEMP<Exception>(#5 <VARIABLE($e)>)
+        result: TEMP<Exception>(#6 <VARIABLE($e)>)
     Expr_MethodCall
-        var: TEMP<Exception>(#5 <VARIABLE($e)>)
+        var: TEMP<Exception>(#6 <VARIABLE($e)>)
         name: LITERAL<string>('getMessage')
         result: TEMP<string>(#7)
     Terminal_Echo
@@ -78,7 +82,10 @@ Block#4
     Parent: Block#6
     Parent: Block#7
         finallyTarget: Block#5
-    TEMP<Exception>(#8 <VARIABLE($e)>) = Phi(TEMP<Exception>(#3 <VARIABLE($e)>), TEMP<Exception>(#6 <VARIABLE($e)>))
+    Phi
+        vars[0]: TEMP<Exception>(#3 <VARIABLE($e)>)
+        vars[1]: TEMP<Exception>(#5 <VARIABLE($e)>)
+        result: TEMP<Exception>(#8 <VARIABLE($e)>)
     Expr_MethodCall
         var: TEMP<Exception>(#8 <VARIABLE($e)>)
         name: LITERAL<string>('getMessage')
@@ -132,3 +139,4 @@ Block#8
         finallyTarget: Block#5
     Terminal_Return
         expr: LITERAL<int>(8)
+

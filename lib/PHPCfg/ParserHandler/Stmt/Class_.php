@@ -42,27 +42,27 @@ class Class_ extends ParserHandler implements Stmt
     {
         $toprocess = new SplObjectStorage();
         $processed = new SplObjectStorage();
-        $toprocess->attach($class->stmts);
+        $toprocess->offsetSet($class->stmts);
         while ($toprocess->count() > 0) {
             $block = $toprocess->current();
-            $toprocess->detach($block);
-            $processed->attach($block);
+            $toprocess->offsetUnset($block);
+            $processed->offsetSet($block);
             foreach ($block->children as $op) {
                 $op->scope = $name;
                 if ($op instanceof Op\CallableOp) {
-                    if ($op->func->cfg && !$processed->contains($op->func->cfg)) {
-                        $toprocess->attach($op->func->cfg);
+                    if ($op->func->cfg && !$processed->offsetExists($op->func->cfg)) {
+                        $toprocess->offsetSet($op->func->cfg);
                     }
                 }
                 foreach ($op->getSubBlocks() as $sub) {
                     if (is_array($sub)) {
                         foreach ($sub as $s) {
-                            if ($s && !$processed->contains($s)) {
-                                $toprocess->attach($s);
+                            if ($s && !$processed->offsetExists($s)) {
+                                $toprocess->offsetSet($s);
                             }
                         }
-                    } elseif ($sub && !$processed->contains($sub)) {
-                        $toprocess->attach($sub);
+                    } elseif ($sub && !$processed->offsetExists($sub)) {
+                        $toprocess->offsetSet($sub);
                     }
                 }
             }

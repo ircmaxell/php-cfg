@@ -58,7 +58,7 @@ class TypeReconstructor
                 }
             }
             foreach ($toRemove as $remove) {
-                $unresolved->detach($remove);
+                $unresolved->offsetUnset($remove);
             }
         } while (count($unresolved) > 0 && $start < count($resolved));
         foreach ($resolved as $var) {
@@ -163,7 +163,7 @@ class TypeReconstructor
                 }
                 return null;
             case 'Expr_BitwiseNot':
-                if ($resolved->contains($op->expr)) {
+                if ($resolved->offsetExists($op->expr)) {
                     switch ($resolved[$op->expr]->type) {
                         case Type::TYPE_STRING:
                             return [Helper::string()];
@@ -321,7 +321,7 @@ class TypeReconstructor
 
     protected function resolveOp_Expr_Assign(Operand $var, Op\Expr\Assign $op, SplObjectStorage $resolved): ?array
     {
-        if ($resolved->contains($op->expr)) {
+        if ($resolved->offsetExists($op->expr)) {
             return [$resolved[$op->expr]];
         }
         return null;
@@ -514,7 +514,7 @@ class TypeReconstructor
         $types = [];
         $resolveFully = true;
         foreach ($op->vars as $v) {
-            if ($resolved->contains($v)) {
+            if ($resolved->offsetExists($v)) {
                 $types[] = $resolved[$v];
             } else {
                 $resolveFully = false;
@@ -592,7 +592,7 @@ class TypeReconstructor
             }
         } elseif (isset($this->state->constants[$try])) {
             foreach ($this->state->constants[$try] as $const) {
-                if ($resolved->contains($const->value)) {
+                if ($resolved->offsetExists($const->value)) {
                     $types[] = $resolved[$const->value];
                 } else {
                     // Not every constant is computed yet
@@ -723,7 +723,7 @@ class TypeReconstructor
         } elseif ($var instanceof Operand\BoundVariable && $var->scope === Operand\BoundVariable::SCOPE_OBJECT) {
             assert($var->extra instanceof Op\Type\Literal);
             return Helper::parseDecl($var->extra->name);
-        } elseif ($resolved->contains($var)) {
+        } elseif ($resolved->offsetExists($var)) {
             $type = $resolved[$var];
             return $type;
         }

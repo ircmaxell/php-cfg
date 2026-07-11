@@ -71,7 +71,7 @@ class CodeTest extends TestCase
     }
 
     #[DataProvider('provideTestTypeReconstruction')]
-    public function testTypeReconstruction($code, $expectedDump)
+    public function testTypeReconstruction($code, $expectedDump, $file)
     {
         try {
             $script = $this->runScript($code);
@@ -83,6 +83,8 @@ class CodeTest extends TestCase
         } catch (RuntimeException $e) {
             $result = $e->getMessage();
         }
+
+        // file_put_contents($file, $code . "\n-----" . $result . "\n");
 
         $this->assertEquals(
             $this->canonicalize($expectedDump),

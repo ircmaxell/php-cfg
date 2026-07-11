@@ -6,8 +6,9 @@ function foo($a) {
     }
     echo $a;
 }
+
 -----
- Block#1
+Block#1
     Stmt_Function
         name: foo
     Terminal_Return
@@ -43,14 +44,18 @@ Block#3
     Expr_Assertion
         expr: TEMP<mixed>(#1 <VARIABLE($a)>)
         result: TEMP<null|bool|int|float|object|array|callable>(#4 <VARIABLE($a)>)
-        assert: not(LITERAL('string'))
+        assert['not']: LITERAL('string')
     Stmt_Jump
         target: Block#4
 
 Block#4
     Parent: Block#2
     Parent: Block#3
-    TEMP<string|null|bool|int|float|object|array|callable>(#5 <VARIABLE($a)>) = Phi(TEMP<string>(#3 <VARIABLE($a)>), TEMP<null|bool|int|float|object|array|callable>(#4 <VARIABLE($a)>))
+    Phi
+        vars[0]: TEMP<string>(#3 <VARIABLE($a)>)
+        vars[1]: TEMP<null|bool|int|float|object|array|callable>(#4 <VARIABLE($a)>)
+        result: TEMP<string|null|bool|int|float|object|array|callable>(#5 <VARIABLE($a)>)
     Terminal_Echo
         expr: TEMP<string|null|bool|int|float|object|array|callable>(#5 <VARIABLE($a)>)
     Terminal_Return
+

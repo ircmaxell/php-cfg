@@ -4,6 +4,7 @@ if ($a instanceof RuntimeException || $a instanceof LogicException) {
     echo $a->getMessage();
 }
 
+
 -----
 Block#1
     Expr_InstanceOf
@@ -29,7 +30,7 @@ Block#3
     Expr_Assertion
         expr: TEMP<unknown>(#1 <VARIABLE($a)>)
         result: TEMP<unknown>(#4 <VARIABLE($a)>)
-        assert: not(LITERAL<string>('RuntimeException'))
+        assert['not']: LITERAL<string>('RuntimeException')
     Expr_InstanceOf
         expr: TEMP<unknown>(#4 <VARIABLE($a)>)
         class: LITERAL<string>('LogicException')
@@ -43,8 +44,14 @@ Block#3
 Block#4
     Parent: Block#3
     Parent: Block#2
-    TEMP<bool>(#7) = Phi(LITERAL<bool>(true), TEMP<bool>(#6))
-    TEMP<unknown>(#8 <VARIABLE($a)>) = Phi(TEMP<unknown>(#4 <VARIABLE($a)>), TEMP<RuntimeException>(#3 <VARIABLE($a)>))
+    Phi
+        vars[0]: LITERAL<bool>(true)
+        vars[1]: TEMP<bool>(#6)
+        result: TEMP<bool>(#7)
+    Phi
+        vars[0]: TEMP<unknown>(#4 <VARIABLE($a)>)
+        vars[1]: TEMP<RuntimeException>(#3 <VARIABLE($a)>)
+        result: TEMP<unknown>(#8 <VARIABLE($a)>)
     Stmt_JumpIf
         cond: TEMP<bool>(#7)
         if: Block#5
@@ -55,7 +62,8 @@ Block#5
     Expr_Assertion
         expr: TEMP<unknown>(#8 <VARIABLE($a)>)
         result: TEMP<RuntimeException|LogicException>(#9 <VARIABLE($a)>)
-        assert: LITERAL<string>('RuntimeException')|LITERAL<string>('LogicException')
+        assert['|'][0]: LITERAL<string>('RuntimeException')
+        assert['|'][1]: LITERAL<string>('LogicException')
     Expr_MethodCall
         var: TEMP<RuntimeException|LogicException>(#9 <VARIABLE($a)>)
         name: LITERAL<string>('getMessage')
@@ -70,7 +78,8 @@ Block#6
     Expr_Assertion
         expr: TEMP<unknown>(#8 <VARIABLE($a)>)
         result: TEMP<unknown>(#11 <VARIABLE($a)>)
-        assert: not(LITERAL<string>('RuntimeException')|LITERAL<string>('LogicException'))
+        assert['not']['|'][0]: LITERAL<string>('RuntimeException')
+        assert['not']['|'][1]: LITERAL<string>('LogicException')
     Stmt_Jump
         target: Block#7
 
@@ -78,3 +87,4 @@ Block#7
     Parent: Block#5
     Parent: Block#6
     Terminal_Return
+

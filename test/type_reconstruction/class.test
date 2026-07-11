@@ -9,6 +9,7 @@ class A {
         return floor($def);
     }
 }
+
 -----
 Block#1
     Stmt_Class
@@ -50,3 +51,4 @@ Block#1
         result: TEMP<int>(#2)
     Terminal_Return
         expr: TEMP<int>(#2)
+

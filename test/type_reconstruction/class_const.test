@@ -36,6 +36,7 @@ interface C {
 class D extends B implements C {}
 
 
+
 -----
 Block#1
     Stmt_Class
@@ -146,3 +147,4 @@ Block#1
         result: TEMP<int>(#1)
     Terminal_Return
         expr: TEMP<int>(#1)
+

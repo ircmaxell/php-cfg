@@ -2,6 +2,7 @@
 
 $x = 1;
 $y = 2;
+
 -----
 Block#1
     Expr_Assign
@@ -13,3 +14,4 @@ Block#1
         expr: LITERAL<int>(2)
         result: TEMP<int>(#4)
     Terminal_Return
+

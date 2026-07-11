@@ -229,11 +229,11 @@ class State
     {
         $toProcess = new SplObjectStorage();
         $processed = new SplObjectStorage();
-        $toProcess->attach($block);
+        $toProcess->offsetSet($block);
         while (count($toProcess) > 0) {
             foreach ($toProcess as $block) {
-                $toProcess->detach($block);
-                $processed->attach($block);
+                $toProcess->offsetUnset($block);
+                $processed->offsetSet($block);
                 foreach ($block->children as $op) {
                     if ($op->getType() === $type) {
                         $result[] = $op;
@@ -246,8 +246,8 @@ class State
                             $sub = [$sub];
                         }
                         foreach ($sub as $subb) {
-                            if (!$processed->contains($subb)) {
-                                $toProcess->attach($subb);
+                            if (!$processed->offsetExists($subb)) {
+                                $toProcess->offsetSet($subb);
                             }
                         }
                     }
