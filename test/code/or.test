@@ -1,6 +1,7 @@
 <?php
 
 $x = a() || b();
+
 -----
 Block#1
     Expr_FuncCall
@@ -14,10 +15,13 @@ Block#1
 Block#2
     Parent: Block#3
     Parent: Block#1
-    TEMP(#2) = Phi(LITERAL(true), TEMP(#3))
+    Phi
+        vars[0]: LITERAL(true)
+        vars[1]: TEMP(#2)
+        result: TEMP(#3)
     Expr_Assign
         var: TEMP(#4 <VARIABLE($x)>)
-        expr: TEMP(#2)
+        expr: TEMP(#3)
         result: TEMP(#5)
     Terminal_Return
 
@@ -28,6 +32,7 @@ Block#3
         result: TEMP(#6)
     Expr_Cast_Bool
         expr: TEMP(#6)
-        result: TEMP(#3)
+        result: TEMP(#2)
     Stmt_Jump
         target: Block#2
+

@@ -30,46 +30,52 @@ class GenericOp implements Renderer
     public function renderOp(Op $op): ?array
     {
         $result = [
+            'attributes' => $this->renderAttributes($op->getAttributes()),
+            'attrGroups' => [],
+            'childblocks' => [],
             'kind' => $op->getType(),
             'types' => [],
             'vars' => [],
-            'attributes' => $this->renderAttributes($op->getAttributes()),
-            'childblocks' => [],
         ];
+
+        if ($op instanceof Op\AttributableOp) {
+            $result['attrGroups'] = $this->renderAttrGroups($op);
+        }
 
         if ($op instanceof Op\CallableOp) {
             $func = $op->getFunc();
-            $result['vars'][] = "name: {$func->name}";
+            $result['vars']['name'] = $func->name;
         }
 
         if ($op instanceof  Op\Stmt\Property || $op instanceof Op\Stmt\ClassMethod) {
-            $result['vars'][] = "flags: " . $this->renderFlags($op);
+            $result['vars']['flags'] = $this->renderFlags($op);
         }
-
 
         foreach ($op->getTypeNames() as $typeName => $type) {
             if (is_array($type)) {
+                $result['types'][$typeName] = [];
                 foreach ($type as $key => $subType) {
                     if (! $subType) {
                         continue;
                     }
-                    $result['types'][] = "{$typeName}[{$key}]: " . $this->printer->renderType($subType);
+                    $result['types'][$typeName][$key] = $this->printer->renderType($subType);
                 }
             } elseif ($type) {
-                $result['types'][] = "{$typeName}: " . $this->printer->renderType($type);
+                $result['types'][$typeName] = $this->printer->renderType($type);
             }
         }
 
         foreach ($op->getVariableNames() as $varName => $vars) {
             if (is_array($vars)) {
+                $result['vars'][$varName] = [];
                 foreach ($vars as $key => $var) {
                     if (! $var) {
                         continue;
                     }
-                    $result['vars'][] = "{$varName}[{$key}]: " . $this->printer->renderOperand($var);
+                    $result['vars'][$varName][$key] = $this->printer->renderOperand($var);
                 }
             } elseif ($vars) {
-                $result['vars'][] = "{$varName}: " . $this->printer->renderOperand($vars);
+                $result['vars'][$varName] = $this->printer->renderOperand($vars);
             }
         }
 
@@ -91,12 +97,6 @@ class GenericOp implements Renderer
             }
         }
 
-        if ($op instanceof Op\AttributableOp) {
-            $result['attrGroups'] = $this->renderAttrGroups($op);
-        }
-
-
-
         return $result;
     }
 
@@ -104,8 +104,6 @@ class GenericOp implements Renderer
     {
         return null;
     }
-
-
 
     protected function renderAttributes(array $attributes): array
     {
@@ -115,37 +113,35 @@ class GenericOp implements Renderer
         $result = [];
         foreach ($attributes as $key => $value) {
             if (is_string($value) || is_numeric($value)) {
-                $result[] = "attribute['" . $key . "']: " . $value;
+                $result['attribute'][$key] = $value;
             }
         }
         return $result;
     }
-
 
     protected function renderAttrGroups(Op\AttributableOp $op): array
     {
         $result = [];
+        $result['attrGroup'] = [];
         foreach ($op->getAttributeGroups() as $indexGroup => $attrGroup) {
-            $result[$indexGroup] = [];
-            $result[$indexGroup][] = "attrGroup[$indexGroup]: ";
-            foreach ($this->renderAttributes($attrGroup->getAttributes()) as $attr) {
-                $result[$indexGroup][] = "    {$attr}";
+            $result['attrGroup'][$indexGroup] = [];
+            foreach ($this->renderAttributes($attrGroup->getAttributes()) as $i => $attr) {
+                $result['attrGroup'][$indexGroup][$i] = $attr;
             }
             foreach ($attrGroup->attrs as $indexAttr => $attr) {
-                $result[$indexGroup][] = "    attr[$indexAttr]: ";
-                foreach ($this->renderAttributes($attr->getAttributes()) as $rendered) {
-                    $result[$indexGroup][] = "        {$rendered}";
+                $result['attrGroup'][$indexGroup][$indexAttr] = [];
+                foreach ($this->renderAttributes($attr->getAttributes()) as $j => $rendered) {
+                    $result['attrGroup'][$indexGroup][$indexAttr][$j] = $rendered;
                 }
-                $result[$indexGroup][] = "        name: " . $this->printer->renderOperand($attr->name);
+                $result['attrGroup'][$indexGroup][$indexAttr]['name'] = $this->printer->renderOperand($attr->name);
                 foreach ($attr->args as $indexArg => $arg) {
-                    $result[$indexGroup][] = "        args[$indexArg]: " . $this->printer->renderOperand($arg);
+                    $result['attrGroup'][$indexGroup][$indexAttr]['args'][$indexArg] = $this->printer->renderOperand($arg);
                 }
             }
         }
 
         return $result;
     }
-
 
     protected function renderFlags(Op\Stmt $stmt): string
     {
@@ -178,5 +174,4 @@ class GenericOp implements Renderer
 
         return $result;
     }
-
 }

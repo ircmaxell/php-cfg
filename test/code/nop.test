@@ -3,6 +3,7 @@ $a = 1;
 /* foo */
 ;
 echo $a;
+
 -----
 Block#1
     Expr_Assign
@@ -12,3 +13,4 @@ Block#1
     Terminal_Echo
         expr: TEMP(#1 <VARIABLE($a)>)
     Terminal_Return
+

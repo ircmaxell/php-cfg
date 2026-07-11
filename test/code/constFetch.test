@@ -6,6 +6,7 @@ namespace Foo;
 \var_dump(true);
 \var_dump(false);
 \var_dump(null);
+
 -----
 Block#1
     Expr_ConstFetch
@@ -26,6 +27,7 @@ Block#1
         result: TEMP(#4)
     Expr_FuncCall
         name: LITERAL('var_dump')
-        args[0]: LITERAL(NULL)
+        args[0]: NULL()
         result: TEMP(#5)
     Terminal_Return
+

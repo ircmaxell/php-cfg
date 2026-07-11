@@ -57,12 +57,12 @@ class Traverser
 
     private function traverseBlock(Block $block, ?Block $prior = null)
     {
-        if ($this->seen->contains($block)) {
+        if ($this->seen->offsetExists($block)) {
             $this->event('skipBlock', [$block, $prior]);
             // Always return null on a skip event
             return;
         }
-        $this->seen->attach($block);
+        $this->seen->offsetSet($block);
         $this->event('enterBlock', [$block, $prior]);
         $children = $block->children;
         for ($i = 0; $i < count($children); ++$i) {

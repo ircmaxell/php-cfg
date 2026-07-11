@@ -44,11 +44,12 @@ class Temporary implements Renderer
         if (!$operand instanceof Operand\Temporary) {
             return null;
         }
+
         return [
             "kind" => "TEMP",
-            "type" => $operand->type ? "<{$operand->type}>" : "",
-            "id" => "#" . $this->getVarId($operand),
-            "original" => $operand->original ? "<" . $this->printer->renderOperand($operand->original) . ">" : "",
+            "type" => $this->printer->renderType($operand->type),
+            "id" => $this->getVarId($operand),
+            "original" => $operand->original ? $this->printer->renderOperand($operand->original) : null,
         ];
     }
 

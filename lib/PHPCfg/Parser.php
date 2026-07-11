@@ -91,9 +91,9 @@ class Parser
     {
         $it = new RecursiveIteratorIterator(
             new RecursiveDirectoryIterator(
-                __DIR__ . '/ParserHandler/',
-                RecursiveIteratorIterator::LEAVES_ONLY
-            )
+                __DIR__ . '/ParserHandler/'
+            ),
+            RecursiveIteratorIterator::LEAVES_ONLY
         );
         $handlers = [];
         foreach ($it as $file) {
@@ -310,7 +310,7 @@ class Parser
         if (isset($this->exprHandlers[$expr->getType()])) {
             return $this->exprHandlers[$expr->getType()]->handleExpr($expr);
         }
-        var_dump(array_keys($this->exprHandlers));
+
         throw new RuntimeException('Unknown Expr Type ' . $expr->getType());
     }
 
@@ -456,6 +456,7 @@ class Parser
 
             return $var;
         }
+
         $var = new Temporary(new Variable(new Literal($name)));
         $phi = new Op\Phi($var, ['block' => $block]);
         $this->ctx->addToIncompletePhis($block, $name, $phi);

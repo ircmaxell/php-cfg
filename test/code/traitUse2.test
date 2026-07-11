@@ -12,6 +12,7 @@ class MyClass1 {
 class MyClass2 {
     use HelloWorld { sayHello as private myPrivateHello; }
 }
+
 -----
 Block#1
     Stmt_Trait
@@ -33,20 +34,19 @@ Block#2
 Block#3
     Stmt_TraitUse
         use[0]: LITERAL('\\HelloWorld')
-        adaptation[0]: Alias
-            method: LITERAL('sayHello')
-            newModifier: protected
+        adaptation[0]['alias']['method']: LITERAL('sayHello')
+        adaptation[0]['alias']['newModifier']: protected
 
 Block#4
     Stmt_TraitUse
         use[0]: LITERAL('\\HelloWorld')
-        adaptation[0]: Alias
-            method: LITERAL('sayHello')
-            newName: LITERAL('myPrivateHello')
-            newModifier: private
+        adaptation[0]['alias']['method']: LITERAL('sayHello')
+        adaptation[0]['alias']['newName']: LITERAL('myPrivateHello')
+        adaptation[0]['alias']['newModifier']: private
 
 Function 'HelloWorld::sayHello': mixed
 Block#1
     Terminal_Echo
         expr: LITERAL('Hello World!')
     Terminal_Return
+

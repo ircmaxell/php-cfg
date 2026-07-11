@@ -8,6 +8,7 @@ if ($a) {
     echo "c";
 }
 echo "d";
+
 -----
 Block#1
     Stmt_JumpIf
@@ -50,3 +51,4 @@ Block#6
         expr: LITERAL('c')
     Stmt_Jump
         target: Block#4
+

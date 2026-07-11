@@ -31,6 +31,7 @@ class Aliased_Talker {
         B::bigTalk as private talk;
     }
 }
+
 -----
 Block#1
     Stmt_Trait
@@ -67,32 +68,27 @@ Block#4
     Stmt_TraitUse
         use[0]: LITERAL('\\A')
         use[1]: LITERAL('\\B')
-        adaptation[0]: Insteadof
-            trait: LITERAL('\\B')
-            method: LITERAL('smallTalk')
-            insteadof[0]: LITERAL('\\A')
-        adaptation[1]: Insteadof
-            trait: LITERAL('\\A')
-            method: LITERAL('bigTalk')
-            insteadof[0]: LITERAL('\\B')
+        adaptation[0]['Insteadof']['trait']: LITERAL('\\B')
+        adaptation[0]['Insteadof']['method']: LITERAL('smallTalk')
+        adaptation[0]['Insteadof']['insteadof'][0]: LITERAL('\\A')
+        adaptation[1]['Insteadof']['trait']: LITERAL('\\A')
+        adaptation[1]['Insteadof']['method']: LITERAL('bigTalk')
+        adaptation[1]['Insteadof']['insteadof'][0]: LITERAL('\\B')
 
 Block#5
     Stmt_TraitUse
         use[0]: LITERAL('\\A')
         use[1]: LITERAL('\\B')
-        adaptation[0]: Insteadof
-            trait: LITERAL('\\B')
-            method: LITERAL('smallTalk')
-            insteadof[0]: LITERAL('\\A')
-        adaptation[1]: Insteadof
-            trait: LITERAL('\\A')
-            method: LITERAL('bigTalk')
-            insteadof[0]: LITERAL('\\B')
-        adaptation[2]: Alias
-            trait: LITERAL('\\B')
-            method: LITERAL('bigTalk')
-            newName: LITERAL('talk')
-            newModifier: private
+        adaptation[0]['Insteadof']['trait']: LITERAL('\\B')
+        adaptation[0]['Insteadof']['method']: LITERAL('smallTalk')
+        adaptation[0]['Insteadof']['insteadof'][0]: LITERAL('\\A')
+        adaptation[1]['Insteadof']['trait']: LITERAL('\\A')
+        adaptation[1]['Insteadof']['method']: LITERAL('bigTalk')
+        adaptation[1]['Insteadof']['insteadof'][0]: LITERAL('\\B')
+        adaptation[2]['alias']['trait']: LITERAL('\\B')
+        adaptation[2]['alias']['method']: LITERAL('bigTalk')
+        adaptation[2]['alias']['newName']: LITERAL('talk')
+        adaptation[2]['alias']['newModifier']: private
 
 Function 'A::smallTalk': mixed
 Block#1
@@ -117,3 +113,4 @@ Block#1
     Terminal_Echo
         expr: LITERAL('B')
     Terminal_Return
+

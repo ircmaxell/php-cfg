@@ -41,14 +41,15 @@ class Literal implements Renderer
                 "type" => "",
             ];
         }
+
         if (!$operand instanceof Operand\Literal) {
             return null;
         }
 
         return [
             "kind" => "LITERAL",
-            "type" => $operand->type ? "<{$operand->type}>" : "",
-            "value" => var_export($operand->value, true),
+            "type" => $this->printer->renderType($operand->type),
+            "value" => $operand->value,
         ];
     }
 

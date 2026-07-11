@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace PHPCfg\Printer;
 
+use FilesystemIterator;
 use LogicException;
 use PHPCfg\Block;
 use PHPCfg\Func;
@@ -59,10 +60,13 @@ abstract class Printer
         $it = new RecursiveIteratorIterator(
             new RecursiveDirectoryIterator(
                 __DIR__ . '/Renderer/',
-                RecursiveIteratorIterator::LEAVES_ONLY
-            )
+                FilesystemIterator::SKIP_DOTS
+            ),
+            RecursiveIteratorIterator::LEAVES_ONLY
         );
+
         $handlers = [];
+        $classes = [];
         foreach ($it as $file) {
             if (!$file->isFile() || $file->getExtension() !== 'php') {
                 continue;
@@ -75,14 +79,32 @@ abstract class Printer
                 continue;
             }
 
+            $classes[] = $class;
+        }
+
+        usort($classes, function ($a, $b) {
+            $aParts = substr_count($a, '\\');
+            $bParts = substr_count($b, '\\');
+
+            if ($aParts == $bParts) {
+                return 0;
+            }
+            return ($aParts < $bParts) ? 1 : -1;
+        });
+
+        foreach ($classes as $class) {
             $obj = new $class($this);
             $this->addRenderer($obj);
         }
     }
 
-    abstract public function printScript(Script $script): string;
+    abstract public function printScript(Script $script): mixed;
 
-    abstract public function printFunc(Func $func): string;
+    abstract public function printFunc(Func $func): mixed;
+
+    abstract public function renderOperand(Operand $var): mixed;
+
+    abstract public function renderOpLabel(array $desc): mixed;
 
     protected function reset(): void
     {
@@ -98,20 +120,6 @@ abstract class Printer
         return $this->blocks[$block];
     }
 
-    public function renderOperand(Operand $var): string
-    {
-        foreach ($this->renderers as $renderer) {
-            $result = $renderer->renderOperand($var);
-            if ($result !== null) {
-                $kind = $result['kind'];
-                $type = $result['type'];
-                unset($result['kind'], $result['type']);
-                return strtoupper($kind) . $type . '(' . trim(implode(" ", $result)) . ')';
-            }
-        }
-        return 'UNKNOWN';
-    }
-
     public function renderOp(Op $op): array
     {
         foreach ($this->renderers as $renderer) {
@@ -121,17 +129,14 @@ abstract class Printer
                 $childblocks = $result['childblocks'];
                 return [
                     'op' => $op,
+                    'kind' => $kind,
                     'label' => $this->renderOpLabel($result),
                     'childBlocks' => $childblocks,
                 ];
             }
         }
 
-        return [
-            'op' => $op,
-            'label' => 'UNKNOWN',
-            'childBlocks' => $childBlocks,
-        ];
+        throw new LogicException("Unknown op rendering: " . get_class($op));
     }
 
     protected function indent($str, $levels = 1): string
@@ -145,7 +150,7 @@ abstract class Printer
 
     public function enqueueBlock(Block $block): void
     {
-        if (! $this->blocks->contains($block)) {
+        if (! $this->blocks->offsetExists($block)) {
             $this->blocks[$block] = count($this->blocks) + 1;
             $this->blockQueue->enqueue($block);
         }
@@ -163,14 +168,7 @@ abstract class Printer
             $block = $this->blockQueue->dequeue();
             $ops = [];
             foreach ($block->phi as $phi) {
-                $result = $this->indent($this->renderOperand($phi->result) . ' = Phi(');
-                $result .= implode(', ', array_map([$this, 'renderOperand'], $phi->vars));
-                $result .= ')';
-                $renderedOps[$phi] = $ops[] = [
-                    'op' => $phi,
-                    'label' => $result,
-                    'childBlocks' => [],
-                ];
+                $renderedOps[$phi] = $ops[] = $this->renderOp($phi);
             }
             foreach ($block->children as $child) {
                 $renderedOps[$child] = $ops[] = $this->renderOp($child);
@@ -221,25 +219,5 @@ abstract class Printer
             return '';
         }
         throw new LogicException("Unknown type rendering: " . get_class($type));
-    }
-
-    public function renderOpLabel(array $desc): string
-    {
-        $result = "{$desc['kind']}";
-        unset($desc['kind'], $desc['childblocks']);
-        foreach ($desc as $name => $val) {
-            if (is_array($val)) {
-                foreach ($val as $v) {
-                    if (is_array($v)) {
-                        $result .= $this->indent("\n" . implode("\n", $v));
-                    } else {
-                        $result .= $this->indent("\n{$v}");
-                    }
-                }
-            } else {
-                $result .= $this->indent("\n{$val}");
-            }
-        }
-        return $result;
     }
 }

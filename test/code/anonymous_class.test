@@ -6,6 +6,7 @@ $var = new class {
 };
 
 $instance = new #[Attr('foo')] class {};
+
 -----
 Block#1
     Stmt_Class
@@ -19,11 +20,9 @@ Block#1
         expr: TEMP(#1)
         result: TEMP(#3)
     Stmt_Class
+        attrGroup[0][0]['name']: LITERAL('Attr')
+        attrGroup[0][0]['args'][0]: LITERAL('foo')
         name: {anonymousClass}#2
-        attrGroup[0]:
-            attr[0]:
-                name: LITERAL('Attr')
-                args[0]: LITERAL('foo')
         stmts: Block#3
     Expr_New
         class: LITERAL('{anonymousClass}#2')
@@ -46,3 +45,4 @@ Block#1
     Terminal_Echo
         expr: LITERAL('Hello World')
     Terminal_Return
+

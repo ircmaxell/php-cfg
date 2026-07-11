@@ -2,6 +2,7 @@
 
 namespace Foo;
 call();
+
 -----
 Block#1
     Expr_NsFuncCall
@@ -9,3 +10,4 @@ Block#1
         name: LITERAL('call')
         result: TEMP(#1)
     Terminal_Return
+

@@ -4,6 +4,7 @@ echo match(10) {
     5 => 'bar',
     5 + 5 => 'baz' . 'buz',
 };
+
 -----
 Block#1
     Expr_BinaryOp_Identical
@@ -39,15 +40,19 @@ Block#4
     Parent: Block#2
     Parent: Block#5
     Parent: Block#7
-    TEMP(#5) = Phi(TEMP(#2), TEMP(#6), TEMP(#7))
+    Phi
+        vars[0]: TEMP(#2)
+        vars[1]: TEMP(#5)
+        vars[2]: TEMP(#6)
+        result: TEMP(#7)
     Terminal_Echo
-        expr: TEMP(#5)
+        expr: TEMP(#7)
     Terminal_Return
 
 Block#5
     Parent: Block#3
     Expr_Assign
-        var: TEMP(#6)
+        var: TEMP(#5)
         expr: LITERAL('bar')
         result: TEMP(#8)
     Stmt_Jump
@@ -73,7 +78,7 @@ Block#7
     Expr_BinaryOp_Concat
         left: LITERAL('baz')
         right: LITERAL('buz')
-        result: TEMP(#7)
+        result: TEMP(#6)
     Stmt_Jump
         target: Block#4
 
@@ -81,3 +86,4 @@ Block#8
     Parent: Block#6
     Terminal_MatchError
         cond: LITERAL(10)
+
