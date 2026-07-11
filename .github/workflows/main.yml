@@ -26,7 +26,9 @@ jobs:
           tools: composer:v2
       - name: "Install dependencies"
         run: "composer install --no-interaction"
-      - name: "PHPCSFixer"
-        run: "php vendor/bin/php-cs-fixer check"
+      - name: "PHPCSFixer installation"
+        run: "composer install --no-interaction --working-dir=tools/php-cs-fixer"
+      - name: "PHPCSFixer check"
+        run: "php tools/php-cs-fixer/vendor/bin/php-cs-fixer check"
       - name: "PHPUnit"
         run: "php vendor/bin/phpunit"
