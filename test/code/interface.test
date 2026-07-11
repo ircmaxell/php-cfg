@@ -3,6 +3,7 @@
 interface Test {
     public function method();
 }
+
 -----
 Block#1
     Stmt_Interface
@@ -11,7 +12,8 @@ Block#1
     Terminal_Return
 
 Block#2
-    Stmt_ClassMethod<'method'>
+    Stmt_ClassMethod
+        name: method
         flags: public
 
 Function 'Test::method': mixed

@@ -1,6 +1,7 @@
 <?php
 
 x: goto x;
+
 -----
 Block#1
     Stmt_Jump
@@ -11,3 +12,4 @@ Block#2
     Parent: Block#2
     Stmt_Jump
         target: Block#2
+

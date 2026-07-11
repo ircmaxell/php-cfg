@@ -40,7 +40,7 @@ class PrintCommand extends BaseCommand
 
         $script = $this->exec($file, $code, $optimize);
 
-        $dumper = new Printer\Text($attributes);
+        $dumper = new Printer\Text($attributes ? Printer\Printer::MODE_RENDER_ATTRIBUTES : Printer\Printer::MODE_DEFAULT);
         $io->write($dumper->printScript($script), true);
     }
 }

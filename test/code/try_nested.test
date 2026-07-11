@@ -3,7 +3,7 @@
 try {
     try {
         echo "nested try";
-    } 
+    }
     catch(Exception1 $e1) {
         echo $e1;
     }
@@ -15,22 +15,23 @@ try {
 } finally {
     return false;
 }
+
 -----
 Block#1
     Stmt_Try
         catchTypes[0]: Exception2
-        catchVars[0]: Var#1<$e2>
+        catchVars[0]: TEMP(#1 <VARIABLE($e2)>)
         body: Block#2
         catch[0]: Block#3
         finally: Block#4
 
 Block#2
     Parent: Block#1
-        catchTarget<Exception2>(Var#1<$e2>): Block#3
+        catchTarget<Exception2>(TEMP(#1 <VARIABLE($e2)>)): Block#3
         finallyTarget: Block#4
     Stmt_Try
         catchTypes[0]: Exception1
-        catchVars[0]: Var#2<$e1>
+        catchVars[0]: TEMP(#2 <VARIABLE($e1)>)
         body: Block#5
         catch[0]: Block#6
         finally: Block#7
@@ -39,9 +40,12 @@ Block#3
     Parent: Block#2
     Parent: Block#7
         finallyTarget: Block#4
-    Var#3<$e2> = Phi(Var#1<$e2>, Var#4<$e2>)
+    Phi
+        vars[0]: TEMP(#1 <VARIABLE($e2)>)
+        vars[1]: TEMP(#3 <VARIABLE($e2)>)
+        result: TEMP(#4 <VARIABLE($e2)>)
     Terminal_Echo
-        expr: Var#3<$e2>
+        expr: TEMP(#4 <VARIABLE($e2)>)
     Stmt_Jump
         target: Block#4
 
@@ -49,15 +53,12 @@ Block#4
     Parent: Block#2
     Parent: Block#3
     Parent: Block#7
-    Expr_ConstFetch
-        name: LITERAL('false')
-        result: Var#5
     Terminal_Return
-        expr: Var#5
+        expr: LITERAL(false)
 
 Block#5
     Parent: Block#2
-        catchTarget<Exception1>(Var#2<$e1>): Block#6
+        catchTarget<Exception1>(TEMP(#2 <VARIABLE($e1)>)): Block#6
         finallyTarget: Block#7
     Terminal_Echo
         expr: LITERAL('nested try')
@@ -68,17 +69,15 @@ Block#6
     Parent: Block#5
         finallyTarget: Block#7
     Terminal_Echo
-        expr: Var#2<$e1>
+        expr: TEMP(#2 <VARIABLE($e1)>)
     Stmt_Jump
         target: Block#7
 
 Block#7
     Parent: Block#5
     Parent: Block#6
-        catchTarget<Exception2>(Var#1<$e2>): Block#3
+        catchTarget<Exception2>(TEMP(#1 <VARIABLE($e2)>)): Block#3
         finallyTarget: Block#4
-    Expr_ConstFetch
-        name: LITERAL('true')
-        result: Var#6
     Terminal_Return
-        expr: Var#6
+        expr: LITERAL(true)
+

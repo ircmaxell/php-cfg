@@ -28,80 +28,60 @@ class NameOfClass5 {
 #[FooAttribute(null)]
 class NameOfClass6 {
 }
+
 -----
 Block#1
     Stmt_Class
-        attrGroup[0]:
-            attr[0]:
-                name: LITERAL('NameOfAttribute')
+        attrGroup[0][0]['name']: LITERAL('NameOfAttribute')
         name: NameOfClass1
         stmts: Block#2
     Stmt_Class
-        attrGroup[0]:
-            attr[0]:
-                name: LITERAL('ExampleAttribute')
-                args[0]: LITERAL('foo')
-                args[1]: LITERAL('bar')
+        attrGroup[0][0]['name']: LITERAL('ExampleAttribute')
+        attrGroup[0][0]['args'][0]: LITERAL('foo')
+        attrGroup[0][0]['args'][1]: LITERAL('bar')
         name: NameOfClass2
         stmts: Block#3
     Stmt_Class
-        attrGroup[0]:
-            attr[0]:
-                name: LITERAL('Attr')
-        attrGroup[1]:
-            attr[0]:
-                name: LITERAL('FooAttr')
+        attrGroup[0][0]['name']: LITERAL('Attr')
+        attrGroup[1][0]['name']: LITERAL('FooAttr')
         name: NameOfClass3
         stmts: Block#4
     Stmt_Class
-        attrGroup[0]:
-            attr[0]:
-                name: LITERAL('Attr')
-            attr[1]:
-                name: LITERAL('FooAttr')
+        attrGroup[0][0]['name']: LITERAL('Attr')
+        attrGroup[0][1]['name']: LITERAL('FooAttr')
         name: NameOfClass4
         stmts: Block#5
     Expr_ClassConstFetch
         class: LITERAL('Attribute')
         name: LITERAL('TARGET_CLASS')
-        result: Var#1
+        result: TEMP(#1)
     Expr_ClassConstFetch
         class: LITERAL('Attribute')
         name: LITERAL('TARGET_METHOD')
-        result: Var#2
+        result: TEMP(#2)
     Expr_BinaryOp_BitwiseOr
-        left: Var#1
-        right: Var#2
-        result: Var#3
+        left: TEMP(#1)
+        right: TEMP(#2)
+        result: TEMP(#3)
     Stmt_Class
-        attrGroup[0]:
-            attr[0]:
-                name: LITERAL('Attribute')
-                args[0]: Var#3
+        attrGroup[0][0]['name']: LITERAL('Attribute')
+        attrGroup[0][0]['args'][0]: TEMP(#3)
         name: NameOfClass5
         stmts: Block#6
-    Expr_ConstFetch
-        name: LITERAL('null')
-        result: Var#4
     Stmt_Class
-        attrGroup[0]:
-            attr[0]:
-                name: LITERAL('ConstAttr')
-        attrGroup[1]:
-            attr[0]:
-                name: LITERAL('FooAttribute')
-                args[0]: Var#4
+        attrGroup[0][0]['name']: LITERAL('ConstAttr')
+        attrGroup[1][0]['name']: LITERAL('FooAttribute')
+        attrGroup[1][0]['args'][0]: NULL()
         name: NameOfClass6
         stmts: Block#7
     Terminal_Return
 
 Block#2
-    Stmt_ClassMethod<'method1'>
-        attrGroup[0]:
-            attr[0]:
-                name: LITERAL('ExampleAttributeMethod')
-                args[0]: LITERAL('foo')
-                args[1]: LITERAL('bar')
+    Stmt_ClassMethod
+        attrGroup[0][0]['name']: LITERAL('ExampleAttributeMethod')
+        attrGroup[0][0]['args'][0]: LITERAL('foo')
+        attrGroup[0][0]['args'][1]: LITERAL('bar')
+        name: method1
         flags: private
 
 Block#3
@@ -117,11 +97,10 @@ Block#7
 Function 'NameOfClass1::method1': mixed
 Block#1
     Expr_Param
-        attrGroup[0]:
-            attr[0]:
-                name: LITERAL('FooParamAttrib')
-                args[0]: LITERAL('Foo1')
+        attrGroup[0][0]['name']: LITERAL('FooParamAttrib')
+        attrGroup[0][0]['args'][0]: LITERAL('Foo1')
         declaredType: mixed
         name: LITERAL('foo')
-        result: Var#1<$foo>
+        result: TEMP(#1 <VARIABLE($foo)>)
     Terminal_Return
+

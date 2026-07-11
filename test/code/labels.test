@@ -10,9 +10,11 @@ goto label;
 echo "B";
 label:
 echo "C";
+
 -----
 Block#1
-    Stmt_Function<'test'>
+    Stmt_Function
+        name: test
     Terminal_Echo
         expr: LITERAL('A')
     Stmt_Jump
@@ -34,3 +36,4 @@ Block#2
     Terminal_Echo
         expr: LITERAL('D')
     Terminal_Return
+

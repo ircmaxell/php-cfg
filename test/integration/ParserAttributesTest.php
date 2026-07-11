@@ -30,7 +30,8 @@ class ParserAttributesTest extends TestCase
 
         $expected = <<< EOF
             Block#1
-                Stmt_Function<'foo'>
+                Stmt_Function
+                    name: foo
                 Terminal_Return
 
             Function 'foo': mixed
@@ -38,9 +39,9 @@ class ParserAttributesTest extends TestCase
                 Expr_Param
                     declaredType: mixed
                     name: LITERAL('a')
-                    result: Var#1<\$a>
+                    result: TEMP(#1 <VARIABLE(\$a)>)
                 Terminal_Return
-                    expr: Var#1<\$a>
+                    expr: TEMP(#1 <VARIABLE(\$a)>)
             EOF;
 
         $parser = new Parser((new ParserFactory())->createForNewestSupportedVersion(), null);
@@ -56,7 +57,7 @@ class ParserAttributesTest extends TestCase
             $result = $e->getMessage();
         }
 
-        $this->assertEquals($this->canonicalize($expected), $this->canonicalize($result));
+        $this->assertEquals(CodeTest::canonicalize($expected), CodeTest::canonicalize($result));
     }
 
     public function testAttributes()
@@ -75,7 +76,7 @@ class ParserAttributesTest extends TestCase
 
         $expected = <<<'EOF'
             Block#1
-                Stmt_Function<'foo'>
+                Stmt_Function
                     attribute['filename']: foo.php
                     attribute['startLine']: 2
                     attribute['startTokenPos']: 1
@@ -83,7 +84,8 @@ class ParserAttributesTest extends TestCase
                     attribute['endLine']: 4
                     attribute['endTokenPos']: 15
                     attribute['endFilePos']: 40
-                Stmt_Function<'foowithattribute'>
+                    name: foo
+                Stmt_Function
                     attribute['filename']: foo.php
                     attribute['startLine']: 6
                     attribute['startTokenPos']: 17
@@ -91,23 +93,22 @@ class ParserAttributesTest extends TestCase
                     attribute['endLine']: 9
                     attribute['endTokenPos']: 35
                     attribute['endFilePos']: 98
-                    attrGroup[0]:
-                        attribute['filename']: foo.php
-                        attribute['startLine']: 6
-                        attribute['startTokenPos']: 17
-                        attribute['startFilePos']: 43
-                        attribute['endLine']: 6
-                        attribute['endTokenPos']: 19
-                        attribute['endFilePos']: 49
-                        attr[0]:
-                            attribute['filename']: foo.php
-                            attribute['startLine']: 6
-                            attribute['startTokenPos']: 18
-                            attribute['startFilePos']: 45
-                            attribute['endLine']: 6
-                            attribute['endTokenPos']: 18
-                            attribute['endFilePos']: 48
-                            name: LITERAL('Attr')
+                    attrGroup[0]['attribute']['filename']: foo.php
+                    attrGroup[0]['attribute']['startLine']: 6
+                    attrGroup[0]['attribute']['startTokenPos']: 17
+                    attrGroup[0]['attribute']['startFilePos']: 43
+                    attrGroup[0]['attribute']['endLine']: 6
+                    attrGroup[0]['attribute']['endTokenPos']: 19
+                    attrGroup[0]['attribute']['endFilePos']: 49
+                    attrGroup[0][0]['attribute']['filename']: foo.php
+                    attrGroup[0][0]['attribute']['startLine']: 6
+                    attrGroup[0][0]['attribute']['startTokenPos']: 18
+                    attrGroup[0][0]['attribute']['startFilePos']: 45
+                    attrGroup[0][0]['attribute']['endLine']: 6
+                    attrGroup[0][0]['attribute']['endTokenPos']: 18
+                    attrGroup[0][0]['attribute']['endFilePos']: 48
+                    attrGroup[0][0]['name']: LITERAL('Attr')
+                    name: foowithattribute
                 Terminal_Return
 
             Function 'foo': mixed
@@ -122,7 +123,7 @@ class ParserAttributesTest extends TestCase
                     attribute['endFilePos']: 20
                     declaredType: mixed
                     name: LITERAL('a')
-                    result: Var#1<$a>
+                    result: TEMP(#1 <VARIABLE($a)>)
                 Terminal_Return
                     attribute['filename']: foo.php
                     attribute['startLine']: 3
@@ -131,7 +132,7 @@ class ParserAttributesTest extends TestCase
                     attribute['endLine']: 3
                     attribute['endTokenPos']: 13
                     attribute['endFilePos']: 38
-                    expr: Var#1<$a>
+                    expr: TEMP(#1 <VARIABLE($a)>)
 
             Function 'foowithattribute': mixed
             Block#1
@@ -145,7 +146,7 @@ class ParserAttributesTest extends TestCase
                     attribute['endFilePos']: 78
                     declaredType: mixed
                     name: LITERAL('a')
-                    result: Var#1<$a>
+                    result: TEMP(#1 <VARIABLE($a)>)
                 Terminal_Return
                     attribute['filename']: foo.php
                     attribute['startLine']: 8
@@ -154,13 +155,13 @@ class ParserAttributesTest extends TestCase
                     attribute['endLine']: 8
                     attribute['endTokenPos']: 33
                     attribute['endFilePos']: 96
-                    expr: Var#1<$a>
+                    expr: TEMP(#1 <VARIABLE($a)>)
             EOF;
 
         $parser = new Parser((new ParserFactory())->createForNewestSupportedVersion(), null);
         $traverser = new Traverser();
         $traverser->addVisitor(new Visitor\Simplifier());
-        $printer = new Printer\Text(true);
+        $printer = new Printer\Text(Printer\Printer::MODE_RENDER_ATTRIBUTES);
 
         try {
             $script = $parser->parse($code, 'foo.php');
@@ -170,18 +171,6 @@ class ParserAttributesTest extends TestCase
             $result = $e->getMessage();
         }
 
-        $this->assertEquals($this->canonicalize($expected), $this->canonicalize($result));
-    }
-
-    private function canonicalize($str)
-    {
-        // trim from both sides
-        $str = trim($str);
-
-        // normalize EOL to \n
-        $str = str_replace(["\r\n", "\r"], "\n", $str);
-
-        // trim right side of all lines
-        return implode("\n", array_map('rtrim', explode("\n", $str)));
+        $this->assertEquals(CodeTest::canonicalize($expected), CodeTest::canonicalize($result));
     }
 }

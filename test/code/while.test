@@ -13,11 +13,8 @@ Block#1
 Block#2
     Parent: Block#1
     Parent: Block#3
-    Expr_ConstFetch
-        name: LITERAL('true')
-        result: Var#1
     Stmt_JumpIf
-        cond: Var#1
+        cond: LITERAL(true)
         if: Block#3
         else: Block#4
 
@@ -33,3 +30,4 @@ Block#4
     Terminal_Echo
         expr: LITERAL(2)
     Terminal_Return
+

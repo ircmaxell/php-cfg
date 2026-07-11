@@ -8,26 +8,21 @@ function foo2(){}
 function foo5(){}
 
 function foo_func(#[FooParamAttrib('Foo1')] $foo) {}
+
 -----
 Block#1
-    Stmt_Function<'foo2'>
-        attrGroup[0]:
-            attr[0]:
-                name: LITERAL('ExampleAttribute')
-                args[0]: LITERAL('foo')
-                args[1]: LITERAL('bar')
-    Expr_ConstFetch
-        name: LITERAL('null')
-        result: Var#1
-    Stmt_Function<'foo5'>
-        attrGroup[0]:
-            attr[0]:
-                name: LITERAL('ConstAttr')
-        attrGroup[1]:
-            attr[0]:
-                name: LITERAL('FooAttribute')
-                args[0]: Var#1
-    Stmt_Function<'foo_func'>
+    Stmt_Function
+        attrGroup[0][0]['name']: LITERAL('ExampleAttribute')
+        attrGroup[0][0]['args'][0]: LITERAL('foo')
+        attrGroup[0][0]['args'][1]: LITERAL('bar')
+        name: foo2
+    Stmt_Function
+        attrGroup[0][0]['name']: LITERAL('ConstAttr')
+        attrGroup[1][0]['name']: LITERAL('FooAttribute')
+        attrGroup[1][0]['args'][0]: NULL()
+        name: foo5
+    Stmt_Function
+        name: foo_func
     Terminal_Return
 
 Function 'foo2': mixed
@@ -41,11 +36,10 @@ Block#1
 Function 'foo_func': mixed
 Block#1
     Expr_Param
-        attrGroup[0]:
-            attr[0]:
-                name: LITERAL('FooParamAttrib')
-                args[0]: LITERAL('Foo1')
+        attrGroup[0][0]['name']: LITERAL('FooParamAttrib')
+        attrGroup[0][0]['args'][0]: LITERAL('Foo1')
         declaredType: mixed
         name: LITERAL('foo')
-        result: Var#1<$foo>
+        result: TEMP(#1 <VARIABLE($foo)>)
     Terminal_Return
+

@@ -6,10 +6,11 @@ if ($a) {
     echo "b";
 }
 echo "c";
+
 -----
 Block#1
     Stmt_JumpIf
-        cond: Var#1<$a>
+        cond: TEMP(#1 <VARIABLE($a)>)
         if: Block#2
         else: Block#3
 
@@ -33,3 +34,4 @@ Block#4
     Terminal_Echo
         expr: LITERAL('c')
     Terminal_Return
+

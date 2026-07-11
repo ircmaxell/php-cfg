@@ -47,7 +47,7 @@ class VariableFinder extends AbstractVisitor
                 if (null === $v) {
                     continue;
                 }
-                $this->variables->attach($v);
+                $this->variables->offsetSet($v);
             }
         }
     }
