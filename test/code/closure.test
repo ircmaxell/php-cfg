@@ -8,6 +8,7 @@ $fn = function($a) use($b, &$c) {
 $fn(3);
 var_dump($c);
 
+
 -----
 Block#1
     Expr_Assign

@@ -1,6 +1,7 @@
 <?php
 $fn = function($a) {};
 
+
 -----
 Block#1
     Expr_Closure

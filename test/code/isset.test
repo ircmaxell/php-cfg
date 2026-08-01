@@ -4,6 +4,7 @@ if (isset($a, $b, $c)) {
     echo "All set\n";
 }
 
+
 -----
 Block#1
     Expr_Isset

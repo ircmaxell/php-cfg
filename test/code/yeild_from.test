@@ -11,6 +11,7 @@ function gen_zero_four() {
     yield 4;
 }
 
+
 -----
 Block#1
     Stmt_Function

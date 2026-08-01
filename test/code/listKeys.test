@@ -3,6 +3,7 @@
 $key = 'b';
 list('a' => $a, $key => $b) = $array;
 
+
 -----
 Block#1
     Expr_Assign

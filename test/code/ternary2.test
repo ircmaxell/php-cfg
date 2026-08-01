@@ -2,6 +2,7 @@
 
 $a = $b ?: ($b ?: $c);
 
+
 -----
 Block#1
     Stmt_JumpIf

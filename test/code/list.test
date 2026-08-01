@@ -3,6 +3,7 @@
 list($a, , $b, list($c, $d)) = $array;
 foreach ($a as list($b, $c));
 
+
 -----
 Block#1
     Expr_ArrayDimFetch

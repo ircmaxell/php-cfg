@@ -3,6 +3,7 @@
 $x || throw new Exception("foo");
 throw new \InvalidArgumentException("foo");
 
+
 -----
 Block#1
     Stmt_JumpIf

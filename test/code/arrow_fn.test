@@ -5,6 +5,7 @@ $fn = fn($a) => $b++ * $a;
 $fn(3);
 var_dump($b);
 
+
 -----
 Block#1
     Expr_Assign

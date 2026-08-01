@@ -4,6 +4,7 @@ include_once($foo);
 require($foo);
 require_once($foo);
 
+
 -----
 Block#1
     Expr_Include

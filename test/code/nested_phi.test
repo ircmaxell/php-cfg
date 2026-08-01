@@ -8,6 +8,7 @@ foreach ([1, 2, 3] as $b) {
 }
 echo $a;
 
+
 -----
 Block#1
     Expr_Assign

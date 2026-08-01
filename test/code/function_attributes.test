@@ -9,6 +9,7 @@ function foo5(){}
 
 function foo_func(#[FooParamAttrib('Foo1')] $foo) {}
 
+
 -----
 Block#1
     Stmt_Function

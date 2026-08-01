@@ -47,7 +47,7 @@ class GenericOp implements Renderer
             $result['vars']['name'] = $func->name;
         }
 
-        if ($op instanceof  Op\Stmt\Property || $op instanceof Op\Stmt\ClassMethod) {
+        if ($op instanceof Op\Stmt\Property || $op instanceof Op\Stmt\ClassMethod) {
             $result['vars']['flags'] = $this->renderFlags($op);
         }
 
@@ -55,7 +55,7 @@ class GenericOp implements Renderer
             if (is_array($type)) {
                 $result['types'][$typeName] = [];
                 foreach ($type as $key => $subType) {
-                    if (! $subType) {
+                    if (!$subType) {
                         continue;
                     }
                     $result['types'][$typeName][$key] = $this->printer->renderType($subType);
@@ -69,7 +69,7 @@ class GenericOp implements Renderer
             if (is_array($vars)) {
                 $result['vars'][$varName] = [];
                 foreach ($vars as $key => $var) {
-                    if (! $var) {
+                    if (!$var) {
                         continue;
                     }
                     $result['vars'][$varName][$key] = $this->printer->renderOperand($var);
@@ -82,7 +82,7 @@ class GenericOp implements Renderer
         foreach ($op->getSubBlocks() as $blockName => $sub) {
             if (is_array($sub)) {
                 foreach ($sub as $key => $subBlock) {
-                    if (! $subBlock) {
+                    if (!$subBlock) {
                         continue;
                     }
                     $this->printer->enqueueBlock($subBlock);
@@ -148,6 +148,9 @@ class GenericOp implements Renderer
         $result = '';
 
         if ($stmt instanceof Op\Stmt\Property) {
+            if ($stmt->isClassConst()) {
+                $result .= "const|";
+            }
             if ($stmt->isReadOnly()) {
                 $result .= "readonly|";
             }

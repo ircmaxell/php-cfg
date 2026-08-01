@@ -5,6 +5,7 @@ echo match(10) {
     5 + 5 => 'baz' . 'buz',
 };
 
+
 -----
 Block#1
     Expr_BinaryOp_Identical

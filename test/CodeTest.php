@@ -58,7 +58,7 @@ class CodeTest extends TestCase
         );
 
         foreach ($iter as $file) {
-            if (! $file->isFile()) {
+            if (!$file->isFile()) {
                 continue;
             }
 

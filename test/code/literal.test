@@ -5,6 +5,7 @@ $b = "aaaa')eeee";
 $c = "aaaa')";
 $d = "aaaa'')";
 
+
 -----
 Block#1
     Expr_Assign

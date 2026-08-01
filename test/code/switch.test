@@ -12,6 +12,7 @@ switch ($i) {
         echo "i < 0 || i > 3";
 }
 
+
 -----
 Block#1
     Stmt_Switch

@@ -27,6 +27,8 @@ class Property extends Stmt implements AttributableOp
 
     public int $visibility;
 
+    public bool $classConst;
+
     public bool $static;
 
     public bool $readonly;
@@ -37,13 +39,14 @@ class Property extends Stmt implements AttributableOp
 
     public Op\Type $declaredType;
 
-    public function __construct(Operand $name, int $visiblity, bool $static, bool $readonly, array $attrGroups, ?Op\Type $declaredType = null, ?Operand $defaultVar = null, ?Block $defaultBlock = null, array $attributes = [])
+    public function __construct(Operand $name, int $visiblity, bool $static, bool $readonly, bool $classConst, array $attrGroups, ?Op\Type $declaredType = null, ?Operand $defaultVar = null, ?Block $defaultBlock = null, array $attributes = [])
     {
         parent::__construct($attributes);
         $this->name = $this->addReadRef($name);
         $this->visibility = $visiblity;
         $this->static = $static;
         $this->readonly = $readonly;
+        $this->classConst = $classConst;
         $this->setAttributeGroups(...$attrGroups);
         $this->declaredType = $declaredType;
         if (!is_null($defaultVar)) {
@@ -65,6 +68,11 @@ class Property extends Stmt implements AttributableOp
     public function isPrivate(): bool
     {
         return (bool) ($this->visibility & Modifiers::PRIVATE);
+    }
+
+    public function isClassConst(): bool
+    {
+        return $this->classConst;
     }
 
     public function isStatic(): bool

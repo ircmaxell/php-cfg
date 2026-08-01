@@ -13,6 +13,7 @@ class MyClass2 {
     use HelloWorld { sayHello as private myPrivateHello; }
 }
 
+
 -----
 Block#1
     Stmt_Trait

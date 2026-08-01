@@ -27,6 +27,7 @@ class NameOfClass extends \X implements Iface {
 }
 $obj = new NameOfClass();
 
+
 -----
 Block#1
     Stmt_Interface

@@ -10,6 +10,7 @@ echo $foo->{$start . $end};
 echo $foo->{$arr[1]};
 echo $foo->{$arr}[1];
 
+
 -----
 Block#1
     Expr_VarVar

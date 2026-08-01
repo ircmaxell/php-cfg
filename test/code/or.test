@@ -2,6 +2,7 @@
 
 $x = a() || b();
 
+
 -----
 Block#1
     Expr_FuncCall

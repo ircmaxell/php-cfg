@@ -2,6 +2,7 @@
 
 x: goto x;
 
+
 -----
 Block#1
     Stmt_Jump

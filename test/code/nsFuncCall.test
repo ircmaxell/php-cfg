@@ -3,6 +3,7 @@
 namespace Foo;
 call();
 
+
 -----
 Block#1
     Expr_NsFuncCall

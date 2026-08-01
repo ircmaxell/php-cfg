@@ -3,6 +3,7 @@
 var_dump(empty($a));
 var_dump(empty($a['b']));
 
+
 -----
 Block#1
     Expr_Empty

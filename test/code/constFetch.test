@@ -7,6 +7,7 @@ namespace Foo;
 \var_dump(false);
 \var_dump(null);
 
+
 -----
 Block#1
     Expr_ConstFetch

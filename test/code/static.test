@@ -2,6 +2,7 @@
 static $flag = FALSE;
 echo $flag;
 
+
 -----
 Block#1
     Terminal_StaticVar
