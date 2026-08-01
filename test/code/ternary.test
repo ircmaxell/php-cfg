@@ -1,8 +1,6 @@
 <?php
 
 $a = $b ? $c : $d;
-
-
 -----
 Block#1
     Stmt_JumpIf
@@ -40,4 +38,3 @@ Block#4
         expr: TEMP(#8)
         result: TEMP(#10)
     Terminal_Return
-

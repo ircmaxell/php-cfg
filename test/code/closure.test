@@ -7,8 +7,6 @@ $fn = function($a) use($b, &$c) {
 };
 $fn(3);
 var_dump($c);
-
-
 -----
 Block#1
     Expr_Assign
@@ -57,4 +55,3 @@ Block#1
         expr: TEMP(#5)
         result: TEMP(#7)
     Terminal_Return
-

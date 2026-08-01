@@ -1,8 +1,6 @@
 <?php
 static $flag = FALSE;
 echo $flag;
-
-
 -----
 Block#1
     Terminal_StaticVar
@@ -15,4 +13,3 @@ Block#1
 
 Block#2
     Parent: Block#1
-

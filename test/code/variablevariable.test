@@ -9,8 +9,6 @@ echo $foo->{$baz[1]};
 echo $foo->{$start . $end};
 echo $foo->{$arr[1]};
 echo $foo->{$arr}[1];
-
-
 -----
 Block#1
     Expr_VarVar
@@ -105,4 +103,3 @@ Block#1
     Terminal_Echo
         expr: TEMP(#31)
     Terminal_Return
-

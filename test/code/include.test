@@ -3,8 +3,6 @@ include($foo);
 include_once($foo);
 require($foo);
 require_once($foo);
-
-
 -----
 Block#1
     Expr_Include
@@ -24,4 +22,3 @@ Block#1
         result: TEMP(#5)
         type: require_once
     Terminal_Return
-

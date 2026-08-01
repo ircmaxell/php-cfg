@@ -6,8 +6,6 @@ if ($a) {
     echo "b";
 }
 echo "c";
-
-
 -----
 Block#1
     Stmt_JumpIf
@@ -35,4 +33,3 @@ Block#4
     Terminal_Echo
         expr: LITERAL('c')
     Terminal_Return
-

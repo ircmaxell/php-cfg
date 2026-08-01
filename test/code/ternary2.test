@@ -1,8 +1,6 @@
 <?php
 
 $a = $b ?: ($b ?: $c);
-
-
 -----
 Block#1
     Stmt_JumpIf
@@ -70,4 +68,3 @@ Block#7
         result: TEMP(#14)
     Stmt_Jump
         target: Block#4
-

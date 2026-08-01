@@ -4,8 +4,6 @@ if (is_int($a) || is_float($a)) {
 	echo $a;
 }
 var_dump($a);
-
-
 -----
 Block#1
     Expr_FuncCall
@@ -92,4 +90,3 @@ Block#7
         args[0]: TEMP(#11 <VARIABLE($a)>)
         result: TEMP(#12)
     Terminal_Return
-

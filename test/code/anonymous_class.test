@@ -6,8 +6,6 @@ $var = new class {
 };
 
 $instance = new #[Attr('foo')] class {};
-
-
 -----
 Block#1
     Stmt_Class
@@ -46,4 +44,3 @@ Block#1
     Terminal_Echo
         expr: LITERAL('Hello World')
     Terminal_Return
-

@@ -3,8 +3,6 @@
 if (isset($a, $b, $c)) {
     echo "All set\n";
 }
-
-
 -----
 Block#1
     Expr_Isset
@@ -29,4 +27,3 @@ Block#3
     Parent: Block#2
     Parent: Block#1
     Terminal_Return
-

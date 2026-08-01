@@ -9,8 +9,6 @@ $generator = gen_one_to_three();
 foreach ($generator as $value) {
     echo "$value\n";
 }
-
-
 -----
 Block#1
     Stmt_Function
@@ -110,4 +108,3 @@ Block#5
         result: TEMP(#8)
     Stmt_Jump
         target: Block#2
-

@@ -4,8 +4,6 @@ echo match(10) {
     5 => 'bar',
     5 + 5 => 'baz' . 'buz',
 };
-
-
 -----
 Block#1
     Expr_BinaryOp_Identical
@@ -87,4 +85,3 @@ Block#8
     Parent: Block#6
     Terminal_MatchError
         cond: LITERAL(10)
-
