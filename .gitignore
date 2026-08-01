@@ -1,5 +1,5 @@
 test.php
-tools/php-cs-fixer/composer.lock
+composer.lock
 vendor/
 .idea/
 .phpunit.result.cache
