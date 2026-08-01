@@ -41,7 +41,7 @@ class CodeTest extends TestCase
             $result = $e->getMessage();
         }
 
-        // file_put_contents($file, $code . "\n-----" . $result . "\n");
+        // file_put_contents($file, $code . "-----" . $result . "\n");
 
         $this->assertEquals(
             CodeTest::canonicalize($expectedDump),
