@@ -70,7 +70,7 @@ class DeclarationFinder extends AbstractVisitor
             $this->methods[] = $op;
         } elseif ($op instanceof Op\Stmt\Function_) {
             $this->functions[] = $op;
-        } elseif ($op instanceof Op\Terminal\Const_) {
+        } elseif ($op instanceof Op\Stmt\Property && $op->isClassConst()) {
             $name = $op->name->value;
             if ($op->scope) {
                 $name = strtolower($op->scope->name) . '::' . $name;

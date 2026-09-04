@@ -244,7 +244,6 @@ class TypeReconstructor
                 if ($op->class->value === "static" || $op->class->value === "self") {
                     //todo change to static class
                     if (!$op->scope) {
-                        var_dump($op);
                         throw new LogicException("Scope is null with a static call?");
                     }
                     $type = Helper::fromOpType($op->scope);
@@ -266,7 +265,7 @@ class TypeReconstructor
                 // TODO: we may be able to determine these...
                 return null;
         }
-        var_dump($op);
+
         throw new LogicException("Unknown variable op found: " . $op->getType());
     }
 
@@ -396,9 +395,9 @@ class TypeReconstructor
             foreach ($this->state->functionLookup[$name] as $func) {
                 if ($func->returnType) {
                     $result[] = Helper::parseDecl($func->returnType->value);
-                } else {
+                } elseif ($func->getAttribute('doccomment')) {
                     // Check doc comment
-                    $result[] = Helper::extractTypeFromComment("return", $func->getAttribute('doccomment'));
+                    $result[] = Helper::parseComment(Helper::KIND_RETURN, $func->getAttribute('doccomment'));
                 }
             }
             return $result;
@@ -498,7 +497,7 @@ class TypeReconstructor
         if ($op->class instanceof Operand\Literal) {
             $class = strtolower($op->class->value);
             return $this->resolveClassConstant($class, $op, $resolved);
-        } elseif ($resolved->contains($op->class)) {
+        } elseif ($resolved->offsetExists($op->class)) {
             $type = $resolved[$op->class];
             if ($type->type !== Type::TYPE_OBJECT || empty($type->userType)) {
                 // give up
@@ -506,6 +505,7 @@ class TypeReconstructor
             }
             return $this->resolveClassConstant(strtolower($type->userType), $op, $resolved);
         }
+
         return null;
     }
 
@@ -567,9 +567,9 @@ class TypeReconstructor
             foreach ($class->stmts->children as $stmt) {
                 if ($stmt instanceof Op\Stmt\Property) {
                     if ($stmt->declaredType) {
-                        $stmt->type = Helper::parseDecl($stmt->declaredType->name);
-                    } else {
-                        $stmt->type = Helper::extractTypeFromComment("var", $stmt->getAttribute('doccomment'));
+                        $stmt->type = Helper::fromOpType($stmt->declaredType);
+                    } elseif ($stmt->getAttribute('doccomment')) {
+                        $stmt->type = Helper::parseComment(Helper::KIND_VAR, $stmt->getAttribute('doccomment'));
                     }
                 }
             }
@@ -592,8 +592,8 @@ class TypeReconstructor
             }
         } elseif (isset($this->state->constants[$try])) {
             foreach ($this->state->constants[$try] as $const) {
-                if ($resolved->offsetExists($const->value)) {
-                    $types[] = $resolved[$const->value];
+                if ($resolved->offsetExists($const->defaultVar)) {
+                    $types[] = $resolved[$const->defaultVar];
                 } else {
                     // Not every constant is computed yet
                     return null;
@@ -616,6 +616,7 @@ class TypeReconstructor
                 }
             }
         }
+
         return $types;
     }
 

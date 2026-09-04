@@ -37,7 +37,7 @@ class Property extends Stmt implements AttributableOp
 
     public ?Block $defaultBlock = null;
 
-    public Op\Type $declaredType;
+    public ?Op\Type $declaredType = null;
 
     public function __construct(Operand $name, int $visiblity, bool $static, bool $readonly, bool $classConst, array $attrGroups, ?Op\Type $declaredType = null, ?Operand $defaultVar = null, ?Block $defaultBlock = null, array $attributes = [])
     {
