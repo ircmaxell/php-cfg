@@ -26,16 +26,9 @@ class CodeTest extends TestCase
     #[DataProvider('provideTestParseAndDump')]
     public function testParseAndDump($code, $expectedDump, $file)
     {
-        $astTraverser = new PhpParser\NodeTraverser();
-        $astTraverser->addVisitor(new PhpParser\NodeVisitor\NameResolver());
-        $parser = new Parser((new ParserFactory())->createForNewestSupportedVersion(), $astTraverser);
-        $traverser = new Traverser();
-        $traverser->addVisitor(new Visitor\Simplifier());
-        $printer = new Printer\Text();
-
         try {
-            $script = $parser->parse($code, 'foo.php');
-            $traverser->traverse($script);
+            $script = $this->runScript($code);
+            $printer = new Printer\Text();
             $result = $printer->printScript($script);
         } catch (RuntimeException $e) {
             $result = $e->getMessage();
@@ -49,9 +42,19 @@ class CodeTest extends TestCase
         );
     }
 
+    public static function provideTestTypeReconstruction()
+    {
+        yield from self::findTests('type_reconstruction');
+    }
+
     public static function provideTestParseAndDump()
     {
-        $dir = __DIR__ . '/code';
+        yield from self::findTests('code');
+    }
+
+    protected static function findTests(string $type)
+    {
+        $dir = __DIR__ . '/' . $type;
         $iter = new RecursiveIteratorIterator(
             new RecursiveDirectoryIterator($dir),
             RecursiveIteratorIterator::LEAVES_ONLY,
@@ -65,6 +68,40 @@ class CodeTest extends TestCase
             $contents = file_get_contents($file->getPathname());
             yield $file->getBasename() => array_merge(explode('-----', $contents), [$file->getPathname()]);
         }
+    }
+
+    #[DataProvider('provideTestTypeReconstruction')]
+    public function testTypeReconstruction($code, $expectedDump, $file)
+    {
+        try {
+            $script = $this->runScript($code);
+            $engine = new Types\Engine();
+            $engine->addScript($script);
+            $engine->run();
+            $printer = new Printer\Text();
+            $result = $printer->printScript($script);
+        } catch (RuntimeException $e) {
+            $result = $e->getMessage();
+        }
+
+        // file_put_contents($file, $code . "\n-----" . $result . "\n");
+
+        $this->assertEquals(
+            $this->canonicalize($expectedDump),
+            $this->canonicalize($result),
+        );
+    }
+
+    protected function runScript(string $code): Script
+    {
+        $astTraverser = new PhpParser\NodeTraverser();
+        $astTraverser->addVisitor(new PhpParser\NodeVisitor\NameResolver());
+        $parser = new Parser((new ParserFactory())->createForNewestSupportedVersion(), $astTraverser);
+        $traverser = new Traverser();
+        $traverser->addVisitor(new Visitor\Simplifier());
+        $script = $parser->parse($code, 'foo.php');
+        $traverser->traverse($script);
+        return $script;
     }
 
     public static function canonicalize($str)

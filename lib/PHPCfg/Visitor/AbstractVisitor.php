@@ -9,7 +9,13 @@ declare(strict_types=1);
  * @license MIT See LICENSE at the root of the project for more info
  */
 
-namespace PHPCfg;
+namespace PHPCfg\Visitor;
+
+use PHPCfg\Block;
+use PHPCfg\Func;
+use PHPCfg\Op;
+use PHPCfg\Script;
+use PHPCfg\Visitor;
 
 /**
  * Dummy visitor implementation.

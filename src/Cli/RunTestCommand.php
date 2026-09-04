@@ -11,6 +11,7 @@ namespace PHPCfg\Cli;
 
 use Ahc\Cli\Output\Color;
 use PHPCfg\Printer;
+use PHPCfg\Types;
 
 class RunTestCommand extends BaseCommand
 {
@@ -30,7 +31,7 @@ class RunTestCommand extends BaseCommand
         $io = $this->app()->io();
         $color = new Color();
 
-        $file = __DIR__ . '/../../test/code/' . $test . '.test';
+        $file = __DIR__ . '/../../' . $test;
 
         if (file_exists($file)) {
             [$code] = explode('-----', file_get_contents($file), 2);
@@ -40,6 +41,13 @@ class RunTestCommand extends BaseCommand
         }
 
         $script = $this->exec($file, $code, true);
+
+        if (substr($test, 0, 25) === "test/type_reconstruction/") {
+            $state = new Types\State();
+            $state->addScript($script);
+            $reconstructor = new Types\TypeReconstructor();
+            $reconstructor->resolve($state);
+        }
 
         $dumper = new Printer\Text();
         $io->write($dumper->printScript($script), true);

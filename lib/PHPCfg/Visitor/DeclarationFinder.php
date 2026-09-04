@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace PHPCfg\Visitor;
 
-use PHPCfg\AbstractVisitor;
 use PHPCfg\Block;
 use PHPCfg\Op;
 
@@ -72,10 +71,14 @@ class DeclarationFinder extends AbstractVisitor
         } elseif ($op instanceof Op\Stmt\Function_) {
             $this->functions[] = $op;
         } elseif ($op instanceof Op\Terminal\Const_) {
-            if (! isset($this->constants[$op->name->value])) {
-                $this->constants[$op->name->value] = [];
+            $name = $op->name->value;
+            if ($op->scope) {
+                $name = strtolower($op->scope->name) . '::' . $name;
             }
-            $this->constants[$op->name->value][] = $op;
+            if (! isset($this->constants[$name])) {
+                $this->constants[$name] = [];
+            }
+            $this->constants[$name][] = $op;
         }
     }
 }

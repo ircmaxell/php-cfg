@@ -13,6 +13,7 @@ use PHPCfg\Op;
 use PHPCfg\ParserHandler;
 use PHPCfg\ParserHandler\Stmt;
 use PhpParser\Node;
+use SplObjectStorage;
 
 class Class_ extends ParserHandler implements Stmt
 {
@@ -22,7 +23,7 @@ class Class_ extends ParserHandler implements Stmt
         $old = $this->parser->currentClass;
         $this->parser->currentClass = $name;
 
-        $this->addOp(new Op\Stmt\Class_(
+        $class = new Op\Stmt\Class_(
             $name,
             $node->flags,
             $node->extends ? $this->parser->parseTypeNode($node->extends) : null,
@@ -30,7 +31,42 @@ class Class_ extends ParserHandler implements Stmt
             $this->parser->parseNodes($node->stmts, $this->createBlock()),
             $this->parser->parseAttributeGroups(...$node->attrGroups),
             $this->mapAttributes($node),
-        ));
+        );
+
+        $this->addScope($class, $name);
+        $this->addOp($class);
         $this->parser->currentClass = $old;
+    }
+
+    public static function addScope(Op\Stmt\ClassLike $class, Op\Type $name): void
+    {
+        $toprocess = new SplObjectStorage();
+        $processed = new SplObjectStorage();
+        $toprocess->offsetSet($class->stmts);
+        while ($toprocess->count() > 0) {
+            $block = $toprocess->current();
+            $toprocess->offsetUnset($block);
+            $processed->offsetSet($block);
+            foreach ($block->children as $op) {
+                $op->scope = $name;
+                if ($op instanceof Op\CallableOp) {
+                    if ($op->func->cfg && !$processed->offsetExists($op->func->cfg)) {
+                        $toprocess->offsetSet($op->func->cfg);
+                    }
+                }
+                foreach ($op->getSubBlocks() as $sub) {
+                    if (is_array($sub)) {
+                        foreach ($sub as $s) {
+                            if ($s && !$processed->offsetExists($s)) {
+                                $toprocess->offsetSet($s);
+                            }
+                        }
+                    } elseif ($sub && !$processed->offsetExists($sub)) {
+                        $toprocess->offsetSet($sub);
+                    }
+                }
+            }
+            $toprocess->rewind();
+        }
     }
 }

@@ -18,6 +18,7 @@ use PHPCfg\Func;
 use PHPCfg\Op;
 use PHPCfg\Operand;
 use PHPCfg\Script;
+use PHPCfg\Types;
 use RecursiveDirectoryIterator;
 use RecursiveIteratorIterator;
 use SplObjectStorage;
@@ -43,7 +44,6 @@ abstract class Printer
         }
         $this->loadRenderers();
         $this->reset();
-
     }
 
     public function addRenderer(Renderer $renderer, bool $prepend = false): void
@@ -188,8 +188,11 @@ abstract class Printer
         ];
     }
 
-    public function renderType(?Op\Type $type): string
+    public function renderType(Op\Type|Types\Type|null $type): string
     {
+        if ($type instanceof Types\Type) {
+            return (string) $type;
+        }
         if ($type instanceof Op\Type\Mixed_) {
             return 'mixed';
         }

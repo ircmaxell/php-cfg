@@ -11,7 +11,6 @@ declare(strict_types=1);
 
 namespace PHPCfg\Visitor;
 
-use PHPCfg\AbstractVisitor;
 use PHPCfg\Block;
 use PHPCfg\Op;
 use SplObjectStorage;
