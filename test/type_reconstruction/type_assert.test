@@ -6,7 +6,6 @@ function foo($a) {
     }
     echo $a;
 }
-
 -----
 Block#1
     Stmt_Function
@@ -58,4 +57,3 @@ Block#4
     Terminal_Echo
         expr: TEMP<string|null|bool|int|float|object|array|callable>(#5 <VARIABLE($a)>)
     Terminal_Return
-

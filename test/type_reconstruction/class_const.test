@@ -34,9 +34,6 @@ interface C {
 }
 
 class D extends B implements C {}
-
-
-
 -----
 Block#1
     Stmt_Class
@@ -57,10 +54,12 @@ Block#1
     Terminal_Return
 
 Block#2
-    Terminal_Const
+    Stmt_Property
+        declaredType: mixed
+        flags: const|public
         name: LITERAL<string>('FOO')
-        value: LITERAL<int>(1)
-        valueBlock: Block#6
+        defaultVar: LITERAL<int>(1)
+        defaultBlock: Block#6
     Stmt_ClassMethod
         name: foo
         flags: public
@@ -83,10 +82,12 @@ Block#2
 Block#3
 
 Block#4
-    Terminal_Const
+    Stmt_Property
+        declaredType: mixed
+        flags: const|public
         name: LITERAL<string>('BAR')
-        value: LITERAL<int>(1)
-        valueBlock: Block#7
+        defaultVar: LITERAL<int>(1)
+        defaultBlock: Block#7
 
 Block#5
 
@@ -147,4 +148,3 @@ Block#1
         result: TEMP<int>(#1)
     Terminal_Return
         expr: TEMP<int>(#1)
-

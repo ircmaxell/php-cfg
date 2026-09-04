@@ -8,7 +8,7 @@ function foo(Bar $bar)
             echo "1";
         }
         return 8;
-    
+
     } catch (Error|RuntimeException $e) {
         echo $e->getMessage();
         return 8;
@@ -20,7 +20,6 @@ function foo(Bar $bar)
         return 10;
     }
 }
-
 -----
 Block#1
     Stmt_Function
@@ -139,4 +138,3 @@ Block#8
         finallyTarget: Block#5
     Terminal_Return
         expr: LITERAL<int>(8)
-

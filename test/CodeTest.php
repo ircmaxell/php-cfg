@@ -84,7 +84,7 @@ class CodeTest extends TestCase
             $result = $e->getMessage();
         }
 
-        // file_put_contents($file, $code . "\n-----" . $result . "\n");
+        // file_put_contents($file, CodeTest::canonicalize($code) . "\n-----\n" . CodeTest::canonicalize($result) . "\n");
 
         $this->assertEquals(
             $this->canonicalize($expectedDump),
