@@ -4,7 +4,6 @@ class C {
     const D = 3, E = 4 + 4;
 }
 var_dump(A, C::D);
-
 -----
 Block#1
     Terminal_Const
@@ -41,14 +40,18 @@ Block#3
         result: TEMP(#1)
 
 Block#4
-    Terminal_Const
+    Stmt_Property
+        declaredType: mixed
+        flags: const|public
         name: LITERAL('D')
-        value: LITERAL(3)
-        valueBlock: Block#5
-    Terminal_Const
+        defaultVar: LITERAL(3)
+        defaultBlock: Block#5
+    Stmt_Property
+        declaredType: mixed
+        flags: const|public
         name: LITERAL('E')
-        value: TEMP(#5)
-        valueBlock: Block#6
+        defaultVar: TEMP(#5)
+        defaultBlock: Block#6
 
 Block#5
 
@@ -57,4 +60,3 @@ Block#6
         left: LITERAL(4)
         right: LITERAL(4)
         result: TEMP(#5)
-

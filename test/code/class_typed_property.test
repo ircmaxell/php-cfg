@@ -4,7 +4,6 @@ class NameOfClass {
     public ?NameOfClass $self;
 }
 $obj = new NameOfClass();
-
 -----
 Block#1
     Stmt_Class
@@ -24,4 +23,3 @@ Block#2
         declaredType: ?NS\NameOfClass
         flags: public
         name: LITERAL('self')
-

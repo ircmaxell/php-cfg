@@ -15,7 +15,6 @@ class A {
     #[NameOfAttribute]
     private const FOO = 'foo';
 }
-
 -----
 Block#1
     Stmt_Class
@@ -63,10 +62,13 @@ Block#2
         declaredType: string
         flags: private
         name: LITERAL('foo5')
-    Terminal_Const
+    Stmt_Property
+        attrGroup[0][0]['name']: LITERAL('NameOfAttribute')
+        declaredType: mixed
+        flags: const|private
         name: LITERAL('FOO')
-        value: LITERAL('foo')
-        valueBlock: Block#5
+        defaultVar: LITERAL('foo')
+        defaultBlock: Block#5
 
 Block#3
 
@@ -77,4 +79,3 @@ Block#4
         result: TEMP(#1)
 
 Block#5
-

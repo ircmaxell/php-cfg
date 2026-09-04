@@ -4,7 +4,6 @@ $dbname = 'database name';
 print @'hostname';
 
 echo $dbname;
-
 -----
 Block#1
     Expr_Assign
@@ -22,4 +21,3 @@ Block#2
     Terminal_Echo
         expr: TEMP(#1 <VARIABLE($dbname)>)
     Terminal_Return
-

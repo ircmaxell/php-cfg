@@ -39,6 +39,7 @@ class Property extends ParserHandler implements Stmt
                 $visibility,
                 (bool) $static,
                 (bool) $readonly,
+                false,
                 $this->parser->parseAttributeGroups(...$node->attrGroups),
                 $this->parser->parseTypeNode($node->type),
                 $defaultVar,

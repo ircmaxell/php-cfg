@@ -3,7 +3,6 @@
 $a = +1;
 $b = -2;
 $c = ~3;
-
 -----
 Block#1
     Expr_UnaryPlus
@@ -28,4 +27,3 @@ Block#1
         expr: TEMP(#7)
         result: TEMP(#9)
     Terminal_Return
-

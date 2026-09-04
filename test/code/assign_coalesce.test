@@ -1,7 +1,6 @@
 <?php
 
 $x ??= a();
-
 -----
 Block#1
     Expr_FuncCall
@@ -16,4 +15,3 @@ Block#1
         expr: TEMP(#3)
         result: TEMP(#5)
     Terminal_Return
-

@@ -10,7 +10,6 @@ function gen_zero_four() {
     yield from gen_one_to_three();
     yield 4;
 }
-
 -----
 Block#1
     Stmt_Function
@@ -84,4 +83,3 @@ Block#1
         key: LITERAL(4)
         result: TEMP(#4)
     Terminal_Return
-

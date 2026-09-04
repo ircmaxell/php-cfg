@@ -5,7 +5,6 @@ class NameOfClass {
         echo $this->hello();
     }
 }
-
 -----
 Block#1
     Stmt_Class
@@ -27,4 +26,3 @@ Block#1
     Terminal_Echo
         expr: TEMP(#1)
     Terminal_Return
-

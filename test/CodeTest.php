@@ -34,7 +34,7 @@ class CodeTest extends TestCase
             $result = $e->getMessage();
         }
 
-        // file_put_contents($file, $code . "\n-----" . $result . "\n");
+        //file_put_contents($file, CodeTest::canonicalize($code) . "\n-----\n" . CodeTest::canonicalize($result) . "\n");
 
         $this->assertEquals(
             CodeTest::canonicalize($expectedDump),
@@ -61,7 +61,7 @@ class CodeTest extends TestCase
         );
 
         foreach ($iter as $file) {
-            if (! $file->isFile()) {
+            if (!$file->isFile()) {
                 continue;
             }
 
