@@ -1,5 +1,5 @@
-composer.lock
 test.php
+composer.lock
 vendor/
 .idea/
 .phpunit.result.cache
